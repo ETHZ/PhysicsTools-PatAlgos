@@ -1,0 +1,13 @@
+
+### PAT Layer 1 default sequence
+
+# perform additionally needed high level reco tasks
+include "PhysicsTools/PatAlgos/data/PATHighLevelReco.cff"
+
+# build the Objects (Jets, Muons, Electrons, METs, Taus)
+include "PhysicsTools/PatAlgos/data/PATObjectProducers.cff"
+
+sequence patLayer1 = {
+  patHighLevelReco,
+  allObjects
+}

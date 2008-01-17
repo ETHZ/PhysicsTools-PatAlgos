@@ -1,0 +1,7 @@
+
+# module to filter on the minimal number of Muons
+
+module minLayer1Muons = PATMuonMinFilter {
+  InputTag src       = selectedLayer1Muons
+  uint32   minNumber = 0
+}

@@ -1,0 +1,10 @@
+
+# default JetMET calibration on IC, KT and MC Jets
+include "JetMETCorrections/Type1MET/data/MetType1Corrections.cff"
+
+# Jet corrections are now done on the fly in the JetProducer
+
+# default PAT sequence for JetMET corrections
+sequence patJetMETCorrections = {
+  MetType1Corrections
+}

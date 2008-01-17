@@ -1,0 +1,5 @@
+
+include "PhysicsTools/PatAlgos/data/PATElectronMinFilter.cfi"
+include "PhysicsTools/PatAlgos/data/PATElectronMaxFilter.cfi"
+
+sequence countLayer1Electrons = { minLayer1Electrons & maxLayer1Electrons }

@@ -1,0 +1,7 @@
+
+# module to filter on the minimal number of Electrons
+
+module minLayer1Electrons = PATElectronMinFilter {
+  InputTag src       = selectedLayer1Electrons
+  uint32   minNumber = 0
+}

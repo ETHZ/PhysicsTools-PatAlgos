@@ -1,0 +1,7 @@
+
+# module to filter on the minimal number of Jets
+
+module minLayer1Jets = PATJetMinFilter {
+  InputTag src       = selectedLayer1Jets
+  uint32   minNumber = 2
+}

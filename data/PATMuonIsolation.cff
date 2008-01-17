@@ -1,0 +1,6 @@
+
+include "RecoMuon/MuonIsolationProducers/data/muIsolation.cff"
+
+sequence patMuonIsolation = {
+  muIsolation
+}

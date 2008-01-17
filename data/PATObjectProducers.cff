@@ -1,0 +1,13 @@
+
+include "PhysicsTools/PatAlgos/data/PATElectronProducer.cff"
+include "PhysicsTools/PatAlgos/data/PATMuonProducer.cff"
+include "PhysicsTools/PatAlgos/data/PATTauProducer.cff"
+include "PhysicsTools/PatAlgos/data/PATJetProducer.cff"
+include "PhysicsTools/PatAlgos/data/PATMETProducer.cff"
+include "PhysicsTools/PatAlgos/data/PATLeptonCountFilter.cfi"
+
+sequence allObjects = {
+  ( (layer1Muons , layer1Electrons , layer1Taus) , countLayer1Leptons ) ,
+  layer1Jets ,
+  layer1METs
+}

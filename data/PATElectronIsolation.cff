@@ -1,0 +1,11 @@
+include "EgammaAnalysis/EgammaIsolationProducers/data/egammaElectronTkIsolation.cfi"
+include "EgammaAnalysis/EgammaIsolationProducers/data/egammaElectronTkNumIsolation.cfi"
+include "EgammaAnalysis/EgammaIsolationProducers/data/egammaHOE.cfi"
+include "EgammaAnalysis/EgammaIsolationProducers/data/egammaEcalRelIsolationSequence.cff"
+
+sequence patElectronIsolation = {
+  egammaHOE &
+  egammaElectronTkIsolation &
+  egammaElectronTkNumIsolation &
+  egammaEcalRelIsolationSequence
+}

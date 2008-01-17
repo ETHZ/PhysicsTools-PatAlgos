@@ -1,0 +1,9 @@
+
+# module to select Jets
+# See https://twiki.cern.ch/twiki/bin/view/CMS/SWGuidePhysicsCutParser
+# on how to use the cut-string
+
+module selectedLayer1Jets = PATJetSelector {
+  InputTag src = allLayer1Jets
+  string cut = "et > 15. & abs(eta) < 2.4 & nConstituents > 0"
+}

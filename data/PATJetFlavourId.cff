@@ -1,0 +1,20 @@
+
+# creation of shallow clone candidates
+module caloJetCollectionClone = CaloJetShallowCloneProducer {
+  InputTag src = iterativeCone5CaloJets
+}
+
+# association of the flavour with the shallow clones
+module jetPartonAssociation = CandJetFlavourIdentifier {
+  InputTag jets = caloJetCollectionClone
+  double coneSizeToAssociate = 0.3
+  bool physicsDefinition = false
+  bool debug = false
+  vstring vetoFlavour = {}
+}
+
+# default PAT sequence for jet flavour identification
+sequence patJetFlavourId = {
+  caloJetCollectionClone,
+  jetPartonAssociation
+}

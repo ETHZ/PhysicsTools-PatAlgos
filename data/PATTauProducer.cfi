@@ -1,0 +1,23 @@
+
+module allLayer1Taus = PATTauProducer {
+
+  ### General configurables
+  InputTag tauSource              = caloRecoTauProducer
+  InputTag tauDiscriminatorSource = caloRecoTauDiscriminationByIsolation
+#  InputTag tauSource              = pfRecoTauProducer
+#  InputTag tauDiscriminatorSource = pfRecoTauDiscriminationByIsolation
+  
+  ### MC matching configurables
+  bool     addGenMatch       = true                     # switch on/off matching to generator level
+  InputTag genParticleSource = genParticleCandidates    # particles source to be used for the matching
+
+  ### resolution configurables
+  bool     addResolutions    = true                     # switch on/off the resolution calculation
+  bool     useNNResolutions  = true                     # use the neural network approach?
+  string   tauResoFile       = "PhysicsTools/PatUtils/data/Resolutions_tau.root"
+                                                        # input root file for the resolution functions
+
+  ### likelihood ratio configurables
+  bool     addLRValues       = false                    # switch on/off the lepton likelihood ratio calculation
+  string   tauLRFile         = "PhysicsTools/PatUtils/data/TauLRDistros.root"
+}

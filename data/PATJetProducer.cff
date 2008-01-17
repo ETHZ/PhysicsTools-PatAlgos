@@ -1,0 +1,16 @@
+
+include "PhysicsTools/PatAlgos/data/PATJetProducer.cfi"
+include "PhysicsTools/PatAlgos/data/PATJetSelector.cfi"
+include "PhysicsTools/PatAlgos/data/PATJetCountFilter.cff"
+
+# define jet flavour correction services
+include "JetMETCorrections/MCJet/data/MCJetCorrections152.cff"
+include "JetMETCorrections/MCJet/data/JetCorrections_L5Flavor_v1.cfi"
+# Pick MCJetCorrectionService to set record's IOV
+es_prefer MCJetCorrectorIcone5 = MCJetCorrectionService {}
+
+sequence layer1Jets = {
+  allLayer1Jets,
+  selectedLayer1Jets,
+  countLayer1Jets
+}

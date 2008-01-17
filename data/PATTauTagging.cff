@@ -1,0 +1,29 @@
+# common
+include "TrackingTools/TransientTrack/data/TransientTrackBuilder.cfi"
+
+# calo
+include "RecoTauTag/RecoTau/data/CaloRecoTauTagInfoProducer.cfi"
+include "RecoTauTag/RecoTau/data/CaloRecoTauProducer.cfi"
+include "RecoTauTag/RecoTau/data/CaloRecoTauDiscriminationByIsolation.cfi"
+
+sequence patCaloTauTagging = {
+  caloRecoTauTagInfoProducer,
+  caloRecoTauProducer,
+  caloRecoTauDiscriminationByIsolation
+}
+
+# PF
+include "RecoParticleFlow/Configuration/data/RecoParticleFlow_refit.cff"
+include "RecoParticleFlow/Configuration/data/RecoParticleFlow_EventContent.cff"
+include "RecoBTau/JetTracksAssociator/data/pfJetTracksAssociator.cfi"
+include "RecoTauTag/RecoTau/data/PFRecoTauTagInfoProducer.cfi"
+include "RecoTauTag/RecoTau/data/PFRecoTauProducer.cfi"
+include "RecoTauTag/RecoTau/data/PFRecoTauDiscriminationByIsolation.cfi"
+
+sequence patPFTauTagging = {
+  iterativeCone5PFJets,
+  pfJetTracksAssociator,
+  pfRecoTauTagInfoProducer,
+  pfRecoTauProducer,
+  pfRecoTauDiscriminationByIsolation
+}
