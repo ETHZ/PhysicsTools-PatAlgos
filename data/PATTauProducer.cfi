@@ -2,8 +2,11 @@
 module allLayer1Taus = PATTauProducer {
 
   ### General configurables
-  InputTag tauSource              = caloRecoTauProducer
-  InputTag tauDiscriminatorSource = caloRecoTauDiscriminationByIsolation
+InputTag tauSource = tauCaloProducer
+InputTag tauDiscriminatorSource = blabla
+# >1.8.X functionality
+#  InputTag tauSource              = caloRecoTauProducer
+#  InputTag tauDiscriminatorSource = caloRecoTauDiscriminationByIsolation
 #  InputTag tauSource              = pfRecoTauProducer
 #  InputTag tauDiscriminatorSource = pfRecoTauDiscriminationByIsolation
   

@@ -116,8 +116,24 @@ sequence famosBTaggingSequence = {
     combinedSVJetTags
 }
 
-#Tau tagging (patched for backported tau tags)
-include "PhysicsTools/PatAlgos/data/PATTauTagging_fast.cff"
+#Tau tagging
+include "RecoTauTag/Configuration/data/RecoTauTag.cff"
+replace combinedTauTag.PVSrc = "offlinePrimaryVerticesFromCTFTracks"
+sequence famosTauTaggingSequence = {
+    coneIsolationTauJetTags,
+    combinedTauTag,
+tauCaloProducer
+}
+include "RecoTauTag/Configuration/data/RecoPFTauTag.cff"
+replace pfConeIsolation.PVmodule = "offlinePrimaryVerticesFromCTFTracks"
+sequence famosPFTauTaggingSequence = {
+   particleFlowJetCandidates,
+    iterativeCone5PFJets,
+    pfConeIsolation,
+    tauPFProducer
+}
+#Tau tagging (patched for backported tau tags) Only >1.8.X functionality
+#include "PhysicsTools/PatAlgos/data/PATTauTagging_fast.cff"
 #Fast L1 Trigger
 include "FastSimulation/L1CaloTriggerProducer/data/fastl1calosim.cfi"
 include "FastSimulation/L1CaloTriggerProducer/data/fastL1extraParticleMap.cfi"
@@ -247,8 +263,9 @@ sequence famosWithEverything = {
     vertexreco,
     jetTracksAssociator,
     famosBTaggingSequence,
-    patCaloTauTagging,
-    patPFTauTagging
+    famosTauTaggingSequence
+#    patCaloTauTagging,
+#    patPFTauTagging
 }
 
 #Trigger sequences
