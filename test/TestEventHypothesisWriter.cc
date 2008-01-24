@@ -38,6 +38,7 @@ TestEventHypothesisWriter::beginRun(edm::Run &iRun, const edm::EventSetup &iSetu
     names_.add("muon", 1);
     names_.add("nearest jet",  2);
     names_.add("other jet",    3);
+    names_.sort();
     iRun.put(std::auto_ptr<StringMap>(new StringMap(names_))); // put a copy in the run
 }
 
