@@ -9,3 +9,9 @@ sequence patElectronIsolation = {
   egammaElectronTkNumIsolation &
   egammaEcalRelIsolationSequence
 }
+
+replace egammaHOETower.emObjectProducer = allLayer0Electrons
+replace egammaElectronTkIsolation.electronProducer = allLayer0Electrons
+replace egammaElectronTkNumIsolation.electronProducer = allLayer0Electrons
+replace egammaEcalRelIsolation.emObjectProducer = allLayer0Electrons
+

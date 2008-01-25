@@ -1,0 +1,10 @@
+# muon isolation
+include "PhysicsTools/PatAlgos/data/PATMuonIsolation.cff"
+
+# JetMET corrections
+include "PhysicsTools/PatAlgos/data/PATJetMETCorrections.cff"
+
+sequence patBeforeLevel0Reco = {
+    //patMuonIsolation,
+    patJetMETCorrections
+}

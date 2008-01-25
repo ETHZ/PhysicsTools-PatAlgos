@@ -2,13 +2,7 @@
 module allLayer1Taus = PATTauProducer {
 
   ### General configurables
-InputTag tauSource = tauCaloProducer
-InputTag tauDiscriminatorSource = blabla
-# >1.8.X functionality
-#  InputTag tauSource              = caloRecoTauProducer
-#  InputTag tauDiscriminatorSource = caloRecoTauDiscriminationByIsolation
-#  InputTag tauSource              = pfRecoTauProducer
-#  InputTag tauDiscriminatorSource = pfRecoTauDiscriminationByIsolation
+  InputTag tauSource = allLayer0Taus
   
   ### MC matching configurables
   bool     addGenMatch       = true                     # switch on/off matching to generator level

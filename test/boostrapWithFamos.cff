@@ -1,0 +1,36 @@
+  ### FAMOS ###
+
+  service =  RandomNumberGeneratorService {
+    # This is to initialize the random engine of the source
+    untracked uint32 sourceSeed = 123456789
+    # This is to initialize the random engines of Famos
+    PSet moduleSeeds = {
+      untracked uint32 VtxSmeared = 123456789
+      untracked uint32 famosSimHits = 13579
+      untracked uint32 siTrackerGaussianSmearingRecHits = 24680
+      untracked uint32 caloRecHits = 654321
+      untracked uint32 paramMuons = 54525
+    }
+  }
+
+  # Generate ttbar events
+  include "FastSimulation/Configuration/data/ttbar.cfi"
+
+  # Famos sequences
+  // provide our own...
+  include "PhysicsTools/PatAlgos/test/FamosSequences.cff"
+  // Parametrized magnetic field
+  replace VolumeBasedMagneticFieldESProducer.useParametrizedTrackerField = true
+  // You may not want to simulate everything for your study
+  replace famosSimHits.SimulateCalorimetry = true
+  replace famosSimHits.SimulateTracking = true
+#  replace famosSimHits.SimulatePileUp = false
+  replace famosSimHits.SimulateMuons = true
+
+  # Tracker MisAlignement 
+  # include "FastSimulation/Configuration/data/MisAlignment.cff" 
+  # ECAL miscalibration. 
+  # include "FastSimulation/Configuration/data/MisCalibration.cff"
+
+  path pf = { famosWithEverything }
+

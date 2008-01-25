@@ -5,9 +5,6 @@ include "PhysicsTools/PatAlgos/data/PATElectronId.cff"
 # Electron Isolation 
 include "PhysicsTools/PatAlgos/data/PATElectronIsolation.cff"
 
-# muon isolation
-include "PhysicsTools/PatAlgos/data/PATMuonIsolation.cff"
-
 # jet-parton matching
 include "PhysicsTools/PatAlgos/data/PATJetFlavourId.cff"
 
@@ -25,8 +22,8 @@ sequence patHighLevelReco = {
   patElectronId,
   patElectronIsolation,
 //  patMuonIsolation,
-  patJetFlavourId,
-  patJetMETCorrections
+  patJetFlavourId
+ #  patJetMETCorrections #<= moved before layer 0
 //  patCaloTauTagging
 //  patPFTauTagging
 //  patBTagging

@@ -2,7 +2,7 @@
 module allLayer1METs = PATMETProducer {
 
   ### General configurables
-  InputTag metSource          = corMetType1Icone5       # reco MET input source
+  InputTag metSource          = allLayer0METs           # reco MET input source
 
   ### MC matching configurables
   bool     addGenMET          = true                    # switch on/off matching to generator level

@@ -1,7 +1,7 @@
 
 # creation of shallow clone candidates
 module caloJetCollectionClone = CaloJetShallowCloneProducer {
-  InputTag src = iterativeCone5CaloJets
+  InputTag src = allLayer0Jets
 }
 
 # association of the flavour with the shallow clones

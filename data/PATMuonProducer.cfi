@@ -2,7 +2,7 @@
 module allLayer1Muons = PATMuonProducer {
 
   ### General configurables
-  InputTag muonSource        = muons                   # reco muon input source
+  InputTag muonSource        = allLayer0Muons          # cleaned muons from AOD
 
   ### MC matching configurables
   bool     addGenMatch       = true                    # switch on/off matching to generator level

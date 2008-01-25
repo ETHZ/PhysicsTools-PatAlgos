@@ -2,12 +2,7 @@
 module allLayer1Jets = PATJetProducer {
 
   ### General configurables
-  InputTag jetSource               = iterativeCone5CaloJets      # uncalibrated reco jet input source
-
-  ### Jet cleaning configurables (currently temporary electron cleaning)
-  bool     doJetCleaning           = true                        # switch on/off jet cleaning
-  InputTag electronsInput          = allLayer1Electrons          # electrons input source
-  InputTag muonsInput              = allLayer1Muons              # muons input source (not used currently)
+  InputTag jetSource               = allLayer0Jets               # uncalibrated reco jet input source
 
   ### Jet flavour idetification configurables
   bool     getJetMCFlavour         = true                        # switch on/off MC flavour identification of all jets

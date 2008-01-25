@@ -2,11 +2,8 @@
 module allLayer1Electrons = PATElectronProducer {
 
   ### General configurables
-  InputTag electronSource    = pixelMatchGsfElectrons   # reco electron input source
+  InputTag electronSource    = allLayer0Electrons       # clean layer 0 electrons
 
-  ### duplicate removal configurables
-  bool     removeDuplicates  = true                     # switch on/off electron duplicate removal (1 SC with 2 tracks and vice versa)
-                                                        # !!! should be off for SiStripElectrons
   ### MC matching configurables
   bool     addGenMatch       = true                     # switch on/off matching to generator level
   InputTag genParticleSource = genParticleCandidates    # particles source to be used for the matching
