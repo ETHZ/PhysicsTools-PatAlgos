@@ -1,0 +1,15 @@
+#
+# Example for a configuration of the MC match
+# for electrons (cuts are NOT tuned!!)
+#
+module electronMatch = PATMCMatcher {
+ InputTag src = cleanElectrons
+ InputTag matched = genParticleCandidates
+ double maxDeltaR = 0.15
+ double maxDPtRel = 0.5
+ bool resolveAmbiguities = true
+ bool resolveByMatchQuality = false
+ bool checkCharge = true
+ vint32 mcPdgId = { 11 }
+ vint32 mcStatus = { 1 }
+}
