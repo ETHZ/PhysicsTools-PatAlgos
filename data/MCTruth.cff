@@ -1,0 +1,8 @@
+include "PhysicsTools/PatAlgos/data/electronMatch.cfi"
+include "PhysicsTools/PatAlgos/data/jetMatch.cfi"
+
+sequence patMCTruth = {
+    electronMatch,
+    jetPartonMatch,
+    jetGenJetMatch
+}

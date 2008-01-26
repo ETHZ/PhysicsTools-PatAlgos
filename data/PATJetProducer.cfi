@@ -10,9 +10,9 @@ module allLayer1Jets = PATJetProducer {
 
   ### MC matching configurables
   bool     addGenPartonMatch       = true                        # switch on/off matching to partons
-  InputTag genPartonSource         = genParticleCandidates       # particles source to be used for the matching
+  InputTag genPartonMatch          = jetPartonMatch              # particles source to be used for the matching
   bool     addGenJetMatch          = true                        # switch on/off matching to GenJet's
-  InputTag genJetSource            = iterativeCone5GenJetsPt10   # GenJet source to be used for the matching
+  InputTag genJetMatch             = jetGenJetMatch              # GenJet source to be used for the matching
   bool     addPartonJetMatch       = false                       # switch on/off matching to PartonJet's (not implemented yet)
   InputTag partonJetSource         = nonsenseName                # ParticleJet source to be used for the matching
 

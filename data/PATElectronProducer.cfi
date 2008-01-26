@@ -6,10 +6,7 @@ module allLayer1Electrons = PATElectronProducer {
 
   ### MC matching configurables
   bool     addGenMatch       = true                     # switch on/off matching to generator level
-  InputTag genParticleSource = genParticleCandidates    # particles source to be used for the matching
-  double   maxDeltaR         = 0.5                      # upper angular separation between reco and gen for match
-  double   minRecoOnGenEt    = 0.5                      # lower cut on the ETreco/ETgen for matching
-  double   maxRecoOnGenEt    = 1.5                      # upper cut on the ETreco/ETgen for matching
+  InputTag genParticleMatch  = electronMatch            # Association between electrons and generator particles
 
   ### resolution configurables
   bool     addResolutions    = true                     # switch on/off the resolution calculation

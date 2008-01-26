@@ -67,6 +67,9 @@ include "PhysicsTools/PatAlgos/data/PATBeforeLevel0Reco.cff"
 # perform additionally needed high level reco tasks used after Layer0 cleaners
 include "PhysicsTools/PatAlgos/data/PATHighLevelReco.cff"
 
-sequence patLayer0 =           { patBeforeLevel0Reco, patLayer0Cleaners, patHighLevelReco }
-sequence patLayer0_withPFTau = { patBeforeLevel0Reco, patLayer0Cleaners_withPFTau, patHighLevelReco }
+# perform MC matching
+include "PhysicsTools/PatAlgos/data/MCTruth.cff"
+
+sequence patLayer0 =           { patBeforeLevel0Reco, patLayer0Cleaners, patHighLevelReco, patMCTruth }
+sequence patLayer0_withPFTau = { patBeforeLevel0Reco, patLayer0Cleaners_withPFTau, patHighLevelReco, patMCTruth }
 
