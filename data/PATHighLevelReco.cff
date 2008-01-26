@@ -22,10 +22,11 @@ sequence patHighLevelReco = {
   patElectronId,
   patElectronIsolation,
 //  patMuonIsolation,
-  patJetFlavourId
+  patJetFlavourId,
  #  patJetMETCorrections #<= moved before layer 0
 //  patCaloTauTagging
 //  patPFTauTagging
 //  patBTagging
+  jetTagsToValueMapRef, allJetTagsLayer0
 }
 

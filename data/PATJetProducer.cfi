@@ -26,9 +26,10 @@ module allLayer1Jets = PATJetProducer {
 
   ### b-Tag info configurables
   bool     addBTagInfo             = true                        # switch on/off the addition of b-tag information
+  string   tagModuleLabelPostfix   = "Layer0"                    # strip this string from the end of the tag module labels
   bool     addDiscriminators       = true                        # switch on/off the addition of the btag discriminators
   bool     addJetTagRefs           = true                        # switch on/off the addition of references to the b-tag JetTag's
-  vstring  tagModuleLabelsToKeep = {                             # the JetTag labels that should be considered and kept
+  vstring  tagModuleLabelsToKeep = {                             # the JetTag labels that should be considered and kept (excluding tagModuleLabelPostfix)
     "combinedSVJetTags", "combinedSVMVAJetTags", "impactParameterMVAJetTags", "jetProbabilityJetTags", "softElectronJetTags", "softMuonJetTags", "softMuonNoIPJetTags", "trackCountingHighEffJetTags", "trackCountingHighPurJetTags"
   }
 
