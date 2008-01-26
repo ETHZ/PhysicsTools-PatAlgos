@@ -71,5 +71,5 @@ include "PhysicsTools/PatAlgos/data/PATHighLevelReco.cff"
 include "PhysicsTools/PatAlgos/data/MCTruth.cff"
 
 sequence patLayer0 =           { patBeforeLevel0Reco, patLayer0Cleaners, patHighLevelReco, patMCTruth }
-sequence patLayer0_withPFTau = { patBeforeLevel0Reco, patLayer0Cleaners_withPFTau, patHighLevelReco, patMCTruth }
+sequence patLayer0_withPFTau = { patBeforeLevel0Reco, patLayer0Cleaners_withPFTau, patHighLevelReco, patMCTruth_withTau }
 
