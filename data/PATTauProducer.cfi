@@ -6,7 +6,7 @@ module allLayer1Taus = PATTauProducer {
   
   ### MC matching configurables
   bool     addGenMatch       = true                     # switch on/off matching to generator level
-  InputTag genParticleSource = genParticleCandidates    # particles source to be used for the matching
+  InputTag genParticleMatch  = tauMatch                 # particles source to be used for the matching
 
   ### resolution configurables
   bool     addResolutions    = true                     # switch on/off the resolution calculation
