@@ -1,7 +1,5 @@
-  ### FAMOS replace statements ###
 
-  ### === LAYER 0 ===
-  replace allLayer0Muons.muonSource = paramMuons:ParamGlobalMuons
+  ### FAMOS replace statements ###
 
   ### === LAYER 1 ===
   // to use gsTracks
@@ -14,6 +12,3 @@
   replace allLayer1Muons.ecalIsoSource  = muParamGlobalIsoDepositCalEcal
   replace allLayer1Muons.hcalIsoSource  = muParamGlobalIsoDepositCalHcal
   replace allLayer1Muons.hocalIsoSource = famos
-  // for electron isolation (not in FAMOS yet)
-  replace egammaElectronTkIsolation.trackProducer = gsWithMaterialTracks
-  replace egammaElectronTkNumIsolation.trackProducer = gsWithMaterialTracks

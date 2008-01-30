@@ -1,3 +1,6 @@
+include "TrackingTools/TransientTrack/data/TransientTrackBuilder.cfi"
+include "MagneticField/Engine/data/volumeBasedMagneticField.cfi"
+
 # muon isolation
 include "PhysicsTools/PatAlgos/data/PATMuonIsolation.cff"
 

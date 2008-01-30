@@ -1,11 +1,17 @@
-  ### FAMOS ###
 
+
+  #############################################
+  ### General fast simulation configuration ###
+  #############################################
+
+  # Random number generator service
   service =  RandomNumberGeneratorService {
     # This is to initialize the random engine of the source
     untracked uint32 sourceSeed = 123456789
     # This is to initialize the random engines of Famos
     PSet moduleSeeds = {
       untracked uint32 VtxSmeared = 123456789
+      untracked uint32 famosPileUp = 918273
       untracked uint32 famosSimHits = 13579
       untracked uint32 siTrackerGaussianSmearingRecHits = 24680
       untracked uint32 caloRecHits = 654321
@@ -17,20 +23,77 @@
   include "FastSimulation/Configuration/data/ttbar.cfi"
 
   # Famos sequences
-  // provide our own...
-  include "PhysicsTools/PatAlgos/test/FamosSequences.cff"
-  // Parametrized magnetic field
-  replace VolumeBasedMagneticFieldESProducer.useParametrizedTrackerField = true
-  // You may not want to simulate everything for your study
+  include "FastSimulation/Configuration/data/FamosSequences.cff"
+  # If you want to turn on/off pile-up (e.g. default low lumi: 5.0)
+  replace famosPileUp.PileUpSimulator.averageNumber = 0
+  # You may not want to simulate everything for your study
   replace famosSimHits.SimulateCalorimetry = true
   replace famosSimHits.SimulateTracking = true
-#  replace famosSimHits.SimulatePileUp = false
   replace famosSimHits.SimulateMuons = true
+  # Parametrized magnetic field
+  replace VolumeBasedMagneticFieldESProducer.useParametrizedTrackerField = true
 
   # Tracker MisAlignement 
   # include "FastSimulation/Configuration/data/MisAlignment.cff" 
   # ECAL miscalibration. 
   # include "FastSimulation/Configuration/data/MisCalibration.cff"
 
-  path pf = { famosWithEverything }
+  # service = Timing { }
+
+
+  ###########################
+  ### PAT specific things ###
+  ###########################
+
+  # fast 1.8 backported CaloTau tagging
+  include "RecoTauTag/RecoTau/data/CaloRecoTauTagInfoProducer.cfi"
+  include "RecoTauTag/RecoTau/data/CaloRecoTauProducer.cfi"
+  include "RecoTauTag/RecoTau/data/CaloRecoTauDiscriminationByIsolation.cfi"
+  replace caloRecoTauTagInfoProducer.EBRecHitsSource = caloRecHits:EcalRecHitsEB
+  replace caloRecoTauTagInfoProducer.EERecHitsSource = caloRecHits:EcalRecHitsEE
+  replace caloRecoTauTagInfoProducer.ESRecHitsSource = caloRecHits:EcalRecHitsES
+  sequence famosTauTaggingSequencePAT = {
+    caloRecoTauTagInfoProducer,
+    caloRecoTauProducer,
+    caloRecoTauDiscriminationByIsolation
+  }
+
+  # fast 1.8 backported PFTau tagging
+  include "RecoBTau/JetTracksAssociator/data/pfJetTracksAssociator.cfi"
+  include "RecoTauTag/RecoTau/data/PFRecoTauTagInfoProducer.cfi"
+  include "RecoTauTag/RecoTau/data/PFRecoTauProducer.cfi"
+  include "RecoTauTag/RecoTau/data/PFRecoTauDiscriminationByIsolation.cfi"
+  replace pfJetTracksAssociator.tracks = gsWithMaterialTracks
+  sequence famosPFTauTaggingSequencePAT = {
+    particleFlowJetCandidates,
+    iterativeCone5PFJets,
+    pfJetTracksAssociator,
+    pfRecoTauTagInfoProducer,
+    pfRecoTauProducer,
+    pfRecoTauDiscriminationByIsolation
+  }
+
+  # needed for non-famos-integrated electron isolation
+  include "PhysicsTools/PatAlgos/data/PATElectronIsolation.cff"
+  replace egammaElectronTkIsolation.trackProducer = gsWithMaterialTracks
+  replace egammaElectronTkNumIsolation.trackProducer = gsWithMaterialTracks
+
+  # default famos sequence adapted for PAT
+  sequence famosWithEverythingPAT = {
+    famosWithCaloTowersAndParticleFlow,
+    ecalClusteringSequence,
+    famosElectronSequence,
+    photonSequence,
+    paramMuons,
+    muIsolation_ParamGlobalMuons,
+    caloJetMetGen,
+    caloJetMet,
+    vertexreco,
+    jetTracksAssociator,
+    famosBTaggingSequence,
+    famosTauTaggingSequencePAT,
+    famosPFTauTaggingSequencePAT
+  }
+
+  path pf = { famosWithEverythingPAT }
 
