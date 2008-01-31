@@ -1,7 +1,6 @@
 
   ### FAMOS replace statements ###
 
-  ### === LAYER 1 ===
   // to use gsTracks
   replace allLayer1Jets.trackAssociation.tracksSource = gsWithMaterialTracks
   replace allLayer1Electrons.tracksSource = gsWithMaterialTracks
