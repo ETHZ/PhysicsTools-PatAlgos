@@ -4,10 +4,15 @@ include "MagneticField/Engine/data/volumeBasedMagneticField.cfi"
 # muon isolation
 include "PhysicsTools/PatAlgos/data/PATMuonIsolation.cff"
 
+# additional tau reconstruction
+include "PhysicsTools/PatAlgos/data/PATTauTagging.cff"
+
 # JetMET corrections
 include "PhysicsTools/PatAlgos/data/PATJetMETCorrections.cff"
 
 sequence patBeforeLevel0Reco = {
-    //patMuonIsolation,
-    patJetMETCorrections
+  // patMuonIsolation, # don't run by default, only needed on old 152 reco samples
+  // patCaloTauTagging, # don't run by default, doesn't work on AOD only samples
+  patPFTauTagging,
+  patJetMETCorrections
 }

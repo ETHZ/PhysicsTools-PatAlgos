@@ -3,34 +3,12 @@
   ### Additional Famos Sequences for PAT ###
   ##########################################
 
-  # fast 1.8 backported CaloTau tagging
-  include "RecoTauTag/RecoTau/data/CaloRecoTauTagInfoProducer.cfi"
-  include "RecoTauTag/RecoTau/data/CaloRecoTauProducer.cfi"
-  include "RecoTauTag/RecoTau/data/CaloRecoTauDiscriminationByIsolation.cfi"
+  # needed for fast 1.8 backported CaloTau tagging
+  include "PhysicsTools/PatAlgos/data/PATTauTagging.cff"
   replace caloRecoTauTagInfoProducer.EBRecHitsSource = caloRecHits:EcalRecHitsEB
   replace caloRecoTauTagInfoProducer.EERecHitsSource = caloRecHits:EcalRecHitsEE
   replace caloRecoTauTagInfoProducer.ESRecHitsSource = caloRecHits:EcalRecHitsES
-  sequence famosTauTaggingSequencePAT = {
-    caloRecoTauTagInfoProducer,
-    caloRecoTauProducer,
-    caloRecoTauDiscriminationByIsolation
-  }
-
-  # fast 1.8 backported PFTau tagging
-  include "RecoParticleFlow/PFProducer/data/particleFlow.cff"
-  include "RecoBTau/JetTracksAssociator/data/pfJetTracksAssociator.cfi"
-  include "RecoTauTag/RecoTau/data/PFRecoTauTagInfoProducer.cfi"
-  include "RecoTauTag/RecoTau/data/PFRecoTauProducer.cfi"
-  include "RecoTauTag/RecoTau/data/PFRecoTauDiscriminationByIsolation.cfi"
   replace pfJetTracksAssociator.tracks = gsWithMaterialTracks
-  sequence famosPFTauTaggingSequencePAT = {
-    particleFlowJetCandidates,
-    iterativeCone5PFJets,
-    pfJetTracksAssociator,
-    pfRecoTauTagInfoProducer,
-    pfRecoTauProducer,
-    pfRecoTauDiscriminationByIsolation
-  }
 
   # needed for non-famos-integrated electron isolation
   include "PhysicsTools/PatAlgos/data/PATElectronIsolation.cff"
@@ -49,13 +27,10 @@
     caloJetMet,
     vertexreco,
     jetTracksAssociator,
-    famosBTaggingSequence,
-    famosTauTaggingSequencePAT,
-    famosPFTauTaggingSequencePAT
+    famosBTaggingSequence
   }
 
   # sequence to run for PAT on top of default FastSim 1_6_8 event content
   sequence patExtraOn168FastAOD = {
-    muIsolation_ParamGlobalMuons,
-    famosPFTauTaggingSequencePAT
+    muIsolation_ParamGlobalMuons
   }

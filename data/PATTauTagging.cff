@@ -1,5 +1,3 @@
-# common
-include "TrackingTools/TransientTrack/data/TransientTrackBuilder.cfi"
 
 # calo
 include "RecoTauTag/RecoTau/data/CaloRecoTauTagInfoProducer.cfi"
@@ -13,14 +11,14 @@ sequence patCaloTauTagging = {
 }
 
 # PF
-include "RecoParticleFlow/Configuration/data/RecoParticleFlow_refit.cff"
-include "RecoParticleFlow/Configuration/data/RecoParticleFlow_EventContent.cff"
+include "RecoParticleFlow/PFProducer/data/particleFlow.cff"
 include "RecoBTau/JetTracksAssociator/data/pfJetTracksAssociator.cfi"
 include "RecoTauTag/RecoTau/data/PFRecoTauTagInfoProducer.cfi"
 include "RecoTauTag/RecoTau/data/PFRecoTauProducer.cfi"
 include "RecoTauTag/RecoTau/data/PFRecoTauDiscriminationByIsolation.cfi"
 
 sequence patPFTauTagging = {
+  particleFlowJetCandidates,
   iterativeCone5PFJets,
   pfJetTracksAssociator,
   pfRecoTauTagInfoProducer,

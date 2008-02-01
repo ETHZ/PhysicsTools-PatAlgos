@@ -8,24 +8,14 @@ include "PhysicsTools/PatAlgos/data/PATElectronIsolation.cff"
 # jet-parton matching
 include "PhysicsTools/PatAlgos/data/PATJetFlavourId.cff"
 
-# JetMET corrections
-include "PhysicsTools/PatAlgos/data/PATJetMETCorrections.cff"
-
 # additional b-tagging
 include "PhysicsTools/PatAlgos/data/PATBTagging.cff"
-
-# additional tau reconstruction
-//include "PhysicsTools/PatAlgos/data/PATTauTagging.cff"
 
 # default PAT sequence for extra high-level reconstruction
 sequence patHighLevelReco = {
   patElectronId,
   patElectronIsolation,
-//  patMuonIsolation,
   patJetFlavourId,
- #  patJetMETCorrections #<= moved before layer 0
-//  patCaloTauTagging
-//  patPFTauTagging
 //  patBTagging
   jetTagsToValueMapRef, allJetTagsLayer0
 }
