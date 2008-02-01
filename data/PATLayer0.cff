@@ -58,8 +58,8 @@ module allLayer0METs = PATCaloMETCleaner {
     InputTag metSource = corMetType1Icone5
 }
 
-sequence patLayer0Cleaners =           { allLayer0Muons, allLayer0Electrons, allLayer0Photons, allLayer0Jets, allLayer0METs}
-sequence patLayer0Cleaners_withPFTau = { allLayer0Muons, allLayer0Electrons, allLayer0Photons, allLayer0Taus, allLayer0Jets, allLayer0METs }
+sequence patLayer0Cleaners_withoutPFTau = { allLayer0Muons, allLayer0Electrons, allLayer0Photons, allLayer0Jets, allLayer0METs}
+sequence patLayer0Cleaners              = { allLayer0Muons, allLayer0Electrons, allLayer0Photons, allLayer0Taus, allLayer0Jets, allLayer0METs }
 
 
 # perform additionally needed high level reco tasks needed before Layer0 cleaners
@@ -70,6 +70,6 @@ include "PhysicsTools/PatAlgos/data/PATHighLevelReco.cff"
 # perform MC matching
 include "PhysicsTools/PatAlgos/data/MCTruth.cff"
 
-sequence patLayer0 =           { patBeforeLevel0Reco, patLayer0Cleaners, patHighLevelReco, patMCTruth }
-sequence patLayer0_withPFTau = { patBeforeLevel0Reco, patLayer0Cleaners_withPFTau, patHighLevelReco, patMCTruth_withTau }
+sequence patLayer0_withoutPFTau = { patBeforeLevel0Reco, patLayer0Cleaners_withoutPFTau, patHighLevelReco, patMCTruth_withoutTau }
+sequence patLayer0              = { patBeforeLevel0Reco, patLayer0Cleaners, patHighLevelReco, patMCTruth }
 
