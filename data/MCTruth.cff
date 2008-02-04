@@ -13,6 +13,6 @@ sequence patMCTruth_withoutTau = {
 }
 
 sequence patMCTruth = {
-    patMCTruth,
+    patMCTruth_withoutTau,
     tauMatch
 }
