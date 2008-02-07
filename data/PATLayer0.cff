@@ -4,6 +4,9 @@
 
 module allLayer0Muons = PATMuonCleaner {
   InputTag muonSource        = muons                   # reco muon input source
+
+  ### selection (e.g. ID)
+  PSet     selection = { string type = "none" }
 }
 
 module allLayer0Electrons = PATElectronCleaner {
