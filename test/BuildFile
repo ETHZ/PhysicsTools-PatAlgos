@@ -5,5 +5,5 @@
     <use name=DataFormats/BTauReco>
     <use name=PhysicsTools/PatUtils>
     <flags EDM_PLUGIN=1>
-    <flags CXXFLAGS="-O0 -ggdb -DDEBUG">
+    <flags CXXFLAGS="-Os">
 </library>
