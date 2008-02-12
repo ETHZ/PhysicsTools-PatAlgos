@@ -1,6 +1,9 @@
 include "TrackingTools/TransientTrack/data/TransientTrackBuilder.cfi"
 include "MagneticField/Engine/data/volumeBasedMagneticField.cfi"
 
+# GenParticle transition
+include "PhysicsTools/HepMCCandAlgos/data/genParticleCandidates2GenParticles.cfi"
+
 # muon isolation
 include "PhysicsTools/PatAlgos/data/PATMuonIsolation.cff"
 
@@ -11,6 +14,7 @@ include "PhysicsTools/PatAlgos/data/PATTauTagging.cff"
 include "PhysicsTools/PatAlgos/data/PATJetMETCorrections.cff"
 
 sequence patBeforeLevel0Reco = {
+  genParticles,
   // patMuonIsolation, # don't run by default, only needed on old 152 reco samples
   // patCaloTauTagging, # don't run by default, doesn't work on AOD only samples
   patPFTauTagging,
