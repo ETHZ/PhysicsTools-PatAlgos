@@ -29,7 +29,7 @@ replace allLayer0METs.metSource = corMetType1Icone5
 
 # Generated from /afs/cern.ch/user/l/lowette/scratch.0/CMSSW_1_6_9_pre2_pat/src/PhysicsTools/PatAlgos/data/muonMatch.cfi
 replace muonMatch.src = allLayer0Muons
-replace muonMatch.matched = genParticleCandidates
+replace muonMatch.matched = genParticles
 replace muonMatch.maxDeltaR = 0.5
 replace muonMatch.maxDPtRel = 0.5
 replace muonMatch.resolveAmbiguities = true
@@ -39,7 +39,7 @@ replace muonMatch.mcPdgId = { 13 }
 replace muonMatch.mcStatus = { 1 }
 # Generated from /afs/cern.ch/user/l/lowette/scratch.0/CMSSW_1_6_9_pre2_pat/src/PhysicsTools/PatAlgos/data/electronMatch.cfi
 replace electronMatch.src = allLayer0Electrons
-replace electronMatch.matched = genParticleCandidates
+replace electronMatch.matched = genParticles
 replace electronMatch.maxDeltaR = 0.5
 replace electronMatch.maxDPtRel = 0.5
 replace electronMatch.resolveAmbiguities = true
@@ -49,7 +49,7 @@ replace electronMatch.mcPdgId = { 11 }
 replace electronMatch.mcStatus = { 1 }
 # Generated from /afs/cern.ch/user/l/lowette/scratch.0/CMSSW_1_6_9_pre2_pat/src/PhysicsTools/PatAlgos/data/photonMatch.cfi
 replace photonMatch.src = allLayer0Photons
-replace photonMatch.matched = genParticleCandidates
+replace photonMatch.matched = genParticles
 replace photonMatch.maxDeltaR = 0.2
 replace photonMatch.maxDPtRel = 1.0
 replace photonMatch.resolveAmbiguities = true
@@ -59,7 +59,7 @@ replace photonMatch.mcPdgId = { 22 }
 replace photonMatch.mcStatus = { 1 }
 # Generated from /afs/cern.ch/user/l/lowette/scratch.0/CMSSW_1_6_9_pre2_pat/src/PhysicsTools/PatAlgos/data/tauMatch.cfi
 replace tauMatch.src = allLayer0Taus
-replace tauMatch.matched = genParticleCandidates
+replace tauMatch.matched = genParticles
 replace tauMatch.maxDeltaR = 5
 replace tauMatch.maxDPtRel = 99
 replace tauMatch.resolveAmbiguities = true
@@ -69,7 +69,7 @@ replace tauMatch.mcPdgId = { 15 }
 replace tauMatch.mcStatus = { 2 }
 # Generated from /afs/cern.ch/user/l/lowette/scratch.0/CMSSW_1_6_9_pre2_pat/src/PhysicsTools/PatAlgos/data/jetMatch.cfi
 replace jetPartonMatch.src = allLayer0Jets
-replace jetPartonMatch.matched = genParticleCandidates
+replace jetPartonMatch.matched = genParticles
 replace jetPartonMatch.maxDeltaR = 0.4
 replace jetPartonMatch.maxDPtRel = 3.0
 replace jetPartonMatch.resolveAmbiguities = true
