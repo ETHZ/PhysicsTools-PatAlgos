@@ -15,6 +15,7 @@ replace allLayer0Photons.electrons = allLayer0Electrons
 replace allLayer0Taus.tauSource = pfRecoTauProducer
 replace allLayer0Taus.tauDiscriminatorSource = pfRecoTauDiscriminationByIsolation
 replace allLayer0Jets.jetSource = iterativeCone5CaloJets
+replace allLayer0Jets.selection = { string type = "none" }
 replace allLayer0Jets.removeOverlaps = {
       { 
           InputTag collection = allLayer0Electrons   

@@ -55,6 +55,17 @@ module allLayer0Jets = PATCaloJetCleaner {
       //}
   }
   
+  ### selection (e.g. ID)
+  PSet     selection = { string type = "none" }
+#  PSet     selection = { 
+#             string type               = "custom" 
+#	     double  EMFmin            = 0.0
+#	     double  EMFmax            = 100000.0
+#	     double  EoverPmax         = 0.0
+#	     double  Etamax            = 10.0
+#	     double  PTrackoverPJetmin = 0.0
+#	     int32   NTracksmin        = 0
+#  }
 }
 
 module allLayer0METs = PATCaloMETCleaner {
