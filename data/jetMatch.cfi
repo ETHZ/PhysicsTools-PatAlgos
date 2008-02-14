@@ -5,7 +5,7 @@
 #
 module jetPartonMatch = PATMCMatcher {
  InputTag src = allLayer0Jets
- InputTag matched = genParticleCandidates
+ InputTag matched = genParticles
  double maxDeltaR = 0.4
  double maxDPtRel = 3.0
  bool resolveAmbiguities = true

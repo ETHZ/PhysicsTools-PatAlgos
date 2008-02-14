@@ -5,7 +5,7 @@
 #
 module photonMatch = PATMCMatcher {
  InputTag src = allLayer0Photons
- InputTag matched = genParticleCandidates
+ InputTag matched = genParticles
  double maxDeltaR = 0.2
  double maxDPtRel = 1.0
  bool resolveAmbiguities = true
