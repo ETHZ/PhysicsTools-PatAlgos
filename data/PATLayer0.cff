@@ -57,29 +57,30 @@ module allLayer0Jets = PATCaloJetCleaner {
   
   ### selection (e.g. ID)
   PSet     selection = { string type = "none" }
-#  PSet     selection = { 
-#             string type               = "custom" 
-#	     double  EMFmin            	= 0.0
-#	     double  EMFmax            	= 100000.0
-#	     double  Etamax            	= 10.0
-#	     double  PTmin 		= 0.0
-#	     double  EMvsHadFmin 	= -1.0       
-#	     double  EMvsHadFmax 	=  1.0
-#	     double  HadFmin 		= 0.0	     
-#	     double  HadFmax 		= 1.0
-#	     double  N90min 		= 0.0	     
-#	     double  N90max 		= 1000.0
-#	     double  NCaloTowersmin 	= 0.0    
-#	     double  NCaloTowersmax 	= 1000.0
-#	     double  HighestTowerOverJetmin = 0.0
-#	     double  HighestTowerOverJetmax = 1.0
-#	     double  RWidthmin 		= 0.0	     
-#	     double  RWidthmax 		= 1.0
-#	     double  PTjetOverAreamin 	= 0.0   
-#	     double  PTjetOverAreamax 	= 9999999.0
-#	     double  PTtowerOverAreamin = 0.0
-#	     double  PTtowerOverAreamax = 9999999.0
-#  }
+  # the following all is very ugly, should go in a PSet like in the electron case
+  string type  = "none"
+  double value = 0.
+  double  EMFmin	     = 0.0
+  double  EMFmax	     = 100000.0
+  double  Etamax	     = 10.0
+  double  PTmin 	     = 0.0
+  double  EMvsHadFmin	     = -1.0	  
+  double  EMvsHadFmax	     =  1.0
+  double  HadFmin	     = 0.0	  
+  double  HadFmax	     = 1.0
+  double  N90min	     = 0.0	  
+  double  N90max	     = 1000.0
+  double  NCaloTowersmin     = 0.0    
+  double  NCaloTowersmax     = 1000.0
+  double  HighestTowerOverJetmin = 0.0
+  double  HighestTowerOverJetmax = 1.0
+  double  RWidthmin	     = 0.0	  
+  double  RWidthmax	     = 1.0
+  double  PTjetOverAreamin   = 0.0   
+  double  PTjetOverAreamax   = 9999999.0
+  double  PTtowerOverAreamin = 0.0
+  double  PTtowerOverAreamax = 9999999.0
+
 }
 
 module allLayer0METs = PATCaloMETCleaner {
