@@ -9,5 +9,5 @@ sequence patElectronId = {
   electronId,electronIdRobust
 }
 
-replace electronId.electronProducer = allLayer0Electrons
-replace electronIdRobust.electronProducer = allLayer0Electrons
+replace electronId.electronProducer = "allLayer0Electrons"
+replace electronIdRobust.electronProducer = "allLayer0Electrons"
