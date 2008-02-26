@@ -8,7 +8,6 @@
   replace caloRecoTauTagInfoProducer.EBRecHitsSource = caloRecHits:EcalRecHitsEB
   replace caloRecoTauTagInfoProducer.EERecHitsSource = caloRecHits:EcalRecHitsEE
   replace caloRecoTauTagInfoProducer.ESRecHitsSource = caloRecHits:EcalRecHitsES
-  replace pfJetTracksAssociator.tracks = gsWithMaterialTracks
 
   # needed for non-famos-integrated electron isolation
   include "PhysicsTools/PatAlgos/data/PATElectronIsolation.cff"
