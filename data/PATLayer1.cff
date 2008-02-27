@@ -1,9 +1,0 @@
-### PAT Layer 1 default sequence
-
-
-# build the Objects (Jets, Muons, Electrons, METs, Taus)
-include "PhysicsTools/PatAlgos/data/PATObjectProducers.cff"
-
-sequence patLayer1 = {
-  allObjects
-}

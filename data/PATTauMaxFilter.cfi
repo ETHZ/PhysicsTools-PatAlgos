@@ -1,7 +1,0 @@
-
-# module to filter on the maximal number of Taus
-
-module maxLayer1Taus = PATTauMaxFilter {
-  InputTag src       = selectedLayer1Taus
-  uint32   maxNumber = 999999
-}

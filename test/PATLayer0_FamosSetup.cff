@@ -1,5 +1,0 @@
-
-  ### FAMOS replace statements ###
-
-  // to use Famos muons
-  replace allLayer0Muons.muonSource = paramMuons:ParamGlobalMuons

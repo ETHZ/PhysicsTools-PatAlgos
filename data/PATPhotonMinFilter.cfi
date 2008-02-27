@@ -1,7 +1,0 @@
-
-# module to filter on the minimal number of Photons
-
-module minLayer1Photons = PATPhotonMinFilter {
-  InputTag src       = selectedLayer1Photons
-  uint32   minNumber = 0
-}
