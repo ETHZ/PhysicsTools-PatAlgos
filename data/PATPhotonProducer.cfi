@@ -1,7 +1,0 @@
-
-module allLayer1Photons = PATPhotonProducer {
-
-  ### General configurables
-  InputTag photonSource = allLayer0Photons   # cleaned photons from AOD
-
-}

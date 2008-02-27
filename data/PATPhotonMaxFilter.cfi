@@ -1,7 +1,0 @@
-
-# module to filter on the maximal number of Photons
-
-module maxLayer1Photons = PATPhotonMaxFilter {
-  InputTag src       = selectedLayer1Photons
-  uint32   maxNumber = 999999
-}
