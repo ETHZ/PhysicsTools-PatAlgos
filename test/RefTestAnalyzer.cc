@@ -41,16 +41,18 @@ RefTestAnalyzer::analyze(const edm::Event &iEvent, const edm::EventSetup &iSetup
     Handle<ValueMap<float> > btag;  iEvent.getByLabel(btag_, btag);
     Handle<ValueMap<float> > newbtag;  iEvent.getByLabel(newbtag_, newbtag);
     Handle<ValueMap<CandidateBaseRef> > backmap;  iEvent.getByLabel(backmap_, backmap);
-    Handle<vector<JetTag> > jtag; iEvent.getByLabel(jtag_, jtag);
+    //    Handle<vector<JetTag> > jtag; iEvent.getByLabel(jtag_, jtag);
     
     ::pat::helper::RefHelper<Candidate> refhelper(*backmap);
 
     size_t max = 0;
+    /*
     for (vector<JetTag>::const_iterator it = jtag->begin(), ed = jtag->end(); it != ed; ++it) {
         std::cout << "Jet (pt " << it->jet()->pt() <<", eta " << it->jet()->eta() <<", phi " << it->jet()->phi() << 
             ")\t disc = " << it->discriminator() << "\t from VMAP disc = " << (*btag)[it->jet()] << std::endl;
         if (max++ > 8) break;
     }
+    */
     max = 0;
     for (size_t i = 0, n = jets1->size(); i < n; ++i) {
         RefToBase<Jet> jet = jets1->refAt(i);
