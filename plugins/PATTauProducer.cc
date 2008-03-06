@@ -1,5 +1,5 @@
 //
-// $Id: PATTauProducer.cc,v 1.13 2008/03/03 10:05:23 llista Exp $
+// $Id: PATTauProducer.cc,v 1.1 2008/03/06 09:23:11 llista Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATTauProducer.h"
@@ -93,16 +93,13 @@ void PATTauProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
 	std::list<const PFBlockElement*> elements;
         PFCandidateRefVector myPFCands=thePFTau->pfTauTagInfoRef()->PFCands();
         for(int i=0;i<(int)myPFCands.size();i++){
-	  /*
           if(myPFCands[i]->blockRef()->elements().size()!=0){
             for(OwnVector<PFBlockElement>::const_iterator iPFBlockElement=myPFCands[i]->blockRef()->elements().begin();
                 iPFBlockElement!=myPFCands[i]->blockRef()->elements().end();iPFBlockElement++){
               elements.push_back(&(*iPFBlockElement));
             }
           }
-	  */
         }
-	/*
         if(thePFTau->leadPFChargedHadrCand()->blockRef()->elements().size()!=0){
           for(OwnVector<PFBlockElement>::const_iterator iPFBlockElement=thePFTau->leadPFChargedHadrCand()->blockRef()->elements().begin();
               iPFBlockElement!=thePFTau->leadPFChargedHadrCand()->blockRef()->elements().end();iPFBlockElement++){
@@ -110,7 +107,6 @@ void PATTauProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
               leadEnergy += iPFBlockElement->clusterRef()->energy();
           }
         }
-	*/
         elements.sort();
         elements.unique();
         for(std::list<const PFBlockElement*>::const_iterator ielements = elements.begin();ielements!=elements.end();++ielements) {
