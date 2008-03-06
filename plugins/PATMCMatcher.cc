@@ -1,11 +1,11 @@
-#include "PhysicsTools/PatAlgos/plugins/PATCandMatcher.h"
+#include "PhysicsTools/PatAlgos/interface/PATCandMatcher.h"
 #include "PhysicsTools/PatAlgos/interface/PATMatchSelector.h"
 #include "PhysicsTools/PatUtils/interface/PATMatchByDRDPt.h"
 #include "PhysicsTools/PatUtils/interface/PATMatchLessByDPt.h"
 
 #include "DataFormats/HepMCCandidate/interface/GenParticleFwd.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
-#include "DataFormats/JetReco/interface/GenJetCollection.h"
+#include "DataFormats/JetReco/interface/GenJetfwd.h"
 #include "DataFormats/JetReco/interface/GenJet.h"
 
 // Match by deltaR and deltaPt, ranking by deltaR (default)
