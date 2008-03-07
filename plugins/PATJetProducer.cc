@@ -1,5 +1,5 @@
 //
-// $Id: PATJetProducer.cc,v 1.12.2.1 2008/03/03 16:45:28 lowette Exp $
+// $Id: PATJetProducer.cc,v 1.1.2.1 2008/03/06 10:44:09 llista Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATJetProducer.h"
@@ -9,6 +9,7 @@
 
 #include "DataFormats/Common/interface/ValueMap.h"
 #include "DataFormats/Common/interface/Association.h"
+#include "DataFormats/Candidate/interface/CandAssociation.h"
 
 #include "JetMETCorrections/Objects/interface/JetCorrector.h"
 #include "DataFormats/BTauReco/interface/JetTagFwd.h"
@@ -25,8 +26,9 @@
 
 #include "PhysicsTools/Utilities/interface/DeltaR.h"
 
+#include "PhysicsTools/PatUtils/interface/RefHelper.h"
 #include "PhysicsTools/PatUtils/interface/ObjectResolutionCalc.h"
-
+#include "DataFormats/PatCandidates/interface/JetCorrFactors.h"
 
 #include <vector>
 #include <memory>
@@ -46,6 +48,7 @@ PATJetProducer::PATJetProducer(const edm::ParameterSet& iConfig) {
   genJetSrc_               = iConfig.getParameter<edm::InputTag>            ( "genJetMatch" );
   addPartonJetMatch_       = iConfig.getParameter<bool>                     ( "addPartonJetMatch" );
   partonJetSrc_            = iConfig.getParameter<edm::InputTag>            ( "partonJetSource" );
+  jetCorrFactorsSrc_       = iConfig.getParameter<edm::InputTag>            ( "jetCorrFactorsSource" );
   addResolutions_          = iConfig.getParameter<bool>                     ( "addResolutions" );
   useNNReso_               = iConfig.getParameter<bool>                     ( "useNNResolutions" );
   caliJetResoFile_         = iConfig.getParameter<std::string>              ( "caliJetResoFile" );
@@ -91,6 +94,10 @@ void PATJetProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
   // Get the vector of jets
   edm::Handle<edm::View<JetType> > jets;
   iEvent.getByLabel(jetsSrc_, jets);
+  // get the back-references produced by cleaners, to access associations
+  edm::Handle<reco::CandRefValueMap> backRefJets;
+  iEvent.getByLabel(jetsSrc_, backRefJets);
+  pat::helper::RefHelper<reco::Candidate> backRefHelper(*backRefJets);
 
   // for jet flavour
   edm::Handle<reco::CandMatchMap> JetPartonMap;
@@ -107,6 +114,10 @@ void PATJetProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
   edm::Handle<edm::View<reco::SomePartonJetType> > partonJets;
   if (addPartonJetMatch_) iEvent.getByLabel(partonJetSrc_, partonJets);
 */
+
+  // read in the jet correction factors ValueMap
+  edm::Handle<edm::ValueMap<JetCorrFactors> > jetCorrs;
+  iEvent.getByLabel(jetCorrFactorsSrc_, jetCorrs);
 
   // Get the vector of jet tags with b-tagging info
   //std::vector<edm::Handle<std::vector<reco::JetTag> > > jetTags_testManyByType ;
@@ -126,31 +137,23 @@ void PATJetProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
   std::vector<Jet> * patJets = new std::vector<Jet>(); 
   for (edm::View<JetType>::const_iterator itJet = jets->begin(); itJet != jets->end(); itJet++) {
 
-    // define the jet correctors
-    const JetCorrector * defaultJetCorr = JetCorrector::getJetCorrector("MCJetCorrectorIcone5", iSetup);
-    const JetCorrector * udsJetCorr     = JetCorrector::getJetCorrector("L5FlavorJetCorrectorUds", iSetup);
-    const JetCorrector * gluJetCorr     = JetCorrector::getJetCorrector("L5FlavorJetCorrectorGluon", iSetup);
-    const JetCorrector * cJetCorr       = JetCorrector::getJetCorrector("L5FlavorJetCorrectorC", iSetup);
-    const JetCorrector * bJetCorr       = JetCorrector::getJetCorrector("L5FlavorJetCorrectorB", iSetup);
-    // calculate the energy correction factors
-    float scaleDefault = defaultJetCorr->correction(*itJet);
-    float scaleUds     = scaleDefault * udsJetCorr->correction(*itJet);
-    float scaleGlu     = scaleDefault * gluJetCorr->correction(*itJet);
-    float scaleC       = scaleDefault * cJetCorr->correction(*itJet);
-    float scaleB       = scaleDefault * bJetCorr->correction(*itJet);
-
     // construct the Jet from the ref -> save ref to original object
     unsigned int idx = itJet - jets->begin();
-    edm::RefToBase<JetType> jetsRef = jets->refAt(idx); 
-    Jet ajet(jetsRef);
-    ajet.setP4(scaleDefault * itJet->p4());
-    ajet.setScaleCalibFactors(1./scaleDefault, scaleUds, scaleGlu, scaleC, scaleB);
+    edm::RefToBase<JetType> jetRef = jets->refAt(idx); 
+    Jet ajet(jetRef);
+
+    // calculate the energy correction factors
+    JetCorrFactors jcf = backRefHelper.recursiveLookup(jetRef, *jetCorrs);
+    ajet.setP4(jcf.scaleDefault() * itJet->p4());
+    ajet.setNoCorrFactor(1./jcf.scaleDefault());
+    ajet.setJetCorrFactors(jcf);
 
     // get the MC flavour information for this jet
     if (getJetMCFlavour_) {
       for (reco::CandMatchMap::const_iterator f = JetPartonMap->begin(); f != JetPartonMap->end(); f++) {
         const reco::Candidate * jetClone = f->key->masterClone().get();
         // if (jetClone == &(*itJet) { // comparison by address doesn't work
+        // ugly matching!!! bah bah bah!!! but what else...?
         if (fabs(jetClone->eta() - itJet->eta()) < 0.001 &&
             fabs(jetClone->phi() - itJet->phi()) < 0.001) {
           ajet.setPartonFlavour(f->val->pdgId());
@@ -159,7 +162,7 @@ void PATJetProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
     }
     // do the parton matching
     if (addGenPartonMatch_) {
-      reco::GenParticleRef parton = (*partonMatch)[jetsRef];
+      reco::GenParticleRef parton = (*partonMatch)[jetRef];
       if (parton.isNonnull() && parton.isAvailable()) {
           ajet.setGenParton(*parton);
       } else {
@@ -169,7 +172,7 @@ void PATJetProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
     }
     // do the GenJet matching
     if (addGenJetMatch_) {
-      reco::GenJetRef genjet = (*genJetMatch)[jetsRef];
+      reco::GenJetRef genjet = (*genJetMatch)[jetRef];
       if (genjet.isNonnull() && genjet.isAvailable()) {
           ajet.setGenJet(*genjet);
       } else {
@@ -204,7 +207,7 @@ void PATJetProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
               if (addDiscriminators_) {
                   std::pair<std::string, float> pairDiscri;
                   pairDiscri.first = tagModuleLabelsToKeep_[i];
-                  pairDiscri.second = ((*jetTags)[jetsRef])->discriminator();
+                  pairDiscri.second = ((*jetTags)[jetRef])->discriminator();
                   ajet.addBDiscriminatorPair(pairDiscri);
                   continue;
               }
@@ -212,7 +215,7 @@ void PATJetProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
               if (addJetTagRefs_) {
                   std::pair<std::string, reco::JetTagRef> pairjettagref;
                   pairjettagref.first = tagModuleLabelsToKeep_[i];
-                  pairjettagref.second = ((*jetTags)[jetsRef]);
+                  pairjettagref.second = ((*jetTags)[jetRef]);
                   ajet.addBJetTagRefPair(pairjettagref);
               }
           }
