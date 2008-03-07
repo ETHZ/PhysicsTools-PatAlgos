@@ -1,0 +1,6 @@
+
+// module to produce jet correction factors associated in a valuemap
+
+module jetCorrFactors = JetCorrFactorsProducer {
+  InputTag jetSource = iterativeCone5CaloJets
+}
