@@ -3,4 +3,9 @@
 
 module jetCorrFactors = JetCorrFactorsProducer {
   InputTag jetSource = iterativeCone5CaloJets
+  string defaultJetCorrector = "MCJetCorrectorIcone5"
+  string udsJetCorrector = "L5FlavorJetCorrectorUds"
+  string gluonJetCorrector = "L5FlavorJetCorrectorGluon"
+  string cJetCorrector = "L5FlavorJetCorrectorC"
+  string bJetCorrector = "L5FlavorJetCorrectorB"
 }
