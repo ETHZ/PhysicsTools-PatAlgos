@@ -10,9 +10,6 @@ include "PhysicsTools/PatAlgos/data/PATMuonIsolation.cff"
 # additional tau reconstruction
 include "PhysicsTools/PatAlgos/data/PATTauTagging.cff"
 
-# produce associated jet correction factors in a valuemap
-include "PhysicsTools/PatAlgos/data/jetCorrFactors.cfi"
-
 # JetMET corrections
 include "PhysicsTools/PatAlgos/data/PATJetMETCorrections.cff"
 
@@ -21,6 +18,5 @@ sequence patBeforeLevel0Reco = {
   // patMuonIsolation, # don't run by default, only needed on old 152 reco samples
   // patCaloTauTagging, # don't run by default, doesn't work on AOD only samples
   patPFTauTagging,
-  jetCorrFactors,
-  patJetMETCorrections # needed for the MET
+  patJetMETCorrections
 }
