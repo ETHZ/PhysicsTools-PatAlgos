@@ -1,4 +1,4 @@
-#include "PhysicsTools/PatAlgos/interface/PATPhotonCleaner.h"
+#include "PhysicsTools/PatAlgos/plugins/PATPhotonCleaner.h"
 
 template<typename PhotonIn, typename PhotonOut>
 typename pat::PATPhotonCleaner<PhotonIn,PhotonOut>::RemovalAlgo
