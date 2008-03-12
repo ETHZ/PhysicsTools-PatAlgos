@@ -1,5 +1,5 @@
 //
-// $Id: PATMuonProducer.cc,v 1.7 2008/02/13 18:06:58 adamwo Exp $
+// $Id: PATMuonProducer.cc,v 1.1.2.1 2008/03/06 10:40:10 llista Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATMuonProducer.h"
@@ -184,3 +184,8 @@ void PATMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetu
   if (addLRValues_) delete theLeptonLRCalc_;
 
 }
+
+
+#include "FWCore/Framework/interface/MakerMacros.h"
+
+DEFINE_FWK_MODULE(PATMuonProducer);

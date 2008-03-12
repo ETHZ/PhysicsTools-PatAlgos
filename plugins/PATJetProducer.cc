@@ -1,5 +1,5 @@
 //
-// $Id: PATJetProducer.cc,v 1.1.2.2 2008/03/07 18:52:56 lowette Exp $
+// $Id: PATJetProducer.cc,v 1.1.2.3 2008/03/10 18:28:00 lowette Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATJetProducer.h"
@@ -62,7 +62,6 @@ PATJetProducer::PATJetProducer(const edm::ParameterSet& iConfig) {
   addJetCharge_            = iConfig.getParameter<bool>                     ( "addJetCharge" ); 
   jetChargePSet_           = iConfig.getParameter<edm::ParameterSet>        ( "jetCharge" );
 
-   
   // construct resolution calculator
   if (addResolutions_) {
     theResoCalc_ = new ObjectResolutionCalc(edm::FileInPath(caliJetResoFile_).fullPath(), useNNReso_);
@@ -245,3 +244,7 @@ void PATJetProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
 
 }
 
+
+#include "FWCore/Framework/interface/MakerMacros.h"
+
+DEFINE_FWK_MODULE(PATJetProducer);
