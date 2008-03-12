@@ -1,5 +1,5 @@
 //
-// $Id: PATPhotonCleaner.h,v 1.1.2.1 2008/03/06 10:39:25 llista Exp $
+// $Id: PATPhotonCleaner.h,v 1.1.2.2 2008/03/11 10:59:27 llista Exp $
 //
 
 #ifndef PhysicsTools_PatAlgos_PATPhotonCleaner_h
@@ -13,7 +13,7 @@
    a collection of objects of PhotonType.
 
   \author   Steven Lowette, Jeremy Andrea
-  \version  $Id: PATPhotonCleaner.h,v 1.1.2.1 2008/03/06 10:39:25 llista Exp $
+  \version  $Id: PATPhotonCleaner.h,v 1.1.2.2 2008/03/11 10:59:27 llista Exp $
 */
 
 #include "FWCore/Framework/interface/EDProducer.h"
@@ -40,6 +40,7 @@ namespace pat {
       ~PATPhotonCleaner();
 
       virtual void produce(edm::Event & iEvent, const edm::EventSetup & iSetup);
+      virtual void endJob();
 
     private:
       // configurables

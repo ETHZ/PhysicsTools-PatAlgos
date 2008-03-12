@@ -1,4 +1,5 @@
 #include "PhysicsTools/PatAlgos/plugins/PATPhotonCleaner.h"
+#include "DataFormats/PatCandidates/interface/Flags.h"
 
 template<typename PhotonIn, typename PhotonOut>
 typename pat::PATPhotonCleaner<PhotonIn,PhotonOut>::RemovalAlgo
@@ -22,10 +23,8 @@ pat::PATPhotonCleaner<PhotonIn,PhotonOut>::PATPhotonCleaner(const edm::Parameter
   removeElectrons_( fromString(iConfig, "removeElectrons")),
   helper_(photonSrc_)
 {
-  // produces vector of electrons
-  produces<std::vector<PhotonOut> >();
-  // producers also backmatch to the electrons
-  produces<reco::CandRefValueMap>();
+  helper_.configure(iConfig);      // learn whether to save good, bad, all, ...
+  helper_.registerProducts(*this); // issue the produces<>() commands
 
   if (removeElectrons_ != None) {
     if (!iConfig.exists("electrons")) throw cms::Exception("Configuraton Error") <<
@@ -36,6 +35,11 @@ pat::PATPhotonCleaner<PhotonIn,PhotonOut>::PATPhotonCleaner(const edm::Parameter
        electronsToCheck_.push_back(iConfig.getParameter<edm::InputTag>("electrons"));
     } else {
        electronsToCheck_ = iConfig.getParameter<std::vector<edm::InputTag> >("electrons");
+       if (electronsToCheck_.size() > 1) {
+           typename edm::LogWarning("Configuration|PATPhotonCleaner") << 
+                        "PATPhotonCleaner: you have specified more than one electron collection. " <<
+                        "the first one will set the flag 'electron', the others 'user1', 'user2', ...";
+        }
     }
   }
 }
@@ -72,11 +76,9 @@ void pat::PATPhotonCleaner<PhotonIn,PhotonOut>::produce(edm::Event & iEvent, con
 
 template<typename PhotonIn, typename PhotonOut>
 void pat::PATPhotonCleaner<PhotonIn,PhotonOut>::removeElectrons(const edm::Event &iEvent) {
-    uint32_t bit = 2; 
     typedef std::vector<edm::InputTag> VInputTag;
     for (VInputTag::const_iterator itt = electronsToCheck_.begin(), edt = electronsToCheck_.end();
-                itt != edt; ++itt, bit <<= 1) {
-
+                itt != edt; ++itt) {
         edm::Handle<edm::View<reco::RecoCandidate> > handle;
         iEvent.getByLabel(*itt, handle);
 
@@ -87,12 +89,21 @@ void pat::PATPhotonCleaner<PhotonIn,PhotonOut>::removeElectrons(const edm::Event
             electrons = remover_.electronsBySuperCluster(helper_.selected(), *handle);
         }
         if (!electrons.get()) return;
+        if (electrons->empty()) continue;
+
+        uint32_t bit;
+        if (itt == electronsToCheck_.begin()) {
+            bit = pat::Flags::Overlap::Electrons;
+        } else {
+            bit = (pat::Flags::Overlap::User1 << (itt - electronsToCheck_.begin() - 1));
+        }
+
         for (pat::OverlapList::const_iterator it = electrons->begin(),
                 ed = electrons->end();
                 it != ed;
                 ++it) {
             size_t idx = it->first;
-            helper_.setMark(idx, helper_.mark(idx) + bit);
+            helper_.setMark(idx, helper_.mark(idx) | bit);
         }
     }
 }
@@ -110,8 +121,12 @@ void pat::PATPhotonCleaner<PhotonIn,PhotonOut>::removeDuplicates() {
                                              ed = duplicates->end();
                                 it != ed;
                                 ++it) {
-        helper_.setMark(*it, 1);
+        helper_.setMark(*it, helper_.mark(*it) | pat::Flags::Core::Duplicate);
     }
 }
 
-
+template<typename PhotonIn, typename PhotonOut>
+void pat::PATPhotonCleaner<PhotonIn,PhotonOut>::endJob() { 
+    typename edm::LogVerbatim("PATLayer0Summary|PATPhotonCleaner") << "PATPhotonCleaner end job. Input tag was " << photonSrc_.encode();
+    helper_.endJob(); 
+}
