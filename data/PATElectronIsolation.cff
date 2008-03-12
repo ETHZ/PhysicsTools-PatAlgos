@@ -3,15 +3,47 @@ include "EgammaAnalysis/EgammaIsolationProducers/data/egammaElectronTkNumIsolati
 include "EgammaAnalysis/EgammaIsolationProducers/data/egammaHOETower.cfi"
 include "EgammaAnalysis/EgammaIsolationProducers/data/egammaEcalRelIsolationSequence.cff"
 
-sequence patElectronIsolation = {
+#NO: now we run ISO on AOD first
+#  replace egammaHOETower.emObjectProducer = allLayer0Electrons
+#  replace egammaElectronTkIsolation.electronProducer = allLayer0Electrons
+#  replace egammaElectronTkNumIsolation.electronProducer = allLayer0Electrons
+#  replace egammaEcalRelIsolation.emObjectProducer = allLayer0Electrons
+
+// read and convert to ValueMap<float>
+module patAODElectronIsolations = MultipleNumbersToValueMaps {
+    InputTag  collection   = pixelMatchGsfElectrons
+    VInputTag associations = { egammaHOETower, egammaElectronTkIsolation, egammaElectronTkNumIsolation, egammaEcalRelIsolation }
+}
+
+sequence patAODElectronIsolation = {
   egammaHOETower &
   egammaElectronTkIsolation &
   egammaElectronTkNumIsolation &
-  egammaEcalRelIsolationSequence
+  egammaEcalRelIsolationSequence &
+  patAODElectronIsolations
 }
 
-replace egammaHOETower.emObjectProducer = allLayer0Electrons
-replace egammaElectronTkIsolation.electronProducer = allLayer0Electrons
-replace egammaElectronTkNumIsolation.electronProducer = allLayer0Electrons
-replace egammaEcalRelIsolation.emObjectProducer = allLayer0Electrons
+module layer0EgammaHOETower = CandValueMapSkimmerFloat {
+    InputTag collection  = allLayer0Electrons
+    InputTag backrefs    = allLayer0Electrons
+    InputTag association = patAODElectronIsolations:egammaHOETower
+}
+module layer0EgammaElectronTkIsolation = CandValueMapSkimmerFloat {
+    InputTag collection  = allLayer0Electrons
+    InputTag backrefs    = allLayer0Electrons
+    InputTag association = patAODElectronIsolations:egammaElectronTkIsolation
+}
+module layer0EgammaElectronTkNumIsolation = CandValueMapSkimmerFloat {
+    InputTag collection  = allLayer0Electrons
+    InputTag backrefs    = allLayer0Electrons
+    InputTag association = patAODElectronIsolations:egammaElectronTkNumIsolation
+}
+module layer0EgammaEcalRelIsolation = CandValueMapSkimmerFloat {
+    InputTag collection  = allLayer0Electrons
+    InputTag backrefs    = allLayer0Electrons
+    InputTag association = patAODElectronIsolations:egammaEcalRelIsolation
+}
+sequence patLayer0ElectronIsolation = {
+    layer0EgammaHOETower, layer0EgammaElectronTkIsolation, layer0EgammaElectronTkNumIsolation, layer0EgammaEcalRelIsolation 
+}
 

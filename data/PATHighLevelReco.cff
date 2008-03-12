@@ -14,8 +14,8 @@ include "PhysicsTools/PatAlgos/data/PATBTagging.cff"
 # default PAT sequence for extra high-level reconstruction
 sequence patHighLevelReco = {
   patElectronId,
-  patElectronIsolation,
   patJetFlavourId,
+  patLayer0ElectronIsolation, // skim & re-key
 //  patBTagging
   jetTagsToValueMapRef, allJetTagsLayer0
 }

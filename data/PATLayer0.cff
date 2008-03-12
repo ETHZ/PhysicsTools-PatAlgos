@@ -7,6 +7,12 @@ module allLayer0Muons = PATMuonCleaner {
 
   ### selection (e.g. ID)
   PSet     selection = { string type = "none" }
+
+  bool    markItems    = true // write the status flags in the output items
+  string  saveRejected = ""   // set this to a non empty label to save the list of items which fail
+  string  saveAll      = ""   // set this to a non empty label to save a list of all items both passing and failing
+  vstring bitsToIgnore = {}   // You can specify some bit names, e.g. "Overflow/User1", "Core/Duplicate", "Isolation/All".
+  untracked bool wantSummary = true // print summary information for each status flag
 }
 
 module allLayer0Electrons = PATElectronCleaner {
@@ -17,6 +23,12 @@ module allLayer0Electrons = PATElectronCleaner {
 
   ### selection (e.g. ID)
   PSet     selection = { string type = "none" }
+
+  bool    markItems    = true // write the status flags in the output items
+  string  saveRejected = ""   // set this to a non empty label to save the list of items which fail
+  string  saveAll      = ""   // set this to a non empty label to save a list of all items both passing and failing
+  vstring bitsToIgnore = {}   // You can specify some bit names, e.g. "Overflow/User1", "Core/Duplicate", "Isolation/All".
+  untracked bool wantSummary = true // print summary information for each status flag
 }
 
 module allLayer0Photons = PATBasePhotonCleaner {
@@ -26,6 +38,12 @@ module allLayer0Photons = PATBasePhotonCleaner {
 
   string   removeElectrons  = "bySeed"
   InputTag electrons        = allLayer0Electrons
+
+  bool    markItems    = true // write the status flags in the output items
+  string  saveRejected = ""   // set this to a non empty label to save the list of items which fail
+  string  saveAll      = ""   // set this to a non empty label to save a list of all items both passing and failing
+  vstring bitsToIgnore = {}   // You can specify some bit names, e.g. "Overflow/User1", "Core/Duplicate", "Isolation/All".
+  untracked bool wantSummary = true // print summary information for each status flag
 }
 
 module allLayer0Taus = PATPFTauCleaner {
@@ -33,6 +51,15 @@ module allLayer0Taus = PATPFTauCleaner {
   InputTag tauDiscriminatorSource = pfRecoTauDiscriminationByIsolation
 #  InputTag tauSource              = caloRecoTauProducer
 #  InputTag tauDiscriminatorSource = caloRecoTauDiscriminationByIsolation
+
+  PSet removeOverlaps = {
+  }
+
+  bool    markItems    = true // write the status flags in the output items
+  string  saveRejected = ""   // set this to a non empty label to save the list of items which fail
+  string  saveAll      = ""   // set this to a non empty label to save a list of all items both passing and failing
+  vstring bitsToIgnore = {}   // You can specify some bit names, e.g. "Overflow/User1", "Core/Duplicate", "Isolation/All".
+  untracked bool wantSummary = true // print summary information for each status flag
 }
 
 
@@ -40,27 +67,49 @@ module allLayer0Jets = PATCaloJetCleaner {
 
   InputTag jetSource               = iterativeCone5CaloJets      # uncalibrated reco jet input source
 
-  VPSet removeOverlaps = {
-      { // discard jets that match with clean electrons
+  PSet removeOverlaps = {
+      PSet jets = { // discard jets that match with clean electrons
           InputTag collection = allLayer0Electrons   # FIXME: plug isolation in between?
           double   deltaR     = 0.3                  #        TQAF used a tracker isolation cut at 2
+        //string   cut        = "some cut"           # you might want a cut here
       }
-      //,{   # discard jets that match with Taus. Off, as it was not there in TQAF
+
+      PSet taus = { }
+      //PSet taus = {   # discard jets that match with Taus. Off, as it was not there in TQAF
       //    InputTag collection = allLayer0Taus
       //    double   deltaR     = 0.3
       //}
-      //,{   # discard jets that match with Photons. Off, as it was not there in TQAF
+
+      PSet photons = { }
+      //PSet photons = {   # discard jets that match with Photons. Off, as it was not there in TQAF
       //    InputTag collection = allLayer0Photons
       //    double   deltaR     = 0.3
       //}
+    
+      //PSet muons = { } // supported, but it's not likely you want it
+      //PSet jets  = { } // same as above   
+ 
+      VPSet user    = { }
   }
   
   ### selection (e.g. ID)
   PSet     selection = { string type = "none" }
+
+  bool    markItems    = true // write the status flags in the output items
+  string  saveRejected = ""   // set this to a non empty label to save the list of items which fail
+  string  saveAll      = ""   // set this to a non empty label to save a list of all items both passing and failing
+  vstring bitsToIgnore = {}   // You can specify some bit names, e.g. "Overflow/User1", "Core/Duplicate", "Isolation/All".
+  untracked bool wantSummary = true // print summary information for each status flag
 }
 
 module allLayer0METs = PATCaloMETCleaner {
-    InputTag metSource = corMetType1Icone5
+  InputTag metSource = corMetType1Icone5
+
+  bool    markItems    = true // write the status flags in the output items
+  string  saveRejected = ""   // set this to a non empty label to save the list of items which fail
+  string  saveAll      = ""   // set this to a non empty label to save a list of all items both passing and failing
+  vstring bitsToIgnore = {}   // You can specify some bit names, e.g. "Overflow/User1", "Core/Duplicate", "Isolation/All".
+  untracked bool wantSummary = true // print summary information for each status flag
 }
 
 sequence patLayer0Cleaners_withoutPFTau = { allLayer0Muons, allLayer0Electrons, allLayer0Photons, allLayer0Jets, allLayer0METs}
@@ -75,6 +124,12 @@ include "PhysicsTools/PatAlgos/data/PATHighLevelReco.cff"
 # perform MC matching
 include "PhysicsTools/PatAlgos/data/MCTruth.cff"
 
-sequence patLayer0_withoutPFTau = { patBeforeLevel0Reco, patLayer0Cleaners_withoutPFTau, patHighLevelReco, patMCTruth_withoutTau }
-sequence patLayer0              = { patBeforeLevel0Reco, patLayer0Cleaners, patHighLevelReco, patMCTruth }
+sequence patLayer0_withoutPFTau = { patBeforeLevel0Reco_withoutPFTau, 
+                                    patLayer0Cleaners_withoutPFTau, 
+                                    patHighLevelReco, 
+                                    patMCTruth_withoutTau }
+sequence patLayer0              = { patBeforeLevel0Reco, 
+                                    patLayer0Cleaners, 
+                                    patHighLevelReco, 
+                                    patMCTruth }
 
