@@ -17,7 +17,7 @@ replace allLayer0Taus.tauDiscriminatorSource = pfRecoTauDiscriminationByIsolatio
 replace allLayer0Jets.jetSource = iterativeCone5CaloJets
 replace allLayer0Jets.selection = { string type = "none" }
 replace allLayer0Jets.removeOverlaps = {
-      { 
+      PSet electrons = { 
           InputTag collection = allLayer0Electrons   
           double   deltaR     = 0.3                  
       }

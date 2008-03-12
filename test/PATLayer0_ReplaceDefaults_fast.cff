@@ -1,4 +1,3 @@
-
 ############################
 ### PAT Layer-0 cleaning ###
 ############################
@@ -16,7 +15,7 @@ replace allLayer0Taus.tauSource = pfRecoTauProducer
 replace allLayer0Taus.tauDiscriminatorSource = pfRecoTauDiscriminationByIsolation
 replace allLayer0Jets.jetSource = iterativeCone5CaloJets
 replace allLayer0Jets.removeOverlaps = {
-      { 
+      PSet electrons = { 
           InputTag collection = allLayer0Electrons   
           double   deltaR     = 0.3                  
       }
