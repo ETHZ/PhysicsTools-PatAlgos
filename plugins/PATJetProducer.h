@@ -1,19 +1,19 @@
 //
-// $Id$
+// $Id: PATJetProducer.h,v 1.1.2.1 2008/03/06 10:44:09 llista Exp $
 //
 
 #ifndef PhysicsTools_PatAlgos_PATJetProducer_h
 #define PhysicsTools_PatAlgos_PATJetProducer_h
 
 /**
-  \class    pat::PATJetProducer PATJetProducer.h "PhysicsTools/PatAlgos/interface/PATJetProducer.h"
+  \class    PATJetProducer PATJetProducer.h "PhysicsTools/PatAlgos/interface/PATJetProducer.h"
   \brief    Produces pat::Jet's
 
    The PATJetProducer produces analysis-level pat::Jet's starting from
    a collection of objects of JetType.
 
   \author   Steven Lowette, Jeremy Andrea
-  \version  $Id$
+  \version  $Id: PATJetProducer.h,v 1.1.2.1 2008/03/06 10:44:09 llista Exp $
 */
 
 
@@ -71,16 +71,11 @@ namespace pat {
       bool                     addBTagInfo_;
       std::string              tagModuleLabelPostfix_; 
       bool                     addDiscriminators_; 
+      bool                     addJetTagRefs_;
       std::vector<std::string> tagModuleLabelsToKeep_;
-      std::vector<std::string> tagInfoModuleLabelsToKeep_;
-      std::vector<edm::InputTag> ipTagInfoLabel_;
-      std::vector<edm::InputTag> softETagInfoLabel_;
-      std::vector<edm::InputTag> softMTagInfoLabel_;
-      std::vector<edm::InputTag> svTagInfoLabel_;
       bool                     addAssociatedTracks_;
       edm::ParameterSet        trackAssociationPSet_;
       bool                     addJetCharge_;
-      bool                     addTagInfoRefs_;
       edm::ParameterSet        jetChargePSet_;
       // tools
       ObjectResolutionCalc             * theResoCalc_;
