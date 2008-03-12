@@ -50,7 +50,7 @@ PATPrimaryVertexSelector::getVertexVariables (const reco::Vertex& vertex,
 					      unsigned int& multiplicity, double& ptSum) const {
   multiplicity = 0;
   ptSum = 0.;
-  for(reco::Vertex::trackRef_iterator it=vertex.tracks_begin();
+  for(reco::track_iterator it=vertex.tracks_begin();
       it!=vertex.tracks_end(); ++it) {
     if(fabs((**it).eta())<trackEtaCut_) {
       ++multiplicity;
