@@ -1,5 +1,5 @@
 //
-// $Id: PATMuonProducer.cc,v 1.9 2008/03/03 20:39:10 slava77 Exp $
+// $Id: PATMuonProducer.cc,v 1.1.2.1 2008/03/06 10:40:10 llista Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATMuonProducer.h"
@@ -9,7 +9,7 @@
 
 #include "DataFormats/HepMCCandidate/interface/GenParticleCandidate.h"
 #include "PhysicsTools/Utilities/interface/DeltaR.h"
-#include "DataFormats/RecoCandidate/interface/IsoDeposit.h"
+#include "DataFormats/MuonReco/interface/MuIsoDeposit.h"
 #include "DataFormats/MuonReco/interface/Muon.h"
 #include "DataFormats/MuonReco/interface/MuonFwd.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticleFwd.h"
@@ -81,7 +81,6 @@ void PATMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetu
   if (addGenMatch_) iEvent.getByLabel(genPartSrc_, genMatch);
 
   // prepare isolation calculation
-  /*
   edm::Handle<reco::MuIsoDepositAssociationMap> trackerIso;
   if (doTrkIso_) {
     if (hocalIsoSrc_.label() == "famos") { // switch off for full sim, since we switched back to using muon-obj embedded info
@@ -98,7 +97,6 @@ void PATMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetu
       if (hocalIsoSrc_.label() != "famos") iEvent.getByLabel(hocalIsoSrc_, hocalIso);
     }
   }
-  */
 
   // prepare LR calculation
   edm::Handle<edm::View<reco::Track> > tracks;
@@ -132,15 +130,15 @@ void PATMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetu
       std::pair<float, int> sumPtAndNTracks03;
       if (hocalIsoSrc_.label() != "famos") {
         // use the muon embedded muon isolation
-        sumPtAndNTracks03.first = 0; //aMuon.getIsolationR03().sumPt;
+        sumPtAndNTracks03.first = aMuon.getIsolationR03().sumPt;
         // use the muon isolation from the isolation maps (not yet stored in the 152 reco samples)
         //const reco::MuIsoDeposit & depTracker = (*trackerIso)[itMuon->combinedMuon()];
         //// cone hardcoded, corresponds to default in recent CMSSW versions
         //sumPtAndNTracks03 = depTracker.depositAndCountWithin(0.3);
       } else {
-	//        const reco::MuIsoDeposit & depTracker = (*trackerIso)[itMuon->track()];
+        const reco::MuIsoDeposit & depTracker = (*trackerIso)[itMuon->track()];
         // cone hardcoded, corresponds to default in recent CMSSW versions
-        sumPtAndNTracks03 = std::make_pair(0, 0); // depTracker.depositAndCountWithin(0.3);
+        sumPtAndNTracks03 = depTracker.depositAndCountWithin(0.3);
       }
       aMuon.setTrackIso(sumPtAndNTracks03.first);
     }
@@ -148,7 +146,7 @@ void PATMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetu
     if (doCalIso_) {
       if (hocalIsoSrc_.label() != "famos") {
         // use the muon embedded muon isolation
-        aMuon.setCaloIso( 0 /*aMuon.getIsolationR03().emEt + aMuon.getIsolationR03().hadEt + aMuon.getIsolationR03().hoEt */ );
+        aMuon.setCaloIso(aMuon.getIsolationR03().emEt + aMuon.getIsolationR03().hadEt + aMuon.getIsolationR03().hoEt);
         // use the muon isolation from the isolation maps (not yet stored in the 152 reco samples)
         //const reco::MuIsoDeposit & depEcal = (*ecalIso)[itMuon->combinedMuon()];
         //const reco::MuIsoDeposit & depHcal = (*hcalIso)[itMuon->combinedMuon()];
@@ -156,12 +154,10 @@ void PATMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetu
         //// cone hardcoded, corresponds to default in recent CMSSW versions
         //aMuon.setCaloIso(depEcal.depositWithin(0.3)+depHcal.depositWithin(0.3)+depHOcal.depositWithin(0.3));
       } else {
-	/*
-        const reco::MuIsoDeposit & depEcal (*ecalIso)[itMuon->track()];
-        const reco::MuIsoDeposit & depHcal (*hcalIso)[itMuon->track()];
+        const reco::MuIsoDeposit & depEcal = (*ecalIso)[itMuon->track()];
+        const reco::MuIsoDeposit & depHcal = (*hcalIso)[itMuon->track()];
         // cone hardcoded, corresponds to default in recent CMSSW versions
         aMuon.setCaloIso(depEcal.depositWithin(0.3)+depHcal.depositWithin(0.3));
-	*/
       }
     }
     // add muon ID info
@@ -186,7 +182,9 @@ void PATMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetu
   iEvent.put(ptr);
 
   if (addLRValues_) delete theLeptonLRCalc_;
+
 }
+
 
 #include "FWCore/Framework/interface/MakerMacros.h"
 
