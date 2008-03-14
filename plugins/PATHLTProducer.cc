@@ -1,5 +1,5 @@
 //
-// $Id: PATHLTProducer.cc,v 1.1 2008/02/26 13:59:12 vadler Exp $
+// $Id: PATHLTProducer.cc,v 1.1.2.1 2008/03/06 10:45:14 llista Exp $
 //
 
 
@@ -15,7 +15,11 @@
 
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
 
+
 using namespace pat;
+using namespace edm;
+using namespace std;
+
 
 PATHLTProducer::PATHLTProducer( const ParameterSet& iConfig ) :
   // initialize
@@ -35,7 +39,7 @@ PATHLTProducer::~PATHLTProducer()
 void PATHLTProducer::produce( Event& iEvent, const EventSetup& iSetup )
 {
   auto_ptr<reco::CandidateCollection> patHltCandidates( new reco::CandidateCollection );
-  Handle<TriggerResults> triggerResults;
+  edm::Handle<TriggerResults> triggerResults;
   iEvent.getByLabel( triggerResults_, triggerResults );
   TriggerNames triggerNames( *triggerResults );
   unsigned int triggerIndex = triggerNames.triggerIndex( triggerName_ );
