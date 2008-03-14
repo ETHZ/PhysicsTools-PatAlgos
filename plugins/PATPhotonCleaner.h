@@ -1,5 +1,5 @@
 //
-// $Id: PATPhotonCleaner.h,v 1.1.2.2 2008/03/11 10:59:27 llista Exp $
+// $Id: PATPhotonCleaner.h,v 1.1.2.3 2008/03/12 16:13:27 gpetrucc Exp $
 //
 
 #ifndef PhysicsTools_PatAlgos_PATPhotonCleaner_h
@@ -13,7 +13,7 @@
    a collection of objects of PhotonType.
 
   \author   Steven Lowette, Jeremy Andrea
-  \version  $Id: PATPhotonCleaner.h,v 1.1.2.2 2008/03/11 10:59:27 llista Exp $
+  \version  $Id: PATPhotonCleaner.h,v 1.1.2.3 2008/03/12 16:13:27 gpetrucc Exp $
 */
 
 #include "FWCore/Framework/interface/EDProducer.h"
@@ -22,6 +22,7 @@
 #include "FWCore/ParameterSet/interface/InputTag.h"
 
 #include "PhysicsTools/PatAlgos/plugins/CleanerHelper.h"
+#include "PhysicsTools/PatAlgos/interface/MultiIsolator.h"
 
 #include <DataFormats/EgammaCandidates/interface/Photon.h>
 #include <DataFormats/EgammaCandidates/interface/ConvertedPhoton.h>
@@ -50,10 +51,14 @@ namespace pat {
       std::vector<edm::InputTag>  electronsToCheck_;
         
       // helper
-      pat::helper::CleanerHelper<PhotonIn,
+      typedef typename pat::helper::CleanerHelper<PhotonIn,
                                  PhotonOut,
                                  std::vector<PhotonOut>,
-                                 GreaterByEt<PhotonOut> > helper_;
+                                 GreaterByEt<PhotonOut> > MyCleanerHelper;
+      MyCleanerHelper helper_;
+    
+      pat::helper::MultiIsolator isolator_;
+
       // duplicate removal algo
       pat::DuplicatedPhotonRemover remover_;
 

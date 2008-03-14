@@ -21,7 +21,8 @@ pat::PATPhotonCleaner<PhotonIn,PhotonOut>::PATPhotonCleaner(const edm::Parameter
   photonSrc_(iConfig.getParameter<edm::InputTag>( "photonSource" )),
   removeDuplicates_(fromString(iConfig, "removeDuplicates")),
   removeElectrons_( fromString(iConfig, "removeElectrons")),
-  helper_(photonSrc_)
+  helper_(photonSrc_),
+  isolator_(iConfig.exists("isolation") ? iConfig.getParameter<edm::ParameterSet>("isolation") : edm::ParameterSet() )
 {
   helper_.configure(iConfig);      // learn whether to save good, bad, all, ...
   helper_.registerProducts(*this); // issue the produces<>() commands
@@ -54,6 +55,7 @@ template<typename PhotonIn, typename PhotonOut>
 void pat::PATPhotonCleaner<PhotonIn,PhotonOut>::produce(edm::Event & iEvent, const edm::EventSetup & iSetup) {     
   // start a new event
   helper_.newEvent(iEvent);
+  if (isolator_.enabled()) isolator_.beginEvent(iEvent);
 
   typedef typename edm::Ref< std::vector<PhotonIn> > PhotonInRef;
   for (size_t idx = 0, size = helper_.srcSize(); idx < size; ++idx) {
@@ -63,14 +65,23 @@ void pat::PATPhotonCleaner<PhotonIn,PhotonOut>::produce(edm::Event & iEvent, con
     // clone the photon and convert it to the new type
     PhotonOut ourPhoton = static_cast<PhotonOut>(srcPhoton);
 
-    // write the muon
-    helper_.addItem(idx, ourPhoton);
+    // write the photon
+    size_t selIdx = helper_.addItem(idx, ourPhoton);
+    
+    // test for isolation and set the bit if needed
+    if (isolator_.enabled()) {
+        uint32_t isolationWord = isolator_.test( helper_.source(), idx );
+        helper_.addMark(selIdx, isolationWord);
+    }
+
+
   }
 
   if (removeDuplicates_ != None) removeDuplicates();
   if (removeElectrons_  != None) removeElectrons(iEvent);
 
   helper_.done();
+  if (isolator_.enabled()) isolator_.endEvent();
  
 }
 
@@ -103,30 +114,35 @@ void pat::PATPhotonCleaner<PhotonIn,PhotonOut>::removeElectrons(const edm::Event
                 it != ed;
                 ++it) {
             size_t idx = it->first;
-            helper_.setMark(idx, helper_.mark(idx) | bit);
+            helper_.addMark(idx, bit);
         }
     }
 }
 
 template<typename PhotonIn, typename PhotonOut>
 void pat::PATPhotonCleaner<PhotonIn,PhotonOut>::removeDuplicates() {
+    typename MyCleanerHelper::FilteredCollection accepted = helper_.accepted();
     std::auto_ptr< std::vector<size_t> > duplicates;
+    // we must use 'accepted()', as we don't want to kill a good electron because it overlaps with the bad one.
     if (removeDuplicates_ == BySeed) {
-        duplicates = remover_.duplicatesBySeed(helper_.selected());
+        duplicates = remover_.duplicatesBySeed(accepted);
     } else if (removeDuplicates_ == BySuperCluster) {
-        duplicates = remover_.duplicatesBySuperCluster(helper_.selected());
+        duplicates = remover_.duplicatesBySuperCluster(accepted);
     }
     if (!duplicates.get()) return;
     for (std::vector<size_t>::const_iterator it = duplicates->begin(),
                                              ed = duplicates->end();
                                 it != ed;
                                 ++it) {
-        helper_.setMark(*it, helper_.mark(*it) | pat::Flags::Core::Duplicate);
+        helper_.addMark(accepted.originalIndexOf(*it), pat::Flags::Core::Duplicate);
     }
 }
 
 template<typename PhotonIn, typename PhotonOut>
 void pat::PATPhotonCleaner<PhotonIn,PhotonOut>::endJob() { 
-    typename edm::LogVerbatim("PATLayer0Summary|PATPhotonCleaner") << "PATPhotonCleaner end job. Input tag was " << photonSrc_.encode();
+    edm::LogVerbatim("PATLayer0Summary|PATPhotonCleaner") << "PATPhotonCleaner end job. \n" <<
+            "Input tag was " << photonSrc_.encode() <<
+            "\nCleaner summary information:\n" <<
+            helper_.printSummary();
     helper_.endJob(); 
 }
