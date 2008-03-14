@@ -23,6 +23,7 @@ sequence patBeforeLevel0Reco_withoutPFTau = {
   // patCaloTauTagging, # don't run by default, doesn't work on AOD only samples
   jetCorrFactors,
   patAODElectronIsolation,
+  patAODMuonIsolation,
   patJetMETCorrections # needed for the MET
 }
 

@@ -25,10 +25,10 @@ module allLayer1Electrons = PATElectronProducer {
   #either by modifying the parameters of the egamma modules directly (see PATElectronIsolation.cff)
   #or by adding another copy of the producer to the path and changing these tags
   bool     addEgammaIso = true
-  InputTag egammaTkIsoSource = layer0EgammaElectronTkIsolation 
-  InputTag egammaTkNumIsoSource = layer0EgammaElectronTkNumIsolation
-  InputTag egammaEcalIsoSource = layer0EgammaEcalRelIsolation
-  InputTag egammaHcalIsoSource = layer0EgammaHOETower
+  InputTag egammaTkIsoSource    = layer0ElectronIsolations:egammaElectronTkIsolation 
+  InputTag egammaTkNumIsoSource = layer0ElectronIsolations:egammaElectronTkNumIsolation
+  InputTag egammaEcalIsoSource  = layer0ElectronIsolations:egammaEcalRelIsolation
+  InputTag egammaHcalIsoSource  = layer0ElectronIsolations:egammaHOETower
 
   ### electron ID configurables
   bool     addElectronID     = true                     # switch on/off the electron ID info addition

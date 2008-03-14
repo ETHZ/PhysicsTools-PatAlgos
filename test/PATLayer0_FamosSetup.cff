@@ -2,4 +2,23 @@
   ### FAMOS replace statements ###
 
   // to use Famos muons
-  replace allLayer0Muons.muonSource = paramMuons:ParamGlobalMuons
+  replace allLayer0Muons.muonSource       = paramMuons:ParamParamGlobalMuons
+  replace patAODMuonIsolations.collection = paramMuons:ParamParamGlobalMuons
+
+  replace patAODMuonIsolations.associations = {
+        muParamGlobalIsoDepositCalEcal,
+        muParamGlobalIsoDepositCalHcal,
+        muParamGlobalIsoDepositGsTk
+  }
+
+  replace layer0MuonIsolations.associations = {
+        muParamGlobalIsoDepositCalEcal,
+        muParamGlobalIsoDepositCalHcal,
+        muParamGlobalIsoDepositGsTk
+  }
+
+
+replace allLayer0Muons.isolation.tracker.src = patAODMuonIsolations:muParamGlobalIsoDepositGsTk
+replace allLayer0Muons.isolation.ecal.src    = patAODMuonIsolations:muParamGlobalIsoDepositCalEcal
+replace allLayer0Muons.isolation.hcal.src    = patAODMuonIsolations:muParamGlobalIsoDepositCalHcal
+replace allLayer0Muons.isolation.user        = { { bool placeholder = true } }
