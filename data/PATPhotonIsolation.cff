@@ -1,0 +1,48 @@
+module egammaPhotonTkDeposits = candIsoDepositCtfTk from "PhysicsTools/IsolationAlgos/test/mu/candIsoDepositCtfTk.cfi"
+replace egammaPhotonTkDeposits.src = photons
+replace egammaPhotonTkDeposits.trackType = "fake"
+replace egammaPhotonTkDeposits.ExtractorPSet.DR_Max    = 0.7
+replace egammaPhotonTkDeposits.ExtractorPSet.DR_Veto   = 0.0
+replace egammaPhotonTkDeposits.ExtractorPSet.Diff_z    = 1
+
+module egammaPhotonTowersDeposits  = candIsoDepositEgammaTowers from "PhysicsTools/IsolationAlgos/test/egamma/candIsoDepositEgammaTowers.cfi"
+replace egammaPhotonTowersDeposits.src       = photons
+replace egammaPhotonTowersDeposits.ExtractorPSet.extRadius = 0.7
+
+module egammaPhotonEcalDeposits  = candIsoDepositEgammaEcal from "PhysicsTools/IsolationAlgos/test/egamma/candIsoDepositEgammaEcal.cfi"
+replace egammaPhotonEcalDeposits.src       = photons
+replace egammaPhotonEcalDeposits.ExtractorPSet.extRadius = 0.5
+
+// define module labels for old (tk-based isodeposit) POG isolation
+block patAODPhotonIsolationLabels = {
+    VInputTag associations = { 
+        egammaPhotonTkDeposits, egammaPhotonTowersDeposits, egammaPhotonEcalDeposits
+    }
+}
+
+// read and convert to ValueMap<IsoDeposit> keyed to Candidate
+module patAODPhotonIsolations = MultipleIsoDepositsToValueMaps {
+    InputTag  collection   = photons
+    using patAODPhotonIsolationLabels
+}
+
+// sequence to run on AOD before 
+sequence patAODPhotonIsolation = {
+    egammaPhotonTkDeposits,
+    egammaPhotonTowersDeposits,
+    egammaPhotonEcalDeposits,  
+    patAODPhotonIsolations
+}
+
+
+module layer0PhotonIsolations = CandManyValueMapsSkimmerIsoDeposits {
+    InputTag collection  =   allLayer0Photons
+    InputTag backrefs    =   allLayer0Photons
+    InputTag commonLabel   = patAODPhotonIsolations
+    using patAODPhotonIsolationLabels
+}
+
+sequence patLayer0PhotonIsolation = {
+    layer0PhotonIsolations
+}
+

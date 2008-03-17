@@ -15,7 +15,9 @@ include "PhysicsTools/PatAlgos/data/jetCorrFactors.cfi"
 
 # JetMET corrections
 include "PhysicsTools/PatAlgos/data/PATJetMETCorrections.cff"
+
 include "PhysicsTools/PatAlgos/data/PATElectronIsolation.cff"
+include "PhysicsTools/PatAlgos/data/PATPhotonIsolation.cff"
 
 sequence patBeforeLevel0Reco_withoutPFTau = {
   genParticles,
@@ -23,6 +25,7 @@ sequence patBeforeLevel0Reco_withoutPFTau = {
   // patCaloTauTagging, # don't run by default, doesn't work on AOD only samples
   jetCorrFactors,
   patAODElectronIsolation,
+  patAODPhotonIsolation,
   patAODMuonIsolation,
   patJetMETCorrections # needed for the MET
 }

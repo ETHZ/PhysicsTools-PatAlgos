@@ -16,6 +16,8 @@ replace layer0MuonIsolations.associations = {
     muParamGlobalIsoDepositGsTk
 }
 
+replace egammaPhotonTkDeposits.ExtractorPSet.inputTrackCollection = gsWithMaterialTracks 
+
 ############################
 ### PAT Layer-0 cleaning ###
 ############################
