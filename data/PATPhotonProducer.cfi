@@ -19,4 +19,9 @@ module allLayer1Photons = PATPhotonProducer {
         double   deltaR = 0.3
      }
   }
+  PSet isoDeposits = {
+    InputTag tracker =  layer0PhotonIsolations:egammaPhotonTkDeposits
+    InputTag ecal    =  layer0PhotonIsolations:egammaPhotonEcalDeposits
+    InputTag hcal    =  layer0PhotonIsolations:egammaPhotonTowersDeposits
+  }
 }
