@@ -1,5 +1,0 @@
-
-include "PhysicsTools/PatAlgos/data/PATJetMinFilter.cfi"
-include "PhysicsTools/PatAlgos/data/PATJetMaxFilter.cfi"
-
-sequence countLayer1Jets = { minLayer1Jets & maxLayer1Jets }

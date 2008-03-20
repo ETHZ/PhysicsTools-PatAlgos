@@ -1,0 +1,5 @@
+
+include "PhysicsTools/PatAlgos/data/selectionLayer1/tauMinFilter.cfi"
+include "PhysicsTools/PatAlgos/data/selectionLayer1/tauMaxFilter.cfi"
+
+sequence countLayer1Taus = { minLayer1Taus & maxLayer1Taus }

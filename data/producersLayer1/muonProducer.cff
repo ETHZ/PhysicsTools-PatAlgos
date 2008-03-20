@@ -2,9 +2,9 @@
 include "TrackingTools/TransientTrack/data/TransientTrackBuilder.cfi"
 include "MagneticField/Engine/data/volumeBasedMagneticField.cfi"
 
-include "PhysicsTools/PatAlgos/data/PATMuonProducer.cfi"
-include "PhysicsTools/PatAlgos/data/PATMuonSelector.cfi"
-include "PhysicsTools/PatAlgos/data/PATMuonCountFilter.cff"
+include "PhysicsTools/PatAlgos/data/producersLayer1/muonProducer.cfi"
+include "PhysicsTools/PatAlgos/data/selectionLayer1/muonSelector.cfi"
+include "PhysicsTools/PatAlgos/data/selectionLayer1/muonCountFilter.cff"
 
 sequence layer1Muons = {
   allLayer1Muons,

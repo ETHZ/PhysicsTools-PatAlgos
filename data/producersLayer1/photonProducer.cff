@@ -1,0 +1,10 @@
+
+include "PhysicsTools/PatAlgos/data/producersLayer1/photonProducer.cfi"
+include "PhysicsTools/PatAlgos/data/selectionLayer1/photonSelector.cfi"
+include "PhysicsTools/PatAlgos/data/selectionLayer1/photonCountFilter.cff"
+
+sequence layer1Photons = {
+  allLayer1Photons,
+  selectedLayer1Photons,
+  countLayer1Photons
+}

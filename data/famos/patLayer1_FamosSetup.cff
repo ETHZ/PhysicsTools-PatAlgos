@@ -1,0 +1,13 @@
+
+  ### FAMOS replace statements ###
+
+  // to use gsTracks
+  replace allLayer1Jets.trackAssociation.tracksSource = gsWithMaterialTracks
+  replace allLayer1Electrons.tracksSource = gsWithMaterialTracks
+  replace allLayer1Muons.tracksSource = gsWithMaterialTracks
+  // to use Famos muons
+  replace allLayer1METs.muonSource = paramMuons:ParamGlobalMuons
+  replace allLayer1Muons.trackIsoSource = muParamGlobalIsoDepositGsTk
+  replace allLayer1Muons.ecalIsoSource  = muParamGlobalIsoDepositCalEcal
+  replace allLayer1Muons.hcalIsoSource  = muParamGlobalIsoDepositCalHcal
+  replace allLayer1Muons.hocalIsoSource = famos

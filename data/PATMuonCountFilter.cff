@@ -1,5 +1,0 @@
-
-include "PhysicsTools/PatAlgos/data/PATMuonMinFilter.cfi"
-include "PhysicsTools/PatAlgos/data/PATMuonMaxFilter.cfi"
-
-sequence countLayer1Muons = { minLayer1Muons & maxLayer1Muons }

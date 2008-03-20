@@ -2,9 +2,9 @@
 include "TrackingTools/TransientTrack/data/TransientTrackBuilder.cfi"
 include "MagneticField/Engine/data/volumeBasedMagneticField.cfi"
 
-include "PhysicsTools/PatAlgos/data/PATElectronProducer.cfi"
-include "PhysicsTools/PatAlgos/data/PATElectronSelector.cfi"
-include "PhysicsTools/PatAlgos/data/PATElectronCountFilter.cff"
+include "PhysicsTools/PatAlgos/data/producersLayer1/electronProducer.cfi"
+include "PhysicsTools/PatAlgos/data/selectionLayer1/electronSelector.cfi"
+include "PhysicsTools/PatAlgos/data/selectionLayer1/electronCountFilter.cff"
 
 sequence layer1Electrons = {
   allLayer1Electrons,

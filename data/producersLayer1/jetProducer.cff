@@ -1,0 +1,10 @@
+
+include "PhysicsTools/PatAlgos/data/producersLayer1/jetProducer.cfi"
+include "PhysicsTools/PatAlgos/data/selectionLayer1/jetSelector.cfi"
+include "PhysicsTools/PatAlgos/data/selectionLayer1/jetCountFilter.cff"
+
+sequence layer1Jets = {
+  allLayer1Jets,
+  selectedLayer1Jets,
+  countLayer1Jets
+}

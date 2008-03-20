@@ -1,0 +1,38 @@
+module allLayer0Jets = PATCaloJetCleaner {
+
+  InputTag jetSource               = iterativeCone5CaloJets      # uncalibrated reco jet input source
+
+  PSet removeOverlaps = {
+      PSet jets = { // discard jets that match with clean electrons
+          InputTag collection = allLayer0Electrons   # FIXME: plug isolation in between?
+          double   deltaR     = 0.3                  #        TQAF used a tracker isolation cut at 2
+        //string   cut        = "some cut"           # you might want a cut here
+      }
+
+      PSet taus = { }
+      //PSet taus = {   # discard jets that match with Taus. Off, as it was not there in TQAF
+      //    InputTag collection = allLayer0Taus
+      //    double   deltaR     = 0.3
+      //}
+
+      PSet photons = { }
+      //PSet photons = {   # discard jets that match with Photons. Off, as it was not there in TQAF
+      //    InputTag collection = allLayer0Photons
+      //    double   deltaR     = 0.3
+      //}
+    
+      //PSet muons = { } // supported, but it's not likely you want it
+      //PSet jets  = { } // same as above   
+ 
+      VPSet user    = { }
+  }
+  
+  ### selection (e.g. ID)
+  PSet     selection = { string type = "none" }
+
+  bool    markItems    = true // write the status flags in the output items
+  string  saveRejected = ""   // set this to a non empty label to save the list of items which fail
+  string  saveAll      = ""   // set this to a non empty label to save a list of all items both passing and failing
+  vstring bitsToIgnore = {}   // You can specify some bit names, e.g. "Overflow/User1", "Core/Duplicate", "Isolation/All".
+  untracked bool wantSummary = true // print summary information for each status flag
+}

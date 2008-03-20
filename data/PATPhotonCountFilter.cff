@@ -1,5 +1,0 @@
-
-include "PhysicsTools/PatAlgos/data/PATPhotonMinFilter.cfi"
-include "PhysicsTools/PatAlgos/data/PATPhotonMaxFilter.cfi"
-
-sequence countLayer1Photons = { minLayer1Photons & maxLayer1Photons }
