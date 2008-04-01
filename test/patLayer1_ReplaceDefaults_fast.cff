@@ -89,7 +89,7 @@ replace allLayer1Jets.jetCharge = {
 # Generated from /afs/cern.ch/user/l/lowette/scratch.0/CMSSW_1_6_9_pre2_pat/src/PhysicsTools/PatAlgos/data/PATMETProducer.cfi
 replace allLayer1METs.metSource = allLayer0METs
 replace allLayer1METs.addGenMET = true
-replace allLayer1METs.genParticleSource = genParticles
+replace allLayer1METs.genMETSource = genMet
 replace allLayer1METs.addResolutions = true
 replace allLayer1METs.useNNResolutions = false
 replace allLayer1METs.metResoFile = "PhysicsTools/PatUtils/data/Resolutions_met.root"

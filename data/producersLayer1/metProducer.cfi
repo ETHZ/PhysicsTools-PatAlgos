@@ -6,7 +6,7 @@ module allLayer1METs = PATMETProducer {
 
   ### MC matching configurables
   bool     addGenMET          = true                    # switch on/off matching to generator level
-  InputTag genParticleSource  = genParticles            # particles source to be used for the matching
+  InputTag genMETSource       = genMet                  # GenMET source to be used for the matching
 
   ### Resolution configurables
   bool     addResolutions     = true                    # switch on/off the resolution calculation
