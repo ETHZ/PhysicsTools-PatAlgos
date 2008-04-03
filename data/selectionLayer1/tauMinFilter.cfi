@@ -1,7 +1,0 @@
-
-# module to filter on the minimal number of Taus
-
-module minLayer1Taus = PATTauMinFilter {
-  InputTag src       = selectedLayer1Taus
-  uint32   minNumber = 0
-}
