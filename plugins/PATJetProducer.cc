@@ -1,5 +1,5 @@
 //
-// $Id: PATJetProducer.cc,v 1.1.2.3 2008/03/10 18:28:00 lowette Exp $
+// $Id: PATJetProducer.cc,v 1.1.2.4 2008/03/12 22:08:49 lowette Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATJetProducer.h"
@@ -39,6 +39,7 @@ using namespace pat;
 PATJetProducer::PATJetProducer(const edm::ParameterSet& iConfig) {
   // initialize the configurables
   jetsSrc_                 = iConfig.getParameter<edm::InputTag>            ( "jetSource" );
+  embedCaloTowers_         = iConfig.getParameter<bool>                     ( "embedCaloTowers" );
   getJetMCFlavour_         = iConfig.getParameter<bool>                     ( "getJetMCFlavour" );
   jetPartonMapSource_      = iConfig.getParameter<edm::InputTag>            ( "JetPartonMapSource" );
   addGenPartonMatch_       = iConfig.getParameter<bool>                     ( "addGenPartonMatch" );
@@ -139,6 +140,8 @@ void PATJetProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
     unsigned int idx = itJet - jets->begin();
     edm::RefToBase<JetType> jetRef = jets->refAt(idx); 
     Jet ajet(jetRef);
+    // ensure the internal storage of the jet constituents
+    if (embedCaloTowers_) ajet.setCaloTowers(jetRef->getConstituents());
 
     // calculate the energy correction factors
     JetCorrFactors jcf = backRefHelper.recursiveLookup(jetRef, *jetCorrs);

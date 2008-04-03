@@ -1,5 +1,5 @@
 //
-// $Id: PATJetProducer.h,v 1.1.2.1 2008/03/06 10:44:09 llista Exp $
+// $Id: PATJetProducer.h,v 1.1.2.2 2008/03/07 18:52:56 lowette Exp $
 //
 
 #ifndef PhysicsTools_PatAlgos_PATJetProducer_h
@@ -13,7 +13,7 @@
    a collection of objects of JetType.
 
   \author   Steven Lowette, Jeremy Andrea
-  \version  $Id: PATJetProducer.h,v 1.1.2.1 2008/03/06 10:44:09 llista Exp $
+  \version  $Id: PATJetProducer.h,v 1.1.2.2 2008/03/07 18:52:56 lowette Exp $
 */
 
 
@@ -54,6 +54,7 @@ namespace pat {
 
       // configurables
       edm::InputTag            jetsSrc_;
+      bool                     embedCaloTowers_;
       bool                     getJetMCFlavour_;
       edm::InputTag            jetPartonMapSource_;
       bool                     addGenPartonMatch_;

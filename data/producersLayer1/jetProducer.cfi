@@ -3,6 +3,7 @@ module allLayer1Jets = PATJetProducer {
 
   ### General configurables
   InputTag jetSource               = allLayer0Jets               # uncalibrated reco jet input source
+  bool     embedCaloTowers         = true                        # switch on/off embedding of supercluster (externally stored in AOD)
 
   ### Jet flavour idetification configurables
   bool     getJetMCFlavour         = true                        # switch on/off MC flavour identification of all jets
