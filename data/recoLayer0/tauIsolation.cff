@@ -1,0 +1,33 @@
+sequence patTauIsolation = {
+#  muIsolation
+}
+
+// define module labels for old (tk-based isodeposit) POG isolation
+block patAODTauIsolationLabels = {
+    VInputTag associations = { 
+    }
+}
+
+// read and convert to ValueMap<IsoDeposit> keyed to Candidate
+# module patAODTauIsolations = MultipleIsoDepositsToValueMaps {
+#     InputTag  collection   = pfTaus
+#     using patAODTauIsolationLabels
+# }
+# 
+// sequence to run on AOD before 
+sequence patAODTauIsolation = {
+#  patAODTauIsolations
+}
+
+
+# module layer0TauIsolations = CandManyValueMapsSkimmerIsoDeposits {
+#     InputTag collection  =   allLayer0Taus
+#     InputTag backrefs    =   allLayer0Taus
+#     InputTag commonLabel   = patAODTauIsolations
+#     using patAODTauIsolationLabels
+# }
+
+sequence patLayer0TauIsolation = { 
+# layer0TauIsolations
+}
+
