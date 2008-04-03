@@ -1,0 +1,8 @@
+
+include "PhysicsTools/PatAlgos/data/producersLayer1/metProducer.cfi"
+include "PhysicsTools/PatAlgos/data/selectionLayer1/metSelector.cfi"
+
+sequence layer1METs = {
+  allLayer1METs,
+  selectedLayer1METs
+}

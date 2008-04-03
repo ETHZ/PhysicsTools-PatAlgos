@@ -1,0 +1,29 @@
+block patLayer0EventContent = {
+  untracked vstring outputCommands = {
+    "keep edmTriggerResults_TriggerResults_*_*",
+    "keep *_genParticleCandidates_*_*", # to be removed when full GenParticle transition finished
+    "keep *_genParticles_*_*",
+    "keep recoJetTags_*_*_*",
+    "drop recoJetTags_coneIsolationTauJetTags_*_*",
+    "keep recoTracks_ctfWithMaterialTracks_*_*",
+    "keep recoTracks_gsWithMaterialTracks_*_*",
+    "keep *_offlinePrimaryVerticesFromCTFTracks_*_*",
+
+    "keep *_layer0MuonIsolations_*_*",
+    "keep *_layer0PhotonIsolations_*_*",
+    "keep floatedmValueMap_*_*_*",
+    "keep patJetCorrFactorsedmValueMap_*_*_*",
+    "keep recoGenJetsedmAssociation_*_*_*",
+    "keep recoGenParticlesedmAssociation_*_*_*",
+    "keep recoJetTagsrecoJetTagrecoJetTagsrecoJetTagedmrefhelperFindUsingAdvanceedmRefedmValueMap_*_*_*",
+    "keep recoPixelMatchGsfElectronsrecoElectronIDsuintedmOneToOneedmAssociationMap_electronId_*_*",
+    "keep recoPixelMatchGsfElectronsrecoElectronIDsuintedmOneToOneedmAssociationMap_electronIdRobust_*_*",
+
+    "keep *_allLayer0Photons_*_*",
+    "keep *_allLayer0Electrons_*_*",
+    "keep *_allLayer0Muons_*_*",
+    "keep *_allLayer0Taus_*_*",
+    "keep *_allLayer0Jets_*_*",
+    "keep *_allLayer0METs_*_*"
+  }
+}

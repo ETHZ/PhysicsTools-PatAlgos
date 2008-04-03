@@ -1,0 +1,16 @@
+#
+# Example for a configuration of the MC match
+# for taus (cuts are NOT tuned)
+# (using old values from TQAF, january 2008)
+#
+module tauMatch = PATMCMatcher {
+ InputTag src = allLayer0Taus
+ InputTag matched = genParticles
+ double maxDeltaR = 5    // no limit (why!?)
+ double maxDPtRel = 99   // no limit
+ bool resolveAmbiguities = true
+ bool resolveByMatchQuality = false
+ bool checkCharge = true
+ vint32 mcPdgId = { 15 }
+ vint32 mcStatus = { 2 }
+}
