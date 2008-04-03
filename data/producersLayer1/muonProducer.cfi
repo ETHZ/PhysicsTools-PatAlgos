@@ -13,15 +13,28 @@ module allLayer1Muons = PATMuonProducer {
   bool     useNNResolutions  = false                   # use the neural network approach?
   string   muonResoFile      = "PhysicsTools/PatUtils/data/Resolutions_muon.root"
                                                        # input root file for the resolution functions
-
-  ### Isolation configurables
-  bool     doTrkIsolation    = true                    # switch on/off the tracker isolation calculations
-  InputTag trackIsoSource    = muGlobalIsoDepositCtfTk # muon track-isolation input object
-  bool     doCalIsolation    = true                    # switch on/off the calorimeter isolation calculations
-  InputTag ecalIsoSource     = muGlobalIsoDepositCalByAssociatorTowers:ecal
-  InputTag hcalIsoSource     = muGlobalIsoDepositCalByAssociatorTowers:hcal
-  InputTag hocalIsoSource    = muGlobalIsoDepositCalByAssociatorTowers:ho
-                                                       # muon calo-isolation input objects
+  ### isolation configurables
+  PSet isolation   = {
+        PSet tracker = { InputTag src    = layer0MuonIsolations:muGlobalIsoDepositCtfTk
+                         double   deltaR = 0.3 }
+        PSet ecal    = { InputTag src    = layer0MuonIsolations:muGlobalIsoDepositCalByAssociatorTowersecal
+                         double   deltaR = 0.3 }
+        PSet hcal    = { InputTag src    = layer0MuonIsolations:muGlobalIsoDepositCalByAssociatorTowershcal
+                         double   deltaR = 0.3 }
+        VPSet user   = {
+            { InputTag src    = layer0MuonIsolations:muGlobalIsoDepositCalByAssociatorTowersho
+              double   deltaR = 0.3 },
+            { InputTag src    = layer0MuonIsolations:muGlobalIsoDepositJets
+              double   deltaR = 0.3 }
+        }
+  }
+  PSet isoDeposits = {
+    InputTag  tracker = layer0MuonIsolations:muGlobalIsoDepositCtfTk
+    InputTag  ecal    = layer0MuonIsolations:muGlobalIsoDepositCalByAssociatorTowersecal
+    InputTag  hcal    = layer0MuonIsolations:muGlobalIsoDepositCalByAssociatorTowershcal
+    VInputTag user =  { layer0MuonIsolations:muGlobalIsoDepositCalByAssociatorTowersho,
+                        layer0MuonIsolations:muGlobalIsoDepositJets }
+  }
 
   ### Muon ID configurables
   bool     addMuonID         = true                    # switch on/off the electron ID info addition

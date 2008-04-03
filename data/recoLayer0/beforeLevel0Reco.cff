@@ -5,7 +5,6 @@ include "MagneticField/Engine/data/volumeBasedMagneticField.cfi"
 include "PhysicsTools/HepMCCandAlgos/data/genParticleCandidates2GenParticles.cfi"
 
 # muon isolation
-include "PhysicsTools/PatAlgos/data/recoLayer0/muonIsolation.cff"
 
 # additional tau reconstruction
 include "PhysicsTools/PatAlgos/data/recoLayer0/tauTagging.cff"
@@ -18,6 +17,8 @@ include "PhysicsTools/PatAlgos/data/recoLayer0/jetMETCorrections.cff"
 
 include "PhysicsTools/PatAlgos/data/recoLayer0/electronIsolation.cff"
 include "PhysicsTools/PatAlgos/data/recoLayer0/photonIsolation.cff"
+include "PhysicsTools/PatAlgos/data/recoLayer0/muonIsolation.cff"
+#include "PhysicsTools/PatAlgos/data/recoLayer0/tauIsolation.cff"  # dummy, at the moment
 
 sequence patBeforeLevel0Reco_withoutPFTau = {
   genParticles,
@@ -33,4 +34,5 @@ sequence patBeforeLevel0Reco_withoutPFTau = {
 sequence patBeforeLevel0Reco = {
   #patPFTauTagging,
   patBeforeLevel0Reco_withoutPFTau
+  #,patAODTauIsolation
 }

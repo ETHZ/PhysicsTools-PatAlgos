@@ -14,6 +14,10 @@ module allLayer1Taus = PATTauProducer {
   string   tauResoFile       = "PhysicsTools/PatUtils/data/Resolutions_tau.root"
                                                         # input root file for the resolution functions
 
+  ### isolation configurables
+  PSet isolation   = { } 
+  PSet isoDeposits = { } 
+
   ### likelihood ratio configurables
   bool     addLRValues       = false                    # switch on/off the lepton likelihood ratio calculation
   string   tauLRFile         = "PhysicsTools/PatUtils/data/TauLRDistros.root"

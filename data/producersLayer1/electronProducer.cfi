@@ -14,21 +14,21 @@ module allLayer1Electrons = PATElectronProducer {
   string   electronResoFile  = "PhysicsTools/PatUtils/data/Resolutions_electron.root"
                                                         # input root file for the resolution functions
 
+  InputTag tracksSource      = ctfWithMaterialTracks    # tracks to be used for LR
+
   ### isolation configurables
-  ### these following four tags refer to the isolation calculated by PAT code
-  bool     addTrkIsolation   = true                     # switch on/off the tracker isolation calculations
-  InputTag tracksSource      = ctfWithMaterialTracks    # tracks to be used for the tracker isolation
-  bool     addCalIsolation   = true                     # switch on/off the calorimeter isolation calculations
-  InputTag towerSource       = towerMaker               # towers to be used for the calorimeter isolation
-  #the following tags refer to the isolation calculated by the egamma isolation tool
-  #the interested user can modify the parameters of the isolation that gets put in the Electron object,
-  #either by modifying the parameters of the egamma modules directly (see PATElectronIsolation.cff)
-  #or by adding another copy of the producer to the path and changing these tags
-  bool     addEgammaIso = true
-  InputTag egammaTkIsoSource    = layer0ElectronIsolations:egammaElectronTkIsolation 
-  InputTag egammaTkNumIsoSource = layer0ElectronIsolations:egammaElectronTkNumIsolation
-  InputTag egammaEcalIsoSource  = layer0ElectronIsolations:egammaEcalRelIsolation
-  InputTag egammaHcalIsoSource  = layer0ElectronIsolations:egammaHOETower
+  PSet isolation   = {
+        PSet tracker = { InputTag src = layer0ElectronIsolations:egammaElectronTkIsolation }
+        PSet ecal    = { InputTag src = layer0ElectronIsolations:egammaEcalIsolation    }
+        PSet hcal    = { InputTag src = layer0ElectronIsolations:egammaTowerIsolation      }
+        VPSet user   = {
+            { InputTag src = layer0ElectronIsolations:egammaElectronTkNumIsolation },
+            { InputTag src = layer0ElectronIsolations:egammaEcalRelIsolation },
+            { InputTag src = layer0ElectronIsolations:egammaHOETower }
+        }
+  }
+  PSet isoDeposits = {  
+  }
 
   ### electron ID configurables
   bool     addElectronID     = true                     # switch on/off the electron ID info addition

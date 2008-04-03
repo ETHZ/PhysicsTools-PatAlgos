@@ -3,6 +3,7 @@ include "EgammaAnalysis/EgammaIsolationProducers/data/egammaElectronTkNumIsolati
 include "EgammaAnalysis/EgammaIsolationProducers/data/egammaHOETower.cfi"
 include "EgammaAnalysis/EgammaIsolationProducers/data/egammaTowerIsolation.cfi"
 include "EgammaAnalysis/EgammaIsolationProducers/data/egammaEcalRelIsolationSequence.cff"
+include "EgammaAnalysis/EgammaIsolationProducers/data/egammaEcalIsolationSequence.cff"
 
 // define module labels for old (non isodeposit) POG isolation
 block patAODElectronIsolationLabels = {
@@ -11,7 +12,8 @@ block patAODElectronIsolationLabels = {
         egammaHOETower, 
         egammaElectronTkIsolation, 
         egammaElectronTkNumIsolation, 
-        egammaEcalRelIsolation 
+        egammaEcalRelIsolation, 
+        egammaEcalIsolation 
     }
 }
 
@@ -28,6 +30,7 @@ sequence patAODElectronIsolation = {
   egammaElectronTkIsolation &
   egammaElectronTkNumIsolation &
   egammaEcalRelIsolationSequence &
+  egammaEcalIsolation &
   patAODElectronIsolations
 }
 
