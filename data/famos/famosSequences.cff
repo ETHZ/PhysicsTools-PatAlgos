@@ -4,10 +4,10 @@
   ##########################################
 
   # needed for fast 1.8 backported CaloTau tagging
-  include "PhysicsTools/PatAlgos/data/recoLayer0/tauTagging.cff"
-  replace caloRecoTauTagInfoProducer.EBRecHitsSource = caloRecHits:EcalRecHitsEB
-  replace caloRecoTauTagInfoProducer.EERecHitsSource = caloRecHits:EcalRecHitsEE
-  replace caloRecoTauTagInfoProducer.ESRecHitsSource = caloRecHits:EcalRecHitsES
+  #include "PhysicsTools/PatAlgos/data/recoLayer0/tauTagging.cff"
+  #replace caloRecoTauTagInfoProducer.EBRecHitsSource = caloRecHits:EcalRecHitsEB
+  #replace caloRecoTauTagInfoProducer.EERecHitsSource = caloRecHits:EcalRecHitsEE
+  #replace caloRecoTauTagInfoProducer.ESRecHitsSource = caloRecHits:EcalRecHitsES
 
   # needed for non-famos-integrated electron isolation
   include "PhysicsTools/PatAlgos/data/recoLayer0/electronIsolation.cff"
@@ -16,19 +16,20 @@
 
   # default famos sequence adapted for PAT
   sequence famosWithEverythingPAT = {
-    famosWithCaloTowersAndParticleFlow,
-    ecalClusteringSequence,
-    famosElectronSequence,
-    photonSequence,
-    paramMuons,
-    muIsolation_ParamGlobalMuons,
-    caloJetMetGen,
-    caloJetMet,
-    vertexreco,
-    jetTracksAssociator,
-    famosBTaggingSequence,
-    patPFTauTagging,
-    patCaloTauTagging
+#    famosWithCaloTowersAndParticleFlow,
+#    ecalClusteringSequence,
+#    famosElectronSequence,
+#    photonSequence,
+#    paramMuons,
+#    muIsolation_ParamGlobalMuons,
+#    caloJetMetGen,
+#    caloJetMet,
+#    vertexreco,
+#    jetTracksAssociator,
+#    famosBTaggingSequence,
+#    patPFTauTagging,
+#    patCaloTauTagging
+    famosWithEverything
   }
 
 

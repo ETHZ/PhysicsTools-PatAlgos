@@ -1,6 +1,6 @@
 
 # electron id
-include "PhysicsTools/PatAlgos/data/recoLayer0/electronId.cff"
+// include "PhysicsTools/PatAlgos/data/recoLayer0/electronId.cff"  //FIXME:: OFF, it does not work in 2_0_0_pre8
 
 # Electron Isolation 
 include "PhysicsTools/PatAlgos/data/recoLayer0/electronIsolation.cff"
@@ -19,13 +19,13 @@ include "PhysicsTools/PatAlgos/data/recoLayer0/bTagging.cff"
 
 # default  sequence for extra high-level reconstruction
 sequence patHighLevelReco_withoutPFTau = {
-  patElectronId,
-  patJetFlavourId,
+//  patElectronId,   //FIXME: OFF, it does not work in 2_0_0_pre8 (missing DB file)
+//  patJetFlavourId, //FIXME: OFF, still to find out how to configure it in 2_0_X
   patLayer0ElectronIsolation, // skim & re-key
   patLayer0PhotonIsolation, // skim & re-key
-  patLayer0MuonIsolation,     // skim & re-key
-//  patBTagging
-  jetTagsToValueMapRef, allJetTagsLayer0
+  patLayer0MuonIsolation     // skim & re-key
+// ,jetTagsToValueMapRef //FIXME: OFF
+// ,allJetTagsLayer0     //FIXME: OFF
 }
 
 sequence patHighLevelReco = {

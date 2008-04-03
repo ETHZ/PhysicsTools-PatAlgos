@@ -1,9 +1,7 @@
 
 # define jet flavour correction services
-include "JetMETCorrections/MCJet/data/MCJetCorrections152.cff"
-include "JetMETCorrections/MCJet/data/JetCorrections_L5Flavor_v1.cfi"
-# Pick MCJetCorrectionService to set record's IOV
-es_prefer MCJetCorrectorIcone5 = MCJetCorrectionService {}
+include "JetMETCorrections/Configuration/data/MCJetCorrections152.cff"
+include "JetMETCorrections/Configuration/data/L5FlavorCorrections.cff"
 
 # default JetMET calibration on IC, KT and MC Jets
 include "JetMETCorrections/Type1MET/data/MetType1Corrections.cff"
@@ -12,5 +10,5 @@ include "JetMETCorrections/Type1MET/data/MetType1Corrections.cff"
 
 # default PAT sequence for JetMET corrections
 sequence patJetMETCorrections = {
-  MetType1Corrections
+  corMetType1Icone5 
 }

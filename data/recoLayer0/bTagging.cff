@@ -1,147 +1,115 @@
 // Need to convert all JetTags to ValueMap<JetTagRef>
-module combinedSVJetTagsVM = JetTagToValueMapRef {
-	InputTag src = iterativeCone5CaloJets
-	InputTag tags = combinedSVJetTags
-        untracked bool failSilently = true
-}
-module combinedSVMVAJetTagsVM = JetTagToValueMapRef {
-	InputTag src = iterativeCone5CaloJets
-	InputTag tags = combinedSVMVAJetTags
-        untracked bool failSilently = true
-}
-module impactParameterMVAJetTagsVM = JetTagToValueMapRef {
-	InputTag src = iterativeCone5CaloJets
-	InputTag tags = impactParameterMVAJetTags
-        untracked bool failSilently = true
-}
-module jetProbabilityJetTagsVM = JetTagToValueMapRef {
-	InputTag src = iterativeCone5CaloJets
-	InputTag tags = jetProbabilityJetTags
-        untracked bool failSilently = true
-}
-module softElectronJetTagsVM = JetTagToValueMapRef {
-	InputTag src = iterativeCone5CaloJets
-	InputTag tags = softElectronJetTags
-        untracked bool failSilently = true
-}
-module softMuonJetTagsVM = JetTagToValueMapRef {
-	InputTag src = iterativeCone5CaloJets
-	InputTag tags = softMuonJetTags
-        untracked bool failSilently = true
-}
-module softMuonNoIPJetTagsVM = JetTagToValueMapRef {
-	InputTag src = iterativeCone5CaloJets
-	InputTag tags = softMuonNoIPJetTags
-        untracked bool failSilently = true
-}
-module trackCountingHighEffJetTagsVM = JetTagToValueMapRef {
-	InputTag src = iterativeCone5CaloJets
-	InputTag tags = trackCountingHighEffJetTags
-        untracked bool failSilently = true
-}
-module trackCountingHighPurJetTagsVM = JetTagToValueMapRef {
-	InputTag src = iterativeCone5CaloJets
-	InputTag tags = trackCountingHighPurJetTags
-        untracked bool failSilently = true
-}
 
-sequence jetTagsToValueMapRef = {
-    combinedSVJetTagsVM, combinedSVMVAJetTagsVM, impactParameterMVAJetTagsVM, jetProbabilityJetTagsVM, softElectronJetTagsVM, 
-    softMuonJetTagsVM, softMuonNoIPJetTagsVM, trackCountingHighEffJetTagsVM, trackCountingHighPurJetTagsVM
-}
-
-
-module combinedSVJetTagsLayer0 = JetTagRefValueMapSkimmer {
-	InputTag collection =   allLayer0Jets
-	InputTag backrefs =     allLayer0Jets
-	InputTag association = combinedSVJetTagsVM
-        untracked bool failSilently = true
-}
-module combinedSVMVAJetTagsLayer0 = JetTagRefValueMapSkimmer {
-	InputTag collection =   allLayer0Jets
-	InputTag backrefs =     allLayer0Jets
-	InputTag association = combinedSVAJetTagsVM
-        untracked bool failSilently = true
-}
-module impactParameterMVAJetTagsLayer0 = JetTagRefValueMapSkimmer {
-	InputTag collection =   allLayer0Jets
-	InputTag backrefs =     allLayer0Jets
-	InputTag association = impactParameterMVAJetTagsVM
-        untracked bool failSilently = true
-}
-module jetProbabilityJetTagsLayer0 = JetTagRefValueMapSkimmer {
-	InputTag collection =   allLayer0Jets
-	InputTag backrefs =     allLayer0Jets
-	InputTag association = jetProbabilityJetTagsVM
-        untracked bool failSilently = true
-}
-module softElectronJetTagsLayer0 = JetTagRefValueMapSkimmer {
-	InputTag collection =   allLayer0Jets
-	InputTag backrefs =     allLayer0Jets
-	InputTag association = softElectronJetTagsVM
-        untracked bool failSilently = true
-}
-module softMuonJetTagsLayer0 = JetTagRefValueMapSkimmer {
-	InputTag collection =   allLayer0Jets
-	InputTag backrefs =     allLayer0Jets
-	InputTag association = softMuonJetTagsVM
-        untracked bool failSilently = true
-}
-module softMuonNoIPJetTagsLayer0 = JetTagRefValueMapSkimmer {
-	InputTag collection =   allLayer0Jets
-	InputTag backrefs =     allLayer0Jets
-	InputTag association = softMuonNoIPJetTagsVM
-        untracked bool failSilently = true
-}
-module trackCountingHighEffJetTagsLayer0 = JetTagRefValueMapSkimmer {
-	InputTag collection =   allLayer0Jets
-	InputTag backrefs =     allLayer0Jets
-	InputTag association = trackCountingHighEffJetTagsVM
-        untracked bool failSilently = true
-}
-module trackCountingHighPurJetTagsLayer0 = JetTagRefValueMapSkimmer {
-	InputTag collection =   allLayer0Jets
-	InputTag backrefs =     allLayer0Jets
-	InputTag association = trackCountingHighPurJetTagsVM
-        untracked bool failSilently = true
-}
-
-sequence allJetTagsLayer0 = {
-    combinedSVJetTagsLayer0, combinedSVMVAJetTagsLayer0, impactParameterMVAJetTagsLayer0, jetProbabilityJetTagsLayer0, 
-    softElectronJetTagsLayer0,     softMuonJetTagsLayer0, softMuonNoIPJetTagsLayer0, 
-    trackCountingHighEffJetTagsLayer0, trackCountingHighPurJetTagsLayer0
-}
-
-
-### vvvvv ALL BELOW IS NEEDED ONLY TO RE-RUN B-Tagging
-
-include "RecoBTau/JetTracksAssociator/data/jetTracksAssociator.cfi"
-include "RecoBTag/Configuration/data/RecoBTag.cff"
-
-module trackCountingJetTags3th = TrackCounting {
-    string jetTracks = "jetTracksAssociator"
-    string primaryVertex = "offlinePrimaryVerticesFromCTFTracks"        
-    PSet AlgorithmPSet =  { 
-	int32    NthTrack = 3
-	int32    ImpactParamterType = 0 
-	int32    MinimumNumberOfPixelHits = 2
-	int32   MinimumNumberOfHits = 8
-	double MaximumTransverseImpactParameter = 0.2
-	double MinimumTransverseMomentum = 1.0
-	double MaximumDecayLength = 5.0
-	double MaximumChiSquared = 5.0
-	double MaximumLongitudinalImpactParameter = 17.0
-	double MaximumDistanceToJetAxis = 0.07  
-    }
-}
-
-#this sequence is just copied from RecoBTag.cff (above)
-#it really only exists as an example, says Steven.
-sequence patBTagging = {  
-
- (impactParameterTagInfos,( jetProbabilityJetTags & trackCountingHighPurJetTags & trackCountingHighEffJetTags & impactParameterMVAJetTags ) ) &
-         ( btagSoftElectrons, softElectronTagInfos, softElectronJetTags ) &
-         ( softMuonTagInfos, ( softMuonJetTags & softMuonNoIPJetTags ) ) &
-         ( combinedSVJetTags, combinedSVMVAJetTags )
- }
-
+## module combinedSVJetTagsVM = JetTagToValueMapRef {
+## 	InputTag src = iterativeCone5CaloJets
+## 	InputTag tags = combinedSVJetTags
+##         untracked bool failSilently = true
+## }
+## module combinedSVMVAJetTagsVM = JetTagToValueMapRef {
+## 	InputTag src = iterativeCone5CaloJets
+## 	InputTag tags = combinedSVMVAJetTags
+##         untracked bool failSilently = true
+## }
+## module impactParameterMVAJetTagsVM = JetTagToValueMapRef {
+## 	InputTag src = iterativeCone5CaloJets
+## 	InputTag tags = impactParameterMVAJetTags
+##         untracked bool failSilently = true
+## }
+## module jetProbabilityJetTagsVM = JetTagToValueMapRef {
+## 	InputTag src = iterativeCone5CaloJets
+## 	InputTag tags = jetProbabilityJetTags
+##         untracked bool failSilently = true
+## }
+## module softElectronJetTagsVM = JetTagToValueMapRef {
+## 	InputTag src = iterativeCone5CaloJets
+## 	InputTag tags = softElectronJetTags
+##         untracked bool failSilently = true
+## }
+## module softMuonJetTagsVM = JetTagToValueMapRef {
+## 	InputTag src = iterativeCone5CaloJets
+## 	InputTag tags = softMuonJetTags
+##         untracked bool failSilently = true
+## }
+## module softMuonNoIPJetTagsVM = JetTagToValueMapRef {
+## 	InputTag src = iterativeCone5CaloJets
+## 	InputTag tags = softMuonNoIPJetTags
+##         untracked bool failSilently = true
+## }
+## module trackCountingHighEffJetTagsVM = JetTagToValueMapRef {
+## 	InputTag src = iterativeCone5CaloJets
+## 	InputTag tags = trackCountingHighEffJetTags
+##         untracked bool failSilently = true
+## }
+## module trackCountingHighPurJetTagsVM = JetTagToValueMapRef {
+## 	InputTag src = iterativeCone5CaloJets
+## 	InputTag tags = trackCountingHighPurJetTags
+##         untracked bool failSilently = true
+## }
+## 
+## sequence jetTagsToValueMapRef = {
+##     combinedSVJetTagsVM, combinedSVMVAJetTagsVM, impactParameterMVAJetTagsVM, jetProbabilityJetTagsVM, softElectronJetTagsVM, 
+##     softMuonJetTagsVM, softMuonNoIPJetTagsVM, trackCountingHighEffJetTagsVM, trackCountingHighPurJetTagsVM
+## }
+## 
+## 
+## module combinedSVJetTagsLayer0 = JetTagRefValueMapSkimmer {
+## 	InputTag collection =   allLayer0Jets
+## 	InputTag backrefs =     allLayer0Jets
+## 	InputTag association = combinedSVJetTagsVM
+##         untracked bool failSilently = true
+## }
+## module combinedSVMVAJetTagsLayer0 = JetTagRefValueMapSkimmer {
+## 	InputTag collection =   allLayer0Jets
+## 	InputTag backrefs =     allLayer0Jets
+## 	InputTag association = combinedSVAJetTagsVM
+##         untracked bool failSilently = true
+## }
+## module impactParameterMVAJetTagsLayer0 = JetTagRefValueMapSkimmer {
+## 	InputTag collection =   allLayer0Jets
+## 	InputTag backrefs =     allLayer0Jets
+## 	InputTag association = impactParameterMVAJetTagsVM
+##         untracked bool failSilently = true
+## }
+## module jetProbabilityJetTagsLayer0 = JetTagRefValueMapSkimmer {
+## 	InputTag collection =   allLayer0Jets
+## 	InputTag backrefs =     allLayer0Jets
+## 	InputTag association = jetProbabilityJetTagsVM
+##         untracked bool failSilently = true
+## }
+## module softElectronJetTagsLayer0 = JetTagRefValueMapSkimmer {
+## 	InputTag collection =   allLayer0Jets
+## 	InputTag backrefs =     allLayer0Jets
+## 	InputTag association = softElectronJetTagsVM
+##         untracked bool failSilently = true
+## }
+## module softMuonJetTagsLayer0 = JetTagRefValueMapSkimmer {
+## 	InputTag collection =   allLayer0Jets
+## 	InputTag backrefs =     allLayer0Jets
+## 	InputTag association = softMuonJetTagsVM
+##         untracked bool failSilently = true
+## }
+## module softMuonNoIPJetTagsLayer0 = JetTagRefValueMapSkimmer {
+## 	InputTag collection =   allLayer0Jets
+## 	InputTag backrefs =     allLayer0Jets
+## 	InputTag association = softMuonNoIPJetTagsVM
+##         untracked bool failSilently = true
+## }
+## module trackCountingHighEffJetTagsLayer0 = JetTagRefValueMapSkimmer {
+## 	InputTag collection =   allLayer0Jets
+## 	InputTag backrefs =     allLayer0Jets
+## 	InputTag association = trackCountingHighEffJetTagsVM
+##         untracked bool failSilently = true
+## }
+## module trackCountingHighPurJetTagsLayer0 = JetTagRefValueMapSkimmer {
+## 	InputTag collection =   allLayer0Jets
+## 	InputTag backrefs =     allLayer0Jets
+## 	InputTag association = trackCountingHighPurJetTagsVM
+##         untracked bool failSilently = true
+## }
+## 
+## sequence allJetTagsLayer0 = {
+##     combinedSVJetTagsLayer0, combinedSVMVAJetTagsLayer0, impactParameterMVAJetTagsLayer0, jetProbabilityJetTagsLayer0, 
+##     softElectronJetTagsLayer0,     softMuonJetTagsLayer0, softMuonNoIPJetTagsLayer0, 
+##     trackCountingHighEffJetTagsLayer0, trackCountingHighPurJetTagsLayer0
+## }
+## 

@@ -9,25 +9,25 @@ module allLayer0Muons = PATMuonCleaner {
   ### isolation (not mandatory, see bitsToIgnore below)
   PSet isolation = {
      PSet tracker = {
-        InputTag src    = patAODMuonIsolations:muGlobalIsoDepositCtfTk  
+        InputTag src    = patAODMuonIsolations:muIsoDepositTk  
         double   deltaR = 0.3 
         double   cut    = 2.0
      }
      PSet hcal = { 
-        InputTag src    = patAODMuonIsolations:muGlobalIsoDepositCalByAssociatorTowersecal
+        InputTag src    = patAODMuonIsolations:muIsoDepositCalByAssociatorTowersecal
         double   deltaR = 0.3 
         double   cut    = 2.0
      }
      PSet ecal = { 
-        InputTag src    = patAODMuonIsolations:muGlobalIsoDepositCalByAssociatorTowershcal 
+        InputTag src    = patAODMuonIsolations:muIsoDepositCalByAssociatorTowershcal 
         double   deltaR = 0.3 
         double   cut    = 2.0
      }
      VPSet user = { 
-        { InputTag src    = patAODMuonIsolations:muGlobalIsoDepositCalByAssociatorTowersho 
+        { InputTag src    = patAODMuonIsolations:muIsoDepositCalByAssociatorTowersho 
           double   deltaR = 0.3 
           double   cut    = 2.0 },
-        { InputTag src    = patAODMuonIsolations:muGlobalIsoDepositJets
+        { InputTag src    = patAODMuonIsolations:muIsoDepositJets
           double   deltaR = 0.5 
           double   cut    = 2.0 }
      }

@@ -14,7 +14,7 @@ module allLayer1Electrons = PATElectronProducer {
   string   electronResoFile  = "PhysicsTools/PatUtils/data/Resolutions_electron.root"
                                                         # input root file for the resolution functions
 
-  InputTag tracksSource      = ctfWithMaterialTracks    # tracks to be used for LR
+  InputTag tracksSource      = generalTracks    # tracks to be used for LR
 
   ### isolation configurables
   PSet isolation   = {

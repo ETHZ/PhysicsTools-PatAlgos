@@ -18,7 +18,7 @@ module jetPartonMatch = PATMCMatcher {
 
 module jetGenJetMatch = PATGenJetMatcher {
  InputTag src = allLayer0Jets
- InputTag matched = iterativeCone5GenJetsPt10
+ InputTag matched = iterativeCone5GenJets
  double maxDeltaR = 0.4
  double maxDPtRel = 3.0
  bool resolveAmbiguities = true

@@ -10,26 +10,26 @@ replace allLayer1Muons.genParticleMatch = muonMatch
 replace allLayer1Muons.addResolutions = true
 replace allLayer1Muons.useNNResolutions = false
 replace allLayer1Muons.muonResoFile = "PhysicsTools/PatUtils/data/Resolutions_muon.root"
-replace allLayer1Muons.isolation.tracker.src    = layer0MuonIsolations:muGlobalIsoDepositCtfTk
+replace allLayer1Muons.isolation.tracker.src    = layer0MuonIsolations:muIsoDepositTk
 replace allLayer1Muons.isolation.tracker.deltaR = 0.3 
-replace allLayer1Muons.isolation.ecal.src       = layer0MuonIsolations:muGlobalIsoDepositCalByAssociatorTowersecal
+replace allLayer1Muons.isolation.ecal.src       = layer0MuonIsolations:muIsoDepositCalByAssociatorTowersecal
 replace allLayer1Muons.isolation.hcal.deltaR    = 0.3 
-replace allLayer1Muons.isolation.hcal.src       = layer0MuonIsolations:muGlobalIsoDepositCalByAssociatorTowershcal
+replace allLayer1Muons.isolation.hcal.src       = layer0MuonIsolations:muIsoDepositCalByAssociatorTowershcal
 replace allLayer1Muons.isolation.ecal.deltaR    = 0.3 
 replace allLayer1Muons.isolation.user           = {
-            { InputTag src    = layer0MuonIsolations:muGlobalIsoDepositCalByAssociatorTowersho
+            { InputTag src    = layer0MuonIsolations:muIsoDepositCalByAssociatorTowersho
               double   deltaR = 0.3 },
-            { InputTag src    = layer0MuonIsolations:muGlobalIsoDepositJets
+            { InputTag src    = layer0MuonIsolations:muIsoDepositJets
               double   deltaR = 0.3 }
 }
-replace allLayer1Muons.isoDeposits.tracker = layer0MuonIsolations:muGlobalIsoDepositCtfTk
-replace allLayer1Muons.isoDeposits.ecal    = layer0MuonIsolations:muGlobalIsoDepositCalByAssociatorTowersecal
-replace allLayer1Muons.isoDeposits.hcal    = layer0MuonIsolations:muGlobalIsoDepositCalByAssociatorTowershcal
-replace allLayer1Muons.isoDeposits.user  = { layer0MuonIsolations:muGlobalIsoDepositCalByAssociatorTowersho,
-                                             layer0MuonIsolations:muGlobalIsoDepositJets }
+replace allLayer1Muons.isoDeposits.tracker = layer0MuonIsolations:muIsoDepositTk
+replace allLayer1Muons.isoDeposits.ecal    = layer0MuonIsolations:muIsoDepositCalByAssociatorTowersecal
+replace allLayer1Muons.isoDeposits.hcal    = layer0MuonIsolations:muIsoDepositCalByAssociatorTowershcal
+replace allLayer1Muons.isoDeposits.user  = { layer0MuonIsolations:muIsoDepositCalByAssociatorTowersho,
+                                             layer0MuonIsolations:muIsoDepositJets }
 replace allLayer1Muons.addMuonID = true
 replace allLayer1Muons.addLRValues = true
-replace allLayer1Muons.tracksSource = ctfWithMaterialTracks
+replace allLayer1Muons.tracksSource = generalTracks
 replace allLayer1Muons.muonLRFile = "PhysicsTools/PatUtils/data/MuonLRDistros.root"
 # Generated from /afs/cern.ch/user/l/lowette/scratch.0/CMSSW_1_6_9_pre2_pat/src/PhysicsTools/PatAlgos/data/PATElectronProducer.cfi
 replace allLayer1Electrons.electronSource = allLayer0Electrons
@@ -38,7 +38,7 @@ replace allLayer1Electrons.genParticleMatch = electronMatch
 replace allLayer1Electrons.addResolutions = true
 replace allLayer1Electrons.useNNResolutions = false
 replace allLayer1Electrons.electronResoFile = "PhysicsTools/PatUtils/data/Resolutions_electron.root"
-replace allLayer1Electrons.tracksSource = ctfWithMaterialTracks
+replace allLayer1Electrons.tracksSource = generalTracks
 replace allLayer1Electrons.isolation.tracker.src = layer0ElectronIsolations:egammaElectronTkIsolation
 replace allLayer1Electrons.isolation.ecal.src    = layer0ElectronIsolations:egammaEcalIsolation
 replace allLayer1Electrons.isolation.hcal.src    = layer0ElectronIsolations:egammaTowerIsolation
@@ -86,7 +86,7 @@ replace allLayer1Jets.tagModuleLabelsToKeep = {
   }
 replace allLayer1Jets.addAssociatedTracks = true
 replace allLayer1Jets.trackAssociation = {
-    InputTag tracksSource = ctfWithMaterialTracks
+    InputTag tracksSource = generalTracks
     double   deltaR       = 0.5
     int32    minHits      = 8
     double   maxNormChi2  = 5.0

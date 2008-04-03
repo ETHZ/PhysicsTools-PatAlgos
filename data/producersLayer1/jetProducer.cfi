@@ -40,7 +40,7 @@ module allLayer1Jets = PATJetProducer {
   ### track association configurables
   bool     addAssociatedTracks     = true                        # switch on/off track association
   PSet     trackAssociation        = {                           # the track association parameter set
-    InputTag tracksSource = ctfWithMaterialTracks
+    InputTag tracksSource = generalTracks
     double   deltaR       = 0.5
     int32    minHits      = 8
     double   maxNormChi2  = 5.0
