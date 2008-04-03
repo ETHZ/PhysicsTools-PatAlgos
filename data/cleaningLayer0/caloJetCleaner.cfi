@@ -4,9 +4,11 @@ module allLayer0Jets = PATCaloJetCleaner {
 
   PSet removeOverlaps = {
       PSet jets = { // discard jets that match with clean electrons
-          InputTag collection = allLayer0Electrons   # FIXME: plug isolation in between?
-          double   deltaR     = 0.3                  #        TQAF used a tracker isolation cut at 2
-        //string   cut        = "some cut"           # you might want a cut here
+          InputTag collection = allLayer0Electrons    # 
+          double   deltaR     = 0.3                   #
+          string   cut        = "pt > 10"             # as in LeptonJetIsolationAngle
+          vstring  flags      = {"Isolation/Tracker"} # request the item to be marked as isolated in the tracker
+                                                      # from the PATElectronCleaner
       }
 
       PSet taus = { }
@@ -30,9 +32,9 @@ module allLayer0Jets = PATCaloJetCleaner {
   ### selection (e.g. ID)
   PSet     selection = { string type = "none" }
 
-  bool    markItems    = true // write the status flags in the output items
-  string  saveRejected = ""   // set this to a non empty label to save the list of items which fail
-  string  saveAll      = ""   // set this to a non empty label to save a list of all items both passing and failing
-  vstring bitsToIgnore = {}   // You can specify some bit names, e.g. "Overflow/User1", "Core/Duplicate", "Isolation/All".
+  bool    markItems    = true  // write the status flags in the output items
+  string  saveRejected = "Bad" // set this to a non empty label to save the list of items which fail
+  string  saveAll      = ""    // set this to a non empty label to save a list of all items both passing and failing
+  vstring bitsToIgnore = {}    // You can specify some bit names, e.g. "Overflow/User1", "Core/Duplicate", "Isolation/All".
   untracked bool wantSummary = true // print summary information for each status flag
 }

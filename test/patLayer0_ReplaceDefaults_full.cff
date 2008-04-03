@@ -8,6 +8,14 @@ replace allLayer0Muons.muonSource = muons
 replace allLayer0Electrons.electronSource = pixelMatchGsfElectrons
 replace allLayer0Electrons.removeDuplicates = true
 replace allLayer0Electrons.selection = { string type = "none" }
+replace allLayer0Electrons.isolation.tracker.src = patAODElectronIsolations:egammaElectronTkIsolation
+replace allLayer0Electrons.isolation.tracker.cut = 3.0
+replace allLayer0Electrons.isolation.ecal.src = patAODElectronIsolations:egammaEcalIsolation
+replace allLayer0Electrons.isolation.ecal.cut = 9999.0
+replace allLayer0Electrons.isolation.hcal.src = patAODElectronIsolations:egammaTowerIsolation
+replace allLayer0Electrons.isolation.hcal.cut = 9999.0
+replace allLayer0Electrons.isolation.user = { { bool placeholder = true } }
+replace allLayer0Electrons.bitsToIgnore   = { "Isolation/All" }  # set isolation but don't reject non-isolated electrons
 replace allLayer0Photons.photonSource = photons
 replace allLayer0Photons.removeDuplicates = "bySeed"
 replace allLayer0Photons.removeElectrons = "bySeed"
@@ -20,6 +28,8 @@ replace allLayer0Jets.removeOverlaps = {
       PSet electrons = { 
           InputTag collection = allLayer0Electrons   
           double   deltaR     = 0.3                  
+          string   cut        = "pt > 10"             # as in LeptonJetIsolationAngle
+          vstring  flags      = {"Isolation/Tracker"} # request the item to be marked as isolated in the tracker
       }
   }
 replace allLayer0METs.metSource = corMetType1Icone5

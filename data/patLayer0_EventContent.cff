@@ -1,7 +1,6 @@
 block patLayer0EventContent = {
   untracked vstring outputCommands = {
     "keep edmTriggerResults_TriggerResults_*_*",
-    "keep *_genParticleCandidates_*_*", # to be removed when full GenParticle transition finished
     "keep *_genParticles_*_*",
     "keep recoJetTags_*_*_*",
     "drop recoJetTags_coneIsolationTauJetTags_*_*",
@@ -9,9 +8,13 @@ block patLayer0EventContent = {
     "keep recoTracks_gsWithMaterialTracks_*_*",
     "keep *_offlinePrimaryVerticesFromCTFTracks_*_*",
 
+    "keep recoJets_iterativeCone5CaloJets_*_*",                    # temporarly needed
+    "keep recoPixelMatchGsfElectrons_pixelMatchGsfElectrons_*_*",  # by layer 1
+
     "keep *_layer0MuonIsolations_*_*",
+    "keep *_layer0ElectronIsolation_*_*",
+    "keep *_layer0TauIsolations_*_*",
     "keep *_layer0PhotonIsolations_*_*",
-    "keep floatedmValueMap_*_*_*",
     "keep patJetCorrFactorsedmValueMap_*_*_*",
     "keep recoGenJetsedmAssociation_*_*_*",
     "keep recoGenParticlesedmAssociation_*_*_*",
@@ -24,6 +27,12 @@ block patLayer0EventContent = {
     "keep *_allLayer0Muons_*_*",
     "keep *_allLayer0Taus_*_*",
     "keep *_allLayer0Jets_*_*",
-    "keep *_allLayer0METs_*_*"
+    "keep *_allLayer0METs_*_*",
+    "drop recoCandidateedmRefToBaseedmValueMap_allLayer0Photons_*_*",
+    "drop recoCandidateedmRefToBaseedmValueMap_allLayer0Electrons_*_*",
+    "drop recoCandidateedmRefToBaseedmValueMap_allLayer0Muons_*_*",
+    "drop recoCandidateedmRefToBaseedmValueMap_allLayer0Taus_*_*",
+    "drop recoCandidateedmRefToBaseedmValueMap_allLayer0Jets_*_*",
+    "drop recoCandidateedmRefToBaseedmValueMap_allLayer0METs_*_*"
   }
 }
