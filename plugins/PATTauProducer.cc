@@ -1,5 +1,5 @@
 //
-// $Id: PATTauProducer.cc,v 1.1 2008/03/06 09:23:11 llista Exp $
+// $Id: PATTauProducer.cc,v 1.1.2.1 2008/03/06 18:35:20 delaer Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATTauProducer.h"
@@ -31,7 +31,10 @@
 using namespace pat;
 
 
-PATTauProducer::PATTauProducer(const edm::ParameterSet & iConfig) {
+PATTauProducer::PATTauProducer(const edm::ParameterSet & iConfig) :
+  isolator_(iConfig.exists("isolation") ? iConfig.getParameter<edm::ParameterSet>("isolation") : edm::ParameterSet(), false) 
+{
+
   // initialize the configurables
   tauSrc_         = iConfig.getParameter<edm::InputTag>( "tauSource" );
   addGenMatch_    = iConfig.getParameter<bool>         ( "addGenMatch" );
@@ -47,6 +50,22 @@ PATTauProducer::PATTauProducer(const edm::ParameterSet & iConfig) {
     theResoCalc_ = new ObjectResolutionCalc(edm::FileInPath(tauResoFile_).fullPath(), useNNReso_);
   }
 
+  if (iConfig.exists("isoDeposits")) {
+     edm::ParameterSet depconf = iConfig.getParameter<edm::ParameterSet>("isoDeposits");
+     if (depconf.exists("tracker")) isoDepositLabels_.push_back(std::make_pair(TrackerIso, depconf.getParameter<edm::InputTag>("tracker")));
+     if (depconf.exists("ecal"))    isoDepositLabels_.push_back(std::make_pair(ECalIso, depconf.getParameter<edm::InputTag>("ecal")));
+     if (depconf.exists("hcal"))    isoDepositLabels_.push_back(std::make_pair(HCalIso, depconf.getParameter<edm::InputTag>("hcal")));
+     if (depconf.exists("user")) {
+        std::vector<edm::InputTag> userdeps = depconf.getParameter<std::vector<edm::InputTag> >("user");
+        std::vector<edm::InputTag>::const_iterator it = userdeps.begin(), ed = userdeps.end();
+        int key = UserBaseIso;
+        for ( ; it != ed; ++it, ++key) {
+            isoDepositLabels_.push_back(std::make_pair(IsolationKeys(key), *it));
+        }
+     }
+  }
+
+
   // produces vector of taus
   produces<std::vector<Tau> >();
 }
@@ -60,6 +79,8 @@ PATTauProducer::~PATTauProducer() {
 void PATTauProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup) {     
   std::auto_ptr<std::vector<Tau> > patTaus(new std::vector<Tau>()); 
 
+  if (isolator_.enabled()) isolator_.beginEvent(iEvent);
+
   edm::Handle<View<TauType> > anyTaus;
   try {
     iEvent.getByLabel(tauSrc_, anyTaus);
@@ -71,6 +92,11 @@ void PATTauProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
    
   edm::Handle<edm::Association<reco::GenParticleCollection> > genMatch;
   if (addGenMatch_) iEvent.getByLabel(genPartSrc_, genMatch); 
+
+  std::vector<edm::Handle<edm::ValueMap<IsoDeposit> > > deposits(isoDepositLabels_.size());
+  for (size_t j = 0, nd = deposits.size(); j < nd; ++j) {
+    iEvent.getByLabel(isoDepositLabels_[j].second, deposits[j]);
+  }
 
   // prepare LR calculation if required
   if (addLRValues_) {
@@ -143,6 +169,21 @@ void PATTauProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
       }
     }
 
+    // Isolation
+    if (isolator_.enabled()) {
+        isolator_.fill(*anyTaus, idx, isolatorTmpStorage_);
+        typedef pat::helper::MultiIsolator::IsolationValuePairs IsolationValuePairs;
+        // better to loop backwards, so the vector is resized less times
+        for (IsolationValuePairs::const_reverse_iterator it = isolatorTmpStorage_.rbegin(), ed = isolatorTmpStorage_.rend(); it != ed; ++it) {
+            aTau.setIsolation(it->first, it->second);
+        }
+    }
+
+    for (size_t j = 0, nd = deposits.size(); j < nd; ++j) {
+        aTau.setIsoDeposit(isoDepositLabels_[j].first, (*deposits[j])[tausRef]);
+    }
+
+
     // add resolution info if demanded
     if (addResolutions_) {
       (*theResoCalc_)(aTau);
@@ -163,6 +204,8 @@ void PATTauProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
 
   // destroy the lepton LR calculator
   if (addLRValues_) delete theLeptonLRCalc_;
+
+  if (isolator_.enabled()) isolator_.endEvent();
 }
 
 #include "FWCore/Framework/interface/MakerMacros.h"

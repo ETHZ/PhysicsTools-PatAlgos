@@ -1,5 +1,5 @@
 //
-// $Id: PATMuonProducer.cc,v 1.1.2.1 2008/03/06 10:40:10 llista Exp $
+// $Id: PATMuonProducer.cc,v 1.1.2.2 2008/03/12 22:08:49 lowette Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATMuonProducer.h"
@@ -29,8 +29,9 @@
 using namespace pat;
 
 
-PATMuonProducer::PATMuonProducer(const edm::ParameterSet & iConfig) {
-
+PATMuonProducer::PATMuonProducer(const edm::ParameterSet & iConfig) :
+  isolator_(iConfig.exists("isolation") ? iConfig.getParameter<edm::ParameterSet>("isolation") : edm::ParameterSet(), false) 
+{
   // general configurables
   muonSrc_       = iConfig.getParameter<edm::InputTag>( "muonSource" );
   // MC matching configurables
@@ -40,13 +41,6 @@ PATMuonProducer::PATMuonProducer(const edm::ParameterSet & iConfig) {
   addResolutions_= iConfig.getParameter<bool>         ( "addResolutions" );
   useNNReso_     = iConfig.getParameter<bool>         ( "useNNResolutions" );
   muonResoFile_  = iConfig.getParameter<std::string>  ( "muonResoFile" );
-  // isolation configurables
-  doTrkIso_      = iConfig.getParameter<bool>         ( "doTrkIsolation" );
-  doCalIso_      = iConfig.getParameter<bool>         ( "doCalIsolation" );
-  trackIsoSrc_   = iConfig.getParameter<edm::InputTag>( "trackIsoSource" );
-  ecalIsoSrc_    = iConfig.getParameter<edm::InputTag>( "ecalIsoSource" );
-  hcalIsoSrc_    = iConfig.getParameter<edm::InputTag>( "hcalIsoSource" );
-  hocalIsoSrc_   = iConfig.getParameter<edm::InputTag>( "hocalIsoSource" );
   // muon ID configurables
   addMuonID_     = iConfig.getParameter<bool>         ( "addMuonID" );
   // likelihood ratio configurables
@@ -58,6 +52,22 @@ PATMuonProducer::PATMuonProducer(const edm::ParameterSet & iConfig) {
   if (addResolutions_) {
     theResoCalc_ = new ObjectResolutionCalc(edm::FileInPath(muonResoFile_).fullPath(), useNNReso_);
   }
+
+  if (iConfig.exists("isoDeposits")) {
+     edm::ParameterSet depconf = iConfig.getParameter<edm::ParameterSet>("isoDeposits");
+     if (depconf.exists("tracker")) isoDepositLabels_.push_back(std::make_pair(TrackerIso, depconf.getParameter<edm::InputTag>("tracker")));
+     if (depconf.exists("ecal"))    isoDepositLabels_.push_back(std::make_pair(ECalIso, depconf.getParameter<edm::InputTag>("ecal")));
+     if (depconf.exists("hcal"))    isoDepositLabels_.push_back(std::make_pair(HCalIso, depconf.getParameter<edm::InputTag>("hcal")));
+     if (depconf.exists("user")) {
+        std::vector<edm::InputTag> userdeps = depconf.getParameter<std::vector<edm::InputTag> >("user");
+        std::vector<edm::InputTag>::const_iterator it = userdeps.begin(), ed = userdeps.end();
+        int key = UserBaseIso;
+        for ( ; it != ed; ++it, ++key) {
+            isoDepositLabels_.push_back(std::make_pair(IsolationKeys(key), *it));
+        }
+     }
+  }
+
 
   // produces vector of muons
   produces<std::vector<Muon> >();
@@ -76,27 +86,16 @@ void PATMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetu
   edm::Handle<edm::View<MuonType> > muons;
   iEvent.getByLabel(muonSrc_, muons);
 
+  if (isolator_.enabled()) isolator_.beginEvent(iEvent);
+
+  std::vector<edm::Handle<edm::ValueMap<IsoDeposit> > > deposits(isoDepositLabels_.size());
+  for (size_t j = 0, nd = deposits.size(); j < nd; ++j) {
+    iEvent.getByLabel(isoDepositLabels_[j].second, deposits[j]);
+  }
+
   // prepare the MC matching
   edm::Handle<edm::Association<reco::GenParticleCollection> > genMatch;
   if (addGenMatch_) iEvent.getByLabel(genPartSrc_, genMatch);
-
-  // prepare isolation calculation
-  edm::Handle<reco::MuIsoDepositAssociationMap> trackerIso;
-  if (doTrkIso_) {
-    if (hocalIsoSrc_.label() == "famos") { // switch off for full sim, since we switched back to using muon-obj embedded info
-      iEvent.getByLabel(trackIsoSrc_, trackerIso);
-    }
-  }
-  edm::Handle<reco::MuIsoDepositAssociationMap> ecalIso;
-  edm::Handle<reco::MuIsoDepositAssociationMap> hcalIso;
-  edm::Handle<reco::MuIsoDepositAssociationMap> hocalIso;
-  if (doCalIso_) {
-    if (hocalIsoSrc_.label() == "famos") { // switch off for full sim, since we switched back to using muon-obj embedded info
-      iEvent.getByLabel(ecalIsoSrc_, ecalIso);
-      iEvent.getByLabel(hcalIsoSrc_, hcalIso);
-      if (hocalIsoSrc_.label() != "famos") iEvent.getByLabel(hocalIsoSrc_, hocalIso);
-    }
-  }
 
   // prepare LR calculation
   edm::Handle<edm::View<reco::Track> > tracks;
@@ -125,48 +124,29 @@ void PATMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetu
     if (addResolutions_) {
       (*theResoCalc_)(aMuon);
     }
-    // do tracker isolation
-    if (doTrkIso_) {
-      std::pair<float, int> sumPtAndNTracks03;
-      if (hocalIsoSrc_.label() != "famos") {
-        // use the muon embedded muon isolation
-        sumPtAndNTracks03.first = aMuon.getIsolationR03().sumPt;
-        // use the muon isolation from the isolation maps (not yet stored in the 152 reco samples)
-        //const reco::MuIsoDeposit & depTracker = (*trackerIso)[itMuon->combinedMuon()];
-        //// cone hardcoded, corresponds to default in recent CMSSW versions
-        //sumPtAndNTracks03 = depTracker.depositAndCountWithin(0.3);
-      } else {
-        const reco::MuIsoDeposit & depTracker = (*trackerIso)[itMuon->track()];
-        // cone hardcoded, corresponds to default in recent CMSSW versions
-        sumPtAndNTracks03 = depTracker.depositAndCountWithin(0.3);
-      }
-      aMuon.setTrackIso(sumPtAndNTracks03.first);
-    }
-    // do calorimeter isolation
-    if (doCalIso_) {
-      if (hocalIsoSrc_.label() != "famos") {
-        // use the muon embedded muon isolation
-        aMuon.setCaloIso(aMuon.getIsolationR03().emEt + aMuon.getIsolationR03().hadEt + aMuon.getIsolationR03().hoEt);
-        // use the muon isolation from the isolation maps (not yet stored in the 152 reco samples)
-        //const reco::MuIsoDeposit & depEcal = (*ecalIso)[itMuon->combinedMuon()];
-        //const reco::MuIsoDeposit & depHcal = (*hcalIso)[itMuon->combinedMuon()];
-        //const reco::MuIsoDeposit & depHOcal = (*hocalIso)[itMuon->combinedMuon()];
-        //// cone hardcoded, corresponds to default in recent CMSSW versions
-        //aMuon.setCaloIso(depEcal.depositWithin(0.3)+depHcal.depositWithin(0.3)+depHOcal.depositWithin(0.3));
-      } else {
-        const reco::MuIsoDeposit & depEcal = (*ecalIso)[itMuon->track()];
-        const reco::MuIsoDeposit & depHcal = (*hcalIso)[itMuon->track()];
-        // cone hardcoded, corresponds to default in recent CMSSW versions
-        aMuon.setCaloIso(depEcal.depositWithin(0.3)+depHcal.depositWithin(0.3));
-      }
-    }
+
     // add muon ID info
     if (addMuonID_) {
 //      aMuon.setLeptonID((float) TMath::Prob((Float_t) itMuon->combinedMuon()->chi2(), (Int_t) itMuon->combinedMuon()->ndof()));
 // no combinedMuon in fastsim
       aMuon.setLeptonID((float) TMath::Prob((Float_t) itMuon->track()->chi2(), (Int_t) itMuon->track()->ndof()));
     }
-    // add lepton LR info
+
+     // Isolation
+    if (isolator_.enabled()) {
+        isolator_.fill(*muons, idx, isolatorTmpStorage_);
+        typedef pat::helper::MultiIsolator::IsolationValuePairs IsolationValuePairs;
+        // better to loop backwards, so the vector is resized less times
+        for (IsolationValuePairs::const_reverse_iterator it = isolatorTmpStorage_.rbegin(), ed = isolatorTmpStorage_.rend(); it != ed; ++it) {
+            aMuon.setIsolation(it->first, it->second);
+        }
+    }
+
+    for (size_t j = 0, nd = deposits.size(); j < nd; ++j) {
+        aMuon.setIsoDeposit(isoDepositLabels_[j].first, (*deposits[j])[muonsRef]);
+    }
+
+   // add lepton LR info
     if (addLRValues_) {
       theLeptonLRCalc_->calcLikelihood(aMuon, tracks, iEvent);
     }
@@ -183,6 +163,7 @@ void PATMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetu
 
   if (addLRValues_) delete theLeptonLRCalc_;
 
+  if (isolator_.enabled()) isolator_.endEvent();
 }
 
 
