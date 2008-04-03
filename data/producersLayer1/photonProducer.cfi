@@ -2,8 +2,10 @@
 module allLayer1Photons = PATPhotonProducer {
 
   ### General configurables
-  InputTag photonSource = allLayer0Photons   # cleaned photons from AOD
+  InputTag photonSource      = allLayer0Photons   # cleaned photons from AOD
+  bool     embedSuperCluster = false              # whether to embed in AOD externally stored supercluster
 
+  ### Isolation configurables
   PSet isolation = {
      PSet tracker = {
         InputTag src    = layer0PhotonIsolations:egammaPhotonTkDeposits
@@ -24,4 +26,5 @@ module allLayer1Photons = PATPhotonProducer {
     InputTag ecal    =  layer0PhotonIsolations:egammaPhotonEcalDeposits
     InputTag hcal    =  layer0PhotonIsolations:egammaPhotonTowersDeposits
   }
+
 }
