@@ -32,7 +32,7 @@ replace allLayer0Jets.removeOverlaps = {
           vstring  flags      = {"Isolation/Tracker"} # request the item to be marked as isolated in the tracker
       }
   }
-replace allLayer0METs.metSource = corMetType1Icone5
+replace allLayer0METs.metSource = corMetType1Icone5 # UNCOMMENTME Muons
 
 ###############################
 ### PAT Layer-0 MC matching ###

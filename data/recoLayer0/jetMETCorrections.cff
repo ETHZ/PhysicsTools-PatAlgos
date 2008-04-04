@@ -8,9 +8,14 @@ es_prefer MCJetCorrectorIcone5 = MCJetCorrectionService {}
 # default JetMET calibration on IC, KT and MC Jets
 include "JetMETCorrections/Type1MET/data/MetType1Corrections.cff"
 
+# default JetMET corrections for muons
+# UNCOMMENTME include "JetMETCorrections/Type1MET/data/MetMuonCorrections.cff"
+
+
 # Jet corrections are now done on the fly in the JetProducer
 
 # default PAT sequence for JetMET corrections
 sequence patJetMETCorrections = {
   MetType1Corrections
+# UNCOMMENTME , MetMuonCorrections
 }
