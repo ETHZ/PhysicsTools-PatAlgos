@@ -1,0 +1,18 @@
+
+
+module layer1Hemispheres   = PATHemisphereProducer {
+	InputTag patJets       = selectedLayer1Jets
+	InputTag patMets       = selectedLayer1METs
+	InputTag patMuons      = selectedLayer1Muons
+	InputTag patElectrons  = selectedLayer1Electrons
+	InputTag patPhotons    = selectedLayer1Photons
+	InputTag patTaus       = selectedLayer1Taus
+}
+
+
+
+
+
+
+
+
