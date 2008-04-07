@@ -1,0 +1,9 @@
+include "PhysicsTools/PatAlgos/data/producersLayer1/hemisphereProducer.cfi"
+
+
+
+sequence layer1Hemispheres = { selectedLayer1Hemispheres } 
+
+
+
+
