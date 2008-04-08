@@ -1,9 +1,0 @@
-include "PhysicsTools/PatAlgos/data/PATHemisphereProducer.cfi"
-
-
-
-sequence layer1Hemispheres = { selectedLayer1Hemispheres } 
-
-
-
-
