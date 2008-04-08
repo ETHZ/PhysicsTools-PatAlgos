@@ -21,7 +21,10 @@ block patLayer0EventContent = {
     "keep recoJetTagsrecoJetTagrecoJetTagsrecoJetTagedmrefhelperFindUsingAdvanceedmRefedmValueMap_*_*_*",
     "keep recoPixelMatchGsfElectronsrecoElectronIDsuintedmOneToOneedmAssociationMap_electronId_*_*",
     "keep recoPixelMatchGsfElectronsrecoElectronIDsuintedmOneToOneedmAssociationMap_electronIdRobust_*_*",
-
+ 
+    "keep patTriggerPrimitivesOwned_*_*_*",    
+    "keep patTriggerPrimitivesOwnededmAssociation_*_*_*",    
+    
     "keep *_allLayer0Photons_*_*",
     "keep *_allLayer0Electrons_*_*",
     "keep *_allLayer0Muons_*_*",

@@ -32,9 +32,9 @@ namespace pat {
   
     public:
     
-      PATL1MatchSelector(const edm::ParameterSet& cfg) {  }
+      PATL1MatchSelector( const edm::ParameterSet& cfg ) {  }
       
-      bool operator()( const T1 & c, const T2 & hlt ) const { return true; }
+      bool operator()( const T1 & c, const T2 & l1 ) const { return true; }
       
     private:
       
