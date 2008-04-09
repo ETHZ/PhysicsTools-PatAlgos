@@ -3,5 +3,5 @@
 
 module minLayer1Jets = PATJetMinFilter {
   InputTag src       = selectedLayer1Jets
-  uint32   minNumber = 2
+  uint32   minNumber = 0
 }

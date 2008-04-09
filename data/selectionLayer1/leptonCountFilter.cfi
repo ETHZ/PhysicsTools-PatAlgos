@@ -8,6 +8,6 @@ module countLayer1Leptons = PATLeptonCountFilter {
   bool     countElectrons = true
   bool     countMuons     = true
   bool     countTaus      = false
-  uint32   minNumber      = 1
+  uint32   minNumber      = 0
   uint32   maxNumber      = 999999
 }
