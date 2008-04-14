@@ -9,7 +9,7 @@ module allLayer1Electrons = PATElectronProducer {
   InputTag genParticleMatch  = electronMatch            # Association between electrons and generator particles
 
   ### Trigger matching configurables
-  bool      addTrigMatch     = false                     # switch on/off matching to trigger primitives
+  bool      addTrigMatch     = true                     # switch on/off matching to trigger primitives
   VInputTag trigPrimMatch    = { electronL1MatchL1SingleEG5,
                                  electronHLTMatchHLT1ElectronRelaxed } # trigger primitive sources to be used for the matching
 

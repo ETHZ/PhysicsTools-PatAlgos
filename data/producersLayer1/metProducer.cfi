@@ -9,7 +9,7 @@ module allLayer1METs = PATMETProducer {
   InputTag genMETSource       = genMet                  # GenMET source to be used for the matching
 
   ### Trigger matching configurables
-  bool      addTrigMatch      = false                    # switch on/off matching to trigger primitives
+  bool      addTrigMatch      = true                    # switch on/off matching to trigger primitives
   VInputTag trigPrimMatch     = { metL1MatchL1ETM20,
                                   metHLTMatchHLT1MET }  # trigger primitive sources to be used for the matching
 

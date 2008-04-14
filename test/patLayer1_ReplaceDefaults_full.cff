@@ -7,6 +7,7 @@
 replace allLayer1Muons.muonSource = allLayer0Muons
 replace allLayer1Muons.addGenMatch = true
 replace allLayer1Muons.genParticleMatch = muonMatch
+replace allLayer1Muons.addTrigMatch = true
 replace allLayer1Muons.addResolutions = true
 replace allLayer1Muons.useNNResolutions = false
 replace allLayer1Muons.muonResoFile = "PhysicsTools/PatUtils/data/Resolutions_muon.root"
@@ -35,6 +36,7 @@ replace allLayer1Muons.muonLRFile = "PhysicsTools/PatUtils/data/MuonLRDistros.ro
 replace allLayer1Electrons.electronSource = allLayer0Electrons
 replace allLayer1Electrons.addGenMatch = true
 replace allLayer1Electrons.genParticleMatch = electronMatch
+replace allLayer1Electrons.addTrigMatch = true
 replace allLayer1Electrons.addResolutions = true
 replace allLayer1Electrons.useNNResolutions = false
 replace allLayer1Electrons.electronResoFile = "PhysicsTools/PatUtils/data/Resolutions_electron.root"
@@ -53,11 +55,13 @@ replace allLayer1Electrons.electronIDRobustSource = electronIdRobust
 replace allLayer1Electrons.addLRValues = true
 replace allLayer1Electrons.electronLRFile = "PhysicsTools/PatUtils/data/ElectronLRDistros.root"
 # Generated from /afs/cern.ch/user/l/lowette/scratch.0/CMSSW_1_6_9_pre2_pat/src/PhysicsTools/PatAlgos/data/PATPhotonProducer.cfi
+replace allLayer1Photons.addTrigMatch = true
 
 # Generated from /afs/cern.ch/user/l/lowette/scratch.0/CMSSW_1_6_9_pre2_pat/src/PhysicsTools/PatAlgos/data/PATTauProducer.cfi
 replace allLayer1Taus.tauSource = allLayer0Taus
 replace allLayer1Taus.addGenMatch = true
 replace allLayer1Taus.genParticleMatch = tauMatch
+replace allLayer1Taus.addTrigMatch = true
 replace allLayer1Taus.addResolutions = true
 replace allLayer1Taus.useNNResolutions = true
 replace allLayer1Taus.tauResoFile = "PhysicsTools/PatUtils/data/Resolutions_tau.root"
@@ -73,6 +77,7 @@ replace allLayer1Jets.addGenJetMatch = true
 replace allLayer1Jets.genJetMatch = jetGenJetMatch
 replace allLayer1Jets.addPartonJetMatch = false
 replace allLayer1Jets.partonJetSource = nonsenseName
+replace allLayer1Jets.addTrigMatch = true
 replace allLayer1Jets.addResolutions = true
 replace allLayer1Jets.useNNResolutions = false
 replace allLayer1Jets.caliJetResoFile = "PhysicsTools/PatUtils/data/Resolutions_lJets_MCJetCorJetIcone5.root"
@@ -100,6 +105,7 @@ replace allLayer1Jets.jetCharge = {
 replace allLayer1METs.metSource = allLayer0METs
 replace allLayer1METs.addGenMET = true
 replace allLayer1METs.genMETSource = genMet
+replace allLayer1METs.addTrigMatch = true
 replace allLayer1METs.addResolutions = true
 replace allLayer1METs.useNNResolutions = false
 replace allLayer1METs.metResoFile = "PhysicsTools/PatUtils/data/Resolutions_met.root"
