@@ -1,5 +1,5 @@
 //
-// $Id: PATElectronProducer.cc,v 1.3 2008/04/03 13:34:22 gpetrucc Exp $
+// $Id$
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATElectronProducer.h"
@@ -32,8 +32,11 @@ PATElectronProducer::PATElectronProducer(const edm::ParameterSet & iConfig) :
   // general configurables
   electronSrc_      = iConfig.getParameter<edm::InputTag>( "electronSource" );
   // MC matching configurables
-  addGenMatch_      = iConfig.getParameter<bool>          ( "addGenMatch" );
-  genMatchSrc_       = iConfig.getParameter<edm::InputTag>( "genParticleMatch" );
+  addGenMatch_      = iConfig.getParameter<bool>         ( "addGenMatch" );
+  genMatchSrc_      = iConfig.getParameter<edm::InputTag>( "genParticleMatch" );
+  // Trigger matching configurables
+  addTrigMatch_     = iConfig.getParameter<bool>         ( "addTrigMatch" );
+  trigPrimSrc_      = iConfig.getParameter<std::vector<edm::InputTag> >( "trigPrimMatch" );
 
   // resolution configurables
   addResolutions_   = iConfig.getParameter<bool>         ( "addResolutions" );
@@ -116,6 +119,17 @@ void PATElectronProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
       } else {
         // "MC ELE MATCH: Something wrong: null=" << !genElectron.isNonnull() <<", avail=" << genElectron.isAvailable() << std::endl;
         anElectron.setGenLepton(reco::Particle(0, reco::Particle::LorentzVector(0,0,0,0))); // TQAF way of setting "null"
+      }
+    }
+    // matches to fired trigger primitives
+    if ( addTrigMatch_ ) {
+      for ( size_t i = 0; i < trigPrimSrc_.size(); ++i ) {
+        edm::Handle<edm::Association<TriggerPrimitiveCollection> > trigMatch;
+        iEvent.getByLabel(trigPrimSrc_[i], trigMatch);
+        TriggerPrimitiveRef trigPrim = (*trigMatch)[elecsRef];
+        if ( trigPrim.isNonnull() && trigPrim.isAvailable() ) {
+          anElectron.addTriggerMatch(*trigPrim);
+        }
       }
     }
     // add resolution info

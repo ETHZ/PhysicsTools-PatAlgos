@@ -1,5 +1,5 @@
 //
-// $Id: PATMuonProducer.cc,v 1.1.2.3 2008/04/03 13:34:22 gpetrucc Exp $
+// $Id$
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATMuonProducer.h"
@@ -36,6 +36,9 @@ PATMuonProducer::PATMuonProducer(const edm::ParameterSet & iConfig) :
   // MC matching configurables
   addGenMatch_   = iConfig.getParameter<bool>         ( "addGenMatch" );
   genPartSrc_    = iConfig.getParameter<edm::InputTag>( "genParticleMatch" );
+  // Trigger matching configurables
+  addTrigMatch_  = iConfig.getParameter<bool>         ( "addTrigMatch" );
+  trigPrimSrc_   = iConfig.getParameter<std::vector<edm::InputTag> >( "trigPrimMatch" );
   // resolution configurables
   addResolutions_= iConfig.getParameter<bool>         ( "addResolutions" );
   useNNReso_     = iConfig.getParameter<bool>         ( "useNNResolutions" );
@@ -106,6 +109,17 @@ void PATMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetu
         aMuon.setGenLepton(*genMuon);
       } else {
         aMuon.setGenLepton(reco::Particle(0, reco::Particle::LorentzVector(0,0,0,0))); // TQAF way of setting "null"
+      }
+    }
+    // matches to fired trigger primitives
+    if ( addTrigMatch_ ) {
+      for ( size_t i = 0; i < trigPrimSrc_.size(); ++i ) {
+        edm::Handle<edm::Association<TriggerPrimitiveCollection> > trigMatch;
+        iEvent.getByLabel(trigPrimSrc_[i], trigMatch);
+        TriggerPrimitiveRef trigPrim = (*trigMatch)[muonsRef];
+        if ( trigPrim.isNonnull() && trigPrim.isAvailable() ) {
+          aMuon.addTriggerMatch(*trigPrim);
+        }
       }
     }
     // add resolution info

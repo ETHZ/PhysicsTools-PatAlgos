@@ -1,5 +1,5 @@
 //
-// $Id: PATTauProducer.cc,v 1.1.2.2 2008/04/03 13:34:22 gpetrucc Exp $
+// $Id$
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATTauProducer.h"
@@ -37,6 +37,9 @@ PATTauProducer::PATTauProducer(const edm::ParameterSet & iConfig) :
   // initialize the configurables
   tauSrc_         = iConfig.getParameter<edm::InputTag>( "tauSource" );
   addGenMatch_    = iConfig.getParameter<bool>         ( "addGenMatch" );
+  // Trigger matching configurables
+  addTrigMatch_   = iConfig.getParameter<bool>         ( "addTrigMatch" );
+  trigPrimSrc_    = iConfig.getParameter<std::vector<edm::InputTag> >( "trigPrimMatch" );
   addResolutions_ = iConfig.getParameter<bool>         ( "addResolutions" );
   useNNReso_      = iConfig.getParameter<bool>         ( "useNNResolutions" );
   genPartSrc_     = iConfig.getParameter<edm::InputTag>( "genParticleMatch" );
@@ -158,6 +161,17 @@ void PATTauProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
         aTau.setGenLepton(*genTau);
       } else {
         aTau.setGenLepton(reco::Particle(0, reco::Particle::LorentzVector(0,0,0,0))); // TQAF way of setting "null"
+      }
+    }
+    // matches to fired trigger primitives
+    if ( addTrigMatch_ ) {
+      for ( size_t i = 0; i < trigPrimSrc_.size(); ++i ) {
+        edm::Handle<edm::Association<TriggerPrimitiveCollection> > trigMatch;
+        iEvent.getByLabel(trigPrimSrc_[i], trigMatch);
+        TriggerPrimitiveRef trigPrim = (*trigMatch)[tausRef];
+        if ( trigPrim.isNonnull() && trigPrim.isAvailable() ) {
+          aTau.addTriggerMatch(*trigPrim);
+        }
       }
     }
 

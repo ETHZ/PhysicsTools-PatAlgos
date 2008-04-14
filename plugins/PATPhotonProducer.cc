@@ -1,5 +1,5 @@
 //
-// $Id: PATPhotonProducer.cc,v 1.3 2008/03/18 09:44:17 gpetrucc Exp $
+// $Id$
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATPhotonProducer.h"
@@ -59,6 +59,17 @@ void PATPhotonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSe
     edm::RefToBase<PhotonType> photonRef = photons->refAt(idx);
     Photon aPhoton(photonRef);
     if (embedSuperCluster_) aPhoton.setSuperCluster(itPhoton->superCluster());
+    // matches to fired trigger primitives
+    if ( addTrigMatch_ ) {
+      for ( size_t i = 0; i < trigPrimSrc_.size(); ++i ) {
+        edm::Handle<edm::Association<TriggerPrimitiveCollection> > trigMatch;
+        iEvent.getByLabel(trigPrimSrc_[i], trigMatch);
+        TriggerPrimitiveRef trigPrim = (*trigMatch)[photonRef];
+        if ( trigPrim.isNonnull() && trigPrim.isAvailable() ) {
+          aPhoton.addTriggerMatch(*trigPrim);
+        }
+      }
+    }
 
     // here comes the extra functionality
     if (isolator_.enabled()) {

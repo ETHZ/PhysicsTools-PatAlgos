@@ -1,5 +1,5 @@
 //
-// $Id: PATMETProducer.cc,v 1.2 2008/04/01 19:05:24 lowette Exp $
+// $Id$
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATMETProducer.h"
@@ -58,6 +58,17 @@ void PATMETProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
     MET amet(metsRef);
     // add the generated MET
     if (addGenMET_) amet.setGenMET((*genMETs)[idx]);
+    // matches to fired trigger primitives
+    if ( addTrigMatch_ ) {
+      for ( size_t i = 0; i < trigPrimSrc_.size(); ++i ) {
+        edm::Handle<edm::Association<TriggerPrimitiveCollection> > trigMatch;
+        iEvent.getByLabel(trigPrimSrc_[i], trigMatch);
+        TriggerPrimitiveRef trigPrim = (*trigMatch)[metsRef];
+        if ( trigPrim.isNonnull() && trigPrim.isAvailable() ) {
+          amet.addTriggerMatch(*trigPrim);
+        }
+      }
+    }
     // add MET resolution info if demanded
     if (addResolutions_) {
       (*metResoCalc_)(amet);

@@ -8,6 +8,10 @@ module allLayer1Taus = PATTauProducer {
   bool     addGenMatch       = true                     # switch on/off matching to generator level
   InputTag genParticleMatch  = tauMatch                 # particles source to be used for the matching
 
+  ### Trigger matching configurables
+  bool      addTrigMatch     = false                     # switch on/off matching to trigger primitives
+  VInputTag trigPrimMatch    = { tauHLTMatchHLT1Tau }   # trigger primitive sources to be used for the matching
+
   ### resolution configurables
   bool     addResolutions    = true                     # switch on/off the resolution calculation
   bool     useNNResolutions  = true                     # use the neural network approach?
