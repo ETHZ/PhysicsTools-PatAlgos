@@ -1,5 +1,5 @@
 //
-// $Id: PATTauProducer.cc,v 1.1.2.1 2008/03/06 18:35:20 delaer Exp $
+// $Id: PATTauProducer.cc,v 1.1.2.2 2008/04/03 13:34:22 gpetrucc Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATTauProducer.h"
@@ -22,7 +22,6 @@
 #include "DataFormats/ParticleFlowReco/interface/PFCluster.h"
 
 #include "PhysicsTools/PatUtils/interface/ObjectResolutionCalc.h"
-#include "PhysicsTools/PatUtils/interface/LeptonLRCalc.h"
 
 #include <vector>
 #include <memory>
@@ -40,10 +39,8 @@ PATTauProducer::PATTauProducer(const edm::ParameterSet & iConfig) :
   addGenMatch_    = iConfig.getParameter<bool>         ( "addGenMatch" );
   addResolutions_ = iConfig.getParameter<bool>         ( "addResolutions" );
   useNNReso_      = iConfig.getParameter<bool>         ( "useNNResolutions" );
-  addLRValues_    = iConfig.getParameter<bool>         ( "addLRValues" );
   genPartSrc_     = iConfig.getParameter<edm::InputTag>( "genParticleMatch" );
   tauResoFile_    = iConfig.getParameter<std::string>  ( "tauResoFile" );
-  tauLRFile_      = iConfig.getParameter<std::string>  ( "tauLRFile" ); 
 
   // construct resolution calculator
   if (addResolutions_) {
@@ -96,11 +93,6 @@ void PATTauProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
   std::vector<edm::Handle<edm::ValueMap<IsoDeposit> > > deposits(isoDepositLabels_.size());
   for (size_t j = 0, nd = deposits.size(); j < nd; ++j) {
     iEvent.getByLabel(isoDepositLabels_[j].second, deposits[j]);
-  }
-
-  // prepare LR calculation if required
-  if (addLRValues_) {
-    theLeptonLRCalc_ = new LeptonLRCalc(iSetup, "", "", edm::FileInPath(tauLRFile_).fullPath());
   }
 
   for (size_t idx = 0, ntaus = anyTaus->size(); idx < ntaus; ++idx) {
@@ -188,11 +180,6 @@ void PATTauProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
     if (addResolutions_) {
       (*theResoCalc_)(aTau);
     }
-    // add lepton LR info if requested
-    if (addLRValues_) {
-      theLeptonLRCalc_->calcLikelihood(aTau, iEvent);
-    }
-
     patTaus->push_back(aTau);
   }
 
@@ -201,9 +188,6 @@ void PATTauProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
 
   // put genEvt object in Event
   iEvent.put(patTaus);
-
-  // destroy the lepton LR calculator
-  if (addLRValues_) delete theLeptonLRCalc_;
 
   if (isolator_.enabled()) isolator_.endEvent();
 }

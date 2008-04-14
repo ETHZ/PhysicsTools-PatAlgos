@@ -1,5 +1,5 @@
 //
-// $Id: PATMuonProducer.cc,v 1.1.2.2 2008/03/12 22:08:49 lowette Exp $
+// $Id: PATMuonProducer.cc,v 1.1.2.3 2008/04/03 13:34:22 gpetrucc Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATMuonProducer.h"
@@ -18,7 +18,6 @@
 #include "DataFormats/Common/interface/Association.h"
 
 #include "PhysicsTools/PatUtils/interface/ObjectResolutionCalc.h"
-#include "PhysicsTools/PatUtils/interface/LeptonLRCalc.h"
 
 #include "TMath.h"
 
@@ -43,10 +42,6 @@ PATMuonProducer::PATMuonProducer(const edm::ParameterSet & iConfig) :
   muonResoFile_  = iConfig.getParameter<std::string>  ( "muonResoFile" );
   // muon ID configurables
   addMuonID_     = iConfig.getParameter<bool>         ( "addMuonID" );
-  // likelihood ratio configurables
-  addLRValues_   = iConfig.getParameter<bool>         ( "addLRValues" );
-  tracksSrc_     = iConfig.getParameter<edm::InputTag>( "tracksSource" );
-  muonLRFile_    = iConfig.getParameter<std::string>  ( "muonLRFile" );
 
   // construct resolution calculator
   if (addResolutions_) {
@@ -97,13 +92,6 @@ void PATMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetu
   edm::Handle<edm::Association<reco::GenParticleCollection> > genMatch;
   if (addGenMatch_) iEvent.getByLabel(genPartSrc_, genMatch);
 
-  // prepare LR calculation
-  edm::Handle<edm::View<reco::Track> > tracks;
-  if (addLRValues_) {
-    iEvent.getByLabel(tracksSrc_, tracks);
-    theLeptonLRCalc_ = new LeptonLRCalc(iSetup, "", edm::FileInPath(muonLRFile_).fullPath(), "");
-  }
-
   // loop over muons
   std::vector<Muon> * patMuons = new std::vector<Muon>();
   for (edm::View<MuonType>::const_iterator itMuon = muons->begin(); itMuon != muons->end(); ++itMuon) {
@@ -146,10 +134,6 @@ void PATMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetu
         aMuon.setIsoDeposit(isoDepositLabels_[j].first, (*deposits[j])[muonsRef]);
     }
 
-   // add lepton LR info
-    if (addLRValues_) {
-      theLeptonLRCalc_->calcLikelihood(aMuon, tracks, iEvent);
-    }
     // add sel to selected
     patMuons->push_back(aMuon);
   }
@@ -160,8 +144,6 @@ void PATMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetu
   // put genEvt object in Event
   std::auto_ptr<std::vector<Muon> > ptr(patMuons);
   iEvent.put(ptr);
-
-  if (addLRValues_) delete theLeptonLRCalc_;
 
   if (isolator_.enabled()) isolator_.endEvent();
 }

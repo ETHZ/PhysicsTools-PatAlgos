@@ -39,10 +39,4 @@ module allLayer1Muons = PATMuonProducer {
   ### Muon ID configurables
   bool     addMuonID         = true                    # switch on/off the electron ID info addition
 
-  ### Likelihood ratio configurables
-  bool     addLRValues       = true                    # switch on/off the lepton likelihood ratio calculation
-  InputTag tracksSource      = ctfWithMaterialTracks   # tracks to be used for the tracker isolation
-  string   muonLRFile        = "PhysicsTools/PatUtils/data/MuonLRDistros.root"
-                                                       # input root file for the likelihood ratio fits
-
 }
