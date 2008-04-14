@@ -4,7 +4,7 @@
 ############################
 
 # Generated from /afs/cern.ch/user/l/lowette/scratch.0/CMSSW_1_6_9_pre2_pat/src/PhysicsTools/PatAlgos/data/PATLayer0.cff
-replace allLayer0Muons.muonSource = trackerMuons
+replace allLayer0Muons.muonSource = muons
 replace allLayer0Electrons.electronSource = pixelMatchGsfElectrons
 replace allLayer0Electrons.removeDuplicates = true
 replace allLayer0Electrons.selection = { string type = "none" }
