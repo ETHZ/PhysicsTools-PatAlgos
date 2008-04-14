@@ -3,6 +3,5 @@
 
   # sequence to run for PAT on top of default FastSim 1_6_8 event content
   sequence patExtraOn168FastAOD = {
-    muIsolation_ParamGlobalMuons,
-    patPFTauTagging
+    muIsolation_ParamGlobalMuons
   }

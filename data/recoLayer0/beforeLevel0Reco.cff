@@ -28,6 +28,7 @@ sequence patBeforeLevel0Reco_withoutPFTau = {
   patAODElectronIsolation,
   patAODPhotonIsolation,
   patAODMuonIsolation,
+  patPFTauTagging,     # take this off if you get a crash on 1.6.10 AODSIM
   patJetMETCorrections # needed for the MET
 }
 

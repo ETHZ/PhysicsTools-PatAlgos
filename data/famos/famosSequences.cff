@@ -27,7 +27,6 @@
     vertexreco,
     jetTracksAssociator,
     famosBTaggingSequence,
-    patPFTauTagging,
     patCaloTauTagging
   }
 
