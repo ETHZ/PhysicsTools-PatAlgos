@@ -1,5 +1,5 @@
 //
-// $Id$
+// $Id: PATJetProducer.cc,v 1.1.2.6 2008/04/14 21:36:12 vadler Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATJetProducer.h"
@@ -25,7 +25,6 @@
 
 #include "PhysicsTools/Utilities/interface/DeltaR.h"
 
-#include "PhysicsTools/PatUtils/interface/RefHelper.h"
 #include "PhysicsTools/PatUtils/interface/ObjectResolutionCalc.h"
 #include "DataFormats/PatCandidates/interface/JetCorrFactors.h"
 
@@ -96,10 +95,6 @@ void PATJetProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
   // Get the vector of jets
   edm::Handle<edm::View<JetType> > jets;
   iEvent.getByLabel(jetsSrc_, jets);
-  // get the back-references produced by cleaners, to access associations
-  edm::Handle<reco::CandRefValueMap> backRefJets;
-  iEvent.getByLabel(jetsSrc_, backRefJets);
-  pat::helper::RefHelper<reco::Candidate> backRefHelper(*backRefJets);
 
   // for jet flavour
   edm::Handle<reco::CandMatchMap> JetPartonMap;
@@ -147,7 +142,7 @@ void PATJetProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
     if (embedCaloTowers_) ajet.setCaloTowers(jetRef->getConstituents());
 
     // calculate the energy correction factors
-    JetCorrFactors jcf = backRefHelper.recursiveLookup(jetRef, *jetCorrs);
+    const JetCorrFactors & jcf = (*jetCorrs)[jetRef];
     ajet.setP4(jcf.scaleDefault() * itJet->p4());
     ajet.setNoCorrFactor(1./jcf.scaleDefault());
     ajet.setJetCorrFactors(jcf);
