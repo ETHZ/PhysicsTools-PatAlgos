@@ -11,6 +11,9 @@ include "PhysicsTools/PatAlgos/data/recoLayer0/photonIsolation.cff"
 # Tau Isolation 
 #include "PhysicsTools/PatAlgos/data/recoLayer0/tauIsolation.cff"
 
+# additional JetMET corrections (including jet correction factors)
+include "PhysicsTools/PatAlgos/data/recoLayer0/jetMETCorrections.cff"
+
 # jet-parton matching
 include "PhysicsTools/PatAlgos/data/recoLayer0/jetFlavourId.cff"
 
@@ -25,7 +28,8 @@ sequence patHighLevelReco_withoutPFTau = {
   patLayer0PhotonIsolation, // skim & re-key
   patLayer0MuonIsolation,     // skim & re-key
 //  patBTagging
-  jetTagsToValueMapRef, allJetTagsLayer0
+  jetTagsToValueMapRef, allJetTagsLayer0,
+  patLayer0JetMETCorrections
 }
 
 sequence patHighLevelReco = {
