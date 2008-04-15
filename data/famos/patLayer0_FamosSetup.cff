@@ -1,22 +1,18 @@
 
 ### FAMOS replace statements ###
+###
+### /!\ Note: all on one line to allow automatised replaces to work. Thanks.
+###
 
 // to use Famos muons
 replace allLayer0Muons.muonSource       = paramMuons:ParamGlobalMuons
 replace patAODMuonIsolations.collection = paramMuons:ParamGlobalMuons
 
-replace patAODMuonIsolations.associations = { 
-    muParamGlobalIsoDepositCalEcal, 
-    muParamGlobalIsoDepositCalHcal, 
-    muParamGlobalIsoDepositGsTk 
-}
+replace patAODMuonIsolations.associations = { muParamGlobalIsoDepositCalEcal, muParamGlobalIsoDepositCalHcal, muParamGlobalIsoDepositGsTk }
 
-replace layer0MuonIsolations.associations = { 
-    muParamGlobalIsoDepositCalEcal, 
-    muParamGlobalIsoDepositCalHcal, 
-    muParamGlobalIsoDepositGsTk 
-}
+replace layer0MuonIsolations.associations = { muParamGlobalIsoDepositCalEcal, muParamGlobalIsoDepositCalHcal, muParamGlobalIsoDepositGsTk }
 
+// Famos tracks
 replace egammaPhotonTkDeposits.ExtractorPSet.inputTrackCollection = gsWithMaterialTracks 
 
 // New isolation
