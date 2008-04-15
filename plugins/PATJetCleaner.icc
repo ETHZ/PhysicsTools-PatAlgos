@@ -10,13 +10,12 @@ pat::PATJetCleaner<JetIn,JetOut>::PATJetCleaner(const edm::ParameterSet & iConfi
   helper_.configure(iConfig);      // learn whether to save good, bad, all, ...
   helper_.registerProducts(*this); // issue the produces<>() commands
 
-  if (selectionCfg_.exists("IDmap")) {
-    IDmap_   = selectionCfg_.getParameter<edm::InputTag>("IDmap");
-    doSelByID_ = true;
+  if (iConfig.exists("JetLikelihoodRejector")) {
+    likelihoodRej_   = iConfig.getParameter<edm::InputTag>("JetLikelihoodRejector");
+    doLikelihoodRej_ = true;
   } 
   else 
-    doSelByID_ = false;
-
+    doLikelihoodRej_ = false;
   
   if (iConfig.exists("removeOverlaps")) {
     edm::ParameterSet overlapConf = iConfig.getParameter<edm::ParameterSet>("removeOverlaps");
@@ -49,10 +48,10 @@ void pat::PATJetCleaner<JetIn,JetOut>::produce(edm::Event & iEvent, const edm::E
     JetOut ourJet = static_cast<JetOut>(srcJet);
  
     // perform the selection
-    edm::Handle<pat::JetValueMap> JetIDmap;
-    if (doSelByID_)
-      iEvent.getByLabel(IDmap_, JetIDmap); 
-    if ( selector_->filter(idx,helper_.source(), &(*JetIDmap) ) ) continue;
+    edm::Handle<pat::JetValueMap> LikelihoodRection;
+    if (doLikelihoodRej_)
+      iEvent.getByLabel(likelihoodRej_, LikelihoodRection); 
+    if ( selector_->filter(idx,helper_.source(), &(*LikelihoodRection) ) ) continue;
 
     // write the jet
     helper_.addItem(idx, ourJet);
@@ -87,6 +86,11 @@ pat::PATJetCleaner<JetIn,JetOut>::fillSelection_( const edm::ParameterSet & cfg)
   JetSelection config_;
 
   config_.selectionType = cfg.getParameter<std::string>("type");;
+  if ( config_.selectionType == "JetMETLikelihood" )
+    config_.value = cfg.template getParameter<double>("value");
+  else
+    config_.value = -1;
+
   if ( config_.selectionType == "custom" ) {
     config_.EMFmin                 = cfg.getParameter<double>("EMFmin");
     config_.EMFmax                 = cfg.getParameter<double>("EMFmax");
@@ -108,9 +112,7 @@ pat::PATJetCleaner<JetIn,JetOut>::fillSelection_( const edm::ParameterSet & cfg)
     config_.PtJetOverArea_max      = cfg.getParameter<double>("PtJetOverAreamax");
     config_.PtTowerOverArea_min    = cfg.getParameter<double>("PtTowerOverAreamin");
     config_.PtTowerOverArea_max    = cfg.getParameter<double>("PtTowerOverAreamax");
-  } else if ( config_.selectionType != "none" )
-    config_.value = cfg.template getParameter<double>("value");
-
+  }
 
   return config_;
 

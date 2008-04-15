@@ -29,12 +29,8 @@ module allLayer0Jets = PATCaloJetCleaner {
       VPSet user    = { }
   }
   
-  ### selection
-  PSet     selection = { 
-     string type    = "JetID"  # options: none, JetID, custom
-     InputTag IDmap = JetID    # ValueMap<double> name, result of any JetID-tool
-     double value   = 0.       # if the jet's ID result, which is stored in IDmap, is greater than value then the jet is selected
-  }
+  ### selection (e.g. ID)
+  PSet     selection = { string type = "none" }
 
   bool    markItems    = true  // write the status flags in the output items
   string  saveRejected = "Bad" // set this to a non empty label to save the list of items which fail
