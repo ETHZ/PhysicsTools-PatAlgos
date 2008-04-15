@@ -1,7 +1,7 @@
 #ifndef PhysicsTools_PatAlgos_PATMuonCleaner_h
 #define PhysicsTools_PatAlgos_PATMuonCleaner_h
 //
-// $Id: PATMuonCleaner.h,v 1.7 2008/04/03 09:36:23 zeidler Exp $
+// $Id: PATMuonCleaner.h,v 1.7.2.1 2008/04/14 09:38:50 zeidler Exp $
 //
 
 /**
@@ -17,7 +17,7 @@
 
 \code
  PSet selection = {
-   string type = "none | globalMuons | muId | custom" // muId not implemented yet
+   string type = "none | globalMuons | muonPOG | custom"
    [ // If custom, give cut values
      double dPbyPmax = ...
      double chi2max  = ...
@@ -29,7 +29,7 @@
   The actual selection is performed by the MuonSelector.
 
   \author   Giovanni Petrucciani (from PATMuonProducer by Steven Lowette, Roger Wolf)
-  \version  $Id: PATMuonCleaner.h,v 1.7 2008/04/03 09:36:23 zeidler Exp $
+  \version  $Id: PATMuonCleaner.h,v 1.7.2.1 2008/04/14 09:38:50 zeidler Exp $
 */
 
 
@@ -114,7 +114,7 @@ namespace reco {
   			}*/
 			else{
 				throw edm::Exception(edm::errors::UnimplementedFeature) 
-					<< "muId flag is not valid or not implemented yet";
+					<< "muonPOG flag is not valid or not implemented yet";
 			}
           }
         return pat::MuonSelector( config_ );
