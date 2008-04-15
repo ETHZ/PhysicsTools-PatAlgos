@@ -1,13 +1,26 @@
 
-  ### FAMOS replace statements ###
+### FAMOS replace statements ###
 
-  // to use gsTracks
-  replace allLayer1Jets.trackAssociation.tracksSource = gsWithMaterialTracks
-  replace allLayer1Electrons.tracksSource = gsWithMaterialTracks
-  replace allLayer1Muons.tracksSource = gsWithMaterialTracks
-  // to use Famos muons
-  replace allLayer1METs.muonSource = paramMuons:ParamGlobalMuons
-  replace allLayer1Muons.trackIsoSource = muParamGlobalIsoDepositGsTk
-  replace allLayer1Muons.ecalIsoSource  = muParamGlobalIsoDepositCalEcal
-  replace allLayer1Muons.hcalIsoSource  = muParamGlobalIsoDepositCalHcal
-  replace allLayer1Muons.hocalIsoSource = famos
+// to use gsTracks
+replace allLayer1Jets.trackAssociation.tracksSource = gsWithMaterialTracks
+
+// New isolation (matching patLayer0_FamosSetup)
+replace allLayer1Muons.isolation.tracker.src = layer0MuonIsolations:muParamGlobalIsoDepositGsTk
+replace allLayer1Muons.isolation.ecal.src    = layer0MuonIsolations:muParamGlobalIsoDepositCalEcal
+replace allLayer1Muons.isolation.hcal.src    = layer0MuonIsolations:muParamGlobalIsoDepositCalHcal
+replace allLayer1Muons.isolation.user        = { { bool placeholder = true } }
+
+
+replace allLayer1Muons.isoDeposits.tracker = layer0MuonIsolations:muParamGlobalIsoDepositGsTk
+replace allLayer1Muons.isoDeposits.ecal    = layer0MuonIsolations:muParamGlobalIsoDepositCalEcal
+replace allLayer1Muons.isoDeposits.hcal    = layer0MuonIsolations:muParamGlobalIsoDepositCalHcal
+replace allLayer1Muons.isoDeposits.user    = {}
+
+
+// De-activate trigger matching until we manage to produce it in FastSim
+replace allLayer1Electrons.addTrigMatch = false
+replace allLayer1Muons.addTrigMatch = false
+replace allLayer1Jets.addTrigMatch = false
+replace allLayer1METs.addTrigMatch = false
+replace allLayer1Photons.addTrigMatch = false
+replace allLayer1Taus.addTrigMatch = false
