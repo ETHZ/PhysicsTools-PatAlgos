@@ -57,7 +57,7 @@ MAIN: while( <INPUT> ) {
         }
       }
       $line = "";
-      next; # This assumes closing brace is alone
+      next;       # This assumes closing brace is last on line...
     }
     # 3. Process parameters (might be multiline)
     ($line,$isMulti) = &processParameters( $line, $levelName );
@@ -187,7 +187,8 @@ sub countBraces {
   my $nBraces = 0;
   my $char = "";
 
-  while ( $char = chop($string) ) {
+  while ( length($string)>0 ) {
+    $char = chop($string);
     ++$nBraces if ( $char =~ /\{/ );
     --$nBraces if ( $char =~ /\}/ );
   }
