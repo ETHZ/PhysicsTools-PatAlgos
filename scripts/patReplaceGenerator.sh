@@ -57,21 +57,10 @@ cat > $layer0FileFull << EOF
 
 EOF
 
-# adapt layer 0 replace-file for fast simulation
-export extraReplaces=`cat $layer0FamosSetup | \
-  sed 's/#/\nREMOVE/' | sed 's/\/\//\nREMOVE/' | grep -v REMOVE | \
-  awk '/replace/ { print $2 }' | tr "\n" " "`
+# adapt layer 1 replace-file for fast simulation
 cp $layer0FileFull $layer0FileFast
-for matchStr in $extraReplaces ; do
-#  echo $matchStr
-  export replaceStr=`grep $matchStr $layer0FamosSetup | sed 's/^[ ]*//'`
-#  echo $replaceStr
-  cat $layer0FileFast | \
-  awk -v matchStr="$matchStr" -v replaceStr="$replaceStr" \
-    '{ do { if (matchStr == $2) print replaceStr; else print $0; } while (getline) }' \
-    > $layer0FileFast.tmp
-  mv $layer0FileFast.tmp $layer0FileFast
-done
+./patReplaceFast.pl $layer0FileFast $layer0FamosSetup
+
 
 # produce the replace-file
 cat > $layer1FileFull << EOF
@@ -114,15 +103,5 @@ cat > $layer1FileFull << EOF
 EOF
 
 # adapt layer 1 replace-file for fast simulation
-export extraReplaces=`cat $layer1FamosSetup | \
-  sed 's/#/\nREMOVE/' | sed 's/\/\//\nREMOVE/' | grep -v REMOVE | \
-  awk '/replace/ { print $2 }' | tr "\n" " "`
 cp $layer1FileFull $layer1FileFast
-for matchStr in $extraReplaces ; do
-  export replaceStr=`grep $matchStr $layer1FamosSetup | sed 's/^[ ]*//'`
-  cat $layer1FileFast | \
-  awk -v matchStr="$matchStr" -v replaceStr="$replaceStr" \
-    '{ do { if (matchStr == $2) print replaceStr; else print $0; } while (getline) }' \
-    > $layer1FileFast.tmp
-  mv $layer1FileFast.tmp $layer1FileFast
-done
+./patReplaceFast.pl $layer1FileFast $layer1FamosSetup
