@@ -5,6 +5,11 @@ include "EgammaAnalysis/EgammaIsolationProducers/data/egammaTowerIsolation.cfi"
 include "EgammaAnalysis/EgammaIsolationProducers/data/egammaEcalRelIsolationSequence.cff"
 include "EgammaAnalysis/EgammaIsolationProducers/data/egammaEcalIsolationSequence.cff"
 
+# This is needed due to a mismatch in the EgammaAnalysis/EgammaIsolationProducers configurables
+# and the AOD content in CMSSW_2_0_0
+replace egammaElectronTkIsolation.trackProducer    = generalTracks 
+replace egammaElectronTkNumIsolation.trackProducer = generalTracks 
+
 // define module labels for old (non isodeposit) POG isolation
 block patAODElectronIsolationLabels = {
     VInputTag associations = { 
