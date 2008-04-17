@@ -1,5 +1,5 @@
 //
-// $Id$
+// $Id: PATJetProducer.h,v 1.1.2.4 2008/04/14 21:36:12 vadler Exp $
 //
 
 #ifndef PhysicsTools_PatAlgos_PATJetProducer_h
@@ -13,7 +13,7 @@
    a collection of objects of JetType.
 
   \author   Steven Lowette, Jeremy Andrea
-  \version  $Id$
+  \version  $Id: PATJetProducer.h,v 1.1.2.4 2008/04/14 21:36:12 vadler Exp $
 */
 
 
@@ -77,13 +77,12 @@ namespace pat {
       bool                     addJetTagRefs_;
       std::vector<std::string> tagModuleLabelsToKeep_;
       bool                     addAssociatedTracks_;
-      edm::ParameterSet        trackAssociationPSet_;
+      edm::InputTag            trackAssociation_;
       bool                     addJetCharge_;
       edm::ParameterSet        jetChargePSet_;
       // tools
       ObjectResolutionCalc             * theResoCalc_;
       ObjectResolutionCalc             * theBResoCalc_;
-      ::helper::SimpleJetTrackAssociator   simpleJetTrackAssociator_;
       JetCharge                        * jetCharge_;
       GreaterByEt<Jet>                   eTComparator_;
 

@@ -1,5 +1,5 @@
 //
-// $Id: PATJetProducer.cc,v 1.1.2.6 2008/04/14 21:36:12 vadler Exp $
+// $Id: PATJetProducer.cc,v 1.1.2.7 2008/04/15 13:39:29 gpetrucc Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATJetProducer.h"
@@ -61,7 +61,7 @@ PATJetProducer::PATJetProducer(const edm::ParameterSet& iConfig) {
   addJetTagRefs_           = iConfig.getParameter<bool>                     ( "addJetTagRefs" );
   tagModuleLabelsToKeep_   = iConfig.getParameter<std::vector<std::string> >( "tagModuleLabelsToKeep" );
   addAssociatedTracks_     = iConfig.getParameter<bool>                     ( "addAssociatedTracks" ); 
-  trackAssociationPSet_    = iConfig.getParameter<edm::ParameterSet>        ( "trackAssociation" );
+  trackAssociation_        = iConfig.getParameter<edm::InputTag>            ( "trackAssociationSource" );
   addJetCharge_            = iConfig.getParameter<bool>                     ( "addJetCharge" ); 
   jetChargePSet_           = iConfig.getParameter<edm::ParameterSet>        ( "jetCharge" );
 
@@ -71,8 +71,6 @@ PATJetProducer::PATJetProducer(const edm::ParameterSet& iConfig) {
     theBResoCalc_ = new ObjectResolutionCalc(edm::FileInPath(caliBJetResoFile_).fullPath(), useNNReso_);
   }
 
-  // construct Jet Track Associator
-  simpleJetTrackAssociator_ = ::helper::SimpleJetTrackAssociator(trackAssociationPSet_);
   // construct Jet Charge Computer
   if (addJetCharge_) jetCharge_ = new JetCharge(jetChargePSet_);
  
@@ -125,9 +123,9 @@ void PATJetProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
   edm::Handle<reco::TrackProbabilityTagInfoCollection> jetsInfoHandleTP;
   edm::Handle<reco::TrackCountingTagInfoCollection> jetsInfoHandleTC;
 
-  // tracks Jet Track Association, by hand in CMSSW_1_3_X
-  edm::Handle<reco::TrackCollection> hTracks;
-  iEvent.getByLabel(trackAssociationPSet_.getParameter<edm::InputTag>("tracksSource"), hTracks);
+  // tracks Jet Track Association
+  edm::Handle<edm::ValueMap<reco::TrackRefVector> > hTrackAss;
+  iEvent.getByLabel(trackAssociation_, hTrackAss);
 
 
   // loop over jets
@@ -233,8 +231,7 @@ void PATJetProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
       }
     }
 
-    // Associate tracks with jet (at least temporary)
-    simpleJetTrackAssociator_.associate(ajet.momentum(), hTracks, ajet.associatedTracks_);
+    ajet.associatedTracks_ = (*hTrackAss)[jetRef];
 
     // PUT HERE EVERYTHING WHICH NEEDS TRACKS
     if (addJetCharge_) {

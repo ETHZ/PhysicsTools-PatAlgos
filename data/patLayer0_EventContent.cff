@@ -28,6 +28,8 @@ block patLayer0EventContent = {
     "keep *_electronIdRobust_*_*",
     "keep *_jetPartonAssociation_*_*",
     "keep *_caloJetCollectionClone_*_*",
+
+    "keep *_layer0JetTracksAssociator_*_*",
  
     "keep patTriggerPrimitivesOwned_*_*_*",    
     "keep patTriggerPrimitivesOwnededmAssociation_*_*_*",    

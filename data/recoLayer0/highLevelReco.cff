@@ -20,6 +20,9 @@ include "PhysicsTools/PatAlgos/data/recoLayer0/jetFlavourId.cff"
 # additional b-tagging
 include "PhysicsTools/PatAlgos/data/recoLayer0/bTagging.cff"
 
+# Jet track association and jet charge
+include "PhysicsTools/PatAlgos/data/recoLayer0/jetTracksCharge.cff"
+
 # default  sequence for extra high-level reconstruction
 sequence patHighLevelReco_withoutPFTau = {
   patElectronId,
@@ -29,7 +32,8 @@ sequence patHighLevelReco_withoutPFTau = {
   patLayer0MuonIsolation,     // skim & re-key
 //  patBTagging
   jetTagsToValueMapRef, allJetTagsLayer0,
-  patLayer0JetMETCorrections
+  patLayer0JetMETCorrections,
+  patLayer0JetTracksCharge
 }
 
 sequence patHighLevelReco = {

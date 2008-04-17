@@ -153,3 +153,10 @@ replace layer0MuonIsolations.associations = { muParamGlobalIsoDepositCalEcal, mu
 replace egammaPhotonTkDeposits.ExtractorPSet.inputTrackCollection = gsWithMaterialTracks 
 replace patAODMuonIsolations.associations = { muParamGlobalIsoDepositCalEcal, muParamGlobalIsoDepositCalHcal, muParamGlobalIsoDepositGsTk }
 replace patAODMuonIsolations.collection = paramMuons:ParamGlobalMuons
+
+replace layer0JetTracksAssociator.src    = allLayer0Jets
+replace layer0JetTracksAssociator.tracks = gsWithMaterialTracks
+replace layer0JetTracksAssociator.deltaR       = 0.5
+replace layer0JetTracksAssociator.minHits      = 8
+replace layer0JetTracksAssociator.maxNormChi2  = 5.0
+

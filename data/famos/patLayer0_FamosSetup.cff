@@ -3,6 +3,7 @@
 ###
 ### /!\ Note: all on one line to allow automatised replaces to work. Thanks.
 ###
+replace layer0JetTracksAssociator.tracks = gsWithMaterialTracks
 
 // to use Famos muons
 replace allLayer0Muons.muonSource       = paramMuons:ParamGlobalMuons

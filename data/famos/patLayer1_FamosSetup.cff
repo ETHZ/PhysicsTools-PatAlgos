@@ -1,9 +1,6 @@
 
 ### FAMOS replace statements ###
 
-// to use gsTracks
-replace allLayer1Jets.trackAssociation.tracksSource = gsWithMaterialTracks
-
 // New isolation (matching patLayer0_FamosSetup)
 replace allLayer1Muons.isolation.tracker.src = layer0MuonIsolations:muParamGlobalIsoDepositGsTk
 replace allLayer1Muons.isolation.ecal.src    = layer0MuonIsolations:muParamGlobalIsoDepositCalEcal
