@@ -1,5 +1,5 @@
 //
-// $Id: PATJetProducer.cc,v 1.1.2.7 2008/04/15 13:39:29 gpetrucc Exp $
+// $Id: PATJetProducer.cc,v 1.1.2.8 2008/04/17 09:12:04 gpetrucc Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATJetProducer.h"
@@ -63,7 +63,7 @@ PATJetProducer::PATJetProducer(const edm::ParameterSet& iConfig) {
   addAssociatedTracks_     = iConfig.getParameter<bool>                     ( "addAssociatedTracks" ); 
   trackAssociation_        = iConfig.getParameter<edm::InputTag>            ( "trackAssociationSource" );
   addJetCharge_            = iConfig.getParameter<bool>                     ( "addJetCharge" ); 
-  jetChargePSet_           = iConfig.getParameter<edm::ParameterSet>        ( "jetCharge" );
+  jetCharge_               = iConfig.getParameter<edm::InputTag>            ( "jetChargeSource" );
 
   // construct resolution calculator
   if (addResolutions_) {
@@ -71,9 +71,7 @@ PATJetProducer::PATJetProducer(const edm::ParameterSet& iConfig) {
     theBResoCalc_ = new ObjectResolutionCalc(edm::FileInPath(caliBJetResoFile_).fullPath(), useNNReso_);
   }
 
-  // construct Jet Charge Computer
-  if (addJetCharge_) jetCharge_ = new JetCharge(jetChargePSet_);
- 
+
   // produces vector of jets
   produces<std::vector<Jet> >();
 }
@@ -84,7 +82,6 @@ PATJetProducer::~PATJetProducer() {
     delete theResoCalc_;
     delete theBResoCalc_;
   }
-  if (addJetCharge_) delete jetCharge_;
 }
 
 
@@ -125,7 +122,9 @@ void PATJetProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
 
   // tracks Jet Track Association
   edm::Handle<edm::ValueMap<reco::TrackRefVector> > hTrackAss;
-  iEvent.getByLabel(trackAssociation_, hTrackAss);
+  if (addAssociatedTracks_) iEvent.getByLabel(trackAssociation_, hTrackAss);
+  edm::Handle<edm::ValueMap<float> > hJetChargeAss;
+  if (addJetCharge_) iEvent.getByLabel(jetCharge_, hJetChargeAss);
 
 
   // loop over jets
@@ -231,15 +230,9 @@ void PATJetProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
       }
     }
 
-    ajet.associatedTracks_ = (*hTrackAss)[jetRef];
+    if (addAssociatedTracks_) ajet.associatedTracks_ = (*hTrackAss)[jetRef];
 
-    // PUT HERE EVERYTHING WHICH NEEDS TRACKS
-    if (addJetCharge_) {
-      ajet.setJetCharge(static_cast<float>(jetCharge_->charge(ajet.p4(), ajet.associatedTracks())));
-    }
-
-    // drop jet track association if the user does not want it
-    if (!addAssociatedTracks_) ajet.associatedTracks_.clear();
+    if (addJetCharge_)        ajet.setJetCharge( (*hJetChargeAss)[jetRef] );
 
     patJets->push_back(ajet);
   }

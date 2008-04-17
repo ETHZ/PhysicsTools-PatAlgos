@@ -49,9 +49,6 @@ module allLayer1Jets = PATJetProducer {
   InputTag trackAssociationSource  = layer0JetTracksAssociator   # association from jets to tracks
   ### Jet charge configurables
   bool     addJetCharge            = true                        # switch on/off jet charge calculation
-  PSet     jetCharge               = {                           # the jet charge parameter set
-    double exp = 1.0
-    string var = "Pt"
-  }
+  InputTag jetChargeSource         = layer0JetCharge             # the jet charge input value map
 
 }

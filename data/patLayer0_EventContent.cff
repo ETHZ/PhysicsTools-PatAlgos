@@ -30,6 +30,7 @@ block patLayer0EventContent = {
     "keep *_caloJetCollectionClone_*_*",
 
     "keep *_layer0JetTracksAssociator_*_*",
+    "keep *_layer0JetCharge_*_*",
  
     "keep patTriggerPrimitivesOwned_*_*_*",    
     "keep patTriggerPrimitivesOwnededmAssociation_*_*_*",    

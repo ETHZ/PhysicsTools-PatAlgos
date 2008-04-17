@@ -154,3 +154,8 @@ replace layer0JetTracksAssociator.tracks = ctfWithMaterialTracks
 replace layer0JetTracksAssociator.deltaR       = 0.5
 replace layer0JetTracksAssociator.minHits      = 8
 replace layer0JetTracksAssociator.maxNormChi2  = 5.0
+
+replace layer0JetCharge.src = allLayer0Jets
+replace layer0JetCharge.jetTracksAssociation = layer0JetTracksAssociator 
+replace layer0JetCharge.exp = 1.0
+replace layer0JetCharge.var = "Pt"

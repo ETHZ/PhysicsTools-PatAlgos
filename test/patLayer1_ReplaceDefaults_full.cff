@@ -88,8 +88,7 @@ replace allLayer1Jets.tagModuleLabelsToKeep = {"combinedSVJetTags", "combinedSVM
 replace allLayer1Jets.addAssociatedTracks = true                        # switch on/off track association
 replace allLayer1Jets.trackAssociationSource = layer0JetTracksAssociator
 replace allLayer1Jets.addJetCharge = true                        # switch on/off jet charge calculation
-replace allLayer1Jets.jetCharge.exp = 1.0
-replace allLayer1Jets.jetCharge.var = "Pt"
+replace allLayer1Jets.jetChargeSource = layer0JetCharge
 # Generated from CMSSW_1_6_11/src/PhysicsTools/PatAlgos/data/producersLayer1/metProducer.cfi
 replace allLayer1METs.metSource = allLayer0METs           # reco MET input source
 replace allLayer1METs.addGenMET = true                    # switch on/off matching to generator level
