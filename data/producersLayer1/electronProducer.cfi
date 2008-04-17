@@ -31,9 +31,9 @@ module allLayer1Electrons = PATElectronProducer {
   }
 
   ### electron ID configurables
-  bool     addElectronID     = true                     # switch on/off the electron ID info addition
+  bool     addElectronID     = false                     # switch on/off the electron ID info addition
   InputTag electronIDSource  = electronId               # label of the electron ID info source
-  bool     addElectronIDRobust     = true               # switch on/off the adding of additional electron id info, from the "robust cuts-based" producer            
+  bool     addElectronIDRobust     = false               # switch on/off the adding of additional electron id info, from the "robust cuts-based" producer            
   InputTag electronIDRobustSource  = electronIdRobust   # label for the robust cuts-based producer (should be just a clone of previous)
 
 }

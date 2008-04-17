@@ -6,7 +6,7 @@ module allLayer1Jets = PATJetProducer {
   bool     embedCaloTowers         = true                        # switch on/off embedding of supercluster (externally stored in AOD)
 
   ### Jet flavour idetification configurables
-  bool     getJetMCFlavour         = true                        # switch on/off MC flavour identification of all jets
+  bool     getJetMCFlavour         = false                       # switch on/off MC flavour identification of all jets
   InputTag JetPartonMapSource      = jetPartonAssociation        # the match-collection, produced by default from PATHighLevelReco.cff
 
   ### MC matching configurables
@@ -32,25 +32,17 @@ module allLayer1Jets = PATJetProducer {
   bool     addBTagInfo             = true                        # switch on/off the addition of b-tag information
   string   tagModuleLabelPostfix   = "Layer0"                    # strip this string from the end of the tag module labels
   bool     addDiscriminators       = true                        # switch on/off the addition of the btag discriminators
-  bool     addJetTagRefs           = true                        # switch on/off the addition of references to the b-tag JetTag's
+  bool     addTagInfoRefs          = true                        # switch on/off the addition of references to the b-tag JetTag's
   vstring  tagModuleLabelsToKeep = {                             # the JetTag labels that should be considered and kept (excluding tagModuleLabelPostfix)
     "combinedSVJetTags", "combinedSVMVAJetTags", "impactParameterMVAJetTags", "jetProbabilityJetTags", "softElectronJetTags", "softMuonJetTags", "softMuonNoIPJetTags", "trackCountingHighEffJetTags", "trackCountingHighPurJetTags"
   }
 
   ### track association configurables
-  bool     addAssociatedTracks     = true                        # switch on/off track association
-  PSet     trackAssociation        = {                           # the track association parameter set
-    InputTag tracksSource = generalTracks
-    double   deltaR       = 0.5
-    int32    minHits      = 8
-    double   maxNormChi2  = 5.0
-  }
+  bool     addAssociatedTracks     = false                        # switch on/off track association
+  InputTag trackAssociationSource  = layer0JetTracksAssociator   # association from jets to tracks
 
   ### Jet charge configurables
-  bool     addJetCharge            = true                        # switch on/off jet charge calculation
-  PSet     jetCharge               = {                           # the jet charge parameter set
-    double exp = 1.0
-    string var = "Pt"
-  }
+  bool     addJetCharge            = false                        # switch on/off jet charge calculation
+  InputTag jetChargeSource         = layer0JetCharge             # the jet charge input value map
 
 }

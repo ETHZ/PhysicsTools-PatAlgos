@@ -1,13 +1,12 @@
 
   ### FAMOS replace statements ###
 
-  // to use gsTracks
-  replace allLayer1Jets.trackAssociation.tracksSource = generalTracks
-  replace allLayer1Electrons.tracksSource = generalTracks
-  replace allLayer1Muons.tracksSource = generalTracks
   // to use Famos muons
-  replace allLayer1METs.muonSource = paramMuons:ParamGlobalMuons
-  replace allLayer1Muons.trackIsoSource = muParamGlobalIsoDepositGsTk
-  replace allLayer1Muons.ecalIsoSource  = muParamGlobalIsoDepositCalEcal
-  replace allLayer1Muons.hcalIsoSource  = muParamGlobalIsoDepositCalHcal
-  replace allLayer1Muons.hocalIsoSource = famos
+replace allLayer1Muons.isolation.tracker.src    = layer0MuonIsolations:muParamGlobalIsoDepositTk
+replace allLayer1Muons.isolation.ecal.src       = layer0MuonIsolations:muParamGlobalIsoDepositCalByAssociatorTowersecal
+replace allLayer1Muons.isolation.hcal.src       = layer0MuonIsolations:muParamGlobalIsoDepositCalByAssociatorTowershcal
+replace allLayer1Muons.isolation.user           = { { bool placeholder = true } }
+replace allLayer1Muons.isoDeposits.tracker = layer0MuonIsolations:muParamGlobalIsoDepositTk
+replace allLayer1Muons.isoDeposits.ecal    = layer0MuonIsolations:muParamGlobalIsoDepositCalByAssociatorTowersecal
+replace allLayer1Muons.isoDeposits.hcal    = layer0MuonIsolations:muParamGlobalIsoDepositCalByAssociatorTowershcal
+replace allLayer1Muons.isoDeposits.user    = { layer0MuonIsolations:muParamGlobalIsoDepositCalByAssociatorTowersho }
