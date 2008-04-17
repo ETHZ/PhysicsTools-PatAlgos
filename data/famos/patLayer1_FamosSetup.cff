@@ -2,9 +2,9 @@
   ### FAMOS replace statements ###
 
   // to use gsTracks
-  replace allLayer1Jets.trackAssociation.tracksSource = gsWithMaterialTracks
-  replace allLayer1Electrons.tracksSource = gsWithMaterialTracks
-  replace allLayer1Muons.tracksSource = gsWithMaterialTracks
+  replace allLayer1Jets.trackAssociation.tracksSource = generalTracks
+  replace allLayer1Electrons.tracksSource = generalTracks
+  replace allLayer1Muons.tracksSource = generalTracks
   // to use Famos muons
   replace allLayer1METs.muonSource = paramMuons:ParamGlobalMuons
   replace allLayer1Muons.trackIsoSource = muParamGlobalIsoDepositGsTk
