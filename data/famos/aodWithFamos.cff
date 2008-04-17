@@ -1,7 +1,9 @@
   # =====  REPLACE statements for AOD RE-RECO on FAMOS ========
   include "RecoMET/METProducers/data/CaloMET.cfi"
+  include "RecoMuon/MuonIsolationProducers/data/muIsoDeposits.cff"
 
-  # sequence to run for PAT on top of default FastSim 1_6_8 event content
-  sequence patExtraOn208FastSim = {
+  # sequence to run for PAT on top of default FastSim 2_0_0 AODSIM event content
+  sequence patExtraOn200FastSim = {
+    muIsoDeposits_ParamGlobalMuons, 
     met
   }

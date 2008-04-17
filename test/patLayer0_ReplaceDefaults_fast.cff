@@ -25,8 +25,8 @@ replace egammaPhotonTkDeposits.ExtractorPSet.inputTrackCollection = generalTrack
 # Generated from /afs/cern.ch/user/l/lowette/scratch.0/CMSSW_1_6_9_pre2_pat/src/PhysicsTools/PatAlgos/data/PATLayer0.cff
 replace allLayer0Muons.muonSource = paramMuons:ParamGlobalMuons
 replace allLayer0Muons.isolation.tracker.src = patAODMuonIsolations:muParamGlobalIsoDepositTk
-replace allLayer0Muons.isolation.ecal.src    = patAODMuonIsolations:muParamGlobalIsoDepositCalByAssociatorTowers:ecal
-replace allLayer0Muons.isolation.hcal.src    = patAODMuonIsolations:muParamGlobalIsoDepositCalByAssociatorTowers:hcal
+replace allLayer0Muons.isolation.ecal.src    = patAODMuonIsolations:muParamGlobalIsoDepositCalByAssociatorTowersecal
+replace allLayer0Muons.isolation.hcal.src    = patAODMuonIsolations:muParamGlobalIsoDepositCalByAssociatorTowershcal
 replace allLayer0Muons.isolation.user        = { { bool placeholder = true } }
 
 replace allLayer0Electrons.electronSource = pixelMatchGsfElectrons

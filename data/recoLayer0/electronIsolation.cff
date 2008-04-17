@@ -1,5 +1,5 @@
-include "EgammaAnalysis/EgammaIsolationProducers/data/egammaElectronTkIsolation.cfi"
-include "EgammaAnalysis/EgammaIsolationProducers/data/egammaElectronTkNumIsolation.cfi"
+//include "EgammaAnalysis/EgammaIsolationProducers/data/egammaElectronTkIsolation.cfi"
+//include "EgammaAnalysis/EgammaIsolationProducers/data/egammaElectronTkNumIsolation.cfi"
 include "EgammaAnalysis/EgammaIsolationProducers/data/egammaHOETower.cfi"
 include "EgammaAnalysis/EgammaIsolationProducers/data/egammaTowerIsolation.cfi"
 include "EgammaAnalysis/EgammaIsolationProducers/data/egammaEcalRelIsolationSequence.cff"
@@ -7,8 +7,24 @@ include "EgammaAnalysis/EgammaIsolationProducers/data/egammaEcalIsolationSequenc
 
 # This is needed due to a mismatch in the EgammaAnalysis/EgammaIsolationProducers configurables
 # and the AOD content in CMSSW_2_0_0
-replace egammaElectronTkIsolation.trackProducer    = generalTracks 
-replace egammaElectronTkNumIsolation.trackProducer = generalTracks 
+# also, I can't use replace, otherwise I can't get replace it again if I want to
+module egammaElectronTkIsolation = EgammaElectronTkIsolationProducer {
+    InputTag electronProducer =  pixelMatchGsfElectrons
+    InputTag trackProducer = generalTracks
+    double ptMin = 1.5
+    double intRadius = .02
+    double extRadius = .2
+    double maxVtxDist = .1
+    bool absolut = true
+}
+module egammaElectronTkNumIsolation = EgammaElectronTkNumIsolationProducer {
+    InputTag electronProducer =  pixelMatchGsfElectrons
+    InputTag trackProducer = generalTracks
+    double ptMin = 1.5
+    double intRadius = 0.02
+    double extRadius = .2
+    double maxVtxDist = .1
+}
 
 // define module labels for old (non isodeposit) POG isolation
 block patAODElectronIsolationLabels = {
