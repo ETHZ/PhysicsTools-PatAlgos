@@ -36,9 +36,4 @@ module allLayer1Electrons = PATElectronProducer {
   bool     addElectronIDRobust     = true               # switch on/off the adding of additional electron id info, from the "robust cuts-based" producer            
   InputTag electronIDRobustSource  = electronIdRobust   # label for the robust cuts-based producer (should be just a clone of previous)
 
-  ### likelihood ratio configurables
-  bool     addLRValues       = true                     # switch on/off the lepton likelihood ratio calculation
-  string   electronLRFile    = "PhysicsTools/PatUtils/data/ElectronLRDistros.root"
-                                                        # input root file for the likelihood ratio fits
-
 }
