@@ -5,18 +5,18 @@
 
 replace patAODMuonIsolations.collection   = paramMuons:ParamGlobalMuons
 replace patAODMuonIsolations.associations = {
-    muParamGlobalIsoDepositCalEcal,
-    muParamGlobalIsoDepositCalHcal,
-    muParamGlobalIsoDepositGsTk
+    muParamGlobalIsoDepositCalByAssociatorTowers:ecal,
+    muParamGlobalIsoDepositCalByAssociatorTowers:hcal,
+    muParamGlobalIsoDepositTk
 }
 
 replace layer0MuonIsolations.associations = {
-    muParamGlobalIsoDepositCalEcal,
-    muParamGlobalIsoDepositCalHcal,
-    muParamGlobalIsoDepositGsTk
+    muParamGlobalIsoDepositCalByAssociatorTowers:ecal,
+    muParamGlobalIsoDepositCalByAssociatorTowers:hcal,
+    muParamGlobalIsoDepositTk
 }
 
-replace egammaPhotonTkDeposits.ExtractorPSet.inputTrackCollection = gsWithMaterialTracks 
+replace egammaPhotonTkDeposits.ExtractorPSet.inputTrackCollection = generalTracks 
 
 ############################
 ### PAT Layer-0 cleaning ###
@@ -24,9 +24,9 @@ replace egammaPhotonTkDeposits.ExtractorPSet.inputTrackCollection = gsWithMateri
 
 # Generated from /afs/cern.ch/user/l/lowette/scratch.0/CMSSW_1_6_9_pre2_pat/src/PhysicsTools/PatAlgos/data/PATLayer0.cff
 replace allLayer0Muons.muonSource = paramMuons:ParamGlobalMuons
-replace allLayer0Muons.isolation.tracker.src = patAODMuonIsolations:muParamGlobalIsoDepositGsTk
-replace allLayer0Muons.isolation.ecal.src    = patAODMuonIsolations:muParamGlobalIsoDepositCalEcal
-replace allLayer0Muons.isolation.hcal.src    = patAODMuonIsolations:muParamGlobalIsoDepositCalHcal
+replace allLayer0Muons.isolation.tracker.src = patAODMuonIsolations:muParamGlobalIsoDepositTk
+replace allLayer0Muons.isolation.ecal.src    = patAODMuonIsolations:muParamGlobalIsoDepositCalByAssociatorTowers:ecal
+replace allLayer0Muons.isolation.hcal.src    = patAODMuonIsolations:muParamGlobalIsoDepositCalByAssociatorTowers:hcal
 replace allLayer0Muons.isolation.user        = { { bool placeholder = true } }
 
 replace allLayer0Electrons.electronSource = pixelMatchGsfElectrons

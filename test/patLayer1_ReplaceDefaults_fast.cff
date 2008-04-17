@@ -23,7 +23,7 @@ replace allLayer1Muons.isoDeposits.hcal    = layer0MuonIsolations:muParamGlobalI
 replace allLayer1Muons.isoDeposits.user    = { layer0MuonIsolations:muParamGlobalIsoDepositGsTk }
 replace allLayer1Muons.addMuonID = true
 replace allLayer1Muons.addLRValues = true
-replace allLayer1Muons.tracksSource = gsWithMaterialTracks
+replace allLayer1Muons.tracksSource = generalTracks
 replace allLayer1Muons.muonLRFile = "PhysicsTools/PatUtils/data/MuonLRDistros.root"
 # Generated from /afs/cern.ch/user/l/lowette/scratch.0/CMSSW_1_6_9_pre2_pat/src/PhysicsTools/PatAlgos/data/PATElectronProducer.cfi
 replace allLayer1Electrons.electronSource = allLayer0Electrons
@@ -32,7 +32,7 @@ replace allLayer1Electrons.genParticleMatch = electronMatch
 replace allLayer1Electrons.addResolutions = true
 replace allLayer1Electrons.useNNResolutions = false
 replace allLayer1Electrons.electronResoFile = "PhysicsTools/PatUtils/data/Resolutions_electron.root"
-replace allLayer1Electrons.tracksSource = gsWithMaterialTracks
+replace allLayer1Electrons.tracksSource = generalTracks
 replace allLayer1Electrons.isolation.tracker.src = layer0ElectronIsolations:egammaElectronTkIsolation
 replace allLayer1Electrons.isolation.ecal.src    = layer0ElectronIsolations:egammaEcalIsolation
 replace allLayer1Electrons.isolation.hcal.src    = layer0ElectronIsolations:egammaTowerIsolation
@@ -80,7 +80,7 @@ replace allLayer1Jets.tagModuleLabelsToKeep = {
   }
 replace allLayer1Jets.addAssociatedTracks = true
 replace allLayer1Jets.trackAssociation = {
-    InputTag tracksSource = gsWithMaterialTracks    # manually corrected, not automized for this case yet...
+    InputTag tracksSource = generalTracks    # manually corrected, not automized for this case yet...
     double   deltaR       = 0.5
     int32    minHits      = 8
     double   maxNormChi2  = 5.0
