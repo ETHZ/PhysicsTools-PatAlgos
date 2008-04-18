@@ -6,10 +6,7 @@ include "MagneticField/Engine/data/volumeBasedMagneticField.cfi"
 # additional tau reconstruction
 #include "PhysicsTools/PatAlgos/data/recoLayer0/tauTagging.cff"
 
-# produce associated jet correction factors in a valuemap
-include "PhysicsTools/PatAlgos/data/recoLayer0/jetCorrFactors.cfi"
-
-# JetMET corrections
+# JetMET corrections (including jet correction factors)
 include "PhysicsTools/PatAlgos/data/recoLayer0/jetMETCorrections.cff"
 
 include "PhysicsTools/PatAlgos/data/recoLayer0/electronIsolation.cff"
@@ -20,11 +17,10 @@ include "PhysicsTools/PatAlgos/data/recoLayer0/muonIsolation.cff"
 sequence patBeforeLevel0Reco_withoutPFTau = {
   // patMuonIsolation, # don't run by default, only needed on old 152 reco samples
   // patCaloTauTagging, # don't run by default, doesn't work on AOD only samples
-  jetCorrFactors,
   patAODElectronIsolation,
   patAODPhotonIsolation,
   patAODMuonIsolation,
-  patJetMETCorrections # needed for the MET
+  patAODJetMETCorrections # needed for the MET
 }
 
 sequence patBeforeLevel0Reco = {

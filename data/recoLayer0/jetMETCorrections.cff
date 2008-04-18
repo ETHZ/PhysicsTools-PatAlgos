@@ -3,12 +3,25 @@
 include "JetMETCorrections/Configuration/data/MCJetCorrections152.cff"
 include "JetMETCorrections/Configuration/data/L5FlavorCorrections.cff"
 
+# produce associated jet correction factors in a valuemap
+include "PhysicsTools/PatAlgos/data/recoLayer0/jetCorrFactors.cfi"
+
 # default JetMET calibration on IC, KT and MC Jets
 include "JetMETCorrections/Type1MET/data/MetType1Corrections.cff"
 
 # Jet corrections are now done on the fly in the JetProducer
 
 # default PAT sequence for JetMET corrections
-sequence patJetMETCorrections = {
+sequence patAODJetMETCorrections = {
+  jetCorrFactors,
   corMetType1Icone5 
+}
+
+module layer0JetCorrFactors = JetCorrFactorsValueMapSkimmer {
+        InputTag collection =   allLayer0Jets
+        InputTag backrefs =     allLayer0Jets
+        InputTag association =  jetCorrFactors
+}
+sequence patLayer0JetMETCorrections = {
+   layer0JetCorrFactors
 }

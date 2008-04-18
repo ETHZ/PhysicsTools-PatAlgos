@@ -37,6 +37,6 @@ module allLayer1Muons = PATMuonProducer {
   }
 
   ### Muon ID configurables
-  bool     addMuonID         = true                    # switch on/off the electron ID info addition
+  bool     addMuonID         = false                    # switch on/off the electron ID info addition
 
 }
