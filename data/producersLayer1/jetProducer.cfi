@@ -6,7 +6,7 @@ module allLayer1Jets = PATJetProducer {
   bool     embedCaloTowers         = true                        # switch on/off embedding of supercluster (externally stored in AOD)
 
   ### Jet flavour idetification configurables
-  bool     getJetMCFlavour         = true                        # switch on/off MC flavour identification of all jets
+  bool     getJetMCFlavour         = false                       # switch on/off MC flavour identification of all jets
   InputTag JetPartonMapSource      = jetPartonAssociation        # the match-collection, produced by default from PATHighLevelReco.cff
 
   ### MC matching configurables
@@ -47,20 +47,12 @@ VInputTag ipTagInfoLabelName = {  "impactParameterMVAJetTags", "jetProbabilityJe
 
 
   ### track association configurables
-  bool     addAssociatedTracks     = true                        # switch on/off track association
-  PSet     trackAssociation        = {                           # the track association parameter set
-    InputTag tracksSource = generalTracks
-    double   deltaR       = 0.5
-    int32    minHits      = 8
-    double   maxNormChi2  = 5.0
-  }
+  bool     addAssociatedTracks     = false                        # switch on/off track association
+  InputTag trackAssociationSource  = foo                          # the track association parameter set
 
   ### Jet charge configurables
-  bool     addJetCharge            = true                        # switch on/off jet charge calculation
-  PSet     jetCharge               = {                           # the jet charge parameter set
-    double exp = 1.0
-    string var = "Pt"
-  }
+  bool     addJetCharge            = false                        # switch on/off jet charge calculation
+  InputTag jetChargeSource         = ba                           # the jet charge parameter set
 
 }
  
