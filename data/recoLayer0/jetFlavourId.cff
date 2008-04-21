@@ -2,7 +2,7 @@ module jetPartons = PartonSelector {
          bool withLeptons = false
 }
 module jetPartonAssociation = JetPartonMatcher {
-         InputTag jets              = allLayer0CaloJets
+         InputTag jets              = allLayer0Jets
          InputTag partons           = jetPartons
          double coneSizeToAssociate = 0.3  
 }

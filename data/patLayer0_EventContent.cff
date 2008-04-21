@@ -17,14 +17,19 @@ block patLayer0EventContent = {
     "keep *_layer0JetCorrFactors_*_*",
 
     "keep recoGenJetsedmAssociation_*_*_*",
-    "keep *_iterativeCone5GenJetsPt10_*_*",
+    #"keep *_iterativeCone5GenJetsPt10_*_*",
+    "keep *_iterativeCone5GenJets_*_*",
     "keep *_genMet_*_*",
+
+    "keep recoMuons_muons__*",  # for MET?
 
     "keep recoGenParticlesedmAssociation_*_*_*",
     "keep recoJetTagsrecoJetTagrecoJetTagsrecoJetTagedmrefhelperFindUsingAdvanceedmRefedmValueMap_*_*_*",
     "keep floatedmValueMap_*_*_*",
     "keep *_electronId_*_*",
     "keep *_electronIdRobust_*_*",
+
+    "keep *_jetFlavourAssociation_*_*",
 
     "keep *_layer0JetTracksAssociator_*_*",
     "keep *_layer0JetCharge_*_*",

@@ -6,8 +6,8 @@ module allLayer1Jets = PATJetProducer {
   bool     embedCaloTowers         = true                        # switch on/off embedding of supercluster (externally stored in AOD)
 
   ### Jet flavour idetification configurables
-  bool     getJetMCFlavour         = false                       # switch on/off MC flavour identification of all jets
-  InputTag JetPartonMapSource      = jetPartonAssociation        # the match-collection, produced by default from PATHighLevelReco.cff
+  bool     getJetMCFlavour         = true                        # switch on/off MC flavour identification of all jets
+  InputTag JetPartonMapSource      = jetFlavourAssociation       # the match-collection, produced by default from PATHighLevelReco.cff
 
   ### MC matching configurables
   bool     addGenPartonMatch       = true                        # switch on/off matching to partons
