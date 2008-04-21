@@ -1,5 +1,5 @@
 //
-// $Id: PATElectronProducer.cc,v 1.3 2008/04/03 13:34:22 gpetrucc Exp $
+// $Id: PATElectronProducer.cc,v 1.2 2008/03/12 16:13:26 gpetrucc Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATElectronProducer.h"
@@ -14,6 +14,7 @@
 #include "DataFormats/HepMCCandidate/interface/GenParticleFwd.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 
+#include "PhysicsTools/PatUtils/interface/LeptonLRCalc.h"
 #include "PhysicsTools/PatUtils/interface/ObjectResolutionCalc.h"
 #include "PhysicsTools/PatUtils/interface/TrackerIsolationPt.h"
 #include "PhysicsTools/PatUtils/interface/CaloIsolationEnergy.h"
@@ -45,6 +46,11 @@ PATElectronProducer::PATElectronProducer(const edm::ParameterSet & iConfig) :
   elecIDSrc_        = iConfig.getParameter<edm::InputTag>( "electronIDSource" );
   addElecIDRobust_  = iConfig.getParameter<bool>         ( "addElectronIDRobust" );
   elecIDRobustSrc_  = iConfig.getParameter<edm::InputTag>( "electronIDRobustSource" );
+  
+  // likelihood ratio configurables
+  tracksSrc_        = iConfig.getParameter<edm::InputTag>( "tracksSource" );
+  addLRValues_      = iConfig.getParameter<bool>         ( "addLRValues" );
+  electronLRFile_   = iConfig.getParameter<std::string>  ( "electronLRFile" );
   
   // construct resolution calculator
   if(addResolutions_){
@@ -102,6 +108,14 @@ void PATElectronProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
   edm::Handle<reco::ElectronIDAssociationCollection> elecIDRobusts;
   if (addElecIDRobust_) iEvent.getByLabel(elecIDRobustSrc_, elecIDRobusts);
   
+  // prepare LR calculation
+  if(addLRValues_) {
+    theLeptonLRCalc_= new LeptonLRCalc(iSetup, edm::FileInPath(electronLRFile_).fullPath(), "", "");
+  }
+
+  edm::Handle<edm::View<reco::Track> > tracks;
+  iEvent.getByLabel(tracksSrc_, tracks);
+
   std::vector<Electron> * patElectrons = new std::vector<Electron>();
   for (edm::View<ElectronType>::const_iterator itElectron = electrons->begin(); itElectron != electrons->end(); ++itElectron) {
     // construct the Electron from the ref -> save ref to original object
@@ -145,6 +159,10 @@ void PATElectronProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
     if (addElecIDRobust_) {
       anElectron.setElectronIDRobust(electronID(electrons, elecIDRobusts, idx));
     }
+    // add lepton LR info
+    if (addLRValues_) {
+      theLeptonLRCalc_->calcLikelihood(anElectron, tracks, iEvent);
+    }
     // add sel to selected
     patElectrons->push_back(anElectron);
   }
@@ -158,6 +176,8 @@ void PATElectronProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
   iEvent.put(ptr);
 
   // clean up
+  if (addLRValues_) delete theLeptonLRCalc_;
+
   if (isolator_.enabled()) isolator_.endEvent();
 
 }

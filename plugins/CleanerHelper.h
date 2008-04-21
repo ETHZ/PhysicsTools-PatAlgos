@@ -188,7 +188,6 @@ class CleanerHelper {
         // fixed
         edm::InputTag src_;
         std::string label_;
-        std::string moduleLabel_;
         Comparator comp_;
         // toggle if I want to save all the data
         bool saveRejected_, saveAll_;
@@ -213,7 +212,7 @@ class CleanerHelper {
 template<typename T, typename T2, typename Collection, typename Comparator>
 CleanerHelper<T,T2,Collection,Comparator>::CleanerHelper(const edm::InputTag &src, const std::string &instanceName) :
     src_(src),
-    label_(instanceName),moduleLabel_(),
+    label_(instanceName),
     saveRejected_(false),saveAll_(false),markItems_(false),
     makeSummary_(false)
 { 
@@ -223,14 +222,13 @@ CleanerHelper<T,T2,Collection,Comparator>::CleanerHelper(const edm::InputTag &sr
 
 template<typename T, typename T2, typename Collection, typename Comparator>
 void CleanerHelper<T,T2,Collection,Comparator>::configure(const edm::ParameterSet &conf) {
-    moduleLabel_ = conf.getParameter<std::string>("@module_label");
     if ( conf.exists("saveAll") ) {
         std::string saveAll = conf.getParameter<std::string>("saveAll");
         if (!saveAll.empty()) setSaveAll( saveAll );
     }
     if ( conf.exists("saveRejected") ) {
         std::string saveRejected = conf.getParameter<std::string>("saveRejected");
-        if (!saveRejected.empty()) setSaveRejected( saveRejected );
+        if (!saveRejected.empty()) setSaveAll( saveRejected );
     }
 
     if (conf.exists("markItems")) setStatusMark ( conf.getParameter<bool>("markItems") );
@@ -280,14 +278,14 @@ void CleanerHelper<T,T2,Collection,Comparator>::configure(const edm::ParameterSe
 
 template<typename T, typename T2, typename Collection, typename Comparator>
 void CleanerHelper<T,T2,Collection,Comparator>::registerProducts(edm::ProducerBase &producer) {
-    producer.produces<Collection>(label_).setBranchAlias(moduleLabel_+label_);
+    producer.produces<Collection>(label_);
     producer.produces<reco::CandRefValueMap>(label_);
     if (saveRejected_) {
-        producer.produces<Collection>(labelRejected_).setBranchAlias(moduleLabel_+labelRejected_);
+        producer.produces<Collection>(labelRejected_);
         producer.produces<reco::CandRefValueMap>(labelRejected_); 
     }
     if (saveAll_) {
-        producer.produces<Collection>(labelAll_).setBranchAlias(moduleLabel_+labelAll_);
+        producer.produces<Collection>(labelAll_);
         producer.produces<reco::CandRefValueMap>(labelAll_); 
     }
 }
@@ -396,7 +394,8 @@ void CleanerHelper<T,T2,Collection,Comparator>::done() {
         if (ok) { // save only unmarked items
             sorted->push_back( selected_[idx] );
             sortedRefs.push_back( originalRefs_[idx] );
-        } else if (saveRejected_) {
+        }
+        if (saveRejected_ && !ok) {
             sortedRejected->push_back( selected_[idx] );
             sortedRefsRejected.push_back( originalRefs_[idx] );
         }

@@ -2,35 +2,24 @@
 ### FAMOS replace statements ###
 
 // to use Famos muons
-replace allLayer0Muons.muonSource       = paramMuons:ParamGlobalMuons
-replace patAODMuonIsolations.collection = paramMuons:ParamGlobalMuons
+replace allLayer0Muons.muonSource       = paramMuons:ParamParamGlobalMuons
+replace patAODMuonIsolations.collection = paramMuons:ParamParamGlobalMuons
 
 replace patAODMuonIsolations.associations = {
-        muParamGlobalIsoDepositCalByAssociatorTowers:ecal,
-        muParamGlobalIsoDepositCalByAssociatorTowers:hcal,
-        muParamGlobalIsoDepositCalByAssociatorTowers:ho,
-        muParamGlobalIsoDepositTk,
-        muParamGlobalIsoDepositJets
+    muParamGlobalIsoDepositCalEcal,
+    muParamGlobalIsoDepositCalHcal,
+    muParamGlobalIsoDepositGsTk
 }
 
 replace layer0MuonIsolations.associations = {
-        muParamGlobalIsoDepositCalByAssociatorTowers:ecal,
-        muParamGlobalIsoDepositCalByAssociatorTowers:hcal,
-        muParamGlobalIsoDepositCalByAssociatorTowers:ho,
-        muParamGlobalIsoDepositTk,
-        muParamGlobalIsoDepositJets
+    muParamGlobalIsoDepositCalEcal,
+    muParamGlobalIsoDepositCalHcal,
+    muParamGlobalIsoDepositGsTk
 }
 
-replace egammaPhotonTkDeposits.ExtractorPSet.inputTrackCollection = generalTracks 
+replace egammaPhotonTkDeposits.ExtractorPSet.inputTrackCollection = gsWithMaterialTracks 
 
-replace allLayer0Muons.isolation.tracker.src = patAODMuonIsolations:muParamGlobalIsoDepositTk
-replace allLayer0Muons.isolation.ecal.src    = patAODMuonIsolations:muParamGlobalIsoDepositCalByAssociatorTowersecal
-replace allLayer0Muons.isolation.hcal.src    = patAODMuonIsolations:muParamGlobalIsoDepositCalByAssociatorTowershcal
-replace allLayer0Muons.isolation.user        = { 
-        { InputTag src    = patAODMuonIsolations:muParamGlobalIsoDepositCalByAssociatorTowersho 
-          double   deltaR = 0.3 
-          double   cut    = 2.0 },
-        { InputTag src    = patAODMuonIsolations:muParamGlobalIsoDepositJets
-          double   deltaR = 0.5 
-          double   cut    = 2.0 }
-}
+replace allLayer0Muons.isolation.tracker.src = patAODMuonIsolations:muParamGlobalIsoDepositGsTk
+replace allLayer0Muons.isolation.ecal.src    = patAODMuonIsolations:muParamGlobalIsoDepositCalEcal
+replace allLayer0Muons.isolation.hcal.src    = patAODMuonIsolations:muParamGlobalIsoDepositCalHcal
+replace allLayer0Muons.isolation.user        = { { bool placeholder = true } }

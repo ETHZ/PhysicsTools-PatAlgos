@@ -1,5 +1,5 @@
 //
-// $Id: PATJetProducer.cc,v 1.8 2008/04/18 07:58:58 gpetrucc Exp $
+// $Id$
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATJetProducer.h"
@@ -27,6 +27,7 @@
 
 #include "DataFormats/Math/interface/deltaR.h"
 
+#include "PhysicsTools/PatUtils/interface/RefHelper.h"
 #include "PhysicsTools/PatUtils/interface/ObjectResolutionCalc.h"
 #include "DataFormats/PatCandidates/interface/JetCorrFactors.h"
 
@@ -64,9 +65,9 @@ PATJetProducer::PATJetProducer(const edm::ParameterSet& iConfig) {
   softMTagInfoLabel_       = iConfig.getParameter<std::vector<edm::InputTag> >( "softMTagInfoLabelName" );
   svTagInfoLabel_          = iConfig.getParameter<std::vector<edm::InputTag> >( "svTagInfoLabelName" );
   addAssociatedTracks_     = iConfig.getParameter<bool> 		      ( "addAssociatedTracks" ); 
-  trackAssociation_        = iConfig.getParameter<edm::InputTag>	      ( "trackAssociationSource" );
+  trackAssociationPSet_    = iConfig.getParameter<edm::ParameterSet>	      ( "trackAssociation" );
   addJetCharge_            = iConfig.getParameter<bool> 		      ( "addJetCharge" ); 
-  jetCharge_               = iConfig.getParameter<edm::InputTag>	      ( "jetChargeSource" );
+  jetChargePSet_           = iConfig.getParameter<edm::ParameterSet>	      ( "jetCharge" );
 
   // construct resolution calculator
   if (addResolutions_) {
@@ -74,7 +75,11 @@ PATJetProducer::PATJetProducer(const edm::ParameterSet& iConfig) {
     theBResoCalc_ = new ObjectResolutionCalc(edm::FileInPath(caliBJetResoFile_).fullPath(), useNNReso_);
   }
 
-
+  // construct Jet Track Associator
+  simpleJetTrackAssociator_ = ::helper::SimpleJetTrackAssociator(trackAssociationPSet_);
+  // construct Jet Charge Computer
+  if (addJetCharge_) jetCharge_ = new JetCharge(jetChargePSet_);
+ 
   // produces vector of jets
   produces<std::vector<Jet> >();
 }
@@ -85,6 +90,7 @@ PATJetProducer::~PATJetProducer() {
     delete theResoCalc_;
     delete theBResoCalc_;
   }
+  if (addJetCharge_) delete jetCharge_;
 }
 
 
@@ -93,6 +99,10 @@ void PATJetProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
   // Get the vector of jets
   edm::Handle<edm::View<JetType> > jets;
   iEvent.getByLabel(jetsSrc_, jets);
+  // get the back-references produced by cleaners, to access associations
+  edm::Handle<reco::CandRefValueMap> backRefJets;
+  iEvent.getByLabel(jetsSrc_, backRefJets);
+  pat::helper::RefHelper<reco::Candidate> backRefHelper(*backRefJets);
 
   // for jet flavour
   edm::Handle<reco::CandMatchMap> JetPartonMap;
@@ -128,11 +138,9 @@ void PATJetProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
   edm::Handle<reco::TrackProbabilityTagInfoCollection> jetsInfoHandleTP;
   edm::Handle<reco::TrackCountingTagInfoCollection> jetsInfoHandleTC;
 
-  // tracks Jet Track Association
-  edm::Handle<edm::ValueMap<reco::TrackRefVector> > hTrackAss;
-  if (addAssociatedTracks_) iEvent.getByLabel(trackAssociation_, hTrackAss);
-  edm::Handle<edm::ValueMap<float> > hJetChargeAss;
-  if (addJetCharge_) iEvent.getByLabel(jetCharge_, hJetChargeAss);
+  // tracks Jet Track Association, by hand in CMSSW_1_3_X
+  edm::Handle<reco::TrackCollection> hTracks;
+  iEvent.getByLabel(trackAssociationPSet_.getParameter<edm::InputTag>("tracksSource"), hTracks);
 
 
   // loop over jets
@@ -147,7 +155,7 @@ void PATJetProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
     if (embedCaloTowers_) ajet.setCaloTowers(jetRef->getConstituents());
 
     // calculate the energy correction factors
-    const JetCorrFactors & jcf = (*jetCorrs)[jetRef];
+    JetCorrFactors jcf = backRefHelper.recursiveLookup(jetRef, *jetCorrs);
     ajet.setP4(jcf.scaleDefault() * itJet->p4());
     ajet.setNoCorrFactor(1./jcf.scaleDefault());
     ajet.setJetCorrFactors(jcf);
@@ -267,9 +275,16 @@ void PATJetProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
       
     }
     
-    if (addAssociatedTracks_) ajet.associatedTracks_ = (*hTrackAss)[jetRef];
+    // Associate tracks with jet (at least temporary)
+    simpleJetTrackAssociator_.associate(ajet.momentum(), hTracks, ajet.associatedTracks_);
 
-    if (addJetCharge_)        ajet.setJetCharge( (*hJetChargeAss)[jetRef] );
+    // PUT HERE EVERYTHING WHICH NEEDS TRACKS
+    if (addJetCharge_) {
+      ajet.setJetCharge(static_cast<float>(jetCharge_->charge(ajet.p4(), ajet.associatedTracks())));
+    }
+
+    // drop jet track association if the user does not want it
+    if (!addAssociatedTracks_) ajet.associatedTracks_.clear();
 
     patJets->push_back(ajet);
   }

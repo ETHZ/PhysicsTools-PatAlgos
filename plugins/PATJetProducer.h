@@ -1,5 +1,5 @@
 //
-// $Id: PATJetProducer.h,v 1.3 2008/04/03 19:33:42 lowette Exp $
+// $Id$
 //
 
 #ifndef PhysicsTools_PatAlgos_PATJetProducer_h
@@ -13,7 +13,7 @@
    a collection of objects of JetType.
 
   \author   Steven Lowette, Jeremy Andrea
-  \version  $Id: PATJetProducer.h,v 1.3 2008/04/03 19:33:42 lowette Exp $
+  \version  $Id$
 */
 
 
@@ -24,6 +24,8 @@
 #include "DataFormats/Common/interface/View.h"
 
 #include "PhysicsTools/Utilities/interface/EtComparator.h"
+#include "PhysicsTools/JetCharge/interface/JetCharge.h"
+#include "PhysicsTools/PatUtils/interface/SimpleJetTrackAssociator.h"
 
 #include "DataFormats/PatCandidates/interface/Jet.h"
 #include "DataFormats/PatCandidates/interface/Electron.h"
@@ -77,13 +79,15 @@ namespace pat {
       std::vector<edm::InputTag> softMTagInfoLabel_;
       std::vector<edm::InputTag> svTagInfoLabel_;
       bool                     addAssociatedTracks_;
-      edm::InputTag            trackAssociation_;
+      edm::ParameterSet        trackAssociationPSet_;
       bool                     addJetCharge_;
       bool                     addTagInfoRefs_;
-      edm::InputTag            jetCharge_;
+      edm::ParameterSet        jetChargePSet_;
       // tools
       ObjectResolutionCalc             * theResoCalc_;
       ObjectResolutionCalc             * theBResoCalc_;
+      ::helper::SimpleJetTrackAssociator   simpleJetTrackAssociator_;
+      JetCharge                        * jetCharge_;
       GreaterByEt<Jet>                   eTComparator_;
 
   };

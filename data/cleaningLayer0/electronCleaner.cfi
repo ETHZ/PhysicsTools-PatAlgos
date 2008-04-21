@@ -11,24 +11,20 @@ module allLayer0Electrons = PATElectronCleaner {
   PSet isolation = {
      PSet tracker = {
         InputTag src = patAODElectronIsolations:egammaElectronTkIsolation
-        double   cut = 3.0
+        double   cut = 2.0
      }
-     PSet ecal = { 
-        InputTag src = patAODElectronIsolations:egammaEcalIsolation
-        double   cut = 9999.0
-     }
-     PSet hcal = { 
-        InputTag src = patAODElectronIsolations:egammaTowerIsolation
-        double   cut = 9999.0
-     }
-     VPSet user = { 
+     #PSet hcal = { 
+     #   InputTag src = patAODElectronIsolations:egammaHOE
+     #   double   cut = 2.0
+     #}
+     #PSet ecal = { 
+     #   InputTag src = patAODElectronIsolations:egammaEcalRelIsolation
+     #   double   cut = 2.0
+     #}
+     #VPSet user = { 
      #   {  InputTag src = patAODElectronIsolations:egammaElectronTkNumIsolation
      #      double   cut = 2.0 }
-     #   {  InputTag src = patAODElectronIsolations:egammaElectronEcalRelIsolation
-     #      double   cut = 2.0 }
-     #   {  InputTag src = patAODElectronIsolations:egammaElectronHOETower
-     #      double   cut = 2.0 }
-     }
+     #}
   }
 
   bool    markItems    = true // write the status flags in the output items

@@ -3,7 +3,6 @@
 //#include "DataFormats/BTauReco/interface/JetTagFwd.h"
 //#include "DataFormats/BTauReco/interface/JetTag.h"
 #include "DataFormats/RecoCandidate/interface/IsoDeposit.h"
-#include "DataFormats/PatCandidates/interface/JetCorrFactors.h"
 
 using namespace pat::helper;
 
@@ -15,7 +14,6 @@ typedef ValueMapSkimmer<float, edm::ValueMap<int>    >  CandValueMapSkimmerInt2F
 typedef ValueMapSkimmer<reco::CandidateBaseRef>         CandRefValueMapSkimmer;
 
 //typedef ValueMapSkimmer<reco::JetTagRef>                JetTagRefValueMapSkimmer;
-typedef ValueMapSkimmer<pat::JetCorrFactors>            JetCorrFactorsValueMapSkimmer;
 
 typedef ManyValueMapsSkimmer<float>  CandManyValueMapsSkimmerFloat;
 typedef ManyValueMapsSkimmer<reco::IsoDeposit>  CandManyValueMapsSkimmerIsoDeposits;
@@ -32,4 +30,3 @@ DEFINE_FWK_MODULE(CandManyValueMapsSkimmerIsoDeposits);
 //DEFINE_FWK_MODULE(CandRefValueMapSkimmer);
 
 //DEFINE_FWK_MODULE(JetTagRefValueMapSkimmer);
-DEFINE_FWK_MODULE(JetCorrFactorsValueMapSkimmer);

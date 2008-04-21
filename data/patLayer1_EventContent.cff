@@ -5,7 +5,7 @@ block patLayer1EventContent = {
     "keep *_genParticles_*_*",          # to be removed when no external MC ref's left
     "keep recoJetTags_*_*_*",
     "drop recoJetTags_coneIsolationTauJetTags_*_*",
-    "keep recoTracks_generalTracks_*_*",
+    "keep recoTracks_gsWithMaterialTracks_*_*",
     "keep *_offlinePrimaryVerticesFromCTFTracks_*_*",
 
     "keep *_selectedLayer1Photons_*_*",
