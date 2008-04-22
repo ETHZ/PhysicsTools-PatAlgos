@@ -30,19 +30,22 @@ module allLayer1Jets = PATJetProducer {
 
   ### b-Tag info configurables
   bool     addBTagInfo             = true                        # switch on/off the addition of b-tag information
-  string   tagModuleLabelPostfix   = "Layer0"                    # strip this string from the end of the tag module labels
+  string   tagModuleLabelPostfix   = ""                          # strip this string from the end of the tag module labels
   bool     addDiscriminators       = true                        # switch on/off the addition of the btag discriminators
-  bool     addJetTagRefs           = true                        # switch on/off the addition of references to the b-tag JetTag's
+  bool     addJetTagRefs           = false                        # switch on/off the addition of references to the b-tag JetTag's
   vstring  tagModuleLabelsToKeep = {                             # the JetTag labels that should be considered and kept (excluding tagModuleLabelPostfix)
-    "combinedSVJetTags", "combinedSVMVAJetTags", "impactParameterMVAJetTags", "jetProbabilityJetTags", "softElectronJetTags", "softMuonJetTags", "softMuonNoIPJetTags", "trackCountingHighEffJetTags", "trackCountingHighPurJetTags"
+    "combinedSecondaryVertexBJetTags", "combinedSecondaryVertexMVABJetTags", "impactParameterMVABJetTags", "jetBProbabilityBJetTags", 
+    "jetProbabilityBJetTags", "simpleSecondaryVertexBJetTags", "softElectronBJetTags", "softMuonBJetTags", "softMuonNoIPBJetTags",
+    "trackCountingHighEffBJetTags", "trackCountingHighPurBJetTags"
   }
 
-VInputTag ipTagInfoLabelName = {  "impactParameterMVAJetTags", "jetProbabilityJetTags",   "trackCountingHighEffJetTags", "trackCountingHighPurJetTags"}
-    VInputTag softETagInfoLabelName = {"softElectronJetTags"}
-    VInputTag softMTagInfoLabelName = { "softMuonJetTags","softMuonNoIPJetTags"}
-    VInputTag svTagInfoLabelName = {"combinedSVJetTags", "combinedSVMVAJetTags"}
+    VInputTag ipTagInfoLabelName = { "impactParameterMVABJetTags", "jetBProbabilityBJetTags", "jetProbabilityBJetTags",
+     "trackCountingHighEffBJetTags", "trackCountingHighPurBJetTags"}
+    VInputTag softETagInfoLabelName = {"softElectronBJetTags"}
+    VInputTag softMTagInfoLabelName = { "softMuonBJetTags", "softMuonNoIPBJetTags"}
+    VInputTag svTagInfoLabelName = {"combinedSecondaryVertexBJetTags", "combinedSecondaryVertexMVABJetTags"}
  
-  bool addTagInfoRefs = true
+  bool addTagInfoRefs = false
 
 
 
