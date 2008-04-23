@@ -98,6 +98,9 @@ replace allLayer1METs.trigPrimMatch = { metL1MatchL1ETM20,metHLTMatchHLT1MET }
 replace allLayer1METs.addResolutions = true                    # switch on/off the resolution calculation
 replace allLayer1METs.useNNResolutions = false                   # use the neural network approach?
 replace allLayer1METs.metResoFile = "PhysicsTools/PatUtils/data/Resolutions_met.root"
+  ### These will be here to plug the compatibility hole
+replace allLayer1METs.addMuonCorrections    = true
+replace allLayer1METs.muonSource        = paramMuons:ParamGlobalMuons
 
 ####################################
 ### PAT Layer-1 Object Selectors ###

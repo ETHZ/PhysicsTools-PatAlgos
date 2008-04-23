@@ -15,7 +15,7 @@ replace allLayer0Jets.saveAll = ""    // set this to a non empty label to save a
 replace allLayer0Jets.bitsToIgnore = {}    // You can specify some bit names, e.g. "Overflow/User1", "Core/Duplicate", "Isolation/All".
 replace allLayer0Jets.wantSummary = true // print summary information for each status flag
 # Generated from CMSSW_1_6_11/src/PhysicsTools/PatAlgos/data/cleaningLayer0/caloMetCleaner.cfi
-replace allLayer0METs.metSource = corMetType1Icone5Muons
+replace allLayer0METs.metSource = corMetType1Icone5 # UNCOMMENTME Muons
 replace allLayer0METs.markItems = true // write the status flags in the output items
 replace allLayer0METs.saveRejected = ""   // set this to a non empty label to save the list of items which fail
 replace allLayer0METs.saveAll = ""   // set this to a non empty label to save a list of all items both passing and failing

@@ -28,8 +28,9 @@ replace corMetType1Icone5Muons.TrackAssociatorParameters.truthMatch = false
 # default PAT sequence for JetMET corrections
 sequence patAODJetMETCorrections = {
   jetCorrFactors,
-  MetType1Corrections,
-  corMetType1Icone5Muons
+  MetType1Corrections
+#,
+#  corMetType1Icone5Muons
 }
 
 module layer0JetCorrFactors = JetCorrFactorsValueMapSkimmer {

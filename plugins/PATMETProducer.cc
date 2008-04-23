@@ -1,5 +1,5 @@
 //
-// $Id$
+// $Id: PATMETProducer.cc,v 1.2 2008/04/01 19:05:24 lowette Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATMETProducer.h"
@@ -23,6 +23,8 @@ PATMETProducer::PATMETProducer(const edm::ParameterSet & iConfig) {
   addResolutions_ = iConfig.getParameter<bool>         ("addResolutions");
   useNNReso_      = iConfig.getParameter<bool>         ("useNNResolutions");
   metResoFile_    = iConfig.getParameter<std::string>  ("metResoFile");
+  addMuonCorr_    = iConfig.getParameter<bool>         ("addMuonCorrections");
+  muonSrc_        = iConfig.getParameter<edm::InputTag>("muonSource");   
   
   // construct resolution calculator
   if (addResolutions_) metResoCalc_ = new ObjectResolutionCalc(edm::FileInPath(metResoFile_).fullPath(), useNNReso_);
@@ -49,6 +51,12 @@ void PATMETProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
     iEvent.getByLabel(genMETSrc_, genMETs);
   }
 
+  // read in the muons if demanded
+  edm::Handle<edm::View<MuonType> > muons;
+  if (addMuonCorr_) {
+    iEvent.getByLabel(muonSrc_, muons);
+  }
+  
   // loop over mets
   std::vector<MET> * patMETs = new std::vector<MET>(); 
   for (edm::View<METType>::const_iterator itMET = mets->begin(); itMET != mets->end(); itMET++) {
@@ -73,13 +81,20 @@ void PATMETProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
     if (addResolutions_) {
       (*metResoCalc_)(amet);
     }
-    // correct for muons if demanded ... never more: it's now done by JetMETCorrections
+    // correct for muons if demanded
+    if (addMuonCorr_) {
+      for (edm::View<MuonType>::const_iterator itMuon = muons->begin(); itMuon != muons->end(); itMuon++) {
+        amet.setP4(reco::Particle::LorentzVector(
+            amet.px()-itMuon->px(),
+            amet.py()-itMuon->py(),
+            0,
+            sqrt(pow(amet.px()-itMuon->px(), 2)+pow(amet.py()-itMuon->py(), 2))
+        ));
+      }
+    }
     // add the MET to the vector of METs
     patMETs->push_back(amet);
   }
-
-  // sort MET in ET .. don't mess with this
-  //  std::sort(patMETs->begin(), patMETs->end(), eTComparator_);
 
   // put genEvt object in Event
   std::auto_ptr<std::vector<MET> > myMETs(patMETs);
