@@ -38,12 +38,13 @@ MAIN: while( <INPUT> ) {
   my $line = $_; # Store line
 
   while ( $line =~ /\S/ ) {
-    # 1. Process named blocks
+    # 1. Process named blocks (modules, blocks, PSets)
     ($line,$levelName) = &processBlocks( $line, $levelName );
-    # 2. Special treatment for VPSets (not replaced for the moment)
+
+    # 2. Skip VPSets and sequences
     #    NB. This is fragile!
-    if ( $line =~ /VPSet\s+(\S+)\s*=\s*\{\s*/ ) {
-      print MSG "Found VPSet with name $1: skipping\n";
+    if ( $line =~ /(VPSet|sequence)\s+(\S+)\s*=\s*\{\s*/ ) {
+      print MSG "Found $1 with name $2: skipping\n";
       my $nBraces = 1; # Start with one, from above matching
       $line = $';
       $nBraces += &countBraces( $line );
@@ -59,6 +60,7 @@ MAIN: while( <INPUT> ) {
       $line = "";
       next;       # This assumes closing brace is last on line...
     }
+
     # 3. Process parameters (might be multiline)
     ($line,$isMulti) = &processParameters( $line, $levelName );
     if ( $isMulti ) { # Treat mutliline separately...
@@ -78,8 +80,10 @@ MAIN: while( <INPUT> ) {
       }
       print MSG "End of span\n";
     }
+
     # 4. Remove remaining comments on blocks
     $line = &nukeComments( $line );
+
     # 5. Climb up levels if braces are closed
     ($line,$levelName) = &closeBraces( $line, $levelName );
   }

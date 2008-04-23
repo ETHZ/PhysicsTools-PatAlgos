@@ -2,11 +2,12 @@
 #
 # Replaces for fast simulation
 #
-# Usage: $0 <output file> <replaces file>
+# Usage: $0 <file> <replaces file>
+#        Replaces in <file> from <replaces file>
 
 use strict;
 
-die "Usage: $0 <output> <replaces>\n" if ( @ARGV != 2 );
+die "Usage: $0 <file> <replaces>\n" if ( @ARGV != 2 );
 
 my $cfgFile = $ARGV[0];
 my $replaceFile = $ARGV[1];
@@ -22,9 +23,19 @@ while( <IN> ) {
 }
 close(IN);
 
-# Scan cfgfile and replace
+# Open temporary file
 my $temp = $cfgFile.".tmp";
 open(TEMP,">$temp") or die "Couldn't open $temp: $!";
+
+# Print header
+print TEMP <<HEADER
+############################
+# Fast simulation replaces #
+############################
+HEADER
+;
+
+# Scan cfgfile and replace
 open(CFG,$cfgFile) or die "Couldn't open $cfgFile: $!";
 while ( <CFG> ) {
   chomp();
@@ -45,8 +56,8 @@ while ( <CFG> ) {
 }
 close(CFG);
 
-# Add missing items at the end of file
 
+# Add missing items at the end of file (things that are only replaced in FastSim)
 foreach my $replace ( keys %replaces ) {
   next if ( !$replaces{$replace} );
   print TEMP "replace ".$replace.$replaces{$replace}."\n";

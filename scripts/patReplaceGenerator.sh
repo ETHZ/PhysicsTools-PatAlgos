@@ -54,6 +54,11 @@ cat > $layer0FileFull << EOF
 `./patReplaceParser.pl ${mcDir}/tauMatch.cfi`
 `./patReplaceParser.pl ${mcDir}/jetMatch.cfi`
 
+###############################
+### PAT Layer-0 jets        ###
+###############################
+`./patReplaceParser.pl ${recDir}/jetTracksCharge.cff`
+
 
 EOF
 
