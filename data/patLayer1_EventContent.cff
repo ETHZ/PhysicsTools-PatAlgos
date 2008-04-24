@@ -3,8 +3,11 @@ block patLayer1EventContent = {
     "keep edmTriggerResults_TriggerResults_*_*",
     "keep *_genParticleCandidates_*_*", # to be removed when full GenParticle transition finished
     "keep *_genParticles_*_*",          # to be removed when no external MC ref's left
-    "keep recoJetTags_*_*_*",
-    "drop recoJetTags_coneIsolationTauJetTags_*_*",
+
+    "keep recoTrackIPTagInfos_*_*_*",
+    "keep recoSoftLeptonTagInfos_*_*_*",
+    "keep recoSecondaryVertexTagInfos_*_*_*",
+
     "keep recoTracks_generalTracks_*_*",
     "keep *_offlinePrimaryVerticesFromCTFTracks_*_*",
 

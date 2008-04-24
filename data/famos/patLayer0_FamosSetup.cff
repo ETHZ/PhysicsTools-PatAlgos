@@ -34,3 +34,4 @@ replace allLayer0Muons.isolation.user        = {
           double   deltaR = 0.5 
           double   cut    = 2.0 }
 }
+

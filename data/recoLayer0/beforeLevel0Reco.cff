@@ -9,6 +9,8 @@ include "MagneticField/Engine/data/volumeBasedMagneticField.cfi"
 # JetMET corrections (including jet correction factors)
 include "PhysicsTools/PatAlgos/data/recoLayer0/jetMETCorrections.cff"
 
+include "PhysicsTools/PatAlgos/data/recoLayer0/bTagging.cff"
+
 include "PhysicsTools/PatAlgos/data/recoLayer0/electronIsolation.cff"
 include "PhysicsTools/PatAlgos/data/recoLayer0/photonIsolation.cff"
 include "PhysicsTools/PatAlgos/data/recoLayer0/muonIsolation.cff"
@@ -17,6 +19,7 @@ include "PhysicsTools/PatAlgos/data/recoLayer0/muonIsolation.cff"
 sequence patBeforeLevel0Reco_withoutPFTau = {
   // patMuonIsolation, # don't run by default, only needed on old 152 reco samples
   // patCaloTauTagging, # don't run by default, doesn't work on AOD only samples
+  patAODBTagging, 
   patAODElectronIsolation,
   patAODPhotonIsolation,
   patAODMuonIsolation,

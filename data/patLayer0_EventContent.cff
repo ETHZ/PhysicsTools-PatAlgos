@@ -21,10 +21,10 @@ block patLayer0EventContent = {
     "keep *_iterativeCone5GenJets_*_*",
     "keep *_genMet_*_*",
 
-    "keep recoMuons_muons__*",  # for MET?
+    "keep recoMuons_muons__*",                       # for Layer 1 MET, to be fixed
+    "keep recoMuons_paramMuons_ParamGlobalMuons_*",  # for Layer 1 MET, to be fixed
 
     "keep recoGenParticlesedmAssociation_*_*_*",
-    "keep recoJetTagsrecoJetTagrecoJetTagsrecoJetTagedmrefhelperFindUsingAdvanceedmRefedmValueMap_*_*_*",
     "keep floatedmValueMap_*_*_*",
     "keep *_electronId_*_*",
     "keep *_electronIdRobust_*_*",
@@ -33,6 +33,12 @@ block patLayer0EventContent = {
 
     "keep *_layer0JetTracksAssociator_*_*",
     "keep *_layer0JetCharge_*_*",
+
+    "keep *_layer0BTags_*_*",
+    "keep *_layer0TagInfos_*_*", 
+    "keep recoTrackIPTagInfos_*_*_*",
+    "keep recoSoftLeptonTagInfos_*_*_*",
+    "keep recoSecondaryVertexTagInfos_*_*_*",
 
     "keep *_allLayer0Photons_*_*",
     "keep *_allLayer0Electrons_*_*",
