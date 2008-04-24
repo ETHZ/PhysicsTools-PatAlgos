@@ -3,7 +3,6 @@ module L1ETM20 = PATL1Producer {
     string   triggerName   = "L1_ETM20" // as in 'DataFormats/L1Trigger/src/L1ParticleMap.cc' (triggerNames_)
     string   objectType    = "met" // "em", "muon", "jet" or "met"
 }
-replace MessageLogger.suppressInfo += "L1ETM20"
 
 sequence metL1Producer = {
     L1ETM20

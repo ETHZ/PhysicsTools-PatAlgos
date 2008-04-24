@@ -3,7 +3,6 @@ module L1SingleMu3 = PATL1Producer {
     string   triggerName   = "L1_SingleMu3" // as in 'DataFormats/L1Trigger/src/L1ParticleMap.cc' (triggerNames_)
     string   objectType    = "muon" // "em", "muon", "jet" or "etmiss"
 }
-replace MessageLogger.suppressInfo += "L1SingleMu3"
 
 sequence muonL1Producer = {
     L1SingleMu3

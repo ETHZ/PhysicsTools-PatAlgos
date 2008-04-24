@@ -3,21 +3,18 @@ module HLT2MuonNonIso = PATHLTProducer {
     string   triggerName     = "HLT2MuonNonIso"
     InputTag filterName      = DiMuonNoIsoL3PreFiltered::HLT
 }
-replace MessageLogger.suppressInfo += "HLT2MuonNonIso"
 
 module HLT1MuonIso = PATHLTProducer {
     InputTag triggerResults  = TriggerResults::HLT
     string   triggerName     = "HLT1MuonIso"
     InputTag filterName      = SingleMuIsoL3IsoFiltered::HLT
 }
-replace MessageLogger.suppressInfo += "HLT1MuonIso"
 
 module HLT1MuonNonIso = PATHLTProducer {
     InputTag triggerResults  = TriggerResults::HLT
     string   triggerName     = "HLT1MuonNonIso"
     InputTag filterName      = SingleMuNoIsoL3PreFiltered::HLT
 }
-replace MessageLogger.suppressInfo += "HLT1MuonNonIso"
 
 sequence muonHLTProducer = {
 //     HLT2MuonNonIso,
