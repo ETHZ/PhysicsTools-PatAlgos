@@ -24,12 +24,12 @@ sequence patBeforeLevel0Reco_withoutPFTau = {
   patAODElectronIsolation,
   patAODPhotonIsolation,
   patAODMuonIsolation,
-#  patPFTauTagging,     # take this off if you get a crash on 1.6.10 AODSIM
+  patPFTauTagging,     # take this off if you get a crash on 1.6.10 AODSIM
   patAODJetMETCorrections # includes jet correction factors & MET corrections
 }
 
 sequence patBeforeLevel0Reco = {
-  patPFTauTagging,
+  #patPFTauTagging,
   patBeforeLevel0Reco_withoutPFTau
   #,patAODTauIsolation
 }
