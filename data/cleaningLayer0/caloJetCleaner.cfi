@@ -3,7 +3,7 @@ module allLayer0Jets = PATCaloJetCleaner {
   InputTag jetSource               = iterativeCone5CaloJets      # uncalibrated reco jet input source
 
   PSet removeOverlaps = {
-      PSet jets = { // discard jets that match with clean electrons
+      PSet electrons = { // discard jets that match with clean electrons
           InputTag collection = allLayer0Electrons    # 
           double   deltaR     = 0.3                   #
           string   cut        = "pt > 10"             # as in LeptonJetIsolationAngle
