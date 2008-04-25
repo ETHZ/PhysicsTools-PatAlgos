@@ -1,10 +1,11 @@
 block patLayer1EventContent = {
   untracked vstring outputCommands = {
     "keep edmTriggerResults_TriggerResults_*_*",
-    "keep *_genParticleCandidates_*_*", # to be removed when full GenParticle transition finished
     "keep *_genParticles_*_*",          # to be removed when no external MC ref's left
-    "keep recoJetTags_*_*_*",
-    "drop recoJetTags_coneIsolationTauJetTags_*_*",
+# this is for advanced users anyway
+#    "keep recoJetTags_*_*_*",
+#    "drop recoJetTags_coneIsolationTauJetTags_*_*",
+    "keep recoTracks_ctfWithMaterialTracks_*_*",
     "keep recoTracks_gsWithMaterialTracks_*_*",
     "keep *_offlinePrimaryVerticesFromCTFTracks_*_*",
 
