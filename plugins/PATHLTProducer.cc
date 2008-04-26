@@ -1,5 +1,5 @@
 //
-// $Id: PATHLTProducer.cc,v 1.1.2.4 2008/04/24 16:23:13 vadler Exp $
+// $Id: PATHLTProducer.cc,v 1.1.2.5 2008/04/24 18:51:33 vadler Exp $
 //
 
 
@@ -14,6 +14,7 @@
 #include "DataFormats/PatCandidates/interface/TriggerPrimitive.h"
 
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
+#include "FWCore/Utilities/interface/EDMException.h"
 
 
 using namespace pat;
@@ -65,7 +66,7 @@ void PATHLTProducer::produce( Event& iEvent, const EventSetup& iSetup )
         }  
       }
     } catch( Exception exc ) {
-      if ( exc.codeToString( exc.categoryCode() ) == "ProductNotFound" ) {
+      if ( exc.categoryCode() == errors::ProductNotFound ) {
         LogWarning( "notpresentTriggerModule" ) << "PATHLTProducer: The filter module " << filterName_.label() << " is not present here!";
       } else {
         throw exc;
