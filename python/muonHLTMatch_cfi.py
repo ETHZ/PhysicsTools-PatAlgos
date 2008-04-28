@@ -4,7 +4,7 @@ import FWCore.ParameterSet.Config as cms
 # Example for a configuration of the HLT match for muons
 # (cuts are NOT tuned, using old values from TQAF MC match, january 2008)
 #
-muonHLTMatchHLT1MuonIso = cms.EDFilter("PATHLTMatcher",
+muonTrigMatchHLT1MuonIso = cms.EDFilter("PATTrigMatcher",
     src = cms.InputTag("allLayer0Muons"),
     maxDPtRel = cms.double(0.5),
     resolveByMatchQuality = cms.bool(False),
@@ -13,7 +13,7 @@ muonHLTMatchHLT1MuonIso = cms.EDFilter("PATHLTMatcher",
     matched = cms.InputTag("HLT1MuonIso")
 )
 
-muonHLTMatchHLT1MuonNonIso = cms.EDFilter("PATHLTMatcher",
+muonTrigMatchHLT1MuonNonIso = cms.EDFilter("PATTrigMatcher",
     src = cms.InputTag("allLayer0Muons"),
     maxDPtRel = cms.double(0.5),
     resolveByMatchQuality = cms.bool(False),
@@ -22,7 +22,7 @@ muonHLTMatchHLT1MuonNonIso = cms.EDFilter("PATHLTMatcher",
     matched = cms.InputTag("HLT1MuonNonIso")
 )
 
-muonHLTMatchHLT2MuonNonIso = cms.EDFilter("PATHLTMatcher",
+muonTrigMatchHLT2MuonNonIso = cms.EDFilter("PATTrigMatcher",
     src = cms.InputTag("allLayer0Muons"),
     maxDPtRel = cms.double(0.5),
     resolveByMatchQuality = cms.bool(False),
@@ -31,5 +31,5 @@ muonHLTMatchHLT2MuonNonIso = cms.EDFilter("PATHLTMatcher",
     matched = cms.InputTag("HLT2MuonNonIso")
 )
 
-muonHLTMatch = cms.Sequence(muonHLTMatchHLT1MuonIso*muonHLTMatchHLT1MuonNonIso*muonHLTMatchHLT2MuonNonIso)
+muonHLTMatch = cms.Sequence(muonTrigMatchHLT1MuonIso*muonTrigMatchHLT1MuonNonIso*muonTrigMatchHLT2MuonNonIso)
 

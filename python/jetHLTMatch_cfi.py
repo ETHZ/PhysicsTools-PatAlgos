@@ -4,7 +4,7 @@ import FWCore.ParameterSet.Config as cms
 # Example for a configuration of the HLT match for muons
 # (cuts are NOT tuned, using old values from TQAF MC match, january 2008)
 #
-jetHLTMatchHLT1Jet = cms.EDFilter("PATHLTMatcher",
+jetTrigMatchHLT1Jet = cms.EDFilter("PATTrigMatcher",
     src = cms.InputTag("allLayer0Jets"),
     maxDPtRel = cms.double(3.0),
     resolveByMatchQuality = cms.bool(False),
@@ -13,7 +13,7 @@ jetHLTMatchHLT1Jet = cms.EDFilter("PATHLTMatcher",
     matched = cms.InputTag("HLT1Jet")
 )
 
-jetHLTMatchHLT2Jet = cms.EDFilter("PATHLTMatcher",
+jetTrigMatchHLT2Jet = cms.EDFilter("PATTrigMatcher",
     src = cms.InputTag("allLayer0Jets"),
     maxDPtRel = cms.double(3.0),
     resolveByMatchQuality = cms.bool(False),
@@ -22,7 +22,7 @@ jetHLTMatchHLT2Jet = cms.EDFilter("PATHLTMatcher",
     matched = cms.InputTag("HLT2Jet")
 )
 
-jetHLTMatchHLT3Jet = cms.EDFilter("PATHLTMatcher",
+jetTrigMatchHLT3Jet = cms.EDFilter("PATTrigMatcher",
     src = cms.InputTag("allLayer0Jets"),
     maxDPtRel = cms.double(3.0),
     resolveByMatchQuality = cms.bool(False),
@@ -31,7 +31,7 @@ jetHLTMatchHLT3Jet = cms.EDFilter("PATHLTMatcher",
     matched = cms.InputTag("HLT3Jet")
 )
 
-jetHLTMatchHLT4Jet = cms.EDFilter("PATHLTMatcher",
+jetTrigMatchHLT4Jet = cms.EDFilter("PATTrigMatcher",
     src = cms.InputTag("allLayer0Jets"),
     maxDPtRel = cms.double(3.0),
     resolveByMatchQuality = cms.bool(False),
@@ -40,5 +40,5 @@ jetHLTMatchHLT4Jet = cms.EDFilter("PATHLTMatcher",
     matched = cms.InputTag("HLT4Jet")
 )
 
-jetHLTMatch = cms.Sequence(jetHLTMatchHLT1Jet*jetHLTMatchHLT2Jet*jetHLTMatchHLT3Jet*jetHLTMatchHLT4Jet)
+jetHLTMatch = cms.Sequence(jetTrigMatchHLT1Jet*jetTrigMatchHLT2Jet*jetTrigMatchHLT3Jet*jetTrigMatchHLT4Jet)
 

@@ -4,7 +4,7 @@ import FWCore.ParameterSet.Config as cms
 # Example for a configuration of the HLT match for electrons
 # (cuts are NOT tuned, using old values from TQAF MC match, january 2008)
 #
-electronHLTMatchHLT1Electron = cms.EDFilter("PATHLTMatcher",
+electronTrigMatchHLT1Electron = cms.EDFilter("PATTrigMatcher",
     src = cms.InputTag("allLayer0Electrons"),
     maxDPtRel = cms.double(0.5),
     resolveByMatchQuality = cms.bool(False),
@@ -13,7 +13,7 @@ electronHLTMatchHLT1Electron = cms.EDFilter("PATHLTMatcher",
     matched = cms.InputTag("HLT1Electron")
 )
 
-electronHLTMatchHLT1ElectronRelaxed = cms.EDFilter("PATHLTMatcher",
+electronTrigMatchHLT1ElectronRelaxed = cms.EDFilter("PATTrigMatcher",
     src = cms.InputTag("allLayer0Electrons"),
     maxDPtRel = cms.double(0.5),
     resolveByMatchQuality = cms.bool(False),
@@ -22,7 +22,7 @@ electronHLTMatchHLT1ElectronRelaxed = cms.EDFilter("PATHLTMatcher",
     matched = cms.InputTag("HLT1ElectronRelaxed")
 )
 
-electronHLTMatchHLT2Electron = cms.EDFilter("PATHLTMatcher",
+electronTrigMatchHLT2Electron = cms.EDFilter("PATTrigMatcher",
     src = cms.InputTag("allLayer0Electrons"),
     maxDPtRel = cms.double(0.5),
     resolveByMatchQuality = cms.bool(False),
@@ -31,7 +31,7 @@ electronHLTMatchHLT2Electron = cms.EDFilter("PATHLTMatcher",
     matched = cms.InputTag("HLT2Electron")
 )
 
-electronHLTMatchHLT2ElectronRelaxed = cms.EDFilter("PATHLTMatcher",
+electronTrigMatchHLT2ElectronRelaxed = cms.EDFilter("PATTrigMatcher",
     src = cms.InputTag("allLayer0Electrons"),
     maxDPtRel = cms.double(0.5),
     resolveByMatchQuality = cms.bool(False),
@@ -40,5 +40,5 @@ electronHLTMatchHLT2ElectronRelaxed = cms.EDFilter("PATHLTMatcher",
     matched = cms.InputTag("HLT2ElectronRelaxed")
 )
 
-electronHLTMatch = cms.Sequence(electronHLTMatchHLT1Electron*electronHLTMatchHLT1ElectronRelaxed*electronHLTMatchHLT2Electron*electronHLTMatchHLT2ElectronRelaxed)
+electronHLTMatch = cms.Sequence(electronTrigMatchHLT1Electron*electronTrigMatchHLT1ElectronRelaxed*electronTrigMatchHLT2Electron*electronTrigMatchHLT2ElectronRelaxed)
 
