@@ -42,5 +42,6 @@
   <use name=PhysicsTools/PatUtils>
   <use name=PhysicsTools/UtilAlgos>
   <use name=PhysicsTools/Utilities>
+  <Flags CXXFLAGS="-Os">
   <use name=clhep>
 </export>
