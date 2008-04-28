@@ -4,10 +4,10 @@
 ############################
 # Generated from CMSSW_1_6_11/src/PhysicsTools/PatAlgos/data/cleaningLayer0/caloJetCleaner.cfi
 replace allLayer0Jets.jetSource = iterativeCone5CaloJets      # uncalibrated reco jet input source
-replace allLayer0Jets.removeOverlaps.jets.collection = allLayer0Electrons    # 
-replace allLayer0Jets.removeOverlaps.jets.deltaR = 0.3                   #
-replace allLayer0Jets.removeOverlaps.jets.cut = "pt > 10"             # as in LeptonJetIsolationAngle
-replace allLayer0Jets.removeOverlaps.jets.flags = {"Isolation/Tracker"} # request the item to be marked as isolated in the tracker
+replace allLayer0Jets.removeOverlaps.electrons.collection = allLayer0Electrons    # 
+replace allLayer0Jets.removeOverlaps.electrons.deltaR = 0.3                   #
+replace allLayer0Jets.removeOverlaps.electrons.cut = "pt > 10"             # as in LeptonJetIsolationAngle
+replace allLayer0Jets.removeOverlaps.electrons.flags = {"Isolation/Tracker"} # request the item to be marked as isolated in the tracker
 replace allLayer0Jets.selection.type = "none" 
 replace allLayer0Jets.markItems = true  // write the status flags in the output items
 replace allLayer0Jets.saveRejected = "Bad" // set this to a non empty label to save the list of items which fail
