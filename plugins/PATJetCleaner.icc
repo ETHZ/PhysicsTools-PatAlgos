@@ -10,13 +10,13 @@ pat::PATJetCleaner<JetIn,JetOut>::PATJetCleaner(const edm::ParameterSet & iConfi
   helper_.configure(iConfig);      // learn whether to save good, bad, all, ...
   helper_.registerProducts(*this); // issue the produces<>() commands
 
-  if (selectionCfg_.exists("IDmap")) {
+  std::string  selectionType = selectionCfg_.getParameter<std::string>("type");
+  if (selectionType == "IDmap") {
     IDmap_   = selectionCfg_.getParameter<edm::InputTag>("IDmap");
     doSelByID_ = true;
-  } 
-  else 
+  } else {
     doSelByID_ = false;
-
+  }
   
   if (iConfig.exists("removeOverlaps")) {
     edm::ParameterSet overlapConf = iConfig.getParameter<edm::ParameterSet>("removeOverlaps");
@@ -111,9 +111,9 @@ pat::PATJetCleaner<JetIn,JetOut>::fillSelection_( const edm::ParameterSet & cfg)
     config_.PtJetOverArea_max      = cfg.getParameter<double>("PtJetOverAreamax");
     config_.PtTowerOverArea_min    = cfg.getParameter<double>("PtTowerOverAreamin");
     config_.PtTowerOverArea_max    = cfg.getParameter<double>("PtTowerOverAreamax");
-  } else if ( config_.selectionType != "none" )
+  } else if ( config_.selectionType == "IDmap" ) {
     config_.value = cfg.template getParameter<double>("value");
-
+  }
 
   return config_;
 
