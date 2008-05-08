@@ -1,9 +1,16 @@
-<export></export>
+<use name=FWCore/Framework>
+<use name=FWCore/ParameterSet>
+<use name=DataFormats/BTauReco>
+<use name=PhysicsTools/PatUtils>
+
 <library name=PhysicsToolsPatAlgos_testAnalyzers file=private/*.cc>
-    <use name=FWCore/Framework>
-    <use name=FWCore/ParameterSet>
-    <use name=DataFormats/BTauReco>
-    <use name=PhysicsTools/PatUtils>
     <flags EDM_PLUGIN=1>
-    <flags CXXFLAGS="-Os">
 </library>
+
+<library name=PhysicsToolsPatAlgos_testVerySimplePATAnalysis file=*.cc>
+    <use name=DataFormats/PatCandidates>
+    <use name=PhysicsTools/UtilAlgos>
+    <use name=root>
+    <flags EDM_PLUGIN=1>
+</library>
+
