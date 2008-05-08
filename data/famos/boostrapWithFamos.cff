@@ -4,23 +4,7 @@
   #############################################
 
   # Random number generator service
-  service =  RandomNumberGeneratorService {
-    # This is to initialize the random engine of the source
-    untracked uint32 sourceSeed = 123456789
-    # This is to initialize the random engines of Famos
-    PSet moduleSeeds = {
-      untracked uint32 VtxSmeared = 123456789
-      untracked uint32 famosPileUp = 918273
-      untracked uint32 famosSimHits = 13579
-      untracked uint32 siTrackerGaussianSmearingRecHits = 24680
-      untracked uint32 caloRecHits = 654321
-      untracked uint32 paramMuons = 54525
-      untracked uint32 MuonSimHits = 97531
-      untracked uint32 muonDTDigis = 67673876
-      untracked uint32 muonCSCDigis = 525432
-      untracked uint32 muonRPCDigis = 524964
-    }
-  }
+  include "FastSimulation/Configuration/data/RandomServiceInitialization.cff"
 
   // If you want to use the (CMS default) CLHEP random, 
   // set these ones to false
@@ -36,7 +20,6 @@
   # Famos sequences
   include "FastSimulation/Configuration/data/CommonInputsFake.cff"
   include "FastSimulation/Configuration/data/FamosSequences.cff"
-  include "FastSimulation/HighLevelTrigger/data/common/NoHLTSetup.cff"
   # If you want to turn on/off pile-up (e.g. default low lumi: 5.0)
   replace famosPileUp.PileUpSimulator.averageNumber = 0
   # You may not want to simulate everything for your study
