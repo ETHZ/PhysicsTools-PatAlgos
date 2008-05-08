@@ -4,23 +4,7 @@
   #############################################
 
   # Random number generator service
-  service =  RandomNumberGeneratorService {
-    # This is to initialize the random engine of the source
-    untracked uint32 sourceSeed = 123456789
-    # This is to initialize the random engines of Famos
-    PSet moduleSeeds = {
-      untracked uint32 VtxSmeared = 123456789
-      untracked uint32 famosPileUp = 918273
-      untracked uint32 famosSimHits = 13579
-      untracked uint32 siTrackerGaussianSmearingRecHits = 24680
-      untracked uint32 caloRecHits = 654321
-      untracked uint32 paramMuons = 54525
-      untracked uint32 MuonSimHits = 97531
-      untracked uint32 simMuonDTDigis = 67673876
-      untracked uint32 simMuonCSCDigis = 525432
-      untracked uint32 simMuonRPCDigis = 524964
-    }
-  }
+  include "FastSimulation/Configuration/data/RandomServiceInitialization.cff"
 
   // If you want to use the (CMS default) CLHEP random, 
   // set these ones to false
