@@ -16,9 +16,9 @@
       untracked uint32 caloRecHits = 654321
       untracked uint32 paramMuons = 54525
       untracked uint32 MuonSimHits = 97531
-      untracked uint32 muonDTDigis = 67673876
-      untracked uint32 muonCSCDigis = 525432
-      untracked uint32 muonRPCDigis = 524964
+      untracked uint32 simMuonDTDigis = 67673876
+      untracked uint32 simMuonCSCDigis = 525432
+      untracked uint32 simMuonRPCDigis = 524964
     }
   }
 
