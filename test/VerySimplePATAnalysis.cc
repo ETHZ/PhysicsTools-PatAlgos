@@ -14,7 +14,7 @@
 //
 // Original Author:  Freya Blekman
 //         Created:  Mon Apr 21 10:03:50 CEST 2008
-// $Id: VerySimplePATAnalysis.cc,v 1.1 2008/04/21 09:16:24 fblekman Exp $
+// $Id: VerySimplePATAnalysis.cc,v 1.2 2008/05/13 10:25:05 fblekman Exp $
 //
 //
 
@@ -44,7 +44,8 @@
 
 #include "TH1D.h"
 #include <map>
-#include <vector>
+
+#include "DataFormats/Common/interface/View.h"
 #include <string>
 //
 // class decleration
@@ -124,29 +125,29 @@ VerySimplePATAnalysis::analyze(const edm::Event& iEvent, const edm::EventSetup& 
    // first: get all objects from the event.
    //{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}
 
-   edm::Handle<std::vector<pat::Muon> > muonHandle;
+   edm::Handle<edm::View<pat::Muon> > muonHandle;
    iEvent.getByLabel(muoLabel_,muonHandle);
-   std::vector<pat::Muon> muons = *muonHandle;
+   edm::View<pat::Muon> muons = *muonHandle;
    
-   edm::Handle<std::vector<pat::Jet> > jetHandle;
+   edm::Handle<edm::View<pat::Jet> > jetHandle;
    iEvent.getByLabel(jetLabel_,jetHandle);
-   std::vector<pat::Jet> jets = *jetHandle;
+   edm::View<pat::Jet> jets = *jetHandle;
 
-   edm::Handle<std::vector<pat::Electron> > electronHandle;
+   edm::Handle<edm::View<pat::Electron> > electronHandle;
    iEvent.getByLabel(eleLabel_,electronHandle);
-   std::vector<pat::Electron> electrons = *electronHandle;
+   edm::View<pat::Electron> electrons = *electronHandle;
 
-   edm::Handle<std::vector<pat::MET> > metHandle;
+   edm::Handle<edm::View<pat::MET> > metHandle;
    iEvent.getByLabel(metLabel_,metHandle);
-   std::vector<pat::MET> mets = *metHandle;
+   edm::View<pat::MET> mets = *metHandle;
 
-   edm::Handle<std::vector<pat::Photon> > phoHandle;
+   edm::Handle<edm::View<pat::Photon> > phoHandle;
    iEvent.getByLabel(phoLabel_,phoHandle);
-   std::vector<pat::Photon> photons = *phoHandle;
+   edm::View<pat::Photon> photons = *phoHandle;
 
-   edm::Handle<std::vector<pat::Tau> > tauHandle;
+   edm::Handle<edm::View<pat::Tau> > tauHandle;
    iEvent.getByLabel(tauLabel_,tauHandle);
-   std::vector<pat::Tau> taus = *tauHandle;
+   edm::View<pat::Tau> taus = *tauHandle;
 
    //{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}
    // example of a loop over objects... this works identical for all vectors defined above
@@ -154,14 +155,14 @@ VerySimplePATAnalysis::analyze(const edm::Event& iEvent, const edm::EventSetup& 
    // (DataFormats/PatCandidates/interface/Jet.h and equivalent for other objects)
    //{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}
    size_t njetscounter=0;
-   for(std::vector<pat::Jet>::const_iterator jet_iter = jets.begin(); jet_iter!=jets.end(); ++jet_iter){
+   for(edm::View<pat::Jet>::const_iterator jet_iter = jets.begin(); jet_iter!=jets.end(); ++jet_iter){
      if(jet_iter->pt()>50)
        njetscounter++;
      
    }
 
    //{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}
-   //histocontainer_ is of type std::map<std::vector, TH1D*>. This means you can use it with this syntax:
+   //histocontainer_ is of type std::map<edm::View, TH1D*>. This means you can use it with this syntax:
    // histocontainer_["histname"]->Fill(x); 
    // histocontainer_["histname"]->Draw(); 
    // etc, etc. Essentially you use the histname string to look up a pointer to a TH1D* 
@@ -187,7 +188,7 @@ VerySimplePATAnalysis::beginJob(const edm::EventSetup&)
   edm::Service<TFileService> fs;
   
   //{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}
-  //histocontainer_ is of type std::map<std::vector, TH1D*>. This means you can use it with this syntax:
+  //histocontainer_ is of type std::map<std::string, TH1D*>. This means you can use it with this syntax:
   // histocontainer_["histname"]->Fill(x); 
   // histocontainer_["histname"]->Draw(); 
   // etc, etc. Essentially you use the histname string to look up a pointer to a TH1D* 
