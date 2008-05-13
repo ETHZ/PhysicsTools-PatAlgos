@@ -1,7 +1,7 @@
 #ifndef PhysicsTools_PatAlgos_PATMuonCleaner_h
 #define PhysicsTools_PatAlgos_PATMuonCleaner_h
 //
-// $Id: PATMuonCleaner.h,v 1.7.2.1 2008/04/14 09:38:50 zeidler Exp $
+// $Id: PATMuonCleaner.h,v 1.7.2.2 2008/04/15 06:48:58 fronga Exp $
 //
 
 /**
@@ -29,7 +29,7 @@
   The actual selection is performed by the MuonSelector.
 
   \author   Giovanni Petrucciani (from PATMuonProducer by Steven Lowette, Roger Wolf)
-  \version  $Id: PATMuonCleaner.h,v 1.7.2.1 2008/04/14 09:38:50 zeidler Exp $
+  \version  $Id: PATMuonCleaner.h,v 1.7.2.2 2008/04/15 06:48:58 fronga Exp $
 */
 
 
@@ -91,31 +91,21 @@ namespace reco {
         config_.selectionType = selectionType;
         if ( selectionType == "custom" )
           {
-		
             config_.dPbyPmax  = cfg.getParameter<double>("dPbyPmax");
             config_.chi2max  = cfg.getParameter<double>("chi2max");
             config_.nHitsMin = cfg.getParameter<int>("nHitsMin");
           }
-		if ( selectionType == "muonPOG" )
+        else if ( selectionType == "muonPOG" )
           {
             std::string flag = cfg.getParameter<std::string>("flag");
-			if(flag == "TMLastStationLoose"){
-				config_.flag = muonid::TMLastStationLoose;
-			}
-			else if(flag == "TMLastStationTight"){
-				config_.flag = muonid::TMLastStationTight;
-  			}
-			/* 2_0 only
-			else if(flag == "TM2DCompatibilityLoose"){
-				config_.flag = muonid::TM2DCompatibilityLoose;
-  			}
-			else if(flag == "TM2DCompatibilityTight"){
-				config_.flag = muonid::TM2DCompatibilityTight;
-  			}*/
-			else{
-				throw edm::Exception(edm::errors::UnimplementedFeature) 
-					<< "muonPOG flag is not valid or not implemented yet";
-			}
+            if        ( flag == "TMLastStationLoose" ) {
+                config_.flag = muonid::TMLastStationLoose;
+            } else if ( flag == "TMLastStationTight" ) {
+              config_.flag = muonid::TMLastStationTight;
+            } else {
+              throw edm::Exception(edm::errors::UnimplementedFeature) 
+                << "muonPOG flag is not valid or not implemented yet";
+            }
           }
         return pat::MuonSelector( config_ );
       }
