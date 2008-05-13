@@ -87,14 +87,30 @@
 
 // initialize random number generator
 service = RandomNumberGeneratorService {
-  untracked uint32 sourceSeed = 7893456
+  PSet theSource = {
+    untracked uint32 initialSeed = 7893456
+    untracked engineName = "HepJamesRandom"
+  }
   // need one initializer for each module defined below
-  PSet moduleSeeds = {
-    untracked uint32 scaledElectrons = 897867
-    untracked uint32 scaledMuons     = 17987
-    untracked uint32 scaledTaus      = 38476
-    untracked uint32 scaledJets     =  61587
-    untracked uint32 scaledMETs      = 3489766
+  PSet scaledElectrons {
+    untracked uint32 initialSeed = 897867
+    untracked engineName = "HepJamesRandom"
+  }
+  PSet scaledMuons {
+    untracked uint32 initialSeed = 17987
+    untracked engineName = "HepJamesRandom"
+  }
+  PSet scaledTaus {
+    untracked uint32 initialSeed = 38476
+    untracked engineName = "HepJamesRandom"
+  }
+  PSet scaledJets {
+    untracked uint32 initialSeed =  61587
+    untracked engineName = "HepJamesRandom"
+  }
+  PSet scaledMETs {
+    untracked uint32 initialSeed = 3489766
+    untracked engineName = "HepJamesRandom"
   }
 }
 
