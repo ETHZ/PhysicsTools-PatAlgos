@@ -1,48 +1,57 @@
 module allLayer0Muons = PATMuonCleaner {
-  InputTag muonSource        = muons                   # reco muon input source
-
-  ### selection (e.g. ID)
-  PSet     selection = {	string type = "muonPOG" 
-  							string flag = "TMLastStationLoose" 		# flag for the muon id algorithm (only tracker muons):
-																	# "TMLastStationLoose", "TMLastStationTight"  
-																	# "TM2DCompatibilityLoose", "TM2DCompatibilityTight" 
-							double minCaloCompatibility		= 0.0
-							double minSegmentCompatibility	= 0.0
-  }
-  ### isolation (not mandatory, see bitsToIgnore below)
-  PSet isolation = {
-     PSet tracker = {
-        InputTag src    = patAODMuonIsolations:muIsoDepositTk  
-        double   deltaR = 0.3 
-        double   cut    = 2.0
+    InputTag muonSource        = muons               # reco muon input source
+    
+    ### selection (e.g. ID)
+    #PSet selection = { string type = "globalMuons" } #* Reco-based muon selection
+    # Other possible selections:
+    # PSet selection = { string type = "none" }      #* No selection at all
+     PSet selection = {                             #* ID-based selection (only tracker muons)
+         string type = "muonPOG" 
+         string flag = "TMLastStationLoose" # flag for the muon id algorithm
+         # "TMLastStationLoose", "TMLastStationTight"  
+         # "TM2DCompatibilityLoose", "TM2DCompatibilityTight" 
+         double minCaloCompatibility    = 0.0 # cut on calo compatibility
+         double minSegmentCompatibility = 0.0 # cut on muon segment match to tracker
      }
-     PSet hcal = { 
-        InputTag src    = patAODMuonIsolations:muIsoDepositCalByAssociatorTowersecal
-        double   deltaR = 0.3 
-        double   cut    = 2.0
-     }
-     PSet ecal = { 
-        InputTag src    = patAODMuonIsolations:muIsoDepositCalByAssociatorTowershcal 
-        double   deltaR = 0.3 
-        double   cut    = 2.0
-     }
-     VPSet user = { 
-        { InputTag src    = patAODMuonIsolations:muIsoDepositCalByAssociatorTowersho 
-          double   deltaR = 0.3 
-          double   cut    = 2.0 },
-        { InputTag src    = patAODMuonIsolations:muIsoDepositJets
-          double   deltaR = 0.5 
-          double   cut    = 2.0 }
-     }
-  }
+    # PSet selection = { string type = "custom"      #* Custom cut-based selection (from SusyAnalyzer)
+    #                    double dPbyPmax = 0.5
+    #                    double chi2max  = 3.0
+    #                    double nHitsMin = 13   }
 
-  bool    markItems    = true // write the status flags in the output items
-  string  saveRejected = ""   // set this to a non empty label to save the list of items which fail
-  string  saveAll      = ""   // set this to a non empty label to save a list of all items both passing and failing
-
-  vstring bitsToIgnore = {    // You can specify some bit names, e.g. "Overflow/User1", "Core/Duplicate", "Isolation/All".
-     "Isolation/All" # set isolation but don't reject non-isolated electrons
-  }
-
-  untracked bool wantSummary = true // print summary information for each status flag
+    ### isolation (not mandatory, see bitsToIgnore below)
+    PSet isolation = {
+        PSet tracker = {
+            InputTag src    = patAODMuonIsolations:muIsoDepositTk  
+            double   deltaR = 0.3 
+            double   cut    = 2.0
+        }
+        PSet hcal = { 
+            InputTag src    = patAODMuonIsolations:muIsoDepositCalByAssociatorTowersecal
+            double   deltaR = 0.3 
+            double   cut    = 2.0
+        }
+        PSet ecal = { 
+            InputTag src    = patAODMuonIsolations:muIsoDepositCalByAssociatorTowershcal 
+            double   deltaR = 0.3 
+            double   cut    = 2.0
+        }
+        VPSet user = { 
+            { InputTag src    = patAODMuonIsolations:muIsoDepositCalByAssociatorTowersho 
+                double   deltaR = 0.3 
+                double   cut    = 2.0 },
+            { InputTag src    = patAODMuonIsolations:muIsoDepositJets
+                double   deltaR = 0.5 
+                double   cut    = 2.0 }
+        }
+    }
+    
+    bool    markItems    = true // write the status flags in the output items
+    string  saveRejected = ""   // set this to a non empty label to save the list of items which fail
+    string  saveAll      = ""   // set this to a non empty label to save a list of all items both passing and failing
+    
+    vstring bitsToIgnore = {    // You can specify some bit names, e.g. "Overflow/User1", "Core/Duplicate", "Isolation/All".
+        "Isolation/All" # set isolation but don't reject non-isolated electrons
+    }
+    
+    untracked bool wantSummary = true // print summary information for each status flag
 }
