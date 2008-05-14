@@ -7,5 +7,5 @@
 
 module selectedLayer1Muons = PATMuonSelector {
   InputTag src = allLayer1Muons
-  string cut = "pt > 0. & abs(eta) < 12.
+  string cut = "pt > 0. & abs(eta) < 12."
 }
