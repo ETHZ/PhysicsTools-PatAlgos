@@ -1,5 +1,5 @@
 //
-// $Id$
+// $Id: PATElectronProducer.cc,v 1.3.2.2 2008/04/14 21:36:12 vadler Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATElectronProducer.h"
@@ -31,6 +31,9 @@ PATElectronProducer::PATElectronProducer(const edm::ParameterSet & iConfig) :
 
   // general configurables
   electronSrc_      = iConfig.getParameter<edm::InputTag>( "electronSource" );
+  embedGsfTrack_    = iConfig.getParameter<bool>         ( "embedGsfTrack" );
+  embedSuperCluster_= iConfig.getParameter<bool>         ( "embedSuperCluster" );
+  embedTrack_       = iConfig.getParameter<bool>         ( "embedTrack" );
   // MC matching configurables
   addGenMatch_      = iConfig.getParameter<bool>         ( "addGenMatch" );
   genMatchSrc_      = iConfig.getParameter<edm::InputTag>( "genParticleMatch" );
@@ -111,6 +114,9 @@ void PATElectronProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
     unsigned int idx = itElectron - electrons->begin();
     edm::RefToBase<ElectronType> elecsRef = electrons->refAt(idx);
     Electron anElectron(elecsRef);
+    if (embedGsfTrack_) anElectron.embedGsfTrack();
+    if (embedSuperCluster_) anElectron.embedSuperCluster();
+    if (embedTrack_) anElectron.embedTrack();
     // match to generated final state electrons
     if (addGenMatch_) {
       reco::GenParticleRef genElectron = (*genMatch)[elecsRef];

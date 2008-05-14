@@ -1,5 +1,5 @@
 //
-// $Id$
+// $Id: PATElectronProducer.h,v 1.3.2.2 2008/04/14 21:36:12 vadler Exp $
 //
 
 #ifndef PhysicsTools_PatAlgos_PATElectronProducer_h
@@ -13,7 +13,7 @@
    a collection of objects of ElectronType.
 
   \author   Steven Lowette, James Lamb
-  \version  $Id$
+  \version  $Id: PATElectronProducer.h,v 1.3.2.2 2008/04/14 21:36:12 vadler Exp $
 */
 
 
@@ -62,6 +62,9 @@ namespace pat {
 
       // configurables
       edm::InputTag electronSrc_;
+      bool          embedGsfTrack_;
+      bool          embedSuperCluster_;
+      bool          embedTrack_;
       bool          addGenMatch_;
       edm::InputTag genMatchSrc_;
       bool          addTrigMatch_;
