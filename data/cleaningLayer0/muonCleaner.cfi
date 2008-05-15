@@ -2,18 +2,18 @@ module allLayer0Muons = PATMuonCleaner {
     InputTag muonSource        = muons               # reco muon input source
     
     ### selection (e.g. ID)
-    #PSet selection = { string type = "globalMuons" } #* Reco-based muon selection
+    PSet selection = { string type = "none" }          #* No selection at all
     # Other possible selections:
-    # PSet selection = { string type = "none" }      #* No selection at all
-     PSet selection = {                             #* ID-based selection (only tracker muons)
-         string type = "muonPOG" 
-         string flag = "TMLastStationLoose" # flag for the muon id algorithm
-         # "TMLastStationLoose", "TMLastStationTight"  
-         # "TM2DCompatibilityLoose", "TM2DCompatibilityTight" 
-         double minCaloCompatibility    = 0.0 # cut on calo compatibility
-         double minSegmentCompatibility = 0.0 # cut on muon segment match to tracker
-     }
-    # PSet selection = { string type = "custom"      #* Custom cut-based selection (from SusyAnalyzer)
+    # PSet selection = { string type = "globalMuons" } #* Reco-based muon selection
+    # PSet selection = {                               #* ID-based selection (only tracker muons)
+    #     string type = "muonPOG" 
+    #     string flag = "TMLastStationLoose" # flag for the muon id algorithm
+    #     # "TMLastStationLoose", "TMLastStationTight"  
+    #     # "TM2DCompatibilityLoose", "TM2DCompatibilityTight" 
+    #     double minCaloCompatibility    = 0.0 # cut on calo compatibility
+    #     double minSegmentCompatibility = 0.0 # cut on muon segment match to tracker
+    # }
+    # PSet selection = { string type = "custom"        #* Custom cut-based selection (from SusyAnalyzer)
     #                    double dPbyPmax = 0.5
     #                    double chi2max  = 3.0
     #                    double nHitsMin = 13   }
