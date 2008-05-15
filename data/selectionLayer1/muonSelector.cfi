@@ -2,8 +2,10 @@
 # module to select Muons
 # See https://twiki.cern.ch/twiki/bin/view/CMS/SWGuidePhysicsCutParser
 # on how to use the cut-string
+#
+# These are only dummy cuts
 
 module selectedLayer1Muons = PATMuonSelector {
   InputTag src = allLayer1Muons
-  string cut = "pt > 10. & abs(eta) < 2.4"
+  string cut = "pt > 0. & abs(eta) < 12."
 }
