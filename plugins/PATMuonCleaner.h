@@ -1,7 +1,7 @@
 #ifndef PhysicsTools_PatAlgos_PATMuonCleaner_h
 #define PhysicsTools_PatAlgos_PATMuonCleaner_h
 //
-// $Id: PATMuonCleaner.h,v 1.7.2.2 2008/04/15 06:48:58 fronga Exp $
+// $Id: PATMuonCleaner.h,v 1.7.2.3 2008/05/13 12:46:09 fronga Exp $
 //
 
 /**
@@ -29,7 +29,7 @@
   The actual selection is performed by the MuonSelector.
 
   \author   Giovanni Petrucciani (from PATMuonProducer by Steven Lowette, Roger Wolf)
-  \version  $Id: PATMuonCleaner.h,v 1.7.2.2 2008/04/15 06:48:58 fronga Exp $
+  \version  $Id: PATMuonCleaner.h,v 1.7.2.3 2008/05/13 12:46:09 fronga Exp $
 */
 
 
@@ -99,9 +99,9 @@ namespace reco {
           {
             std::string flag = cfg.getParameter<std::string>("flag");
             if        ( flag == "TMLastStationLoose" ) {
-                config_.flag = muonid::TMLastStationLoose;
+                config_.flag = reco::Muon::TMLastStationLoose;
             } else if ( flag == "TMLastStationTight" ) {
-              config_.flag = muonid::TMLastStationTight;
+              config_.flag = reco::Muon::TMLastStationTight;
             } else {
               throw edm::Exception(edm::errors::UnimplementedFeature) 
                 << "muonPOG flag is not valid or not implemented yet";
