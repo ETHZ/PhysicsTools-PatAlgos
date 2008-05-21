@@ -10,8 +10,9 @@ module allLayer0Photons = PATBasePhotonCleaner {
   string  saveRejected = ""   // set this to a non empty label to save the list of items which fail
   string  saveAll      = ""   // set this to a non empty label to save a list of all items both passing and failing
   vstring bitsToIgnore = {    // You can specify some bit names, e.g. "Overflow/User1", 
-        "Isolation/All"       //   "Core/Duplicate", "Isolation/All".
-  }
+        "Isolation/All",       //   "Core/Duplicate", "Isolation/All".
+        "Overlap/All"
+  } 
   untracked bool wantSummary = true // print summary information for each status flag
 
   PSet isolation = {
