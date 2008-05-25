@@ -21,12 +21,12 @@ module allLayer0Muons = PATMuonCleaner {
         double   deltaR = 0.3 
         double   cut    = 2.0
      }
-     PSet hcal = { 
+     PSet ecal = { 
         InputTag src    = patAODMuonIsolations:muGlobalIsoDepositCalByAssociatorTowersecal
         double   deltaR = 0.3 
         double   cut    = 2.0
      }
-     PSet ecal = { 
+     PSet hcal = { 
         InputTag src    = patAODMuonIsolations:muGlobalIsoDepositCalByAssociatorTowershcal 
         double   deltaR = 0.3 
         double   cut    = 2.0
