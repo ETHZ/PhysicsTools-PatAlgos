@@ -1,11 +1,16 @@
-module layer0JetTracksAssociator = JetTracksAssociationValueMap {
-    InputTag src    = allLayer0Jets
-    InputTag tracks = generalTracks
-
-    double   deltaR       = 0.5
-    int32    minHits      = 3
-    double   maxNormChi2  = 9999.0
+module patAODJetTracksAssociator = JetTracksAssociationValueMap {
+    InputTag src    = iterativeCone5CaloJets
+    InputTag tracks = ic5JetTracksAssociatorAtVertex  # any JetTracksAssociation
+    #string   cut    = "normalizedChi2 < 5" # optional cut on track quality
+    string   cut    = "" # optional cut on track quality
 }
+
+module layer0JetTracksAssociator = CandValueMapSkimmerTrackRefs {
+    InputTag collection  = allLayer0Jets
+    InputTag association = patAODJetTracksAssociator
+    InputTag backrefs    = allLayer0Jets
+}
+
 
 module layer0JetCharge = JetChargeValueMap {
     InputTag src = allLayer0Jets
@@ -16,6 +21,7 @@ module layer0JetCharge = JetChargeValueMap {
 }
 
 sequence patLayer0JetTracksCharge = {
+    patAODJetTracksAssociator,
     layer0JetTracksAssociator,
     layer0JetCharge
 }
