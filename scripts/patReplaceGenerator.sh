@@ -10,7 +10,7 @@ export parser=${CMSSW_BASE}/src/PhysicsTools/PatAlgos/scripts/patReplaceParser.p
 export fastReplacer=${CMSSW_BASE}/src/PhysicsTools/PatAlgos/scripts/patReplaceFast.pl
 if [ ! -d $baseDir ]; then 
   echo "*** " $baseDir not found
-  echo "*** " Please make sure to run scramv1 run -[c]sh first
+  echo "*** " Please make sure to run 'cmsenv'
   exit -1
 fi
 export layer0FamosSetup=${baseDir}/data/famos/patLayer0_FamosSetup.cff
