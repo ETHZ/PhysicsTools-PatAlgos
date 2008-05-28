@@ -35,7 +35,8 @@ struct NullSorter {
 template<typename T, typename T2=T, typename Collection = std::vector<T2>, typename Comparator = NullSorter<T2> >
 class CleanerHelper {
     // make sure our template arguments T and T2 inherits from Candidate. The extra () is needed!.
-    BOOST_STATIC_ASSERT( (boost::is_base_of<reco::Candidate,T>::value) );
+    BOOST_STATIC_ASSERT( ( (boost::is_same<reco::Candidate,T>::value) || (boost::is_base_of<reco::Candidate,T>::value) ) );
+    // boost::is_base_of<reco::Candidate,T> should be enough, but for strange reasons it does not work if T=Candidate, even if it should
     BOOST_STATIC_ASSERT( (boost::is_base_of<reco::Candidate,T2>::value) );
     public:
         typedef CleanerHelper<T,T2,Collection,Comparator> cleaner_type;

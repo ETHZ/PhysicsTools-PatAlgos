@@ -1,5 +1,5 @@
 //
-// $Id$
+// $Id: PATPhotonProducer.h,v 1.3.2.2 2008/04/14 21:36:13 vadler Exp $
 //
 
 #ifndef PhysicsTools_PatAlgos_PATPhotonProducer_h
@@ -13,7 +13,7 @@
    a collection of objects of PhotonType.
 
   \author   Steven Lowette
-  \version  $Id$
+  \version  $Id: PATPhotonProducer.h,v 1.3.2.2 2008/04/14 21:36:13 vadler Exp $
 */
 
 
@@ -30,14 +30,9 @@
 
 namespace pat {
 
-
-  class ObjectResolutionCalc;
-
-
   class PATPhotonProducer : public edm::EDProducer {
 
     public:
-
       explicit PATPhotonProducer(const edm::ParameterSet & iConfig);
       ~PATPhotonProducer();
 
@@ -48,8 +43,13 @@ namespace pat {
       // configurables
       edm::InputTag photonSrc_;
       bool embedSuperCluster_;
+
+      bool addGenMatch_;
+      edm::InputTag genPartSrc_;
+
       bool addTrigMatch_;
       std::vector<edm::InputTag> trigPrimSrc_;
+
       // tools
       GreaterByEt<Photon> eTComparator_;
 

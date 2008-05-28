@@ -1,0 +1,59 @@
+module allLayer0TrackCands = PATRecoChargedCandidateCleaner {
+  InputTag src = patAODTrackCands
+
+  PSet isolation = {
+     PSet tracker = {
+        InputTag src = patAODTrackIsolations:patAODTrackIsoDepositCtfTk
+        double   deltaR    = 0.3
+        double   veto      = 0.015
+        double   threshold = 1.5
+        double   cut       = 3.0
+        bool     skipDefaultVeto = true
+     }
+     PSet hcal = {
+        InputTag src    = patAODTrackIsolations:patAODTrackIsoDepositCalByAssociatorTowershcal
+        double   deltaR = 0.3
+        double   cut    = 3
+     }
+     PSet ecal = {
+        InputTag src    = patAODTrackIsolations:patAODTrackIsoDepositCalByAssociatorTowershcal
+        double   deltaR = 0.3
+        double   cut    = 5
+     }
+  } // Isolation block
+
+  PSet removeOverlaps = {
+    PSet muons = {
+        InputTag collection = allLayer0Muons
+        double   deltaR     = 0.3
+        #string  cut        = ""  // optional cut
+        #vstring flags      = ""  // optional flags
+        bool     checkRecoComponents = true // "overlap" only if they overlap from the Candidate OverlapChecker point of view
+    }
+
+    PSet electrons = {
+        InputTag collection = allLayer0Electrons
+        double   deltaR     = 0.3
+        #string  cut        = ""  // optional cut
+        #vstring flags      = ""  // optional flags
+        bool     checkRecoComponents = true // "overlap" only if they overlap from the Candidate OverlapChecker point of view
+    }
+
+    PSet taus = {
+        InputTag collection = allLayer0Taus
+        double   deltaR     = 0.3
+        #string  cut        = ""  // optional cut
+        #vstring flags      = ""  // optional flags
+        #bool   checkRecoComponents = true // if not specified, is false
+    }
+  } // Overlap block
+
+  bool    markItems    = true // write the status flags in the output items
+  string  saveRejected = ""   // set this to a non empty label to save the list of items which fail
+  string  saveAll      = ""   // set this to a non empty label to save a list of all items both passing and failing
+  vstring bitsToIgnore = {    // You can specify some bit names, e.g. "Overflow/User1", 
+        "Isolation/All",       //   "Core/Duplicate", "Isolation/All".
+        "Overlap/All"
+  } 
+  untracked bool wantSummary = true // print summary information for each status flag
+}

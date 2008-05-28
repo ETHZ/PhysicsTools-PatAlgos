@@ -1,5 +1,5 @@
 //
-// $Id: PATPhotonProducer.cc,v 1.3.2.2 2008/04/14 21:36:13 vadler Exp $
+// $Id: PATPhotonProducer.cc,v 1.3.2.3 2008/05/14 13:24:32 lowette Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATPhotonProducer.h"
@@ -15,7 +15,15 @@ PATPhotonProducer::PATPhotonProducer(const edm::ParameterSet & iConfig) :
   // initialize the configurables
   photonSrc_         = iConfig.getParameter<edm::InputTag>("photonSource");
   embedSuperCluster_ = iConfig.getParameter<bool>         ("embedSuperCluster");
-  
+
+   // MC matching configurables
+  addGenMatch_   = iConfig.getParameter<bool>( "addGenMatch" );
+  genPartSrc_    = iConfig.getParameter<edm::InputTag>( "genParticleMatch" );
+
+  // Trigger matching configurables
+  addTrigMatch_  = iConfig.getParameter<bool>( "addTrigMatch" );
+  trigPrimSrc_   = iConfig.getParameter<std::vector<edm::InputTag> >( "trigPrimMatch" );
+ 
   // produces vector of photons
   produces<std::vector<Photon> >();
 
