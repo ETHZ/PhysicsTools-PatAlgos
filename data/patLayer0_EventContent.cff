@@ -52,6 +52,9 @@ block patLayer0EventContent = {
     "drop recoCandidateedmRefToBaseedmValueMap_allLayer0Muons_*_*",
     "drop recoCandidateedmRefToBaseedmValueMap_allLayer0Taus_*_*",
     "drop recoCandidateedmRefToBaseedmValueMap_allLayer0Jets_*_*",
-    "drop recoCandidateedmRefToBaseedmValueMap_allLayer0METs_*_*"
+    "drop recoCandidateedmRefToBaseedmValueMap_allLayer0METs_*_*",
+    
+    "keep patTriggerPrimitivesOwned_*_*_*",
+    "keep patTriggerPrimitivesOwnededmAssociation_*_*_*"
   }
 }
