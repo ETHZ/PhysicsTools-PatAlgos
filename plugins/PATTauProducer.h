@@ -53,7 +53,7 @@ namespace pat {
       bool embedLeadTrack_;
       bool embedSignalTracks_;
       bool          addGenMatch_;
-      edm::InputTag genPartSrc_;
+      edm::InputTag genMatchSrc_;
       bool          addResolutions_;
       bool          useNNReso_;
       std::string   tauResoFile_;

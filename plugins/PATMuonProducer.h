@@ -56,7 +56,7 @@ namespace pat {
       bool          embedStandAloneMuon_;
       bool          embedCombinedMuon_;
       bool          addGenMatch_;
-      edm::InputTag genPartSrc_;
+      edm::InputTag genMatchSrc_;
       bool          addResolutions_;
       bool          useNNReso_;
       std::string   muonResoFile_;
