@@ -1,5 +1,5 @@
 //
-// $Id: PATTauProducer.cc,v 1.1.2.4 2008/04/14 21:36:13 vadler Exp $
+// $Id: PATTauProducer.cc,v 1.1.2.5 2008/05/14 13:28:31 lowette Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATTauProducer.h"
@@ -45,7 +45,7 @@ PATTauProducer::PATTauProducer(const edm::ParameterSet & iConfig) :
   trigPrimSrc_    = iConfig.getParameter<std::vector<edm::InputTag> >( "trigPrimMatch" );
   addResolutions_ = iConfig.getParameter<bool>         ( "addResolutions" );
   useNNReso_      = iConfig.getParameter<bool>         ( "useNNResolutions" );
-  genPartSrc_     = iConfig.getParameter<edm::InputTag>( "genParticleMatch" );
+  genMatchSrc_    = iConfig.getParameter<edm::InputTag>( "genParticleMatch" );
   tauResoFile_    = iConfig.getParameter<std::string>  ( "tauResoFile" );
 
   // construct resolution calculator
@@ -94,7 +94,7 @@ void PATTauProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
   }
    
   edm::Handle<edm::Association<reco::GenParticleCollection> > genMatch;
-  if (addGenMatch_) iEvent.getByLabel(genPartSrc_, genMatch); 
+  if (addGenMatch_) iEvent.getByLabel(genMatchSrc_, genMatch); 
 
   std::vector<edm::Handle<edm::ValueMap<IsoDeposit> > > deposits(isoDepositLabels_.size());
   for (size_t j = 0, nd = deposits.size(); j < nd; ++j) {
@@ -160,15 +160,14 @@ void PATTauProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
       }
     }
 
-    // add MC match if demanded
+    // store the match to the generated final state taus
     if (addGenMatch_) {
       reco::GenParticleRef genTau = (*genMatch)[tausRef];
       if (genTau.isNonnull() && genTau.isAvailable() ) {
         aTau.setGenLepton(*genTau);
-      } else {
-        aTau.setGenLepton(reco::Particle(0, reco::Particle::LorentzVector(0,0,0,0))); // TQAF way of setting "null"
-      }
+      } // leave empty if no match found
     }
+
     // matches to fired trigger primitives
     if ( addTrigMatch_ ) {
       for ( size_t i = 0; i < trigPrimSrc_.size(); ++i ) {

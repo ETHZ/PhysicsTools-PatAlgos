@@ -1,5 +1,5 @@
 //
-// $Id: PATGenericParticleProducer.cc,v 1.3.2.3 2008/05/14 13:24:32 lowette Exp $
+// $Id: PATGenericParticleProducer.cc,v 1.1.2.1 2008/05/28 13:46:01 gpetrucc Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATGenericParticleProducer.h"
@@ -26,7 +26,7 @@ PATGenericParticleProducer::PATGenericParticleProducer(const edm::ParameterSet &
   
   // MC matching configurables
   addGenMatch_   = iConfig.getParameter<bool>( "addGenMatch" );
-  genPartSrc_    = iConfig.getParameter<edm::InputTag>( "genParticleMatch" );
+  genMatchSrc_    = iConfig.getParameter<edm::InputTag>( "genParticleMatch" );
 
   // Trigger matching configurables
   addTrigMatch_  = iConfig.getParameter<bool>( "addTrigMatch" );
@@ -74,7 +74,7 @@ void PATGenericParticleProducer::produce(edm::Event & iEvent, const edm::EventSe
 
   // prepare the MC matching
   edm::Handle<edm::Association<reco::GenParticleCollection> > genMatch;
-  if (addGenMatch_) iEvent.getByLabel(genPartSrc_, genMatch);
+  if (addGenMatch_) iEvent.getByLabel(genMatchSrc_, genMatch);
 
   // prepare the quality
   edm::Handle<edm::ValueMap<float> > qualities;
@@ -131,9 +131,7 @@ void PATGenericParticleProducer::produce(edm::Event & iEvent, const edm::EventSe
       reco::GenParticleRef genGenericParticle = (*genMatch)[candRef];
       if (genGenericParticle.isNonnull() && genGenericParticle.isAvailable() ) {
         aGenericParticle.setGenParticle(*genGenericParticle);
-      } else {
-        aGenericParticle.setGenParticle(reco::Particle(0, reco::Particle::LorentzVector(0,0,0,0))); // TQAF way of setting "null"
-      }
+      } // leave empty if no match found
     }
 
     if (addQuality_) {

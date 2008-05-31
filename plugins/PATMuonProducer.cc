@@ -1,5 +1,5 @@
 //
-// $Id: PATMuonProducer.cc,v 1.1.2.6 2008/04/18 15:13:47 lowette Exp $
+// $Id: PATMuonProducer.cc,v 1.1.2.7 2008/05/14 13:28:31 lowette Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATMuonProducer.h"
@@ -38,7 +38,7 @@ PATMuonProducer::PATMuonProducer(const edm::ParameterSet & iConfig) :
   embedCombinedMuon_   = iConfig.getParameter<bool>         ( "embedCombinedMuon" );
   // MC matching configurables
   addGenMatch_   = iConfig.getParameter<bool>         ( "addGenMatch" );
-  genPartSrc_    = iConfig.getParameter<edm::InputTag>( "genParticleMatch" );
+  genMatchSrc_   = iConfig.getParameter<edm::InputTag>( "genParticleMatch" );
   // Trigger matching configurables
   addTrigMatch_  = iConfig.getParameter<bool>         ( "addTrigMatch" );
   trigPrimSrc_   = iConfig.getParameter<std::vector<edm::InputTag> >( "trigPrimMatch" );
@@ -97,7 +97,7 @@ void PATMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetu
 
   // prepare the MC matching
   edm::Handle<edm::Association<reco::GenParticleCollection> > genMatch;
-  if (addGenMatch_) iEvent.getByLabel(genPartSrc_, genMatch);
+  if (addGenMatch_) iEvent.getByLabel(genMatchSrc_, genMatch);
 
   // loop over muons
   std::vector<Muon> * patMuons = new std::vector<Muon>();
@@ -111,15 +111,14 @@ void PATMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetu
     if (embedStandAloneMuon_) aMuon.embedStandAloneMuon();
     if (embedCombinedMuon_) aMuon.embedCombinedMuon();
 
-    // match to generated final state muons
+    // store the match to the generated final state muons
     if (addGenMatch_) {
       reco::GenParticleRef genMuon = (*genMatch)[muonsRef];
       if (genMuon.isNonnull() && genMuon.isAvailable() ) {
         aMuon.setGenLepton(*genMuon);
-      } else {
-        aMuon.setGenLepton(reco::Particle(0, reco::Particle::LorentzVector(0,0,0,0))); // TQAF way of setting "null"
-      }
+      } // leave empty if no match found
     }
+
     // matches to fired trigger primitives
     if ( addTrigMatch_ ) {
       for ( size_t i = 0; i < trigPrimSrc_.size(); ++i ) {
