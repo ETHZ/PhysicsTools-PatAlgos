@@ -1,10 +1,13 @@
 //
-// $Id: PATPhotonProducer.cc,v 1.3.2.3 2008/05/14 13:24:32 lowette Exp $
+// $Id: PATPhotonProducer.cc,v 1.3.2.4 2008/05/28 13:46:01 gpetrucc Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATPhotonProducer.h"
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
 #include "DataFormats/Common/interface/View.h"
+#include "DataFormats/HepMCCandidate/interface/GenParticleFwd.h"
+#include "DataFormats/HepMCCandidate/interface/GenParticle.h"
+
 #include <memory>
 
 using namespace pat;
@@ -18,7 +21,7 @@ PATPhotonProducer::PATPhotonProducer(const edm::ParameterSet & iConfig) :
 
    // MC matching configurables
   addGenMatch_   = iConfig.getParameter<bool>( "addGenMatch" );
-  genPartSrc_    = iConfig.getParameter<edm::InputTag>( "genParticleMatch" );
+  genMatchSrc_    = iConfig.getParameter<edm::InputTag>( "genParticleMatch" );
 
   // Trigger matching configurables
   addTrigMatch_  = iConfig.getParameter<bool>( "addTrigMatch" );
@@ -52,6 +55,12 @@ void PATPhotonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSe
   edm::Handle<edm::View<PhotonType> > photons;
   iEvent.getByLabel(photonSrc_, photons);
 
+  // prepare the MC matching
+  edm::Handle<edm::Association<reco::GenParticleCollection> > genMatch;
+  if (addGenMatch_) {
+    iEvent.getByLabel(genMatchSrc_, genMatch);
+  }
+
   if (isolator_.enabled()) isolator_.beginEvent(iEvent);
 
   std::vector<edm::Handle<edm::ValueMap<IsoDeposit> > > deposits(isoDepositLabels_.size());
@@ -67,6 +76,15 @@ void PATPhotonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSe
     edm::RefToBase<PhotonType> photonRef = photons->refAt(idx);
     Photon aPhoton(photonRef);
     if (embedSuperCluster_) aPhoton.embedSuperCluster();
+
+    // store the match to the generated final state photons
+    if (addGenMatch_) {
+      reco::GenParticleRef genPhoton = (*genMatch)[photonRef];
+      if (genPhoton.isNonnull() && genPhoton.isAvailable() ) {
+        aPhoton.setGenPhoton(*genPhoton);
+      } // leave empty if no match found
+    }
+
     // matches to fired trigger primitives
     if ( addTrigMatch_ ) {
       for ( size_t i = 0; i < trigPrimSrc_.size(); ++i ) {
@@ -80,6 +98,7 @@ void PATPhotonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSe
     }
 
     // here comes the extra functionality
+    // FIXME: Needs better comments
     if (isolator_.enabled()) {
         isolator_.fill(*photons, idx, isolatorTmpStorage_);
         typedef pat::helper::MultiIsolator::IsolationValuePairs IsolationValuePairs;
@@ -88,7 +107,7 @@ void PATPhotonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSe
             aPhoton.setIsolation(it->first, it->second);
         }
     }
-
+    // store isolation deposits if asked for
     for (size_t j = 0, nd = deposits.size(); j < nd; ++j) {
         aPhoton.setIsoDeposit(isoDepositLabels_[j].first, (*deposits[j])[photonRef]);
     }
