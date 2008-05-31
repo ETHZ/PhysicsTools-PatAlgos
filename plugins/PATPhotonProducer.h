@@ -48,6 +48,10 @@ namespace pat {
       // configurables
       edm::InputTag photonSrc_;
       bool embedSuperCluster_;
+
+      bool addGenMatch_;
+      edm::InputTag genMatchSrc_;
+
       // tools
       GreaterByEt<Photon> eTComparator_;
 
