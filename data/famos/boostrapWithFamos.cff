@@ -6,14 +6,6 @@
   # Random number generator service
   include "FastSimulation/Configuration/data/RandomServiceInitialization.cff"
 
-  // If you want to use the (CMS default) CLHEP random, 
-  // set these ones to false
-  replace famosPileUp.UseTRandomEngine = true
-  replace famosSimHits.UseTRandomEngine = true
-  replace siTrackerGaussianSmearingRecHits.UseTRandomEngine = true
-  replace caloRecHits.UseTRandomEngine = true
-  replace paramMuons.UseTRandomEngine = true
-
   # Generate ttbar events
   include "FastSimulation/Configuration/data/ttbar.cfi"
 
