@@ -1,0 +1,57 @@
+// This is a skeleton of what you need to run PAT with generic candidates (e.g. from tracks),
+// for what matters the reconstruction steps
+include "SimGeneral/HepPDTESSource/data/pythiapdt.cfi"
+
+module patAODTrackCandsUnfiltered = ChargedCandidateProducer {
+  InputTag src = generalTracks
+  string particleType = "mu+"
+}
+
+module patAODTrackCands = CandViewSelector {
+   InputTag src = patAODTrackCandsUnfiltered
+   string   cut = "pt > 15"
+}
+
+module  patAODTrackIsoDepositCalByAssociatorTowers = CandIsoDepositProducer {
+    InputTag src = patAODTrackCands
+    string trackType = "best"
+    bool MultipleDepositsFlag = true
+    PSet ExtractorPSet = { using MIsoCaloExtractorByAssociatorTowersBlock }
+}
+module  patAODTrackIsoDepositCtfTk = candIsoDepositCtfTk from "PhysicsTools/IsolationAlgos/test/mu/candIsoDepositCtfTk.cfi"
+replace patAODTrackIsoDepositCtfTk.src = patAODTrackCands
+
+block patAODTrackIsolationLabels = {
+    VInputTag associations = {
+        patAODTrackIsoDepositCalByAssociatorTowers:ecal,
+        patAODTrackIsoDepositCalByAssociatorTowers:hcal,
+        patAODTrackIsoDepositCalByAssociatorTowers:ho,
+        patAODTrackIsoDepositCtfTk
+    }
+}
+
+// converter module
+module patAODTrackIsolations = MultipleIsoDepositsToValueMaps {
+    InputTag  collection = patAODTrackCands
+    using patAODTrackIsolationLabels
+}
+
+// sequence to run on AOD before 
+sequence patAODTrackCandSequence = {
+  patAODTrackCandsUnfiltered, patAODTrackCands, patAODTrackIsoDepositCalByAssociatorTowers, patAODTrackIsoDepositCtfTk, patAODTrackIsolations
+}
+
+// re-key to clean layer 0 output collection
+module layer0TrackIsolations = CandManyValueMapsSkimmerIsoDeposits {
+    InputTag collection  =   allLayer0TrackCands
+    InputTag backrefs    =   allLayer0TrackCands
+    InputTag commonLabel   = patAODTrackIsolations
+    using patAODTrackIsolationLabels
+}
+
+// sequence to run at end of layer 0 
+sequence patLayer0TrackCandSequence = {
+    layer0TrackIsolations
+}
+
+
