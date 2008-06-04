@@ -21,7 +21,7 @@ sequence patBeforeLevel0Reco_withoutPFTau = {
   // patCaloTauTagging, # don't run by default, doesn't work on AOD only samples
   patAODBTagging, 
   patAODElectronIsolation,
-  patAODPhotonIsolation,
+  // patAODPhotonIsolation, //FIXME
   patAODMuonIsolation,
   patAODJetMETCorrections # needed for the MET
 }

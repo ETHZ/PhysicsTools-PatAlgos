@@ -11,7 +11,7 @@ module allLayer1Photons = PATPhotonProducer {
 
   ### Isolation configurables
   PSet isolation = {
-     PSet tracker = {
+  /*  PSet tracker = {
         InputTag src    = layer0PhotonIsolations:egammaPhotonTkDeposits
         double   deltaR    = 0.3
         double   threshold = 1.5
@@ -24,11 +24,12 @@ module allLayer1Photons = PATPhotonProducer {
         InputTag src    = layer0PhotonIsolations:egammaPhotonEcalDeposits
         double   deltaR = 0.3
      }
+  */
   }
   PSet isoDeposits = {
-    InputTag tracker =  layer0PhotonIsolations:egammaPhotonTkDeposits
-    InputTag ecal    =  layer0PhotonIsolations:egammaPhotonEcalDeposits
-    InputTag hcal    =  layer0PhotonIsolations:egammaPhotonTowersDeposits
+    #InputTag tracker =  layer0PhotonIsolations:egammaPhotonTkDeposits
+    #InputTag ecal    =  layer0PhotonIsolations:egammaPhotonEcalDeposits
+    #InputTag hcal    =  layer0PhotonIsolations:egammaPhotonTowersDeposits
   }
 
 }

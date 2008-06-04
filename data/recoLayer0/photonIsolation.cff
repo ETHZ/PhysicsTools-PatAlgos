@@ -9,14 +9,15 @@ module egammaPhotonTowersDeposits  = candIsoDepositEgammaTowers from "PhysicsToo
 replace egammaPhotonTowersDeposits.src       = photons
 replace egammaPhotonTowersDeposits.ExtractorPSet.extRadius = 0.7
 
-module egammaPhotonEcalDeposits  = candIsoDepositEgammaEcal from "PhysicsTools/IsolationAlgos/test/egamma/candIsoDepositEgammaEcal.cfi"
-replace egammaPhotonEcalDeposits.src       = photons
-replace egammaPhotonEcalDeposits.ExtractorPSet.extRadius = 0.5
+//FIXME workaround in 2.1.0.pre5
+//module egammaPhotonEcalDeposits  = candIsoDepositEgammaEcal from "PhysicsTools/IsolationAlgos/test/egamma/candIsoDepositEgammaEcal.cfi"
+//replace egammaPhotonEcalDeposits.src       = photons
+//replace egammaPhotonEcalDeposits.ExtractorPSet.extRadius = 0.5
 
 // define module labels for old (tk-based isodeposit) POG isolation
 block patAODPhotonIsolationLabels = {
     VInputTag associations = { 
-        egammaPhotonTkDeposits, egammaPhotonTowersDeposits, egammaPhotonEcalDeposits
+        egammaPhotonTkDeposits, egammaPhotonTowersDeposits //,egammaPhotonEcalDeposits // FIXME: workaround in 2.1.0.pre5
     }
 }
 

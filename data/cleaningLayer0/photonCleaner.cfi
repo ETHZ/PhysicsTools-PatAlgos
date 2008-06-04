@@ -1,9 +1,8 @@
 module allLayer0Photons = PATBasePhotonCleaner {
   InputTag photonSource     = photons
 
-  string   removeDuplicates = "bySeed"
-
-  string   removeElectrons  = "bySeed"
+  string   removeDuplicates = "none" 
+  string   removeElectrons  = "none" // FIXME: "BySeed" in one of the two 'removeXyz' throws exception of bad ref.
   InputTag electrons        = allLayer0Electrons
 
   bool    markItems    = true // write the status flags in the output items
@@ -15,7 +14,7 @@ module allLayer0Photons = PATBasePhotonCleaner {
   untracked bool wantSummary = true // print summary information for each status flag
 
   PSet isolation = {
-     PSet tracker = {
+  /*   PSet tracker = {
         InputTag src    = patAODPhotonIsolations:egammaPhotonTkDeposits
         double   deltaR = 0.3
         vstring  vetos  = { "Threshold(1.5)" }
@@ -32,6 +31,7 @@ module allLayer0Photons = PATBasePhotonCleaner {
         double   deltaR = 0.3
         double   cut    = 5
      }
+  */
   }
   
 }
