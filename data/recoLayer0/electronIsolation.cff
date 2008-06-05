@@ -1,62 +1,38 @@
-//include "EgammaAnalysis/EgammaIsolationProducers/data/egammaElectronTkIsolation.cfi"
-//include "EgammaAnalysis/EgammaIsolationProducers/data/egammaElectronTkNumIsolation.cfi"
-include "EgammaAnalysis/EgammaIsolationProducers/data/egammaHOETower.cfi"
-include "EgammaAnalysis/EgammaIsolationProducers/data/egammaTowerIsolation.cfi"
-include "EgammaAnalysis/EgammaIsolationProducers/data/egammaEcalRelIsolationSequence.cff"
-include "EgammaAnalysis/EgammaIsolationProducers/data/egammaEcalIsolationSequence.cff"
+include "RecoEgamma/EgammaIsolationAlgos/data/egammaIsoDeposits.cff"
 
-# This is needed due to a mismatch in the EgammaAnalysis/EgammaIsolationProducers configurables
-# and the AOD content in CMSSW_2_0_0
-# also, I can't use replace, otherwise I can't get replace it again if I want to
-module egammaElectronTkIsolation = EgammaElectronTkIsolationProducer {
-    InputTag electronProducer =  pixelMatchGsfElectrons
-    InputTag trackProducer = generalTracks
-    double ptMin = 1.5
-    double intRadius = .02
-    double extRadius = .2
-    double maxVtxDist = .1
-    bool absolut = true
-}
-module egammaElectronTkNumIsolation = EgammaElectronTkNumIsolationProducer {
-    InputTag electronProducer =  pixelMatchGsfElectrons
-    InputTag trackProducer = generalTracks
-    double ptMin = 1.5
-    double intRadius = 0.02
-    double extRadius = .2
-    double maxVtxDist = .1
+// selecting POG modules that can run on top of AOD
+sequence eleIsoDepositAOD = { 
+    eleIsoDepositTk,
+    eleIsoDepositEcalFromClusts,      # on RECO you can use "eleIsoDepositEcalFromHits"
+    #eleIsoDepositEcalSCVetoFromClust,# somebody may want this one 
+    eleIsoDepositHcalFromTowers       # on RECO you can use "eleIsoDepositHcalFromHits"
 }
 
-// define module labels for old (non isodeposit) POG isolation
+// define module labels for old (tk-based isodeposit) POG isolation
 block patAODElectronIsolationLabels = {
     VInputTag associations = { 
-        egammaTowerIsolation, 
-        egammaHOETower, 
-        egammaElectronTkIsolation, 
-        egammaElectronTkNumIsolation, 
-        egammaEcalRelIsolation, 
-        egammaEcalIsolation 
+       eleIsoDepositTk, 
+       eleIsoDepositEcalFromClusts, 
+       #eleIsoDepositEcalSCVetoFromClust, # somebody may want this one instead
+       eleIsoDepositHcalFromTowers 
     }
 }
 
-// read and convert to ValueMap<float>
-module patAODElectronIsolations = MultipleNumbersToValueMaps {
+// read and convert to ValueMap<IsoDeposit> keyed to Candidate
+module patAODElectronIsolations = MultipleIsoDepositsToValueMaps {
     InputTag  collection   = pixelMatchGsfElectrons
     using patAODElectronIsolationLabels
 }
 
 // sequence to run on AOD before 
 sequence patAODElectronIsolation = {
-  egammaTowerIsolation &
-  egammaHOETower &
-  egammaElectronTkIsolation &
-  egammaElectronTkNumIsolation &
-  egammaEcalRelIsolationSequence &
-  egammaEcalIsolation &
-  patAODElectronIsolations
+    egammaSuperClusterMerger, egammaBasicClusterMerger, # these we put here
+    eleIsoDepositAOD,
+    patAODElectronIsolations
 }
 
 
-module layer0ElectronIsolations = CandManyValueMapsSkimmerFloat {
+module layer0ElectronIsolations = CandManyValueMapsSkimmerIsoDeposits {
     InputTag collection  =   allLayer0Electrons
     InputTag backrefs    =   allLayer0Electrons
     InputTag commonLabel   = patAODElectronIsolations

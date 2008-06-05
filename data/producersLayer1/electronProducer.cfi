@@ -21,16 +21,48 @@ module allLayer1Electrons = PATElectronProducer {
 
   ### isolation configurables
   PSet isolation   = {
-        PSet tracker = { InputTag src = layer0ElectronIsolations:egammaElectronTkIsolation }
-        PSet ecal    = { InputTag src = layer0ElectronIsolations:egammaEcalIsolation    }
-        PSet hcal    = { InputTag src = layer0ElectronIsolations:egammaTowerIsolation      }
-        VPSet user   = {
-            { InputTag src = layer0ElectronIsolations:egammaElectronTkNumIsolation },
-            { InputTag src = layer0ElectronIsolations:egammaEcalRelIsolation },
-            { InputTag src = layer0ElectronIsolations:egammaHOETower }
-        }
+     PSet tracker = {
+        // input IsoDeposit
+        InputTag src = layer0ElectronIsolations:eleIsoDepositTk
+        // parameters to compute isolation (Egamma POG defaults)
+        double  deltaR = 0.3
+        vstring vetos = {"0.015",            # Inner DR Veto
+                         "Threshold(1.0)"}   # Minimum Tk Pt
+        bool skipDefaultVeto = true
+     }
+     PSet ecal = { 
+        // input IsoDeposit
+        InputTag src = layer0ElectronIsolations:eleIsoDepositEcalFromClusts
+        // parameters to compute isolation (Egamma POG defaults)
+        double  deltaR = 0.4
+        vstring vetos = {"EcalBarrel:0.040",                                      # Barrel (|eta| < 1.479)
+                         "EcalBarrel:RectangularEtaPhiVeto(-0.01,0.01,-0.5,0.5)", # 
+                        "EcalEndcaps:0.070",                                      # Endcaps
+                        "EcalEndcaps:RectangularEtaPhiVeto(-0.02,0.02,-0.5,0.5)"} # 
+        bool skipDefaultVeto = true
+     }
+     #other option, using eleIsoDepositEcalSCVetoFromClust
+     #PSet ecal = { 
+     #   // input IsoDeposit
+     #   InputTag src = layer0ElectronIsolations:eleIsoDepositEcalFromClusts
+     #   // parameters to compute isolation (Egamma POG defaults)
+     #   double  deltaR = 0.4
+     #   vstring vetos = {} # no veto, already done with SC
+     #   bool skipDefaultVeto = true
+     #}
+     PSet hcal = { 
+        // input IsoDeposit
+        InputTag src = layer0ElectronIsolations:eleIsoDepositHcalFromTowers
+        // parameters to compute isolation (Egamma POG defaults)
+        double deltaR = 0.4
+        bool skipDefaultVeto = true # no inner cone veto
+     }
+     VPSet user = { }
   }
   PSet isoDeposits = {  
+        InputTag tracker = layer0ElectronIsolations:eleIsoDepositTk
+        InputTag ecal    = layer0ElectronIsolations:eleIsoDepositEcalFromClusts
+        InputTag hcal    = layer0ElectronIsolations:eleIsoDepositHcalFromTowers
   }
 
   ### electron ID configurables

@@ -1,23 +1,20 @@
-module egammaPhotonTkDeposits = candIsoDepositCtfTk from "PhysicsTools/IsolationAlgos/test/mu/candIsoDepositCtfTk.cfi"
-replace egammaPhotonTkDeposits.src = photons
-replace egammaPhotonTkDeposits.trackType = "fake"
-replace egammaPhotonTkDeposits.ExtractorPSet.DR_Max    = 0.7
-replace egammaPhotonTkDeposits.ExtractorPSet.DR_Veto   = 0.0
-replace egammaPhotonTkDeposits.ExtractorPSet.Diff_z    = 1
+include "RecoEgamma/EgammaIsolationAlgos/data/egammaIsoDeposits.cff"
 
-module egammaPhotonTowersDeposits  = candIsoDepositEgammaTowers from "PhysicsTools/IsolationAlgos/test/egamma/candIsoDepositEgammaTowers.cfi"
-replace egammaPhotonTowersDeposits.src       = photons
-replace egammaPhotonTowersDeposits.ExtractorPSet.extRadius = 0.7
-
-//FIXME workaround in 2.1.0.pre5
-//module egammaPhotonEcalDeposits  = candIsoDepositEgammaEcal from "PhysicsTools/IsolationAlgos/test/egamma/candIsoDepositEgammaEcal.cfi"
-//replace egammaPhotonEcalDeposits.src       = photons
-//replace egammaPhotonEcalDeposits.ExtractorPSet.extRadius = 0.5
+// selecting POG modules that can run on top of AOD
+sequence gamIsoDepositAOD = { 
+    gamIsoDepositTk,
+    gamIsoDepositEcalFromClusts,      # on RECO you can use "gamIsoDepositEcalFromHits"
+    #gamIsoDepositEcalSCVetoFromClust,# somebody may want this one 
+    gamIsoDepositHcalFromTowers       # on RECO you can use "gamIsoDepositHcalFromHits"
+}
 
 // define module labels for old (tk-based isodeposit) POG isolation
 block patAODPhotonIsolationLabels = {
     VInputTag associations = { 
-        egammaPhotonTkDeposits, egammaPhotonTowersDeposits //,egammaPhotonEcalDeposits // FIXME: workaround in 2.1.0.pre5
+       gamIsoDepositTk, 
+       gamIsoDepositEcalFromClusts, 
+       #gamIsoDepositEcalSCVetoFromClust, # somebody may want this one instead
+       gamIsoDepositHcalFromTowers 
     }
 }
 
@@ -29,9 +26,8 @@ module patAODPhotonIsolations = MultipleIsoDepositsToValueMaps {
 
 // sequence to run on AOD before 
 sequence patAODPhotonIsolation = {
-    egammaPhotonTkDeposits,
-    egammaPhotonTowersDeposits,
-    egammaPhotonEcalDeposits,  
+    #egammaSuperClusterMerger, egammaBasicClusterMerger, #already run for electrons
+    gamIsoDepositAOD,
     patAODPhotonIsolations
 }
 

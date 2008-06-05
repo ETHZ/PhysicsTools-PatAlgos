@@ -1,8 +1,8 @@
 module allLayer0Photons = PATBasePhotonCleaner {
   InputTag photonSource     = photons
 
-  string   removeDuplicates = "none" 
-  string   removeElectrons  = "none" // FIXME: "BySeed" in one of the two 'removeXyz' throws exception of bad ref.
+  string   removeDuplicates = "bySeed" 
+  string   removeElectrons  = "bySeed" 
   InputTag electrons        = allLayer0Electrons
 
   bool    markItems    = true // write the status flags in the output items
@@ -14,24 +14,49 @@ module allLayer0Photons = PATBasePhotonCleaner {
   untracked bool wantSummary = true // print summary information for each status flag
 
   PSet isolation = {
-  /*   PSet tracker = {
-        InputTag src    = patAODPhotonIsolations:egammaPhotonTkDeposits
-        double   deltaR = 0.3
-        vstring  vetos  = { "Threshold(1.5)" }
-        bool     skipDefaultVeto = true
-        double   cut    = 5
+     PSet tracker = {
+        // input IsoDeposit
+        InputTag src = patAODPhotonIsolations:gamIsoDepositTk
+        // parameters to compute isolation (Egamma POG defaults)
+        double  deltaR = 0.3
+        vstring vetos = {"0.015",            # Inner DR Veto
+                         "Threshold(1.0)"}   # Minimum Tk Pt
+        bool skipDefaultVeto = true
+        // cut value
+        double  cut = 3
      }
-     PSet hcal = {
-        InputTag src    = patAODPhotonIsolations:egammaPhotonTowersDeposits
-        double   deltaR = 0.3
-        double   cut    = 3
+     PSet ecal = { 
+        // input IsoDeposit
+        InputTag src = patAODPhotonIsolations:gamIsoDepositEcalFromClusts
+        // parameters to compute isolation (Egamma POG defaults)
+        double  deltaR = 0.4
+        vstring vetos = { "EcalBarrel:0.045",   # inner cone veto (barrel, |eta| < 1.479)
+                         "EcalEndcaps:0.070"  } # inner cone veto (endcaps, |eta| >= 1.479)
+        bool skipDefaultVeto = true
+        // cut value
+        double  cut = 5
      }
-     PSet ecal = {
-        InputTag src    = patAODPhotonIsolations:egammaPhotonEcalDeposits
-        double   deltaR = 0.3
-        double   cut    = 5
+     #other option, using eleIsoDepositEcalSCVetoFromClust
+     #PSet ecal = { 
+     #   // input IsoDeposit
+     #   InputTag src = patAODPhotonIsolations:gamIsoDepositEcalFromClusts
+     #   // parameters to compute isolation (Egamma POG defaults)
+     #   double  deltaR = 0.4
+     #   vstring vetos = {} # no veto, already done with SC
+     #   bool skipDefaultVeto = true
+     #   // cut value
+     #   double  cut = 5
+     #}
+     PSet hcal = { 
+        // input IsoDeposit
+        InputTag src = patAODPhotonIsolations:gamIsoDepositHcalFromTowers
+        // parameters to compute isolation (Egamma POG defaults)
+        double deltaR = 0.4
+        bool skipDefaultVeto = true # no inner cone veto
+        // cut value
+        double  cut = 5
      }
-  */
+     VPSet user = { }
   }
   
 }

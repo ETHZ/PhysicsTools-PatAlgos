@@ -9,11 +9,6 @@
   #replace caloRecoTauTagInfoProducer.EERecHitsSource = caloRecHits:EcalRecHitsEE
   #replace caloRecoTauTagInfoProducer.ESRecHitsSource = caloRecHits:EcalRecHitsES
 
-  # needed for non-famos-integrated electron isolation
-  include "PhysicsTools/PatAlgos/data/recoLayer0/electronIsolation.cff"
-  replace egammaElectronTkIsolation.trackProducer = generalTracks
-  replace egammaElectronTkNumIsolation.trackProducer = generalTracks
-
   # default famos sequence adapted for PAT
   sequence famosWithEverythingPAT = {
 #    famosWithCaloTowersAndParticleFlow,

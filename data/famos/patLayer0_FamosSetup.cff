@@ -21,8 +21,6 @@ replace layer0MuonIsolations.associations = {
         muParamGlobalIsoDepositJets
 }
 
-replace egammaPhotonTkDeposits.ExtractorPSet.inputTrackCollection = generalTracks 
-
 replace allLayer0Muons.isolation.tracker.src = patAODMuonIsolations:muParamGlobalIsoDepositTk
 replace allLayer0Muons.isolation.ecal.src    = patAODMuonIsolations:muParamGlobalIsoDepositCalByAssociatorTowersecal
 replace allLayer0Muons.isolation.hcal.src    = patAODMuonIsolations:muParamGlobalIsoDepositCalByAssociatorTowershcal

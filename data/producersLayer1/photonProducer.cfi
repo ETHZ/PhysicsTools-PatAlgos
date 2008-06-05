@@ -11,25 +11,47 @@ module allLayer1Photons = PATPhotonProducer {
 
   ### Isolation configurables
   PSet isolation = {
-  /*  PSet tracker = {
-        InputTag src    = layer0PhotonIsolations:egammaPhotonTkDeposits
-        double   deltaR    = 0.3
-        double   threshold = 1.5
+     PSet tracker = {
+        // input IsoDeposit
+        InputTag src = layer0PhotonIsolations:gamIsoDepositTk
+        // parameters to compute isolation (Egamma POG defaults)
+        double  deltaR = 0.3
+        vstring vetos = {"0.015",            # Inner DR Veto
+                         "Threshold(1.0)"}   # Minimum Tk Pt
+        bool skipDefaultVeto = true
      }
-     PSet hcal = {
-        InputTag src    = layer0PhotonIsolations:egammaPhotonTowersDeposits
-        double   deltaR = 0.3
+     PSet ecal = { 
+        // input IsoDeposit
+        InputTag src = layer0PhotonIsolations:gamIsoDepositEcalFromClusts
+        // parameters to compute isolation (Egamma POG defaults)
+        double  deltaR = 0.4
+        vstring vetos = { "EcalBarrel:0.045",   # inner cone veto (barrel, |eta| < 1.479)
+                         "EcalEndcaps:0.070"  } # inner cone veto (endcaps, |eta| >= 1.479)
+        bool skipDefaultVeto = true
      }
-     PSet ecal = {
-        InputTag src    = layer0PhotonIsolations:egammaPhotonEcalDeposits
-        double   deltaR = 0.3
+     #other option, using eleIsoDepositEcalSCVetoFromClust
+     #PSet ecal = { 
+     #   // input IsoDeposit
+     #   InputTag src = layer0PhotonIsolations:gamIsoDepositEcalFromClusts
+     #   // parameters to compute isolation (Egamma POG defaults)
+     #   double  deltaR = 0.4
+     #   vstring vetos = {} # no veto, already done with SC
+     #   bool skipDefaultVeto = true
+     #}
+     PSet hcal = { 
+        // input IsoDeposit
+        InputTag src = layer0PhotonIsolations:gamIsoDepositHcalFromTowers
+        // parameters to compute isolation (Egamma POG defaults)
+        double deltaR = 0.4
+        bool skipDefaultVeto = true # no inner cone veto
      }
-  */
+     VPSet user = { }
+
   }
   PSet isoDeposits = {
-    #InputTag tracker =  layer0PhotonIsolations:egammaPhotonTkDeposits
-    #InputTag ecal    =  layer0PhotonIsolations:egammaPhotonEcalDeposits
-    #InputTag hcal    =  layer0PhotonIsolations:egammaPhotonTowersDeposits
+    InputTag tracker =  layer0PhotonIsolations:gamIsoDepositTk
+    InputTag ecal    =  layer0PhotonIsolations:gamIsoDepositEcalFromClusts
+    InputTag hcal    =  layer0PhotonIsolations:gamIsoDepositHcalFromTowers
   }
 
 }

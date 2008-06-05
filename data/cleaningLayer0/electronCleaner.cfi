@@ -10,25 +10,50 @@ module allLayer0Electrons = PATElectronCleaner {
   ### isolation (not mandatory, see bitsToIgnore below)
   PSet isolation = {
      PSet tracker = {
-        InputTag src = patAODElectronIsolations:egammaElectronTkIsolation
-        double   cut = 3.0
+        // input IsoDeposit
+        InputTag src = patAODElectronIsolations:eleIsoDepositTk
+        // parameters to compute isolation (Egamma POG defaults)
+        double  deltaR = 0.3
+        vstring vetos = {"0.015",            # Inner DR Veto
+                         "Threshold(1.0)"}   # Minimum Tk Pt
+        bool skipDefaultVeto = true
+        // cut value
+        double  cut = 3
      }
      PSet ecal = { 
-        InputTag src = patAODElectronIsolations:egammaEcalIsolation
-        double   cut = 9999.0
+        // input IsoDeposit
+        InputTag src = patAODElectronIsolations:eleIsoDepositEcalFromClusts
+        // parameters to compute isolation (Egamma POG defaults)
+        double  deltaR = 0.4
+        vstring vetos = {"EcalBarrel:0.040",                                      # Barrel (|eta| < 1.479)
+                         "EcalBarrel:RectangularEtaPhiVeto(-0.01,0.01,-0.5,0.5)", # 
+                        "EcalEndcaps:0.070",                                      # Endcaps
+                        "EcalEndcaps:RectangularEtaPhiVeto(-0.02,0.02,-0.5,0.5)"} # 
+        bool skipDefaultVeto = true
+        // cut value
+        double  cut = 5
      }
+     #other option, using eleIsoDepositEcalSCVetoFromClust
+     #PSet ecal = { 
+     #   // input IsoDeposit
+     #   InputTag src = patAODElectronIsolations:eleIsoDepositEcalFromClusts
+     #   // parameters to compute isolation (Egamma POG defaults)
+     #   double  deltaR = 0.4
+     #   vstring vetos = {} # no veto, already done with SC
+     #   bool skipDefaultVeto = true
+     #   // cut value
+     #   double  cut = 5
+     #}
      PSet hcal = { 
-        InputTag src = patAODElectronIsolations:egammaTowerIsolation
-        double   cut = 9999.0
+        // input IsoDeposit
+        InputTag src = patAODElectronIsolations:eleIsoDepositHcalFromTowers
+        // parameters to compute isolation (Egamma POG defaults)
+        double deltaR = 0.4
+        bool skipDefaultVeto = true # no inner cone veto
+        // cut value
+        double  cut = 5
      }
-     VPSet user = { 
-     #   {  InputTag src = patAODElectronIsolations:egammaElectronTkNumIsolation
-     #      double   cut = 2.0 }
-     #   {  InputTag src = patAODElectronIsolations:egammaElectronEcalRelIsolation
-     #      double   cut = 2.0 }
-     #   {  InputTag src = patAODElectronIsolations:egammaElectronHOETower
-     #      double   cut = 2.0 }
-     }
+     VPSet user = { }
   }
 
   bool    markItems    = true // write the status flags in the output items

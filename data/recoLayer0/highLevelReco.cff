@@ -25,7 +25,7 @@ sequence patHighLevelReco_withoutPFTau = {
   // patElectronId,
   patJetFlavourId, 
   patLayer0ElectronIsolation, // skim & re-key
-  // patLayer0PhotonIsolation, // skim & re-key // FIXME 
+  patLayer0PhotonIsolation, // skim & re-key // FIXME 
   patLayer0MuonIsolation,    // skim & re-key
   patLayer0BTagging,  
   patLayer0JetMETCorrections,
