@@ -7,7 +7,7 @@ sequence patTrigMatch_withoutBTau = {
     patTrigMatchHLT1PhotonRelaxed &
     patTrigMatchHLT1ElectronRelaxed &
     patTrigMatchHLT1MuonNonIso &
-    patTrigMatchHLT2Jet &
+    patTrigMatchHLT2jet &
     patTrigMatchHLT1MET65
 }
 
