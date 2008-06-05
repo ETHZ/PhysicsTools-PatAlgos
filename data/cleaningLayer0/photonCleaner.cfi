@@ -1,4 +1,4 @@
-module allLayer0Photons = PATBasePhotonCleaner {
+module allLayer0Photons = PATPhotonCleaner {
   InputTag photonSource     = photons
 
   string   removeDuplicates = "bySeed" 
