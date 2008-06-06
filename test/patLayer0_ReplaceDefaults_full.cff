@@ -2,33 +2,91 @@
 ############################
 ### PAT Layer-0 cleaning ###
 ############################
-
-# Generated from /afs/cern.ch/user/l/lowette/scratch.0/CMSSW_1_6_9_pre2_pat/src/PhysicsTools/PatAlgos/data/PATLayer0.cff
-replace allLayer0Muons.muonSource = muons
-replace allLayer0Electrons.electronSource = pixelMatchGsfElectrons
-replace allLayer0Electrons.removeDuplicates = true
-replace allLayer0Electrons.selection = { string type = "none" }
+# Generated from CMSSW_2_0_8/src/PhysicsTools/PatAlgos/data/cleaningLayer0/caloJetCleaner.cfi
+replace allLayer0Jets.jetSource = iterativeCone5CaloJets              # uncalibrated reco jet input source
+replace allLayer0Jets.removeOverlaps.electrons.collection = allLayer0Electrons # 
+replace allLayer0Jets.removeOverlaps.electrons.deltaR = 0.3           # 
+replace allLayer0Jets.removeOverlaps.electrons.cut = "pt > 10"        # as in LeptonJetIsolationAngle
+replace allLayer0Jets.removeOverlaps.electrons.flags = {"Isolation/Tracker"} # request the item to be marked as isolated in the tracker
+replace allLayer0Jets.selection.type = "none" 
+replace allLayer0Jets.markItems = true                                # write the status flags in the output items
+replace allLayer0Jets.saveRejected = ""                               # set this to a non empty label to save the list of items which fail
+replace allLayer0Jets.saveAll = ""                                    # set this to a non empty label to save a list of all items both passing and failing
+replace allLayer0Jets.bitsToIgnore = {"Overlap/All"}                  # You can specify some bit names, e.g. "Overflow/User1", "Core/Duplicate", "Isolation/All".
+replace allLayer0Jets.wantSummary = true                              # print summary information for each status flag
+# Generated from CMSSW_2_0_8/src/PhysicsTools/PatAlgos/data/cleaningLayer0/caloMetCleaner.cfi
+replace allLayer0METs.metSource = corMetType1Icone5
+replace allLayer0METs.markItems = true                                # write the status flags in the output items
+replace allLayer0METs.saveRejected = ""                               # set this to a non empty label to save the list of items which fail
+replace allLayer0METs.saveAll = ""                                    # set this to a non empty label to save a list of all items both passing and failing
+replace allLayer0METs.bitsToIgnore = {}                               # You can specify some bit names, e.g. "Overflow/User1", "Core/Duplicate", "Isolation/All".
+replace allLayer0METs.wantSummary = true                              # print summary information for each status flag
+# Generated from CMSSW_2_0_8/src/PhysicsTools/PatAlgos/data/cleaningLayer0/electronCleaner.cfi
+replace allLayer0Electrons.electronSource = pixelMatchGsfElectrons    # reco electron input source
+replace allLayer0Electrons.removeDuplicates = true                    # switch on/off electron duplicate removal (1 SC with 2 tracks and vice versa)
+replace allLayer0Electrons.selection.type = "none" 
+replace allLayer0Electrons.isolation.tracker.src = patAODElectronIsolations:egammaElectronTkIsolation
+replace allLayer0Electrons.isolation.tracker.cut = 3.0
+replace allLayer0Electrons.isolation.ecal.src = patAODElectronIsolations:egammaEcalIsolation
+replace allLayer0Electrons.isolation.ecal.cut = 9999.0
+replace allLayer0Electrons.isolation.hcal.src = patAODElectronIsolations:egammaTowerIsolation
+replace allLayer0Electrons.isolation.hcal.cut = 9999.0
+replace allLayer0Electrons.markItems = true                           # write the status flags in the output items
+replace allLayer0Electrons.saveRejected = ""                          # set this to a non empty label to save the list of items which fail
+replace allLayer0Electrons.saveAll = ""                               # set this to a non empty label to save a list of all items both passing and failing
+replace allLayer0Electrons.bitsToIgnore = {"Isolation/All"}
+replace allLayer0Electrons.wantSummary = true                         # print summary information for each status flag
+# Generated from CMSSW_2_0_8/src/PhysicsTools/PatAlgos/data/cleaningLayer0/muonCleaner.cfi
+replace allLayer0Muons.muonSource = muons                             # reco muon input source
+replace allLayer0Muons.selection.type = "none" 
+replace allLayer0Muons.isolation.tracker.src = patAODMuonIsolations:muIsoDepositTk  
+replace allLayer0Muons.isolation.tracker.deltaR = 0.3 
+replace allLayer0Muons.isolation.tracker.cut = 2.0
+replace allLayer0Muons.isolation.ecal.src = patAODMuonIsolations:muIsoDepositCalByAssociatorTowersecal
+replace allLayer0Muons.isolation.ecal.deltaR = 0.3 
+replace allLayer0Muons.isolation.ecal.cut = 2.0
+replace allLayer0Muons.isolation.hcal.src = patAODMuonIsolations:muIsoDepositCalByAssociatorTowershcal 
+replace allLayer0Muons.isolation.hcal.deltaR = 0.3 
+replace allLayer0Muons.isolation.hcal.cut = 2.0
+replace allLayer0Muons.markItems = true                               # write the status flags in the output items
+replace allLayer0Muons.saveRejected = ""                              # set this to a non empty label to save the list of items which fail
+replace allLayer0Muons.saveAll = ""                                   # set this to a non empty label to save a list of all items both passing and failing
+replace allLayer0Muons.bitsToIgnore = {"Isolation/All"}
+replace allLayer0Muons.wantSummary = true                             # print summary information for each status flag
+# Generated from CMSSW_2_0_8/src/PhysicsTools/PatAlgos/data/cleaningLayer0/pfTauCleaner.cfi
+replace allLayer0Taus.tauSource = pfRecoTauProducer
+replace allLayer0Taus.tauDiscriminatorSource = pfRecoTauDiscriminationByIsolation
+replace allLayer0Taus.markItems = true                                # write the status flags in the output items
+replace allLayer0Taus.saveRejected = ""                               # set this to a non empty label to save the list of items which fail
+replace allLayer0Taus.saveAll = ""                                    # set this to a non empty label to save a list of all items both passing and failing
+replace allLayer0Taus.bitsToIgnore = {}                               # You can specify some bit names, e.g. "Overflow/User1", "Core/Duplicate", "Isolation/All".
+replace allLayer0Taus.wantSummary = true                              # print summary information for each status flag
+# Generated from CMSSW_2_0_8/src/PhysicsTools/PatAlgos/data/cleaningLayer0/photonCleaner.cfi
 replace allLayer0Photons.photonSource = photons
 replace allLayer0Photons.removeDuplicates = "bySeed"
 replace allLayer0Photons.removeElectrons = "bySeed"
 replace allLayer0Photons.electrons = allLayer0Electrons
-replace allLayer0Taus.tauSource = pfRecoTauProducer
-replace allLayer0Taus.tauDiscriminatorSource = pfRecoTauDiscriminationByIsolation
-replace allLayer0Jets.jetSource = iterativeCone5CaloJets
-replace allLayer0Jets.selection = { string type = "none" }
-replace allLayer0Jets.removeOverlaps = {
-      PSet electrons = { 
-          InputTag collection = allLayer0Electrons   
-          double   deltaR     = 0.3                  
-      }
-  }
-replace allLayer0METs.metSource = corMetType1Icone5
+replace allLayer0Photons.markItems = true                             # write the status flags in the output items
+replace allLayer0Photons.saveRejected = ""                            # set this to a non empty label to save the list of items which fail
+replace allLayer0Photons.saveAll = ""                                 # set this to a non empty label to save a list of all items both passing and failing
+replace allLayer0Photons.bitsToIgnore = {"Isolation/All"}
+replace allLayer0Photons.wantSummary = true                           # print summary information for each status flag
+replace allLayer0Photons.isolation.tracker.src = patAODPhotonIsolations:egammaPhotonTkDeposits
+replace allLayer0Photons.isolation.tracker.deltaR = 0.3
+replace allLayer0Photons.isolation.tracker.vetos = { "Threshold(1.5)" }
+replace allLayer0Photons.isolation.tracker.skipDefaultVeto = true
+replace allLayer0Photons.isolation.tracker.cut = 5
+replace allLayer0Photons.isolation.hcal.src = patAODPhotonIsolations:egammaPhotonTowersDeposits
+replace allLayer0Photons.isolation.hcal.deltaR = 0.3
+replace allLayer0Photons.isolation.hcal.cut = 3
+replace allLayer0Photons.isolation.ecal.src = patAODPhotonIsolations:egammaPhotonEcalDeposits
+replace allLayer0Photons.isolation.ecal.deltaR = 0.3
+replace allLayer0Photons.isolation.ecal.cut = 5
 
 ###############################
 ### PAT Layer-0 MC matching ###
 ###############################
-
-# Generated from /afs/cern.ch/user/l/lowette/scratch.0/CMSSW_1_6_9_pre2_pat/src/PhysicsTools/PatAlgos/data/muonMatch.cfi
+# Generated from CMSSW_2_0_8/src/PhysicsTools/PatAlgos/data/mcMatchLayer0/muonMatch.cfi
 replace muonMatch.src = allLayer0Muons
 replace muonMatch.matched = genParticles
 replace muonMatch.maxDeltaR = 0.5
@@ -38,7 +96,7 @@ replace muonMatch.resolveByMatchQuality = false
 replace muonMatch.checkCharge = true
 replace muonMatch.mcPdgId = { 13 }
 replace muonMatch.mcStatus = { 1 }
-# Generated from /afs/cern.ch/user/l/lowette/scratch.0/CMSSW_1_6_9_pre2_pat/src/PhysicsTools/PatAlgos/data/electronMatch.cfi
+# Generated from CMSSW_2_0_8/src/PhysicsTools/PatAlgos/data/mcMatchLayer0/electronMatch.cfi
 replace electronMatch.src = allLayer0Electrons
 replace electronMatch.matched = genParticles
 replace electronMatch.maxDeltaR = 0.5
@@ -48,7 +106,7 @@ replace electronMatch.resolveByMatchQuality = false
 replace electronMatch.checkCharge = true
 replace electronMatch.mcPdgId = { 11 }
 replace electronMatch.mcStatus = { 1 }
-# Generated from /afs/cern.ch/user/l/lowette/scratch.0/CMSSW_1_6_9_pre2_pat/src/PhysicsTools/PatAlgos/data/photonMatch.cfi
+# Generated from CMSSW_2_0_8/src/PhysicsTools/PatAlgos/data/mcMatchLayer0/photonMatch.cfi
 replace photonMatch.src = allLayer0Photons
 replace photonMatch.matched = genParticles
 replace photonMatch.maxDeltaR = 0.2
@@ -58,17 +116,17 @@ replace photonMatch.resolveByMatchQuality = false
 replace photonMatch.checkCharge = true
 replace photonMatch.mcPdgId = { 22 }
 replace photonMatch.mcStatus = { 1 }
-# Generated from /afs/cern.ch/user/l/lowette/scratch.0/CMSSW_1_6_9_pre2_pat/src/PhysicsTools/PatAlgos/data/tauMatch.cfi
+# Generated from CMSSW_2_0_8/src/PhysicsTools/PatAlgos/data/mcMatchLayer0/tauMatch.cfi
 replace tauMatch.src = allLayer0Taus
 replace tauMatch.matched = genParticles
-replace tauMatch.maxDeltaR = 5
-replace tauMatch.maxDPtRel = 99
+replace tauMatch.maxDeltaR = 5                                        # no limit (why!?)
+replace tauMatch.maxDPtRel = 99                                       # no limit
 replace tauMatch.resolveAmbiguities = true
 replace tauMatch.resolveByMatchQuality = false
 replace tauMatch.checkCharge = true
 replace tauMatch.mcPdgId = { 15 }
 replace tauMatch.mcStatus = { 2 }
-# Generated from /afs/cern.ch/user/l/lowette/scratch.0/CMSSW_1_6_9_pre2_pat/src/PhysicsTools/PatAlgos/data/jetMatch.cfi
+# Generated from CMSSW_2_0_8/src/PhysicsTools/PatAlgos/data/mcMatchLayer0/jetMatch.cfi
 replace jetPartonMatch.src = allLayer0Jets
 replace jetPartonMatch.matched = genParticles
 replace jetPartonMatch.maxDeltaR = 0.4
@@ -77,7 +135,7 @@ replace jetPartonMatch.resolveAmbiguities = true
 replace jetPartonMatch.resolveByMatchQuality = false
 replace jetPartonMatch.checkCharge = false
 replace jetPartonMatch.mcPdgId = { 1, 2, 3, 4, 5, 21 }
-replace jetPartonMatch.mcStatus = { 3 }
+replace jetPartonMatch.mcStatus = { 3 }                               # TQAF definition
 replace jetGenJetMatch.src = allLayer0Jets
 replace jetGenJetMatch.matched = iterativeCone5GenJets
 replace jetGenJetMatch.maxDeltaR = 0.4
@@ -87,4 +145,20 @@ replace jetGenJetMatch.resolveByMatchQuality = false
 replace jetGenJetMatch.checkCharge = false
 replace jetGenJetMatch.mcPdgId = { }
 replace jetGenJetMatch.mcStatus = { }
+
+###############################
+### PAT Layer-0 jets        ###
+###############################
+# Generated from CMSSW_2_0_8/src/PhysicsTools/PatAlgos/data/recoLayer0/jetTracksCharge.cff
+replace patAODJetTracksAssociator.src = iterativeCone5CaloJets
+replace patAODJetTracksAssociator.tracks = ic5JetTracksAssociatorAtVertex # any JetTracksAssociation
+replace patAODJetTracksAssociator.cut = ""                            # optional cut on track quality
+replace layer0JetTracksAssociator.collection = allLayer0Jets
+replace layer0JetTracksAssociator.association = patAODJetTracksAssociator
+replace layer0JetTracksAssociator.backrefs = allLayer0Jets
+replace layer0JetCharge.src = allLayer0Jets
+replace layer0JetCharge.jetTracksAssociation = layer0JetTracksAssociator # NOTE: must be something from JetTracksAssociationValueMap
+replace layer0JetCharge.exp = 1.0
+replace layer0JetCharge.var = "Pt"
+
 
