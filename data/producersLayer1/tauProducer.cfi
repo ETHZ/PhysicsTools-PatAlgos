@@ -10,6 +10,11 @@ module allLayer1Taus = PATTauProducer {
   ### MC matching configurables
   bool     addGenMatch       = true                     # switch on/off matching to generator level
   InputTag genParticleMatch  = tauMatch                 # particles source to be used for the matching
+  
+  ### Trigger matching configurables
+  bool      addTrigMatch     = true                     # switch on/off matching to trigger primitives
+  VInputTag trigPrimMatch    = { tauTrigMatchHLT1Tau }
+                                                        # trigger primitive sources to be used for the matching
 
   ### resolution configurables
   bool     addResolutions    = true                     # switch on/off the resolution calculation

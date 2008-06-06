@@ -10,6 +10,11 @@ module allLayer1Electrons = PATElectronProducer {
   ### MC matching configurables
   bool     addGenMatch       = true                     # switch on/off matching to generator level
   InputTag genParticleMatch  = electronMatch            # Association between electrons and generator particles
+  
+  ### Trigger matching configurables
+  bool      addTrigMatch     = true                     # switch on/off matching to trigger primitives
+  VInputTag trigPrimMatch    = { electronTrigMatchHLT1ElectronRelaxed }
+                                                        # trigger primitive sources to be used for the matching
 
   ### resolution configurables
   bool     addResolutions    = true                     # switch on/off the resolution calculation

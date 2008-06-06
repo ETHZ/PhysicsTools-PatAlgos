@@ -1,5 +1,5 @@
 //
-// $Id$
+// $Id: PATMuonProducer.cc,v 1.5.2.1 2008/05/31 19:33:38 lowette Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATMuonProducer.h"
@@ -35,15 +35,22 @@ PATMuonProducer::PATMuonProducer(const edm::ParameterSet & iConfig) :
   embedTrack_          = iConfig.getParameter<bool>         ( "embedTrack" );
   embedStandAloneMuon_ = iConfig.getParameter<bool>         ( "embedStandAloneMuon" );
   embedCombinedMuon_   = iConfig.getParameter<bool>         ( "embedCombinedMuon" );
+  
   // MC matching configurables
-  addGenMatch_   = iConfig.getParameter<bool>         ( "addGenMatch" );
-  genMatchSrc_   = iConfig.getParameter<edm::InputTag>( "genParticleMatch" );
+  addGenMatch_   = iConfig.getParameter<bool>               ( "addGenMatch" );
+  genMatchSrc_   = iConfig.getParameter<edm::InputTag>      ( "genParticleMatch" );
+  
+  // trigger matching configurables
+  addTrigMatch_     = iConfig.getParameter<bool>            ( "addTrigMatch" );
+  trigMatchSrc_     = iConfig.getParameter<std::vector<edm::InputTag> >( "trigPrimMatch" );
+  
   // resolution configurables
-  addResolutions_= iConfig.getParameter<bool>         ( "addResolutions" );
-  useNNReso_     = iConfig.getParameter<bool>         ( "useNNResolutions" );
-  muonResoFile_  = iConfig.getParameter<std::string>  ( "muonResoFile" );
+  addResolutions_= iConfig.getParameter<bool>               ( "addResolutions" );
+  useNNReso_     = iConfig.getParameter<bool>               ( "useNNResolutions" );
+  muonResoFile_  = iConfig.getParameter<std::string>        ( "muonResoFile" );
+  
   // muon ID configurables
-  addMuonID_     = iConfig.getParameter<bool>         ( "addMuonID" );
+  addMuonID_     = iConfig.getParameter<bool>               ( "addMuonID" );
 
   // construct resolution calculator
   if (addResolutions_) {
@@ -112,6 +119,17 @@ void PATMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetu
       if (genMuon.isNonnull() && genMuon.isAvailable() ) {
         aMuon.setGenLepton(*genMuon);
       } // leave empty if no match found
+    }
+    // matches to trigger primitives
+    if ( addTrigMatch_ ) {
+      for ( size_t i = 0; i < trigMatchSrc_.size(); ++i ) {
+        edm::Handle<edm::Association<TriggerPrimitiveCollection> > trigMatch;
+        iEvent.getByLabel(trigMatchSrc_[i], trigMatch);
+        TriggerPrimitiveRef trigPrim = (*trigMatch)[muonsRef];
+        if ( trigPrim.isNonnull() && trigPrim.isAvailable() ) {
+          aMuon.addTriggerMatch(*trigPrim);
+        }
+      }
     }
     // add resolution info
     if (addResolutions_) {
