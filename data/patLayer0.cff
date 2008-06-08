@@ -15,9 +15,8 @@ include "PhysicsTools/PatAlgos/data/recoLayer0/beforeLevel0Reco.cff"
 include "PhysicsTools/PatAlgos/data/recoLayer0/highLevelReco.cff"
 # MC matching
 include "PhysicsTools/PatAlgos/data/mcMatchLayer0/mcMatchSequences.cff"
-// not in 2.1.X?
-//# trigger matching
-//include "PhysicsTools/PatAlgos/data/triggerLayer0/trigMatchSequences.cff"
+# trigger matching
+include "PhysicsTools/PatAlgos/data/triggerLayer0/trigMatchSequences.cff"
 
 sequence patLayer0Cleaners_withoutPFTau = { 
     allLayer0Muons, allLayer0Electrons, allLayer0Photons, 

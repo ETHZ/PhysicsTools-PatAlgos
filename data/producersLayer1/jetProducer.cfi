@@ -16,6 +16,12 @@ module allLayer1Jets = PATJetProducer {
   InputTag genJetMatch             = jetGenJetMatch              # GenJet source to be used for the matching
   bool     addPartonJetMatch       = false                       # switch on/off matching to PartonJet's (not implemented yet)
   InputTag partonJetSource         = nonsenseName                # ParticleJet source to be used for the matching
+  
+  ### Trigger matching configurables
+  bool      addTrigMatch     = true                     # switch on/off matching to trigger primitives
+  VInputTag trigPrimMatch    = { jetTrigMatchHLT1ElectronRelaxed,
+                                 jetTrigMatchHLT2jet }
+                                                        # trigger primitive sources to be used for the matching
 
   ### Jet energy scale correction configurables
   bool     addJetCorrFactors       = true

@@ -10,6 +10,12 @@ module allLayer1Muons = PATMuonProducer {
   ### MC matching configurables
   bool     addGenMatch       = true                    # switch on/off matching to generator level
   InputTag genParticleMatch  = muonMatch               # particles source to be used for the matching
+  
+  ### Trigger matching configurables
+  bool      addTrigMatch     = true                     # switch on/off matching to trigger primitives
+  VInputTag trigPrimMatch    = { muonTrigMatchHLT1MuonNonIso,
+                                 muonTrigMatchHLT1MET65 }
+                                                        # trigger primitive sources to be used for the matching
 
   ### Resolution configurables
   bool     addResolutions    = true                    # switch on/off the resolution calculation
