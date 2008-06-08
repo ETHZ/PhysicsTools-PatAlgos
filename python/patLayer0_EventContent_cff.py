@@ -22,6 +22,7 @@ patLayer0EventContent = cms.PSet(
         'keep *_layer0PhotonIsolations_*_*', 
         'keep *_layer0JetCorrFactors_*_*', 
         'keep recoGenJetsedmAssociation_*_*_*', 
+#         'keep *_iterativeCone5GenJetsPt10_*_*',
         'keep *_iterativeCone5GenJets_*_*', 
         'keep *_genMet_*_*', 
         'keep recoMuons_muons__*', 
@@ -50,6 +51,8 @@ patLayer0EventContent = cms.PSet(
         'drop recoCandidateedmRefToBaseedmValueMap_allLayer0Muons_*_*', 
         'drop recoCandidateedmRefToBaseedmValueMap_allLayer0Taus_*_*', 
         'drop recoCandidateedmRefToBaseedmValueMap_allLayer0Jets_*_*', 
-        'drop recoCandidateedmRefToBaseedmValueMap_allLayer0METs_*_*')
+        'drop recoCandidateedmRefToBaseedmValueMap_allLayer0METs_*_*'),
+        'keep *_hltTriggerSummaryAOD_*_*',
+        'keep patTriggerPrimitivesOwned_*_*_*',
+        'keep patTriggerPrimitivesOwnededmAssociation_*_*_*'
 )
-
