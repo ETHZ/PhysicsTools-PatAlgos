@@ -7,5 +7,5 @@
 
 module selectedLayer1Taus = PATTauSelector {
   InputTag src = allLayer1Taus
-  string cut = "pt > 0. & abs(eta) < 12. & emEnergyFraction<2. & eOverP>0."
+  string cut = "pt > 0. & abs(eta) < 12."
 }
