@@ -1,6 +1,6 @@
-module allLayer0Taus = PATPFTauCleaner {
-  InputTag tauSource              = pfRecoTauProducer
-  InputTag tauDiscriminatorSource = pfRecoTauDiscriminationByIsolation
+module allLayer0CaloTaus = PATCaloTauCleaner {
+  InputTag tauSource              = caloRecoTauProducer
+  InputTag tauDiscriminatorSource = caloRecoTauDiscriminationByIsolation
 
   PSet removeOverlaps = {
   }
