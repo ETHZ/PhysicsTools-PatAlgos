@@ -2,7 +2,7 @@
 // for what matters the reconstruction steps
 include "SimGeneral/HepPDTESSource/data/pythiapdt.cfi"
 
-module patAODTrackCandsUnfiltered = ChargedCandidateProducer {
+module patAODTrackCandsUnfiltered = ConcreteChargedCandidateProducer {
   InputTag src = generalTracks
   string particleType = "mu+"
 }

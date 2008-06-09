@@ -1,4 +1,4 @@
-module allLayer0TrackCands = PATRecoChargedCandidateCleaner {
+module allLayer0TrackCands = PATGenericParticleCleaner {
   InputTag src = patAODTrackCands
 
   PSet isolation = {
