@@ -72,9 +72,18 @@ module allLayer1Electrons = PATElectronProducer {
   }
 
   ### electron ID configurables
-  bool     addElectronID     = false                     # switch on/off the electron ID info addition
-  InputTag electronIDSource  = electronId               # label of the electron ID info source
-  bool     addElectronIDRobust     = false               # switch on/off the adding of additional electron id info, from the "robust cuts-based" producer            
-  InputTag electronIDRobustSource  = electronIdRobust   # label for the robust cuts-based producer (should be just a clone of previous)
-
+  bool addElectronID  = true        # switch on/off the electron ID info addition
+  #InputTag electronIDSource = ...  # you can use this to set a single electron ID
+  PSet electronIDSources = {        # or his to set multiple IDs
+      # configure many IDs as InputTag <someName> = <someTag>
+      # you can comment out those you don't want to save some disk space
+      InputTag robust     = electronIdCutBasedRobust
+      InputTag loose      = electronIdCutBasedLoose
+      InputTag tight      = electronIdCutBasedTight
+      InputTag ptdrLoose  = electronIdPTDRLoose
+      InputTag ptdrMedium = electronIdPTDRMedium
+      InputTag ptdrTight  = electronIdPTDRTight
+      InputTag likelihood = electronIdLikelihood
+      InputTag neuralnet  = electronIdNeuralNet
+  }
 }
