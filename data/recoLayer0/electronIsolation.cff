@@ -1,4 +1,6 @@
 include "RecoEgamma/EgammaIsolationAlgos/data/egammaIsoDeposits.cff"
+include "RecoEgamma/EgammaIsolationAlgos/data/egammaSuperClusterMerger.cfi"
+include "RecoEgamma/EgammaIsolationAlgos/data/egammaBasicClusterMerger.cfi"
 
 // selecting POG modules that can run on top of AOD
 sequence eleIsoDepositAOD = { 
