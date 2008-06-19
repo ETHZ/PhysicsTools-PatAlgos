@@ -1,5 +1,4 @@
 
-include "MagneticField/Engine/data/volumeBasedMagneticField.cfi"
 
 include "PhysicsTools/PatAlgos/data/producersLayer1/tauProducer.cfi"
 include "PhysicsTools/PatAlgos/data/selectionLayer1/tauSelector.cfi"
