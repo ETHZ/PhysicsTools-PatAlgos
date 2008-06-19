@@ -1,6 +1,7 @@
 // This is a skeleton of what you need to run PAT with generic candidates (e.g. from tracks),
 // for what matters the reconstruction steps
 include "SimGeneral/HepPDTESSource/data/pythiapdt.cfi"
+include "Configuration/StandardSequences/data/MagneticField.cff"
 
 module patAODTrackCandsUnfiltered = ConcreteChargedCandidateProducer {
   InputTag src = generalTracks
