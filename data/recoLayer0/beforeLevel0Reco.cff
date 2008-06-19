@@ -1,10 +1,6 @@
 include "TrackingTools/TransientTrack/data/TransientTrackBuilder.cfi"
-include "MagneticField/Engine/data/volumeBasedMagneticField.cfi"
 
 # muon isolation
-
-# additional tau reconstruction
-#include "PhysicsTools/PatAlgos/data/recoLayer0/tauTagging.cff"
 
 # JetMET corrections (including jet correction factors)
 include "PhysicsTools/PatAlgos/data/recoLayer0/jetMETCorrections.cff"
@@ -21,13 +17,12 @@ sequence patBeforeLevel0Reco_withoutPFTau = {
   // patCaloTauTagging, # don't run by default, doesn't work on AOD only samples
   patAODBTagging, 
   patAODElectronIsolation,
-  patAODPhotonIsolation,
+  patAODPhotonIsolation, 
   patAODMuonIsolation,
   patAODJetMETCorrections # needed for the MET
 }
 
 sequence patBeforeLevel0Reco = {
-  #patPFTauTagging,
   patBeforeLevel0Reco_withoutPFTau
   #,patAODTauIsolation
 }
