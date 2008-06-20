@@ -11,7 +11,6 @@ module allLayer0Photons = PATPhotonCleaner {
   vstring bitsToIgnore = {    // You can specify some bit names, e.g. "Overflow/User1", 
         "Isolation/All"       //   "Core/Duplicate", "Isolation/All".
   }
-  untracked bool wantSummary = true // print summary information for each status flag
 
   PSet isolation = {
      PSet tracker = {

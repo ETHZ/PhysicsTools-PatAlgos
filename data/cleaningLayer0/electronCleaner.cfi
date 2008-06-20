@@ -56,6 +56,13 @@ module allLayer0Electrons = PATElectronCleaner {
      VPSet user = { }
   }
 
+  PSet removeOverlaps = {
+     // PSet muons = { // this might be useful to somebody
+     //    InputTag collection = allLayer0Muons
+     //    double   deltaR     = 0.3
+     // }
+  }
+
   bool    markItems    = true // write the status flags in the output items
   string  saveRejected = ""   // set this to a non empty label to save the list of items which fail
   string  saveAll      = ""   // set this to a non empty label to save a list of all items both passing and failing
@@ -63,6 +70,4 @@ module allLayer0Electrons = PATElectronCleaner {
   vstring bitsToIgnore = {    // You can specify some bit names, e.g. "Overflow/User1", "Core/Duplicate", "Isolation/All".
      "Isolation/All" # set isolation but don't reject non-isolated electrons
   }
-
-  untracked bool wantSummary = true // print summary information for each status flag
 }

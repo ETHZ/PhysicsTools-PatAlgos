@@ -52,6 +52,4 @@ module allLayer0Muons = PATMuonCleaner {
     vstring bitsToIgnore = {    // You can specify some bit names, e.g. "Overflow/User1", "Core/Duplicate", "Isolation/All".
         "Isolation/All" # set isolation but don't reject non-isolated electrons
     }
-    
-    untracked bool wantSummary = true // print summary information for each status flag
 }

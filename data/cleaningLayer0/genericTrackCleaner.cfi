@@ -56,5 +56,4 @@ module allLayer0TrackCands = PATGenericParticleCleaner {
         "Isolation/All",       //   "Core/Duplicate", "Isolation/All".
         "Overlap/All"
   } 
-  untracked bool wantSummary = true // print summary information for each status flag
 }

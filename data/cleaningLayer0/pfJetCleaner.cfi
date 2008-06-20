@@ -42,5 +42,4 @@ module allLayer0PFJets = PATPFJetCleaner {
   string  saveRejected = "Bad" // set this to a non empty label to save the list of items which fail
   string  saveAll      = ""    // set this to a non empty label to save a list of all items both passing and failing
   vstring bitsToIgnore = {}    // You can specify some bit names, e.g. "Overflow/User1", "Core/Duplicate", "Isolation/All".
-  untracked bool wantSummary = true // print summary information for each status flag
 }
