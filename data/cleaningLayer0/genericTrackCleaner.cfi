@@ -10,12 +10,12 @@ module allLayer0TrackCands = PATRecoChargedCandidateCleaner {
         double   cut       = 3.0
         bool     skipDefaultVeto = true
      }
-     PSet hcal = {
-        InputTag src    = patAODTrackIsolations:patAODTrackIsoDepositCalByAssociatorTowershcal
+     PSet ecal = {
+        InputTag src    = patAODTrackIsolations:patAODTrackIsoDepositCalByAssociatorTowersecal
         double   deltaR = 0.3
         double   cut    = 3
      }
-     PSet ecal = {
+     PSet hcal = {
         InputTag src    = patAODTrackIsolations:patAODTrackIsoDepositCalByAssociatorTowershcal
         double   deltaR = 0.3
         double   cut    = 5
