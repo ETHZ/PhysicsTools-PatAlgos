@@ -24,8 +24,8 @@ process.load("PhysicsTools.PatAlgos.patLayer0_cff") # need to load this
 process.load("PhysicsTools.PatAlgos.patLayer1_cff") # even if we run only layer 1
 #process.content = cms.EDAnalyzer("EventContentAnalyzer")
 process.p = cms.Path(
-                #+ process.content # uncomment to get a dump of the input
-                + process.patLayer1  
+                #process.content  + # uncomment to get a dump of the input
+                process.patLayer1  
             )
 
 # Output module configuration
