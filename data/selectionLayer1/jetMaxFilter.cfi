@@ -1,7 +1,0 @@
-
-# module to filter on the maximal number of Jets
-
-module maxLayer1Jets = PATJetMaxFilter {
-  InputTag src       = selectedLayer1Jets
-  uint32   maxNumber = 999999
-}
