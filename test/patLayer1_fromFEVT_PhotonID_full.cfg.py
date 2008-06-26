@@ -23,6 +23,11 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
 process.load("PhysicsTools.PatAlgos.patLayer0_cff")
 process.load("PhysicsTools.PatAlgos.patLayer1_cff")
 
+
+## Load additional RECO config
+# Magnetic field now needs to be in the high-level py
+process.load("Configuration.StandardSequences.MagneticField_cff")
+
 # produce PhotonID with POG tool, associate it to layer 0 photons
 from RecoEgamma.PhotonIdentification.photonId_cfi import PhotonIDProd
 process.patAODphotonID = PhotonIDProd.clone()

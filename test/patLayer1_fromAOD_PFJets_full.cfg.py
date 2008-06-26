@@ -23,6 +23,11 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
 process.load("PhysicsTools.PatAlgos.patLayer0_cff")
 process.load("PhysicsTools.PatAlgos.patLayer1_cff")
 
+
+## Load additional RECO config
+# Magnetic field now needs to be in the high-level py
+process.load("Configuration.StandardSequences.MagneticField_cff")
+
 # define the jet collection we want to use
 
 # Additional code

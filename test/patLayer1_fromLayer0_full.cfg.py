@@ -19,6 +19,9 @@ process.source = cms.Source("PoolSource",
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
 
 
+# Magnetic field now needs to be in the high-level py
+process.load("Configuration.StandardSequences.MagneticField_cff")
+
 # PAT Layer 1
 process.load("PhysicsTools.PatAlgos.patLayer0_cff") # need to load this
 process.load("PhysicsTools.PatAlgos.patLayer1_cff") # even if we run only layer 1

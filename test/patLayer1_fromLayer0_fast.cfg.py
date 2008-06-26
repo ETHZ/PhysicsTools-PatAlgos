@@ -22,6 +22,13 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
 # PAT Layer 1
 process.load("PhysicsTools.PatAlgos.patLayer0_cff") # need to load this too
 process.load("PhysicsTools.PatAlgos.patLayer1_cff") # even if we run only layer 1
+
+## Load additional RECO config
+# Magnetic field now needs to be in the high-level py
+process.load("Configuration.StandardSequences.MagneticField_cff")
+
+
+
 #process.content = cms.EDAnalyzer("EventContentAnalyzer")
 process.p = cms.Path(
 #                process.content   +  # to get a dump of the event content

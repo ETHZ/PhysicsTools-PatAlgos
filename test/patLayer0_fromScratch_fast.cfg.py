@@ -17,6 +17,9 @@ process.load("PhysicsTools.PatAlgos.famos.famosSequences_cff")
 process.load("PhysicsTools.PatAlgos.famos.boostrapWithFamos_cff")
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
 
+# Magnetic field now needs to be in the high-level py
+process.load("Configuration.StandardSequences.MagneticField_cff")
+
 # PAT Layer 0
 process.load("PhysicsTools.PatAlgos.patLayer0_cff")
 #process.content = cms.EDAnalyzer("EventContentAnalyzer")
