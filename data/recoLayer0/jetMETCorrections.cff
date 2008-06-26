@@ -9,12 +9,25 @@ include "PhysicsTools/PatAlgos/data/recoLayer0/jetCorrFactors.cfi"
 # default JetMET calibration on IC, KT and MC Jets
 include "JetMETCorrections/Type1MET/data/MetType1Corrections.cff"
 
+# JetMET corrections for muons: input jet-corrected MET
+# It would be better to get this config to JetMETCorrections/Type1MET/data/ at some point
+module corMetType1Icone5Muons = corMetMuons from  "JetMETCorrections/Type1MET/data/corMetMuons.cfi"
+replace corMetType1Icone5Muons.inputUncorMetLabel = corMetType1Icone5
+replace corMetType1Icone5Muons.TrackAssociatorParameters.useEcal = false      # RecoHits
+replace corMetType1Icone5Muons.TrackAssociatorParameters.useHcal = false     # RecoHits
+replace corMetType1Icone5Muons.TrackAssociatorParameters.useHO = false        # RecoHits
+replace corMetType1Icone5Muons.TrackAssociatorParameters.useCalo = true     # CaloTowers
+replace corMetType1Icone5Muons.TrackAssociatorParameters.useMuon = false      # RecoHits
+replace corMetType1Icone5Muons.TrackAssociatorParameters.truthMatch = false
+
+
 # Jet corrections are now done on the fly in the JetProducer
 
 # default PAT sequence for JetMET corrections
 sequence patAODJetMETCorrections = {
   jetCorrFactors,
-  corMetType1Icone5 
+  corMetType1Icone5,
+  corMetType1Icone5Muons
 }
 
 module layer0JetCorrFactors = JetCorrFactorsValueMapSkimmer {
