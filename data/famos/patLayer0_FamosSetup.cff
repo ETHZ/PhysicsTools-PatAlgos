@@ -4,6 +4,7 @@
 // to use Famos muons
 replace allLayer0Muons.muonSource       = paramMuons:ParamGlobalMuons
 replace patAODMuonIsolations.collection = paramMuons:ParamGlobalMuons
+replace corMetType1Icone5Muons.inputMuonsLabel = paramMuons:ParamGlobalMuons
 
 replace patAODMuonIsolations.associations = {
         muParamGlobalIsoDepositCalByAssociatorTowers:ecal,
