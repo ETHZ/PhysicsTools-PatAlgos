@@ -1,5 +1,5 @@
 module allLayer0METs = PATCaloMETCleaner {
-  InputTag metSource = corMetType1Icone5
+  InputTag metSource = corMetType1Icone5Muons
 
   bool    markItems    = true // write the status flags in the output items
   string  saveRejected = ""   // set this to a non empty label to save the list of items which fail
