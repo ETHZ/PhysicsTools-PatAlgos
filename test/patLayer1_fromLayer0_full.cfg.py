@@ -16,7 +16,7 @@ process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 process.source = cms.Source("PoolSource", 
      fileNames = cms.untracked.vstring('file:PATLayer0_Output.fromAOD_full.root')
 )
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
 
 
 # Magnetic field now needs to be in the high-level py
