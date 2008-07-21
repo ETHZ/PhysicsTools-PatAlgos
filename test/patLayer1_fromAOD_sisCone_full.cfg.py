@@ -58,10 +58,15 @@ process.p = cms.Path(
                 + process.patLayer1
             )
 
-
+# make the L2+L3 correction chain for sisCone, as it's not in L2L3Corrections152_cff.py
+process.L2L3JetCorrectorMcone5 = cms.ESSource("JetCorrectionServiceChain",
+    correctors = cms.vstring('L2RelativeJetCorrectorScone5', 'L3AbsoluteJetCorrectorScone5'),
+    label      = cms.string('L2L3JetCorrectorScone5')
+)
 ## Define variables for new inputs
 jets         = 'sisCone5CaloJets'      # not using cms.InputTag as some modules want it as a string :-(
-jetCorrector = 'MCJetCorrectorScone5'
+jetCorrector = 'L2L3JetCorrectorScone5'
+
 btagLabels   = ['trackCountingHighEffBJetTags',  'trackCountingHighPurBJetTags', 
                 'impactParameterMVABJetTags',    'jetBProbabilityBJetTags',         'jetProbabilityBJetTags', 
                 'simpleSecondaryVertexBJetTags', 'combinedSecondaryVertexBJetTags', 'combinedSecondaryVertexMVABJetTags', 
