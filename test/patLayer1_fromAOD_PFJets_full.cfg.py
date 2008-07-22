@@ -25,7 +25,9 @@ process.load("PhysicsTools.PatAlgos.patLayer1_cff")
 
 
 ## Load additional RECO config
-# Magnetic field now needs to be in the high-level py
+process.load("Configuration.StandardSequences.Geometry_cff")
+process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
+process.GlobalTag.globaltag = cms.string('STARTUP_V4::All')
 process.load("Configuration.StandardSequences.MagneticField_cff")
 
 # define the jet collection we want to use

@@ -26,7 +26,9 @@ process.load("PhysicsTools.PatAlgos.patLayer1_cff")
 ## Load additional RECO config
 process.load("RecoJets.JetAssociationProducers.ic5JetTracksAssociatorAtVertex_cfi")
 process.load("RecoBTag.Configuration.RecoBTag_cff")
-process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")  ## check this is correct for you!
+process.load("Configuration.StandardSequences.Geometry_cff")
+process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
+process.GlobalTag.globaltag = cms.string('STARTUP_V4::All')
 process.load("Configuration.StandardSequences.MagneticField_cff")
 
 ## Redefine sequences
