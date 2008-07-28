@@ -24,74 +24,47 @@ process.load("PhysicsTools.PatAlgos.patLayer0_cff")
 process.load("PhysicsTools.PatAlgos.patLayer1_cff")
 
 ## Load additional RECO config
-process.load("RecoJets.JetAssociationProducers.ic5JetTracksAssociatorAtVertex_cfi")
-process.load("RecoBTag.Configuration.RecoBTag_cff")
 process.load("Configuration.StandardSequences.Geometry_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 process.GlobalTag.globaltag = cms.string('STARTUP_V4::All')
 process.load("Configuration.StandardSequences.MagneticField_cff")
 
-## Redefine sequences
-# same as default 'btagging' except without the module 'btagSoftElectrons'
-process.btaggingAOD = cms.Sequence(
-    process.impactParameterTagInfos *
-    process.jetBProbabilityBJetTags +
-    process.jetProbabilityBJetTags +
-    process.trackCountingHighPurBJetTags +
-    process.trackCountingHighEffBJetTags +
-    process.impactParameterMVABJetTags *
-    process.secondaryVertexTagInfos *
-    process.simpleSecondaryVertexBJetTags +
-    process.combinedSecondaryVertexBJetTags +
-    process.combinedSecondaryVertexMVABJetTags +
-    process.softElectronTagInfos *
-    process.softElectronBJetTags +
-    process.softMuonTagInfos *
-    process.softMuonBJetTags +
-    process.softMuonNoIPBJetTags )
-process.prePATreco = cms.Sequence(
-    process.ic5JetTracksAssociatorAtVertex *
-    process.btaggingAOD)
-# PAT sequence, with 'prePATreco' before
+from PhysicsTools.PatAlgos.tools.jetTools import *
+
+## ==== Example with CaloJets
+switchJetCollection(process, 
+        'sisCone5CaloJets',    # Jet collection; must be already in the event when patLayer0 sequence is executed
+        layers=[0,1],          # If you're not runnint patLayer1, set 'layers=[0]' 
+        runCleaner="CaloJet",  # =None if not to clean
+        doJTA=True,            # Run Jet-Track association & JetCharge
+        doBTagging=True,       # Run b-tagging
+        jetCorrLabel='Scone5', # example jet correction name; set to None for no JEC
+        doType1MET=True)       # recompute Type1 MET using these jets
+
+## ==== FOR BASIC JETS
+### make some basic jets for testing
+# from RecoJets.JetProducers.BasicJetIcone5_cfi import iterativeCone5BasicJets
+# process.iterativeCone5BasicJets = iterativeCone5BasicJets.clone(src = cms.InputTag("towerMaker"))
+#
+### configure PAT
+# switchJetCollection(process, 
+#        'iterativeCone5BasicJets', # Jet collection; must be already in the event patLayer0 sequence is executed
+#        layers=[0,1],        
+#        runCleaner="BasicJet", # =None for no cleaning
+#        doJTA=True,
+#        doBTagging=True,
+#        jetCorrLabel=None,#='Scone5',    # If you have JES corrections, you can apply them even to BasicJets
+#        doType1MET=False)                # Type1MET dows not work on BasicJets :-(
+
+process.content = cms.EDAnalyzer("EventContentAnalyzer")
 process.p = cms.Path(
-                process.prePATreco
-                #+ process.content    # uncomment to get a dump of the file before PAT layer 0
-                + process.patLayer0  
+                ## process.iterativeCone5BasicJets +  ## Turn on this to run tests on BasicJets
+                process.patLayer0  
+                #+ process.content    # uncomment to get a dump 
                 + process.patLayer1
             )
 
-# make the L2+L3 correction chain for sisCone, as it's not in L2L3Corrections152_cff.py
-process.L2L3JetCorrectorMcone5 = cms.ESSource("JetCorrectionServiceChain",
-    correctors = cms.vstring('L2RelativeJetCorrectorScone5', 'L3AbsoluteJetCorrectorScone5'),
-    label      = cms.string('L2L3JetCorrectorScone5')
-)
-## Define variables for new inputs
-jets         = 'sisCone5CaloJets'      # not using cms.InputTag as some modules want it as a string :-(
-jetCorrector = 'L2L3JetCorrectorScone5'
 
-btagLabels   = ['trackCountingHighEffBJetTags',  'trackCountingHighPurBJetTags', 
-                'impactParameterMVABJetTags',    'jetBProbabilityBJetTags',         'jetProbabilityBJetTags', 
-                'simpleSecondaryVertexBJetTags', 'combinedSecondaryVertexBJetTags', 'combinedSecondaryVertexMVABJetTags', 
-                'softElectronBJetTags',          'softMuonBJetTags',                'softMuonNoIPBJetTags']
-## Replace statements
-# layer 0 cleaners
-process.allLayer0Jets.jetSource               = jets
-# JetMET calibrations
-process.jetCorrFactors.jetSource              = jets
-process.jetCorrFactors.defaultJetCorrector    = jetCorrector
-process.corMetType1Icone5.inputUncorJetsLabel = jets
-process.corMetType1Icone5.corrector           = jetCorrector
-# Jet-Track association & b-tagging
-process.ic5JetTracksAssociatorAtVertex.jets = jets
-process.softElectronTagInfos.jets           = jets
-process.softMuonTagInfos.jets               = jets
-process.patAODJetTracksAssociator.src       = jets
-process.patAODTagInfos.collection           = jets
-process.patAODBTags.collection              = jets
-process.patAODBTags.associations            = btagLabels 
-process.layer0BTags.associations            = btagLabels 
-
-#process.content = cms.EDAnalyzer("EventContentAnalyzer")
 # Output module configuration
 process.out = cms.OutputModule("PoolOutputModule",
     fileName = cms.untracked.string('PATLayer1_Output.fromAOD_sisCone_full.root'),
@@ -103,4 +76,3 @@ process.outpath = cms.EndPath(process.out)
 # save PAT Layer 1 output
 process.load("PhysicsTools.PatAlgos.patLayer1_EventContent_cff")
 process.out.outputCommands.extend(process.patLayer1EventContent.outputCommands)
-

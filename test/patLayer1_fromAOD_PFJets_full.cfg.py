@@ -30,41 +30,21 @@ process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 process.GlobalTag.globaltag = cms.string('STARTUP_V4::All')
 process.load("Configuration.StandardSequences.MagneticField_cff")
 
-# define the jet collection we want to use
-
-# Additional code
-process.load("RecoParticleFlow.PFProducer.particleFlow_cff")
-process.load("RecoJets.JetAssociationProducers.j2tParametersVX_cfi")
-process.ic5PFJetTracksAssociatorAtVertex = cms.EDFilter("JetTracksAssociatorAtVertex", process.j2tParametersVX, jets = cms.InputTag("iterativeCone5PFJets") )
-# MC match
-process.jetPartonMatch.src        = cms.InputTag("allLayer0PFJets")
-process.jetGenJetMatch.src        = cms.InputTag("allLayer0PFJets")
-process.jetPartonAssociation.jets = cms.InputTag("allLayer0PFJets")
-# Trigger match
-process.jetTrigMatchHLT1ElectronRelaxed.src = cms.InputTag("allLayer0PFJets")
-process.jetTrigMatchHLT2jet.src             = cms.InputTag("allLayer0PFJets")
-# Jet Tracks Association
-process.patAODJetTracksAssociator.src        = cms.InputTag("iterativeCone5PFJets")
-process.patAODJetTracksAssociator.tracks     = cms.InputTag("ic5PFJetTracksAssociatorAtVertex")
-process.layer0JetTracksAssociator.collection = cms.InputTag("allLayer0PFJets")
-process.layer0JetTracksAssociator.backrefs   = cms.InputTag("allLayer0PFJets")
-process.layer0JetCharge.src                  = cms.InputTag("allLayer0PFJets")
-# Layer 1 pat::Jets
-process.allLayer1Jets.jetSource = cms.InputTag("allLayer0PFJets")
+# switch the JET collection
+from PhysicsTools.PatAlgos.tools.jetTools import *
+switchJetCollection(process, 'iterativeCone5PFJets', 
+        layers=[0,1],        
+        runCleaner="PFJet", #change this to runCleaner=None if you want no cleaning
+        doJTA=True,
+        doBTagging=True,
+        jetCorrLabel=None,  # You may want to apply jet energy corrections
+        doType1MET=False)   # even if you set jetCorrLabel to a non-null value, you should keep this to False
+                            # due to limitations in the JetMET module for Type1 corrections
 process.allLayer1Jets.embedCaloTowers   = False
-process.allLayer1Jets.addBTagInfo       = False
-process.allLayer1Jets.addResolutions    = False
-process.allLayer1Jets.addJetCorrFactors = False
 
 # Now we break up process.patLayer0
 process.p = cms.Path(
-                process.patBeforeLevel0Reco *
-                process.ic5PFJetTracksAssociatorAtVertex *
-                process.patLayer0Cleaners *
-                process.allLayer0PFJets *
-                process.patHighLevelReco *
-                process.patMCTruth *
-                process.patTrigMatch
+                process.patLayer0  
                 + process.patLayer1
             )
 
