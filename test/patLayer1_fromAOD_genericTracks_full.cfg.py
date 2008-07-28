@@ -28,54 +28,24 @@ process.load("Configuration.StandardSequences.MagneticField_cff")
 process.load("PhysicsTools.PatAlgos.patLayer0_cff")
 process.load("PhysicsTools.PatAlgos.patLayer1_cff")
 
-# Additionl modules
-process.load("PhysicsTools.PatAlgos.recoLayer0.genericTrackCandidates_cff")
-process.load("PhysicsTools.PatAlgos.cleaningLayer0.genericTrackCleaner_cfi")
-## MC match
-from PhysicsTools.PatAlgos.mcMatchLayer0.muonMatch_cfi import muonMatch
-process.trackMuMatch = muonMatch.clone()
-process.trackMuMatch.src = 'allLayer0TrackCands'
-## Layer 1
-from PhysicsTools.PatAlgos.producersLayer1.genericParticleProducer_cfi import allLayer1GenericParticles
-process.allLayer1TrackCands = allLayer1GenericParticles.clone()
-process.allLayer1TrackCands.src = 'allLayer0TrackCands'
-process.allLayer1TrackCands.addGenMatch           = True
-process.allLayer1TrackCands.genParticleMatch      = 'trackMuMatch'
-process.allLayer1TrackCands.isolation.tracker.src = 'layer0TrackIsolations:patAODTrackIsoDepositCtfTk'
-process.allLayer1TrackCands.isolation.ecal.src    = 'layer0TrackIsolations:patAODTrackIsoDepositCalByAssociatorTowersecal'
-process.allLayer1TrackCands.isolation.hcal.src    = 'layer0TrackIsolations:patAODTrackIsoDepositCalByAssociatorTowershcal'
-process.allLayer1TrackCands.isoDeposits.tracker   = 'layer0TrackIsolations:patAODTrackIsoDepositCtfTk'
-process.allLayer1TrackCands.isoDeposits.ecal      = 'layer0TrackIsolations:patAODTrackIsoDepositCalByAssociatorTowersecal'
-process.allLayer1TrackCands.isoDeposits.hcal      = 'layer0TrackIsolations:patAODTrackIsoDepositCalByAssociatorTowershcal'
-## Filter
-process.selectedLayer1TrackCands = cms.EDFilter("PATGenericParticleSelector",
-    src = cms.InputTag("allLayer1TrackCands"),
-    cut = cms.string('(pt > 15.) && (caloIso < 10.)')
-)
+from PhysicsTools.PatAlgos.tools.trackTools import *
+makeTrackCandidates(process, 
+        label='TrackCands',                   # output collection will be 'allLayer0TrackCands', 'allLayer1TrackCands', 'selectedLayer1TrackCands'
+        tracks=cms.InputTag('generalTracks'), # input track collection
+        particleType="pi+",                   # particle type (for assigning a mass)
+        preselection='pt > 10',               # preselection cut on candidates. Only methods of 'reco::Candidate' are available
+        cleaning=True,                        # Run the PATGenericParticleCleaner ('allLayer0TrackCands')
+        selection='pt > 10',                  # Selection on PAT Layer 1 objects ('selectedLayer1TrackCands')
+        isolation=['tracker','caloTowers'],   # Isolations to use (currently only 'tracker' and 'caloTowers' are valid options)
+                                              # You can also set it to 'None' to avoid computing isolatio alltogether
+        mcAs='allLayer0Muons',                # Replicate MC match as the one used for Muons
+        triggerAs=['allLayer0Muons']          # Replicate trigger match as all the ones used for Muons
+        );                                    #  you can specify more than one collection for this
+
 
 process.p = cms.Path(
-        # before-cleaner reconstruction
-        process.patBeforeLevel0Reco *
-        process.patAODTrackCandSequence *
-        # all the cleaners
-        process.allLayer0Muons *
-        process.allLayer0Electrons *
-        process.allLayer0Photons *
-        process.allLayer0Taus *
-        process.allLayer0TrackCands *
-        process.allLayer0Jets *
-        process.allLayer0METs *
-        # high level reco
-        process.patHighLevelReco *
-        process.patLayer0TrackCandSequence *
-        # matching with MC and trigger
-        process.patTrigMatch *
-        process.patMCTruth *
-        process.trackMuMatch *
-        # layer 1
-        process.patLayer1 *
-        process.allLayer1TrackCands *
-        process.selectedLayer1TrackCands
+        process.patLayer0 *
+        process.patLayer1 
 )
 
 # Output module configuration
@@ -91,3 +61,10 @@ process.load("PhysicsTools.PatAlgos.patLayer1_EventContent_cff")
 process.out.outputCommands.extend(process.patLayer1EventContent.outputCommands)
 process.out.outputCommands.append('keep *_selectedLayer1TrackCands_*_*')
 
+#### Dump the python config
+#
+# f = open("patLayer1_fromAOD_genericTracks_full.dump.py", "w")
+# f.write(process.dumpPython())
+# f.close()
+#
+ 
