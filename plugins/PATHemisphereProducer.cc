@@ -13,7 +13,7 @@
 //
 // Original Author:  Tanja Rommerskirchen
 //         Created:  Sat Mar 22 12:58:04 CET 2008
-// $Id: PATHemisphereProducer.cc,v 1.3 2008/04/08 09:02:18 trommers Exp $
+// $Id: PATHemisphereProducer.cc,v 1.1.2.2 2008/04/08 15:46:28 adamwo Exp $
 //
 //
 
@@ -57,26 +57,25 @@ PATHemisphereProducer::PATHemisphereProducer(const edm::ParameterSet& iConfig) :
   _patElectrons  ( iConfig.getParameter<edm::InputTag>( "patElectrons" ) ),
   _patPhotons    ( iConfig.getParameter<edm::InputTag>( "patPhotons" ) ),
   _patTaus       ( iConfig.getParameter<edm::InputTag>( "patTaus" ) ),
+  
+  _minJetEt       ( iConfig.getParameter<double>("minJetEt") ),
+  _minMuonEt       ( iConfig.getParameter<double>("minMuonEt") ),
+  _minElectronEt       ( iConfig.getParameter<double>("minElectronEt") ),
+  _minTauEt       ( iConfig.getParameter<double>("minTauEt") ), 
+  _minPhotonEt       ( iConfig.getParameter<double>("minPhotonEt") ),
+
+  _maxJetEta       ( iConfig.getParameter<double>("maxJetEta") ),
+  _maxMuonEta       ( iConfig.getParameter<double>("maxMuonEta") ),
+  _maxElectronEta       ( iConfig.getParameter<double>("maxElectronEta") ),
+  _maxTauEta       ( iConfig.getParameter<double>("maxTauEta") ), 
+  _maxPhotonEta       ( iConfig.getParameter<double>("maxPhotonEta") ),
+
   _seedMethod    ( iConfig.getParameter<int>("seedMethod") ),
   _combinationMethod ( iConfig.getParameter<int>("combinationMethod") )
 
 
-
-  //  _EJselectionCfg(iConfig.getParameter<edm::ParameterSet>("ElectronJetCrossCleaning")),    
-  // _ElectronJetCC(reco::modules::make<ElectronJetCrossCleaner>(_EJselectionCfg))
 {
-  //produces<std::vector<std::double
-  ///produces cross-cleaned collections of above objects
-  //Alternative: produce cross-cleaning decision & MET correction per object
-//    produces<HemiAxis>("hemi1"); //hemisphere 1 axis
-//    produces<HemiAxis>("hemi2"); //hemisphere 1 axis
- 
-//   produces<std::vector<pat::Jet> >();
-//   produces<std::vector<pat::MET> >();
-//   produces<std::vector<pat::Muon> >();
-//   produces<std::vector<pat::Electron> >();
-//   produces<std::vector<pat::Photon> >();
-//   produces<std::vector<pat::Tau> >();
+
 
   produces< std::vector<pat::Hemisphere> >();
 }
@@ -125,6 +124,7 @@ PATHemisphereProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup
 
    //fill e,p vector with information from all objects (hopefully cleaned before)
    for(int i = 0; i < (int) (*pJets).size() ; i++){
+     if((*pJets)[i].pt() <  _minJetEt || fabs((*pJets)[i].eta()) >  _maxJetEta) continue;
      vPx.push_back((*pJets)[i].px());
      vPy.push_back((*pJets)[i].py());
      vPz.push_back((*pJets)[i].pz());
@@ -133,6 +133,7 @@ PATHemisphereProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup
    }
 
    for(int i = 0; i < (int) (*pMuons).size() ; i++){
+     if((*pMuons)[i].pt() <  _minMuonEt || fabs((*pMuons)[i].eta()) >  _maxMuonEta) continue; 
      vPx.push_back((*pMuons)[i].px());
      vPy.push_back((*pMuons)[i].py());
      vPz.push_back((*pMuons)[i].pz());
@@ -141,6 +142,7 @@ PATHemisphereProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup
    }
   
    for(int i = 0; i < (int) (*pElectrons).size() ; i++){
+     if((*pElectrons)[i].pt() <  _minElectronEt || fabs((*pElectrons)[i].eta()) >  _maxElectronEta) continue;  
      vPx.push_back((*pElectrons)[i].px());
      vPy.push_back((*pElectrons)[i].py());
      vPz.push_back((*pElectrons)[i].pz());
@@ -149,6 +151,7 @@ PATHemisphereProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup
    } 
 
    for(int i = 0; i < (int) (*pPhotons).size() ; i++){
+     if((*pPhotons)[i].pt() <  _minPhotonEt || fabs((*pPhotons)[i].eta()) >  _maxPhotonEta) continue;  
      vPx.push_back((*pPhotons)[i].px());
      vPy.push_back((*pPhotons)[i].py());
      vPz.push_back((*pPhotons)[i].pz());
@@ -158,6 +161,7 @@ PATHemisphereProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup
 
    //aren't taus included in jets?
    for(int i = 0; i < (int) (*pTaus).size() ; i++){
+     if((*pTaus)[i].pt() <  _minTauEt || fabs((*pTaus)[i].eta()) >  _maxTauEta) continue; 
      vPx.push_back((*pTaus)[i].px());
      vPy.push_back((*pTaus)[i].py());
      vPz.push_back((*pTaus)[i].pz());

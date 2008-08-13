@@ -8,6 +8,19 @@ module selectedLayer1Hemispheres   = PATHemisphereProducer {
 	InputTag patPhotons    = selectedLayer1Photons
 	InputTag patTaus       = selectedLayer1Taus
 
+	double minJetEt = 30
+	double minMuonEt = 7
+	double minElectronEt = 7
+	double minTauEt = 1000000
+	double minPhotonEt = 200000
+
+	double maxJetEta = 5
+	double maxMuonEta = 5
+	double maxElectronEta = 5
+	double maxTauEta = -1
+	double maxPhotonEta = 5
+
+
         int32 seedMethod = 3
 	int32 combinationMethod = 3
 }
