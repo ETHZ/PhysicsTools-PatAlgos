@@ -30,8 +30,8 @@ process.load("SimGeneral.HepPDTESSource.pythiapdt_cfi")
 process.inFlightMuons = cms.EDProducer("PATGenCandsFromSimTracksProducer",
         src           = cms.InputTag("g4SimHits"),
         setStatus     = cms.int32(-1),
-        particleTypes = cms.vstring("mu+"),        # picks also mu-, of course
-        filter        = cms.vstring("pt > 0.01"),  # just for testing
+        particleTypes = cms.vstring("mu+"),       # picks also mu-, of course
+        filter        = cms.vstring("pt > 0.5"),  # just for testing
 )
 process.muMatch3 = process.muonMatch.clone(mcStatus = cms.vint32(3))
 process.muMatch1 = process.muonMatch.clone(mcStatus = cms.vint32(1))
