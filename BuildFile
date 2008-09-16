@@ -19,6 +19,7 @@
 <use name=PhysicsTools/PatUtils>
 <use name=PhysicsTools/UtilAlgos>
 <use name=PhysicsTools/Utilities>
+<use name=RecoMET/METAlgorithms>
 <use name=clhep>
 <export>
   <lib name=PhysicsToolsPatAlgos>
@@ -42,6 +43,7 @@
   <use name=PhysicsTools/PatUtils>
   <use name=PhysicsTools/UtilAlgos>
   <use name=PhysicsTools/Utilities>
+  <use name=RecoMET/METAlgorithms>
   <Flags CXXFLAGS="-Os">
   <use name=clhep>
 </export>
