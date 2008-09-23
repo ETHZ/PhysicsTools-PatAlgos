@@ -1,5 +1,5 @@
 //
-// $Id: PATMHTProducer.cc,v 1.1.2.1 2008/09/16 09:17:20 fblekman Exp $
+// $Id: PATMHTProducer.cc,v 1.1.2.2 2008/09/23 13:24:15 fblekman Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATMHTProducer.h"
@@ -37,7 +37,7 @@ pat::PATMHTProducer::PATMHTProducer(const edm::ParameterSet & iConfig){
   phoLabel_ = iConfig.getUntrackedParameter<edm::InputTag>("photonTag");
   
   // Produce MHT and the corresponding Significance
-  produces<double>(mhtLabel_.label());
+  //  produces<double>(mhtLabel_.label()); not necessary any more
   produces<pat::MHTCollection>(mhtLabel_.label());
 
 }
@@ -135,6 +135,24 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
     physobjvector_.push_back(tmp_photon);
      
   }
+
+  edm::Handle<edm::View<pat::Tau> > tauHandle;
+  iEvent.getByLabel(tauLabel_,tauHandle);
+  edm::View<pat::Tau> taus = *tauHandle;
+
+  // Fill Input Vector with Taus 
+  for(edm::View<pat::Tau>::const_iterator tau_iter = taus.begin(); tau_iter!=taus.end(); ++tau_iter){
+    double tau_px = tau_iter->px();
+    double tau_py = tau_iter->py();
+    double sigma_et = tau_iter->resolutionEt();
+    double sigma_phi = tau_iter->resolutionPhi();
+    objectname="tau";
+    // try to read out the tau resolution from the root file at PatUtils
+    //-- Store tau for Significance Calculation --//
+    metsig::SigInputObj tmp_tau(objectname,tau_px,tau_py,sigma_et,sigma_phi);
+    physobjvector_.push_back(tmp_tau);
+     
+  }
   
   double met_x=0;
   double met_y=0;
@@ -152,8 +170,9 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
   iEvent.put( themetsigcoll, mhtLabel_.label());
   //double significance = 0.0;
 
-  std::auto_ptr<double> themetsig(new double(significance));
-  iEvent.put( themetsig, mhtLabel_.label() );
+  // not necessary any more
+  //  std::auto_ptr<double> themetsig(new double(significance));
+  //  iEvent.put( themetsig, mhtLabel_.label() );
 
 }  
 
