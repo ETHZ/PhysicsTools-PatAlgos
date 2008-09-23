@@ -1,5 +1,5 @@
 //
-// $Id: PATMHTProducer.cc,v 1.1.2.3 2008/09/23 13:37:35 fblekman Exp $
+// $Id: PATMHTProducer.cc,v 1.1.2.4 2008/09/23 16:52:42 fblekman Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATMHTProducer.h"
@@ -75,6 +75,8 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
     double sigma_et = jet_iter->resolutionEt();
     double sigma_phi = jet_iter->resolutionPhi();
     objectname="jet";
+    if(sigma_et<0 || sigma_phi<0)
+      edm::LogWarning("PATMHTProducer") << " uncertainties for "  << objectname << " are (et, phi): " << sigma_et << "," << sigma_phi << " (et,phi): " << jet_et << "," << jet_phi;
     // try to read out the jet resolution from the root file at PatUtils
     //-- Store jet for Significance Calculation --//
     metsig::SigInputObj tmp_jet(objectname,jet_et,jet_phi,sigma_et,sigma_phi);
@@ -93,6 +95,8 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
     double sigma_et = electron_iter->resolutionEt();
     double sigma_phi = electron_iter->resolutionPhi();
     objectname="electron";
+    if(sigma_et<0 || sigma_phi<0)
+      edm::LogWarning("PATMHTProducer") << " uncertainties for "  << objectname << " are (et, phi): " << sigma_et << "," << sigma_phi << " (et,phi): " << electron_et << "," << electron_phi;
     // try to read out the electron resolution from the root file at PatUtils
     //-- Store electron for Significance Calculation --//
     metsig::SigInputObj tmp_electron(objectname,electron_et,electron_phi,sigma_et,sigma_phi);
@@ -111,6 +115,8 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
     double sigma_et = muon_iter->resolutionEt();
     double sigma_phi = muon_iter->resolutionPhi();
     objectname="muon";
+    if(sigma_et<0 || sigma_phi<0)
+      edm::LogWarning("PATMHTProducer") << " uncertainties for "  << objectname << " are (et, phi): " << sigma_et << "," << sigma_phi << " (pt,phi): " << muon_pt << "," << muon_phi;
     // try to read out the muon resolution from the root file at PatUtils
     //-- Store muon for Significance Calculation --//
     metsig::SigInputObj tmp_muon(objectname,muon_pt,muon_phi,sigma_et,sigma_phi);
@@ -129,6 +135,8 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
     double sigma_et = photon_iter->resolutionEt();
     double sigma_phi = photon_iter->resolutionPhi();
     objectname="photon";
+    if(sigma_et<0 || sigma_phi<0)
+      edm::LogWarning("PATMHTProducer") << " uncertainties for "  << objectname << " are (et, phi): " << sigma_et << "," << sigma_phi << " (et,phi): " << photon_et << "," << photon_phi;
     // try to read out the photon resolution from the root file at PatUtils
     //-- Store photon for Significance Calculation --//
     metsig::SigInputObj tmp_photon(objectname,photon_et,photon_phi,sigma_et,sigma_phi);
@@ -147,6 +155,8 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
     double sigma_et = tau_iter->resolutionEt();
     double sigma_phi = tau_iter->resolutionPhi();
     objectname="tau";
+    if(sigma_et<0 || sigma_phi<0)
+      edm::LogWarning("PATMHTProducer") << " uncertainties for "  << objectname << " are (et, phi): " << sigma_et << "," << sigma_phi << " (pt,phi): " << tau_pt << "," << tau_phi;
     // try to read out the tau resolution from the root file at PatUtils
     //-- Store tau for Significance Calculation --//
     metsig::SigInputObj tmp_tau(objectname,tau_pt,tau_phi,sigma_et,sigma_phi);
