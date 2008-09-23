@@ -1,5 +1,5 @@
 //
-// $Id: PATMHTProducer.cc,v 1.3 2008/09/08 20:40:03 xs32 Exp xs32 $
+// $Id: PATMHTProducer.cc,v 1.1.2.1 2008/09/16 09:17:20 fblekman Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATMHTProducer.h"
@@ -10,6 +10,10 @@
 #include "DataFormats/Math/interface/LorentzVector.h"
 #include "DataFormats/PatCandidates/interface/MHT.h"
 #include "DataFormats/PatCandidates/interface/Jet.h"
+#include "DataFormats/PatCandidates/interface/Photon.h"
+#include "DataFormats/PatCandidates/interface/Tau.h"
+#include "DataFormats/PatCandidates/interface/Electron.h"
+#include "DataFormats/PatCandidates/interface/Muon.h"
 #include "RecoMET/METAlgorithms/interface/SigInputObj.h"
 #include "RecoMET/METAlgorithms/interface/SignAlgoResolutions.h"
 #include "RecoMET/METAlgorithms/interface/significanceAlgo.h"
@@ -34,7 +38,7 @@ pat::PATMHTProducer::PATMHTProducer(const edm::ParameterSet & iConfig){
   
   // Produce MHT and the corresponding Significance
   produces<double>(mhtLabel_.label());
-  produces<pat::MHT>(mhtLabel_.label());
+  produces<pat::MHTCollection>(mhtLabel_.label());
 
 }
 
@@ -52,6 +56,11 @@ void pat::PATMHTProducer::endJob() {
 
 
 void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup) {
+  // make sure the SigInputObj container is empty
+  while(physobjvector_.size()>0){
+    physobjvector_.erase(physobjvector_.begin(),physobjvector_.end());
+
+  }
   // Get the jet object
 
   edm::Handle<edm::View<pat::Jet> > jetHandle;
@@ -72,6 +81,60 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
     physobjvector_.push_back(tmp_jet);
      
   }
+
+  edm::Handle<edm::View<pat::Electron> > electronHandle;
+  iEvent.getByLabel(eleLabel_,electronHandle);
+  edm::View<pat::Electron> electrons = *electronHandle;
+
+  // Fill Input Vector with Electrons 
+  for(edm::View<pat::Electron>::const_iterator electron_iter = electrons.begin(); electron_iter!=electrons.end(); ++electron_iter){
+    double electron_px = electron_iter->px();
+    double electron_py = electron_iter->py();
+    double sigma_et = electron_iter->resolutionEt();
+    double sigma_phi = electron_iter->resolutionPhi();
+    objectname="electron";
+    // try to read out the electron resolution from the root file at PatUtils
+    //-- Store electron for Significance Calculation --//
+    metsig::SigInputObj tmp_electron(objectname,electron_px,electron_py,sigma_et,sigma_phi);
+    physobjvector_.push_back(tmp_electron);
+     
+  }
+
+  edm::Handle<edm::View<pat::Muon> > muonHandle;
+  iEvent.getByLabel(muoLabel_,muonHandle);
+  edm::View<pat::Muon> muons = *muonHandle;
+
+  // Fill Input Vector with Muons 
+  for(edm::View<pat::Muon>::const_iterator muon_iter = muons.begin(); muon_iter!=muons.end(); ++muon_iter){
+    double muon_px = muon_iter->px();
+    double muon_py = muon_iter->py();
+    double sigma_et = muon_iter->resolutionEt();
+    double sigma_phi = muon_iter->resolutionPhi();
+    objectname="muon";
+    // try to read out the muon resolution from the root file at PatUtils
+    //-- Store muon for Significance Calculation --//
+    metsig::SigInputObj tmp_muon(objectname,muon_px,muon_py,sigma_et,sigma_phi);
+    physobjvector_.push_back(tmp_muon);
+     
+  }
+  
+  edm::Handle<edm::View<pat::Photon> > photonHandle;
+  iEvent.getByLabel(phoLabel_,photonHandle);
+  edm::View<pat::Photon> photons = *photonHandle;
+
+  // Fill Input Vector with Photons 
+  for(edm::View<pat::Photon>::const_iterator photon_iter = photons.begin(); photon_iter!=photons.end(); ++photon_iter){
+    double photon_px = photon_iter->px();
+    double photon_py = photon_iter->py();
+    double sigma_et = photon_iter->resolutionEt();
+    double sigma_phi = photon_iter->resolutionPhi();
+    objectname="photon";
+    // try to read out the photon resolution from the root file at PatUtils
+    //-- Store photon for Significance Calculation --//
+    metsig::SigInputObj tmp_photon(objectname,photon_px,photon_py,sigma_et,sigma_phi);
+    physobjvector_.push_back(tmp_photon);
+     
+  }
   
   double met_x=0;
   double met_y=0;
@@ -82,8 +145,11 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
   double significance = ASignificance(physobjvector_, met_x, met_y, met_set);
 
   // and fill the output into the event..
-  std::auto_ptr<pat::MHT> themetsigobj (new pat::MHT(math::XYZTLorentzVector(met_x,met_y,0,sqrt(met_x*met_x+met_y*met_y)),met_set,significance));
-  iEvent.put( themetsigobj, mhtLabel_.label());
+  std::auto_ptr<pat::MHTCollection>  themetsigcoll (new pat::MHTCollection);
+  pat::MHT themetsigobj(math::XYZTLorentzVector(met_x,met_y,0,sqrt(met_x*met_x+met_y*met_y)),met_set,significance);
+  themetsigcoll->push_back(themetsigobj);
+
+  iEvent.put( themetsigcoll, mhtLabel_.label());
   //double significance = 0.0;
 
   std::auto_ptr<double> themetsig(new double(significance));
