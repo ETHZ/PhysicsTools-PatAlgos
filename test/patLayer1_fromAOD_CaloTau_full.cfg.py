@@ -48,6 +48,7 @@ process.p = cms.Path(
 )
 # reconfigure MC, Trigger match and Layer 1 to use CaloTaus
 process.tauMatch.src                 = cms.InputTag('allLayer0CaloTaus')
+process.tauGenJetMatch.src           = cms.InputTag('allLayer0CaloTaus')
 process.tauTrigMatchHLT1Tau.src      = cms.InputTag('allLayer0CaloTaus')
 process.tauTrigMatchHLT2TauPixel.src = cms.InputTag('allLayer0CaloTaus')
 process.allLayer1Taus.tauSource      = cms.InputTag('allLayer0CaloTaus')
