@@ -1,5 +1,5 @@
 //
-// $Id: PATMHTProducer.cc,v 1.1.2.5 2008/09/23 17:09:50 fblekman Exp $
+// $Id: PATMHTProducer.cc,v 1.6 2008/09/30 20:20:56 xs32 Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATMHTProducer.h"
@@ -29,7 +29,7 @@
 pat::PATMHTProducer::PATMHTProducer(const edm::ParameterSet & iConfig){
 
   // Initialize the configurables
-  mhtLabel_ = iConfig.getUntrackedParameter<edm::InputTag>("missingHTTag");
+  //  mhtLabel_ = iConfig.getUntrackedParameter<edm::InputTag>("missingHTTag");
   jetLabel_ = iConfig.getUntrackedParameter<edm::InputTag>("jetTag");
   eleLabel_ = iConfig.getUntrackedParameter<edm::InputTag>("electronTag");
   muoLabel_ = iConfig.getUntrackedParameter<edm::InputTag>("muonTag");
@@ -38,7 +38,8 @@ pat::PATMHTProducer::PATMHTProducer(const edm::ParameterSet & iConfig){
   
   // Produce MHT and the corresponding Significance
   //  produces<double>(mhtLabel_.label()); not necessary any more
-  produces<pat::MHTCollection>(mhtLabel_.label());
+  //produces<pat::MHTCollection>(mhtLabel_.label());  should avoid this in the producer. 
+  produces<pat::MHTCollection>();
 
 }
 
@@ -124,9 +125,14 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
      
   }
   
+  /* We'll deal with photons and taus later for sure :)
+
+
   edm::Handle<edm::View<pat::Photon> > photonHandle;
   iEvent.getByLabel(phoLabel_,photonHandle);
   edm::View<pat::Photon> photons = *photonHandle;
+
+
 
   // Fill Input Vector with Photons 
   for(edm::View<pat::Photon>::const_iterator photon_iter = photons.begin(); photon_iter!=photons.end(); ++photon_iter){
@@ -164,6 +170,9 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
      
   }
   
+  */
+
+
   double met_x=0;
   double met_y=0;
   double met_et=0;
@@ -181,7 +190,10 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
   pat::MHT themetsigobj(Particle::LorentzVector(met_x,met_y,0,met_et),met_set,significance);
   themetsigcoll->push_back(themetsigobj);
 
-  iEvent.put( themetsigcoll, mhtLabel_.label());
+  //  iEvent.put( themetsigcoll, mhtLabel_.label()); cause trouble in getting out from analyzer. 
+
+  iEvent.put( themetsigcoll);
+
   //double significance = 0.0;
 
   // not necessary any more
