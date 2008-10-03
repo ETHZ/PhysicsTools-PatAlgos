@@ -1,44 +1,18 @@
 //
-// $Id: PATMHTProducer.cc,v 1.6 2008/09/30 20:20:56 xs32 Exp $
+// $Id: PATMHTProducer.cc,v 1.1.2.7 2008/10/01 13:51:36 xshi Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATMHTProducer.h"
-#include "FWCore/MessageLogger/interface/MessageLogger.h"
-#include "FWCore/ParameterSet/interface/FileInPath.h"
-#include "DataFormats/Common/interface/View.h"
-
-#include "DataFormats/Math/interface/LorentzVector.h"
-#include "DataFormats/PatCandidates/interface/MHT.h"
-#include "DataFormats/PatCandidates/interface/Jet.h"
-#include "DataFormats/PatCandidates/interface/Photon.h"
-#include "DataFormats/PatCandidates/interface/Tau.h"
-#include "DataFormats/PatCandidates/interface/Electron.h"
-#include "DataFormats/PatCandidates/interface/Muon.h"
-#include "RecoMET/METAlgorithms/interface/SigInputObj.h"
-#include "RecoMET/METAlgorithms/interface/SignAlgoResolutions.h"
-#include "RecoMET/METAlgorithms/interface/significanceAlgo.h"
-#include "DataFormats/Candidate/interface/Candidate.h"
-
- 
-#include <memory>
-
-
-//using namespace pat;
-
 
 pat::PATMHTProducer::PATMHTProducer(const edm::ParameterSet & iConfig){
 
   // Initialize the configurables
-  //  mhtLabel_ = iConfig.getUntrackedParameter<edm::InputTag>("missingHTTag");
   jetLabel_ = iConfig.getUntrackedParameter<edm::InputTag>("jetTag");
   eleLabel_ = iConfig.getUntrackedParameter<edm::InputTag>("electronTag");
   muoLabel_ = iConfig.getUntrackedParameter<edm::InputTag>("muonTag");
   tauLabel_ = iConfig.getUntrackedParameter<edm::InputTag>("tauTag");
   phoLabel_ = iConfig.getUntrackedParameter<edm::InputTag>("photonTag");
   
-  // Produce MHT and the corresponding Significance
-  //  produces<double>(mhtLabel_.label()); not necessary any more
-  //produces<pat::MHTCollection>(mhtLabel_.label());  should avoid this in the producer. 
   produces<pat::MHTCollection>();
 
 }
@@ -77,7 +51,9 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
     double sigma_phi = jet_iter->resolutionPhi();
     objectname="jet";
     if(sigma_et<=0 || sigma_phi<=0)
-      edm::LogWarning("PATMHTProducer") << " uncertainties for "  << objectname << " are (et, phi): " << sigma_et << "," << sigma_phi << " (et,phi): " << jet_et << "," << jet_phi;
+      edm::LogWarning("PATMHTProducer") << 
+	" uncertainties for "  << objectname <<
+	" are (et, phi): " << sigma_et << "," << sigma_phi << " (et,phi): " << jet_et << "," << jet_phi;
     // try to read out the jet resolution from the root file at PatUtils
     //-- Store jet for Significance Calculation --//
     metsig::SigInputObj tmp_jet(objectname,jet_et,jet_phi,sigma_et,sigma_phi);
@@ -97,7 +73,10 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
     double sigma_phi = electron_iter->resolutionPhi();
     objectname="electron";
     if(sigma_et<=0 || sigma_phi<=0)
-      edm::LogWarning("PATMHTProducer") << " uncertainties for "  << objectname << " are (et, phi): " << sigma_et << "," << sigma_phi << " (et,phi): " << electron_et << "," << electron_phi;
+      edm::LogWarning("PATMHTProducer") <<
+	" uncertainties for "  << objectname <<
+	" are (et, phi): " << sigma_et << "," << sigma_phi << 
+	" (et,phi): " << electron_et << "," << electron_phi;
     // try to read out the electron resolution from the root file at PatUtils
     //-- Store electron for Significance Calculation --//
     metsig::SigInputObj tmp_electron(objectname,electron_et,electron_phi,sigma_et,sigma_phi);
@@ -117,7 +96,10 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
     double sigma_phi = muon_iter->resolutionPhi();
     objectname="muon";
     if(sigma_et<=0 || sigma_phi<=0)
-      edm::LogWarning("PATMHTProducer") << " uncertainties for "  << objectname << " are (et, phi): " << sigma_et << "," << sigma_phi << " (pt,phi): " << muon_pt << "," << muon_phi;
+      edm::LogWarning("PATMHTProducer") << 
+	" uncertainties for "  << objectname << 
+	" are (et, phi): " << sigma_et << "," <<
+	sigma_phi << " (pt,phi): " << muon_pt << "," << muon_phi;
     // try to read out the muon resolution from the root file at PatUtils
     //-- Store muon for Significance Calculation --//
     metsig::SigInputObj tmp_muon(objectname,muon_pt,muon_phi,sigma_et,sigma_phi);
@@ -131,8 +113,6 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
   edm::Handle<edm::View<pat::Photon> > photonHandle;
   iEvent.getByLabel(phoLabel_,photonHandle);
   edm::View<pat::Photon> photons = *photonHandle;
-
-
 
   // Fill Input Vector with Photons 
   for(edm::View<pat::Photon>::const_iterator photon_iter = photons.begin(); photon_iter!=photons.end(); ++photon_iter){
@@ -190,15 +170,7 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
   pat::MHT themetsigobj(Particle::LorentzVector(met_x,met_y,0,met_et),met_set,significance);
   themetsigcoll->push_back(themetsigobj);
 
-  //  iEvent.put( themetsigcoll, mhtLabel_.label()); cause trouble in getting out from analyzer. 
-
   iEvent.put( themetsigcoll);
-
-  //double significance = 0.0;
-
-  // not necessary any more
-  //  std::auto_ptr<double> themetsig(new double(significance));
-  //  iEvent.put( themetsig, mhtLabel_.label() );
 
 }  
 
