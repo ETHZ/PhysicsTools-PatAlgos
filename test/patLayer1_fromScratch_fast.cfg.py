@@ -15,7 +15,7 @@ process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 # FAMOS source
 process.load("PhysicsTools.PatAlgos.famos.famosSequences_cff")
 process.load("PhysicsTools.PatAlgos.famos.boostrapWithFamos_cff")
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(50) )
 
 # PAT Layer 0+1
 process.load("PhysicsTools.PatAlgos.patLayer0_cff")
@@ -28,9 +28,9 @@ process.load("Configuration.StandardSequences.MagneticField_cff")
 
 #process.content = cms.EDAnalyzer("EventContentAnalyzer")
 process.p = cms.Path(
-                process.famosWithEverythingPAT +     # run full FAMOS (ttbar events)
+                process.famosWithEverythingPAT +    # run full FAMOS (ttbar events)
                 #process.content               +     # to get a dump of the output of FAMOS
-                process.patLayer0_withoutTrigMatch + # PAT Layer 0, no trigger matching
+                process.patLayer0_withoutTrigMatch +  # PAT Layer 0, no trigger matching
                 process.patLayer1                    # PAT Layer 1
             )
 
