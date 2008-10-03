@@ -1,7 +1,0 @@
-
-# module to filter on the maximal number of Electrons
-
-module maxLayer1Electrons = PATElectronMaxFilter {
-  InputTag src       = selectedLayer1Electrons
-  uint32   maxNumber = 999999
-}

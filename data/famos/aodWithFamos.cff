@@ -1,7 +1,0 @@
-  # =====  REPLACE statements for AOD RE-RECO on FAMOS ========
-  replace pfJetTracksAssociator.tracks = gsWithMaterialTracks
-
-  # sequence to run for PAT on top of default FastSim 1_6_8 event content
-  sequence patExtraOn168FastAOD = {
-    muIsolation_ParamGlobalMuons
-  }

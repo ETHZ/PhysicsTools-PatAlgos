@@ -1,7 +1,0 @@
-
-# module to filter on the maximal number of Muons
-
-module maxLayer1Muons = PATMuonMaxFilter {
-  InputTag src       = selectedLayer1Muons
-  uint32   maxNumber = 999999
-}

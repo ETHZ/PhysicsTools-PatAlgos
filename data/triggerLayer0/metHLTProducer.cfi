@@ -1,9 +1,0 @@
-module patHLT1MET = PATHLTProducer {
-    InputTag triggerResults  = TriggerResults::HLT
-    string   triggerName     = "HLT1MET"
-    InputTag filterName      = hlt1MET65::HLT
-}
-
-sequence metHLTProducer = {
-    patHLT1MET
-}
