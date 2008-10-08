@@ -13,7 +13,8 @@ process.MessageLogger.cerr.INFO = cms.untracked.PSet(
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 
 # FAMOS source
-process.load("PhysicsTools.PatAlgos.famos.famosSequences_cff")
+process.load("FastSimulation.Configuration.ttbar_cfi")
+# some FAMOS setup (FIXME maybe this should go)
 process.load("PhysicsTools.PatAlgos.famos.boostrapWithFamos_cff")
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
 
@@ -24,13 +25,10 @@ process.load("Configuration.StandardSequences.MagneticField_cff")
 process.load("PhysicsTools.PatAlgos.patLayer0_cff")
 #process.content = cms.EDAnalyzer("EventContentAnalyzer")
 process.p = cms.Path(
-                process.famosWithEverythingPAT +     # run full FAMOS (ttbar events)
+                process.famosWithEverything    +     # run full FAMOS (ttbar events)
                 #process.content               +     # to get a dump of the output of FAMOS
-                process.patLayer0_withoutTrigMatch # PAT Layer 0, no trigger matching
+                process.patLayer0_withoutTrigMatch   # PAT Layer 0, no trigger matching
             )
-
-from PhysicsTools.PatAlgos.famos import patLayer0_FamosSetup_cff
-patLayer0_FamosSetup_cff.setup(process) # apply 'replace' statements for Layer 0
 
 # Output module configuration
 process.out = cms.OutputModule("PoolOutputModule",

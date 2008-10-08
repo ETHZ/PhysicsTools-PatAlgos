@@ -35,9 +35,6 @@ process.p = cms.Path(
                 process.patLayer1    # PAT Layer 1
             )
 
-from PhysicsTools.PatAlgos.famos import patLayer1_FamosSetup_cff
-patLayer1_FamosSetup_cff.setup(process) # apply 'replace' statements for Layer 1
-
 # Output module configuration
 process.out = cms.OutputModule("PoolOutputModule",
     fileName = cms.untracked.string('PATLayer1_Output.fromLayer0_fast.root'),

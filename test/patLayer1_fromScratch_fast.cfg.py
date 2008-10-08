@@ -13,9 +13,10 @@ process.MessageLogger.cerr.INFO = cms.untracked.PSet(
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 
 # FAMOS source
-process.load("PhysicsTools.PatAlgos.famos.famosSequences_cff")
+process.load("FastSimulation.Configuration.ttbar_cfi")
+# some FAMOS setup (FIXME maybe this should go)
 process.load("PhysicsTools.PatAlgos.famos.boostrapWithFamos_cff")
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(50) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
 
 # PAT Layer 0+1
 process.load("PhysicsTools.PatAlgos.patLayer0_cff")
@@ -25,18 +26,18 @@ process.load("PhysicsTools.PatAlgos.patLayer1_cff")
 # Magnetic field now needs to be in the high-level py
 process.load("Configuration.StandardSequences.MagneticField_cff")
 
+## Switch off trigger matching (just to make things easier)
+from PhysicsTools.PatAlgos.tools.trigTools import switchLayer1Off
+switchLayer1Off(process)
 
 #process.content = cms.EDAnalyzer("EventContentAnalyzer")
 process.p = cms.Path(
-                process.famosWithEverythingPAT +    # run full FAMOS (ttbar events)
-                #process.content               +     # to get a dump of the output of FAMOS
-                process.patLayer0_withoutTrigMatch +  # PAT Layer 0, no trigger matching
-                process.patLayer1                    # PAT Layer 1
+                process.famosWithEverything        +    # run full FAMOS (ttbar events)
+                #process.content                   +    # to get a dump of the output of FAMOS
+                process.patLayer0_withoutTrigMatch +    # PAT Layer 0, no trigger matching
+                process.patLayer1                       # PAT Layer 1
             )
 
-from PhysicsTools.PatAlgos.famos import patLayer0_FamosSetup_cff, patLayer1_FamosSetup_cff
-patLayer0_FamosSetup_cff.setup(process) # apply 'replace' statements for Layer 0
-patLayer1_FamosSetup_cff.setup(process) # apply 'replace' statements for Layer 1
 
 # Output module configuration
 process.out = cms.OutputModule("PoolOutputModule",

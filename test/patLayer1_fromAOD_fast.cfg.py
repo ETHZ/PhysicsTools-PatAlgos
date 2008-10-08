@@ -14,10 +14,9 @@ process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 
 # source
 process.source = cms.Source("PoolSource", 
-     fileNames = cms.untracked.vstring('file:/afs/cern.ch/cms/PRS/top/cmssw-data/relval200-for-pat-testing/FastSimTTBar-2_1_X_2008-07-08_STARTUP_V4-AODSIM.100.root')
+     fileNames = cms.untracked.vstring('file:/afs/cern.ch/cms/PRS/top/cmssw-data/relval200-for-pat-testing/FastSimTTBar-219_STARTUP_V5-AODSIM.root')
 )
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
-
 
 process.load("Configuration.StandardSequences.Geometry_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
@@ -27,18 +26,12 @@ process.load("Configuration.StandardSequences.MagneticField_cff")
 # PAT Layer 0+1
 process.load("PhysicsTools.PatAlgos.patLayer0_cff")
 process.load("PhysicsTools.PatAlgos.patLayer1_cff")
-process.load("PhysicsTools.PatAlgos.famos.aodWithFamos_cff")
 #process.content = cms.EDAnalyzer("EventContentAnalyzer")
 process.p = cms.Path(
-                process.patExtraOn200FastSim +       # extra reco on 20X Fast AODSIM
-                #process.content             +       # to get a dump of the event content
-                process.patLayer0_withoutTrigMatch + # PAT Layer 0, no trigger matching
-                process.patLayer1                    # PAT Layer 1
+                #process.content   +  # to get a dump of the event content
+                process.patLayer0  +  # PAT Layer 0
+                process.patLayer1     # PAT Layer 1
             )
-
-from PhysicsTools.PatAlgos.famos import patLayer0_FamosSetup_cff, patLayer1_FamosSetup_cff
-patLayer0_FamosSetup_cff.setup(process) # apply 'replace' statements for Layer 0
-patLayer1_FamosSetup_cff.setup(process) # apply 'replace' statements for Layer 1
 
 # Output module configuration
 process.out = cms.OutputModule("PoolOutputModule",
