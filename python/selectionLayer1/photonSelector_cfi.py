@@ -6,7 +6,7 @@ import FWCore.ParameterSet.Config as cms
 #
 # These are only dummy cuts
 selectedLayer1Photons = cms.EDFilter("PATPhotonSelector",
-    src = cms.InputTag("allLayer1Photons"),
+    src = cms.InputTag("cleanLayer1Photons"),
     cut = cms.string('pt > 0. & abs(eta) < 12.')
 )
 

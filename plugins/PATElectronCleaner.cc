@@ -1,127 +1,162 @@
 //
-// $Id: PATElectronCleaner.cc,v 1.6 2008/06/09 16:15:37 gpetrucc Exp $
+// $Id: PATElectronCleaner.cc,v 1.7 2008/06/20 13:15:31 gpetrucc Exp $
 //
-#include "PhysicsTools/PatAlgos/plugins/PATElectronCleaner.h"
+
+/**
+  \class    pat::PATElectronCleaner PATElectronCleaner.cc "PhysicsTools/PatAlgos/plugins/PATElectronCleaner.cc"
+  \brief    Produces a clean list of pat::Electrons
+
+   The PATElectronCleaner produces a clean list of pat::Electrons
+
+  First, a string-based preselection is applied.
+  Also, an additional overlap checking based on deltaR or the Candidate OverlapChecker can be applied.
+
+   The selection is based on the electron ID or on user-defined cuts.
+   It is steered by the configuration parameters:
+
+\code
+ PSet selection = {
+   string type = "none | cut | likelihood | neuralnet | custom"
+   [ // If cut-based, give electron ID source
+     InputTag eIdSource = <source>
+   ]
+   [ // If likelihood/neuralnet, give ID source and cut value
+     InputTag eIdSource = <source>
+     double value = xxx
+   ]
+   [ // If custom, give cluster shape sources and cut values
+     InputTag clusterShapeBarrel = <source 1>
+     InputTag clusterShapeEndcap = <source 2>
+     double <cut> = <value>
+     ...
+   ]
+ }
+\endcode
+
+  The actual selection is performed by the ElectronSelector.
+
+  \author   The PAT team (twiki:SWGuidePAT; hn-cms-physTools@cern.ch)
+  \version  $Id: PATElectronCleaner.h,v 1.7 2008/06/20 13:15:32 gpetrucc Exp $
+*/
+
+#include "PhysicsTools/PatAlgos/plugins/PATCleanerBase.h"
+#include "DataFormats/PatCandidates/interface/Electron.h"
+
+#include "DataFormats/EgammaReco/interface/ClusterShapeFwd.h"
 #include "DataFormats/EgammaReco/interface/BasicClusterShapeAssociation.h"
 #include "DataFormats/EgammaReco/interface/BasicCluster.h"
-#include "DataFormats/PatCandidates/interface/Flags.h"
-#include <vector>
-#include <memory>
-#include <sstream>
 
-using pat::PATElectronCleaner;
+#include "PhysicsTools/UtilAlgos/interface/ParameterAdapter.h"
+#include "PhysicsTools/PatUtils/interface/ElectronSelector.h"
 
-PATElectronCleaner::PATElectronCleaner(const edm::ParameterSet & iConfig) :
-    electronSrc_(iConfig.getParameter<edm::InputTag>("electronSource")),
-    removeDuplicates_(iConfig.getParameter<bool>("removeDuplicates")),
-    helper_(electronSrc_),
-    isolator_(iConfig.exists("isolation") ? iConfig.getParameter<edm::ParameterSet>("isolation") : edm::ParameterSet() ),
+namespace pat {
+
+  class PATElectronCleaner : public pat::PATCleanerBase<pat::Electron> {
+
+    public:
+      explicit PATElectronCleaner(const edm::ParameterSet & iConfig);
+      ~PATElectronCleaner() {}
+
+      /// Perform the real cleaning
+      ///   preselected = items passing the string-based preselection cut
+      ///   overlaps    = result of simple overlap checking (see OverlapHelper docs)
+      ///                 it may be a NULL pointer if overlap checking is not enabled
+      ///   output      = put your selected items here
+      ///   iEvent, iSetup = you might want these
+      virtual void clean(const edm::PtrVector<pat::Electron> & preselected,
+                         const pat::helper::OverlapHelper::Result *overlaps,
+                         std::vector<pat::Electron>  & output,
+                         edm::Event & iEvent, const edm::EventSetup & iSetup) ;
+    private:
+     edm::ParameterSet selectionCfg_;  ///< Defines all about the selection
+      std::string       selectionType_; ///< Selection type (none, custom, cut,...)
+      bool              doSelection_;   ///< False if type = "none", true otherwise
+      ElectronSelector  selector_;      ///< Actually performs the selection
+
+  };
+}
+
+namespace reco {
+  namespace modules {
+    /// Helper struct to convert from ParameterSet to ElectronSelection
+    template<> 
+    struct ParameterAdapter<pat::ElectronSelector> { 
+      static pat::ElectronSelector make(const edm::ParameterSet & cfg) {
+        pat::ElectronSelection config_;
+        const std::string& selectionType = cfg.getParameter<std::string>("type");
+        config_.selectionType = selectionType;
+        if ( selectionType == "likelihood" || selectionType == "neuralnet" )
+	  config_.value = cfg.getParameter<double>("value");
+        else if ( selectionType == "custom" ) {
+	  config_.HoverEBarmax        = cfg.getParameter<double>("HoverEBarmax");
+	  config_.SigmaEtaEtaBarmax   = cfg.getParameter<double>("SigmaEtaEtaBarmax");
+	  config_.SigmaPhiPhiBarmax   = cfg.getParameter<double>("SigmaPhiPhiBarmax");
+	  config_.DeltaEtaInBarmax    = cfg.getParameter<double>("DeltaEtaInBarmax");
+	  config_.DeltaPhiInBarmax    = cfg.getParameter<double>("DeltaPhiInBarmax");
+	  config_.DeltaPhiOutBarmax   = cfg.getParameter<double>("DeltaPhiOutBarmax");
+	  config_.EoverPInBarmin      = cfg.getParameter<double>("EoverPInBarmin");
+	  config_.EoverPOutBarmin     = cfg.getParameter<double>("EoverPOutBarmin");
+	  config_.InvEMinusInvPBarmax = cfg.getParameter<double>("InvEMinusInvPBarmax");
+	  config_.E9overE25Barmin     = cfg.getParameter<double>("E9overE25Barmin");
+	  config_.HoverEEndmax        = cfg.getParameter<double>("HoverEEndmax");
+	  config_.SigmaEtaEtaEndmax   = cfg.getParameter<double>("SigmaEtaEtaEndmax");
+	  config_.SigmaPhiPhiEndmax   = cfg.getParameter<double>("SigmaPhiPhiEndmax");
+	  config_.DeltaEtaInEndmax    = cfg.getParameter<double>("DeltaEtaInEndmax");
+	  config_.DeltaPhiInEndmax    = cfg.getParameter<double>("DeltaPhiInEndmax");
+	  config_.DeltaPhiOutEndmax   = cfg.getParameter<double>("DeltaPhiOutEndmax");
+	  config_.EoverPInEndmin      = cfg.getParameter<double>("EoverPInEndmin");
+	  config_.EoverPOutEndmin     = cfg.getParameter<double>("EoverPOutEndmin");
+	  config_.InvEMinusInvPEndmax = cfg.getParameter<double>("InvEMinusInvPEndmax");
+	  config_.E9overE25Endmin     = cfg.getParameter<double>("E9overE25Endmin");
+	  config_.doBremEoverPcomp    = cfg.getParameter<bool>  ("doBremEoverPcomp");
+	}
+        return pat::ElectronSelector( config_ );
+      }
+    };
+  }
+}
+
+pat::PATElectronCleaner::PATElectronCleaner(const edm::ParameterSet & iConfig) :
+    pat::PATCleanerBase<pat::Electron>(iConfig),
     selectionCfg_(iConfig.getParameter<edm::ParameterSet>("selection")),
     selectionType_(selectionCfg_.getParameter<std::string>("type")),
     selector_(reco::modules::make<ElectronSelector>(selectionCfg_)) 
 {
-  helper_.configure(iConfig);      // learn whether to save good, bad, all, ...
-  helper_.registerProducts(*this); // issue the produces<>() commands
-
-  if (iConfig.exists("removeOverlaps")) {
-    edm::ParameterSet overlapConf = iConfig.getParameter<edm::ParameterSet>("removeOverlaps");
-    overlapHelper_ = pat::helper::OverlapHelper(overlapConf);
-  }
 }
 
-PATElectronCleaner::~PATElectronCleaner() {
-}
-
-void PATElectronCleaner::produce(edm::Event & iEvent, const edm::EventSetup & iSetup) {
-  // start a new event
-  helper_.newEvent(iEvent);
-
-  if (isolator_.enabled()) isolator_.beginEvent(iEvent);
-
+void 
+pat::PATElectronCleaner::clean(const edm::PtrVector<pat::Electron> & preselected,
+                         const pat::helper::OverlapHelper::Result *overlaps,
+                         std::vector<pat::Electron>  & output,
+                         edm::Event & iEvent, const edm::EventSetup & iSetup)
+{
   // Get additional info from the event, if needed
-  const reco::ClusterShape* clusterShape = 0;
+  //const reco::ClusterShape* clusterShape = 0;
   edm::Handle<reco::ElectronIDAssociationCollection> electronIDs;
   if ( selectionType_ != "none" && selectionType_ != "custom" ) {
     iEvent.getByLabel( selectionCfg_.getParameter<edm::InputTag>("eIdSource"), 
                        electronIDs );
   } 
 
-  for (size_t idx = 0, size = helper_.srcSize(); idx < size; ++idx) {
+  for (size_t idx = 0, size = preselected.size(); idx < size; ++idx) {
+    const edm::Ptr<pat::Electron> & electron = preselected[idx];;    
 
-    // read the source electron
-    const reco::GsfElectron &srcElectron = helper_.srcAt(idx);    
-
-    // clone the electron so we can modify it (if we want)
-    reco::GsfElectron ourElectron = srcElectron; 
-
-    // Add the electron to the working collection
-    size_t selIdx = helper_.addItem(idx, ourElectron);
-
-    // get the cluster shape for this electron selection
-    if ( selectionType_ == "custom" ) {
-//       const reco::ClusterShapeRef& shapeRef = getClusterShape_( &srcElectron, iEvent);
-//       clusterShape = &(*shapeRef);
+    if ((overlaps != 0) && ((*overlaps)[idx] != 0)) {
+        continue; // FIXME should do something smarter?
     }
 
-    // apply selection and set bits accordingly
+    // FIXME can't do this because ElectronSelector expects for a View
+    /* 
     if ( selector_.filter(idx,helper_.source(),(*electronIDs),clusterShape) != pat::GOOD) {
         helper_.addMark(selIdx, pat::Flags::Selection::Bit0); // opaque, at the moment
     }
+    */
 
-    // test for isolation and set the bit if needed
-    if (isolator_.enabled()) {
-        uint32_t isolationWord = isolator_.test( helper_.source(), idx );
-        helper_.addMark(selIdx, isolationWord);
-    }
-
+    output.push_back(*electron);
   }
-
-  // remove ghosts, by marking them
-  if (removeDuplicates_) { 
-    removeDuplicates(); 
-  }
-
-  if (overlapHelper_.enabled()) {
-     typedef pat::helper::OverlapHelper::Result Result;
-     std::auto_ptr<Result> result = overlapHelper_.test( iEvent, helper_.selected() );
-     for (size_t i = 0, n = helper_.size(); i < n; ++i) {
-        helper_.addMark( i, (*result)[i] );
-     }
-  }
-
-  // tell him that we're done. 
-  helper_.done(); // he does event.put by itself
-  if (isolator_.enabled()) isolator_.endEvent();
-
 }
 
-
-/* --- Original comment from TQAF follows ----
- * it is possible that there are multiple electron objects in the collection that correspond to the same
- * real physics object - a supercluster with two tracks reconstructed to it, or a track that points to two different SC
- *  (i would guess the latter doesn't actually happen).
- * NB triplicates also appear in the electron collection provided by egamma group, it is necessary to handle those correctly   
- */
-void PATElectronCleaner::removeDuplicates() {
-    // we must use 'accepted()', as we don't want to kill a good electron because it overlaps with the bad one.
-    MyCleanerHelper::FilteredCollection accepted = helper_.accepted(); 
-    std::auto_ptr< std::vector<size_t> > duplicates = duplicateRemover_.duplicatesToRemove(accepted);
-    for (std::vector<size_t>::const_iterator it = duplicates->begin(),
-                                             ed = duplicates->end();
-                                it != ed;
-                                ++it) {
-        helper_.addMark(accepted.originalIndexOf(*it), pat::Flags::Core::Duplicate);
-    }
-}
-
-void PATElectronCleaner::endJob() { 
-    edm::LogVerbatim("PATLayer0Summary|PATElectronCleaner") << "PATElectronCleaner end job. \n" <<
-            "Input tag was " << electronSrc_.encode() <<
-            "\nIsolation information:\n" <<
-            isolator_.printSummary() <<
-            "\nCleaner summary information:\n" <<
-            helper_.printSummary();
-}
 
 #include "FWCore/Framework/interface/MakerMacros.h"
+using pat::PATElectronCleaner;
 DEFINE_FWK_MODULE(PATElectronCleaner);

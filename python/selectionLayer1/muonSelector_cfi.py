@@ -6,7 +6,7 @@ import FWCore.ParameterSet.Config as cms
 #
 # These are only dummy cuts
 selectedLayer1Muons = cms.EDFilter("PATMuonSelector",
-    src = cms.InputTag("allLayer1Muons"),
+    src = cms.InputTag("cleanLayer1Muons"),
     cut = cms.string('pt > 0. & abs(eta) < 12.')
 )
 

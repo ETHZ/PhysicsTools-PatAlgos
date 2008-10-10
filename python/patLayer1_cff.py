@@ -9,6 +9,10 @@ from PhysicsTools.PatAlgos.producersLayer1.photonProducer_cff import *
 from PhysicsTools.PatAlgos.producersLayer1.jetProducer_cff import *
 from PhysicsTools.PatAlgos.producersLayer1.metProducer_cff import *
 
+from PhysicsTools.PatAlgos.cleaningLayer1.muonCleaner_cfi import *
+from PhysicsTools.PatAlgos.cleaningLayer1.electronCleaner_cfi import *
+from PhysicsTools.PatAlgos.cleaningLayer1.photonCleaner_cfi import *
+
 from PhysicsTools.PatAlgos.producersLayer1.hemisphereProducer_cfi import *
 from PhysicsTools.PatAlgos.selectionLayer1.leptonCountFilter_cfi import *
 
@@ -20,6 +24,15 @@ allLayer1Objects = cms.Sequence(
         allLayer1Photons +
         allLayer1Jets +
         allLayer1METs
+)
+
+cleanLayer1Objects = cms.Sequence(
+        cleanLayer1Muons +
+        cleanLayer1Electrons +
+        cleanLayer1Photons 
+        #cleanLayer1Taus +
+        #cleanLayer1Jets +
+        #cleanLayer1METs 
 )
 
 selectedLayer1Objects = cms.Sequence(
@@ -44,6 +57,7 @@ countLayer1Objects = cms.Sequence(
 
 patLayer1 = cms.Sequence(
     allLayer1Objects +
+    cleanLayer1Objects +
     selectedLayer1Objects +
     selectedLayer1Hemispheres +
     countLayer1Objects

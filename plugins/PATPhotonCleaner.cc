@@ -1,4 +1,63 @@
-#include "PhysicsTools/PatAlgos/plugins/PATPhotonCleaner.h"
+//
+// $Id: PATPhotonCleaner.h,v 1.6 2008/06/05 17:54:06 gpetrucc Exp $
+//
+
+/**
+  \class    pat::PATPhotonCleaner PATPhotonCleaner.cc "PhysicsTools/PatAlgos/plugins/PATPhotonCleaner.cc"
+  \brief    Produces a clean list of pat::Photons
+
+  The PATPhotonCleaner produces a list of clean pat::Photons
+
+  First, a string-based preselection is applied.
+
+  Then, an additional overlap checking based on deltaR or the Candidate OverlapChecker can be applied.
+
+  Then, a specific removal of electrons by superCluster or by superCluster seed can be applied
+
+  \author   The PAT team (twiki:SWGuidePAT, and hn-cms-physTools@cern.ch)
+  \version  $Id: PATPhotonCleaner.cc,v 1.9 2008/05/14 12:10:48 fronga Exp $
+*/
+
+#include "PhysicsTools/PatAlgos/plugins/PATCleanerBase.h"
+#include "DataFormats/PatCandidates/interface/Photon.h"
+
+#include "PhysicsTools/PatUtils/interface/DuplicatedPhotonRemover.h"
+
+namespace pat {
+
+  class PATPhotonCleaner : public pat::PATCleanerBase<pat::Photon> {
+    public:
+      enum RemovalAlgo { None, BySeed, BySuperCluster };
+    
+      explicit PATPhotonCleaner(const edm::ParameterSet & iConfig);
+      ~PATPhotonCleaner() {}
+
+      /// Perform the real cleaning
+      ///   preselected = items passing the string-based preselection cut
+      ///   overlaps    = result of simple overlap checking (see OverlapHelper docs)
+      ///                 it may be a NULL pointer if overlap checking is not enabled
+      ///   output      = put your selected items here
+      ///   iEvent, iSetup = you might want these
+      virtual void clean(const edm::PtrVector<pat::Photon> & preselected,
+                         const pat::helper::OverlapHelper::Result *overlaps,
+                         std::vector<pat::Photon>  & output,
+                         edm::Event & iEvent, const edm::EventSetup & iSetup) ;
+
+    private:
+      // configurables
+      RemovalAlgo                 electronRemovalAlgo_;
+      std::vector<edm::InputTag>  electronsToCheck_;
+        
+      // duplicate removal algo
+      pat::DuplicatedPhotonRemover remover_;
+
+      static RemovalAlgo fromString(const edm::ParameterSet & iConfig, const std::string &name);
+
+      typedef pat::PATCleanerBase<pat::Photon>::PtrVectorFacade PreselectedCollection;
+      void removeElectrons(const PreselectedCollection &photons, const edm::Event &iEvent, std::vector<uint32_t> &result) ;
+  };
+
+}
 
 pat::PATPhotonCleaner::RemovalAlgo
 pat::PATPhotonCleaner::fromString(const edm::ParameterSet & iConfig, 
@@ -16,68 +75,50 @@ pat::PATPhotonCleaner::fromString(const edm::ParameterSet & iConfig,
 
 
 pat::PATPhotonCleaner::PATPhotonCleaner(const edm::ParameterSet & iConfig) :
-  photonSrc_(iConfig.getParameter<edm::InputTag>( "photonSource" )),
-  removeDuplicates_(fromString(iConfig, "removeDuplicates")),
-  removeElectrons_( fromString(iConfig, "removeElectrons")),
-  helper_(photonSrc_),
-  isolator_(iConfig.exists("isolation") ? iConfig.getParameter<edm::ParameterSet>("isolation") : edm::ParameterSet() )
+  pat::PATCleanerBase<pat::Photon>(iConfig),
+  electronRemovalAlgo_( fromString(iConfig, "removeElectrons"))
 {
-  helper_.configure(iConfig);      // learn whether to save good, bad, all, ...
-  helper_.registerProducts(*this); // issue the produces<>() commands
-
-  if (removeElectrons_ != None) {
-    if (!iConfig.exists("electrons")) throw cms::Exception("Configuraton Error") <<
-        "PATPhotonCleaner: if using any electron removal, you have to specify" <<
-        " the collection(s) of electrons, either as InputTag or VInputTag";
-    std::vector<std::string> pars = iConfig.getParameterNamesForType<edm::InputTag>();
-    if (std::find(pars.begin(), pars.end(), "electrons") != pars.end()) {
-       electronsToCheck_.push_back(iConfig.getParameter<edm::InputTag>("electrons"));
-    } else {
-       electronsToCheck_ = iConfig.getParameter<std::vector<edm::InputTag> >("electrons");
+    if (electronRemovalAlgo_ != None) {
+        if (iConfig.existsAs<edm::InputTag>("electrons")) {
+            electronsToCheck_.push_back(iConfig.getParameter<edm::InputTag>("electrons"));
+        } else if (iConfig.existsAs<edm::InputTag>("electrons"))  {
+            electronsToCheck_ = iConfig.getParameter<std::vector<edm::InputTag> >("electrons");
+        } else {
+            throw cms::Exception("Configuraton Error") <<
+                "PATPhotonCleaner: if using any electron removal, you have to specify" <<
+                " the collection(s) of electrons, either as InputTag or VInputTag";
+        }
     }
-  }
 }
 
+void pat::PATPhotonCleaner::clean(const edm::PtrVector<pat::Photon> & preselected,
+                         const pat::helper::OverlapHelper::Result *overlaps,
+                         std::vector<pat::Photon>  & output,
+                         edm::Event & iEvent, const edm::EventSetup & iSetup) 
+{
+  std::vector<uint32_t> markElectrons(preselected.size(), 0);
+  removeElectrons(PreselectedCollection(preselected), iEvent, markElectrons);
 
+  for (size_t idx = 0, size = preselected.size(); idx < size; ++idx) {
+    const edm::Ptr<pat::Photon> & photon = preselected[idx];;    
 
-pat::PATPhotonCleaner::~PATPhotonCleaner() {
-}
-
-
-
-void pat::PATPhotonCleaner::produce(edm::Event & iEvent, const edm::EventSetup & iSetup) {     
-  // start a new event
-  helper_.newEvent(iEvent);
-  if (isolator_.enabled()) isolator_.beginEvent(iEvent);
-
-  for (size_t idx = 0, size = helper_.srcSize(); idx < size; ++idx) {
-    // read the source photon
-    const reco::Photon & srcPhoton = helper_.srcAt(idx);
-
-    // clone the photon
-    reco::Photon ourPhoton = srcPhoton;
-
-    // write the photon
-    size_t selIdx = helper_.addItem(idx, ourPhoton);
-
-    // test for isolation and set the bit if needed
-    if (isolator_.enabled()) {
-        uint32_t isolationWord = isolator_.test( helper_.source(), idx );
-        helper_.addMark(selIdx, isolationWord);
+    if ((overlaps != 0) && ((*overlaps)[idx] != 0)) {
+        continue; // FIXME should do something smarter?
     }
 
+    if (markElectrons[idx] != 0) {
+        continue; // FIXME should do something smarter?
+    }
+
+    output.push_back(*photon);
   }
 
-  if (removeDuplicates_ != None) removeDuplicates();
-  if (removeElectrons_  != None) removeElectrons(iEvent);
-
-  helper_.done();
-  if (isolator_.enabled()) isolator_.endEvent(); 
 }
 
-
-void pat::PATPhotonCleaner::removeElectrons(const edm::Event &iEvent) {
-    uint32_t bit = 2; 
+void pat::PATPhotonCleaner::removeElectrons(const PreselectedCollection &photons, 
+                                            const edm::Event &iEvent, 
+                                            std::vector<uint32_t> &result) {
+    uint32_t bit = 1; 
     typedef std::vector<edm::InputTag> VInputTag;
     for (VInputTag::const_iterator itt = electronsToCheck_.begin(), edt = electronsToCheck_.end();
                 itt != edt; ++itt, bit <<= 1) {
@@ -86,10 +127,10 @@ void pat::PATPhotonCleaner::removeElectrons(const edm::Event &iEvent) {
         iEvent.getByLabel(*itt, handle);
 
         std::auto_ptr< pat::OverlapList > electrons;
-        if (removeElectrons_ == BySeed) {
-            electrons = remover_.electronsBySeed(helper_.selected(), *handle);
-        } else if (removeElectrons_ == BySuperCluster) {
-            electrons = remover_.electronsBySuperCluster(helper_.selected(), *handle);
+        if (electronRemovalAlgo_ == BySeed) {
+            electrons = remover_.electronsBySeed(photons, *handle);
+        } else if (electronRemovalAlgo_ == BySuperCluster) {
+            electrons = remover_.electronsBySuperCluster(photons, *handle);
         }
         if (!electrons.get()) return;
         for (pat::OverlapList::const_iterator it = electrons->begin(),
@@ -97,38 +138,11 @@ void pat::PATPhotonCleaner::removeElectrons(const edm::Event &iEvent) {
                 it != ed;
                 ++it) {
             size_t idx = it->first;
-            helper_.addMark(idx, bit);
+            result[idx] += bit;
         }
     }
 }
 
-
-void pat::PATPhotonCleaner::removeDuplicates() {
-    std::auto_ptr< std::vector<size_t> > duplicates;
-    if (removeDuplicates_ == BySeed) {
-        duplicates = remover_.duplicatesBySeed(helper_.selected());
-    } else if (removeDuplicates_ == BySuperCluster) {
-        duplicates = remover_.duplicatesBySuperCluster(helper_.selected());
-    }
-    if (!duplicates.get()) return;
-    for (std::vector<size_t>::const_iterator it = duplicates->begin(),
-                                             ed = duplicates->end();
-                                it != ed;
-                                ++it) {
-        helper_.addMark(*it, 1);
-    }
-}
-
-
-
-void pat::PATPhotonCleaner::endJob() {
-    edm::LogVerbatim("PATLayer0Summary|PATPhotonCleaner") << "PATPhotonCleaner end job. \n" <<
-            "Input tag was " << photonSrc_.encode() <<
-            "\nIsolation information:\n" <<
-            isolator_.printSummary() <<
-            "\nCleaner summary information:\n" <<
-            helper_.printSummary();
-}
 
 #include "FWCore/Framework/interface/MakerMacros.h"
 using namespace pat;

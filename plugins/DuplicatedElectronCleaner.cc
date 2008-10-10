@@ -1,5 +1,5 @@
 //
-// $Id: DuplicatedElectronCleaner.h,v 1.7 2008/06/20 13:15:32 gpetrucc Exp $
+// $Id: DuplicatedElectronCleaner.cc,v 1.1.2.1 2008/10/10 13:10:32 gpetrucc Exp $
 //
 
 /**
@@ -15,7 +15,7 @@
    which can be read through edm::View<reco::GsfElectron>
 
   \author   Giovanni Petrucciani
-  \version  $Id: DuplicatedElectronCleaner.h,v 1.7 2008/06/20 13:15:32 gpetrucc Exp $
+  \version  $Id: DuplicatedElectronCleaner.cc,v 1.1.2.1 2008/10/10 13:10:32 gpetrucc Exp $
 */
 
 
@@ -89,8 +89,8 @@ pat::DuplicatedElectronCleaner::endJob() {
     edm::LogVerbatim("PATLayer0Summary|DuplicatedElectronCleaner") << "DuplicatedElectronCleaner end job. \n" <<
             "Input tag " << electronSrc_.encode() <<
             "\t: try " << try_ << 
-            ", pass " << pass_ << " (" << (pass_/double(try_) * 100.0) << "%)" << 
-            ", fail " << (try_-pass_) << " (" << ((try_-pass_)/double(try_) * 100.0) << "%)" << "\n";
+            ", pass " << pass_ << " (" << (try_ > 0 ? pass_/double(try_) * 100.0 : 0) << "%)" << 
+            ", fail " << (try_-pass_) << " (" << (try_ > 0 ? (try_-pass_)/double(try_) * 100.0 : 0) << "%)" << "\n";
 }
 
 #include "FWCore/Framework/interface/MakerMacros.h"

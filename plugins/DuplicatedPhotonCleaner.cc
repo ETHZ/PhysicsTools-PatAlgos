@@ -1,5 +1,5 @@
 //
-// $Id: DuplicatedPhotonCleaner.h,v 1.7 2008/06/20 13:15:32 gpetrucc Exp $
+// $Id: DuplicatedPhotonCleaner.cc,v 1.1.2.1 2008/10/10 13:10:33 gpetrucc Exp $
 //
 
 /**
@@ -15,7 +15,7 @@
    which can be read through edm::View<reco::Photon>
 
   \author   Giovanni Petrucciani
-  \version  $Id: DuplicatedPhotonCleaner.h,v 1.7 2008/06/20 13:15:32 gpetrucc Exp $
+  \version  $Id: DuplicatedPhotonCleaner.cc,v 1.1.2.1 2008/10/10 13:10:33 gpetrucc Exp $
 */
 
 
@@ -116,8 +116,8 @@ pat::DuplicatedPhotonCleaner::endJob() {
     edm::LogVerbatim("PATLayer0Summary|DuplicatedPhotonCleaner") << "DuplicatedPhotonCleaner end job. \n" <<
             "Input tag " << photonSrc_.encode() <<
             "\t: try " << try_ << 
-            ", pass " << pass_ << " (" << (pass_/double(try_) * 100.0) << "%)" << 
-            ", fail " << (try_-pass_) << " (" << ((try_-pass_)/double(try_) * 100.0) << "%)" << "\n";
+            ", pass " << pass_ << " (" << (try_ > 0 ? pass_/double(try_) * 100.0 : 0) << "%)" << 
+            ", fail " << (try_-pass_) << " (" << (try_ > 0 ? (try_-pass_)/double(try_) * 100.0 : 0) << "%)" << "\n";
 }
 
 #include "FWCore/Framework/interface/MakerMacros.h"
