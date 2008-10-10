@@ -6,7 +6,7 @@ from PhysicsTools.PatAlgos.recoLayer0.electronIsolation_cff import *
 from PhysicsTools.PatAlgos.recoLayer0.jetFlavourId_cff import *
 from PhysicsTools.PatAlgos.recoLayer0.jetMETCorrections_cff import *
 from PhysicsTools.PatAlgos.recoLayer0.jetTracksCharge_cff import *
-from PhysicsTools.PatAlgos.recoLayer0.muonIsolation_cff import *
+#from PhysicsTools.PatAlgos.recoLayer0.muonIsolation_cff import *   ## << nothing to do here
 from PhysicsTools.PatAlgos.recoLayer0.photonId_cff import *
 from PhysicsTools.PatAlgos.recoLayer0.photonIsolation_cff import *
 
@@ -19,7 +19,7 @@ patLayer0Reco = cms.Sequence(
     patElectronIsolation *
     patPhotonIsolation *
     patPhotonID *
-    patMuonIsolation *
+    #patMuonIsolation *    ## << nothing to do here
     patBTagging *
     patJetMETCorrections *
     patJetTracksCharge

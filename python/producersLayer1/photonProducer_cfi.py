@@ -35,7 +35,7 @@ allLayer1Photons = cms.EDProducer("PATPhotonProducer",
     isolation = cms.PSet(
         tracker = cms.PSet(
             # source IsoDeposit
-            src = cms.InputTag("patPhotonIsolations","gamIsoDepositTk"),
+            src = cms.InputTag("gamIsoDepositTk"),
             # parameters (E/gamma POG defaults)
             deltaR = cms.double(0.3),              # Cone radius
             vetos  = cms.vstring('0.015',          # Inner veto cone radius
@@ -44,8 +44,8 @@ allLayer1Photons = cms.EDProducer("PATPhotonProducer",
         ),
         ecal = cms.PSet(
             # source IsoDeposit
-            #src = cms.InputTag("patPhotonIsolations","gamIsoDepositEcalFromHits"),
-            src = cms.InputTag("patPhotonIsolations","gamIsoDepositEcalFromClusts"),
+            #src = cms.InputTag("gamIsoDepositEcalFromHits"),
+            src = cms.InputTag("gamIsoDepositEcalFromClusts"),
             # parameters (E/gamma POG defaults)
             deltaR          = cms.double(0.4),
             vetos           = cms.vstring('EcalBarrel:0.045', 'EcalEndcaps:0.070'),
@@ -53,15 +53,15 @@ allLayer1Photons = cms.EDProducer("PATPhotonProducer",
         ),
         ## other option, using gamIsoDepositEcalSCVetoFromClust (see also recoLayer0/photonIsolation_cff.py)
         #PSet ecal = cms.PSet( 
-        #   src    = cms.InputTag("patPhotonIsolations", "gamIsoDepositEcalSCVetoFromClusts")
+        #   src    = cms.InputTag( "gamIsoDepositEcalSCVetoFromClusts")
         #   deltaR = cms.double(0.4)
         #   vetos  = cms.vstring()     # no veto, already done with SC
         #   skipDefaultVeto = cms.bool(True)
         #),
         hcal = cms.PSet(
             # source IsoDeposit
-            #src = cms.InputTag("patPhotonIsolations","gamIsoDepositHcalFromHits"),
-            src = cms.InputTag("patPhotonIsolations","gamIsoDepositHcalFromTowers"),
+            #src = cms.InputTag("gamIsoDepositHcalFromHits"),
+            src = cms.InputTag("gamIsoDepositHcalFromTowers"),
             # parameters (E/gamma POG defaults)
             deltaR          = cms.double(0.4),
             skipDefaultVeto = cms.bool(True),
@@ -70,11 +70,11 @@ allLayer1Photons = cms.EDProducer("PATPhotonProducer",
     ),
     #   store isodeposits to recompute isolation
     isoDeposits = cms.PSet(
-        tracker = cms.InputTag("patPhotonIsolations","gamIsoDepositTk"),
-        #ecal    = cms.InputTag("patPhotonIsolations","gamIsoDepositEcalFromHits"),
-        ecal    = cms.InputTag("patPhotonIsolations","gamIsoDepositEcalFromClusts"),
-        #hcal    = cms.InputTag("patPhotonIsolations","gamIsoDepositHcalFromHits"),
-        hcal    = cms.InputTag("patPhotonIsolations","gamIsoDepositHcalFromTowers"),
+        tracker = cms.InputTag("gamIsoDepositTk"),
+        #ecal    = cms.InputTag("gamIsoDepositEcalFromHits"),
+        ecal    = cms.InputTag("gamIsoDepositEcalFromClusts"),
+        #hcal    = cms.InputTag("gamIsoDepositHcalFromHits"),
+        hcal    = cms.InputTag("gamIsoDepositHcalFromTowers"),
     ),
 
     # PhotonID configurables
