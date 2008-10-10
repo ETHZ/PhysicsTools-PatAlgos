@@ -1,7 +1,7 @@
 import FWCore.ParameterSet.Config as cms
 
 # module to produce jet correction factors associated in a valuemap
-jetCorrFactors = cms.EDProducer("JetCorrFactorsProducer",
+patJetCorrFactors = cms.EDProducer("JetCorrFactorsProducer",
     jetSource = cms.InputTag("iterativeCone5CaloJets"),
     # Basic JES correction, applied in PAT Layer 1 to pat::Jets
     defaultJetCorrector = cms.string('L2L3JetCorrectorIcone5'),

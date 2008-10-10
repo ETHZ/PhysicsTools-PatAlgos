@@ -40,7 +40,7 @@ eleIsoDepositHcalFromTowers = cms.EDProducer("CandIsoDepositProducer",
 )
 
 # define module labels for old (tk-based isodeposit) POG isolation
-patAODElectronIsolationLabels = cms.VInputTag(
+patElectronIsolationLabels = cms.VInputTag(
         cms.InputTag("eleIsoDepositTk"),
       #  cms.InputTag("eleIsoDepositEcalFromHits"),
       #  cms.InputTag("eleIsoDepositHcalFromHits"),
@@ -50,75 +50,65 @@ patAODElectronIsolationLabels = cms.VInputTag(
 )
 
 # read and convert to ValueMap<IsoDeposit> keyed to Candidate
-patAODElectronIsolations = cms.EDFilter("MultipleIsoDepositsToValueMaps",
+# FIXME: no longer needed?
+patElectronIsolations = cms.EDFilter("MultipleIsoDepositsToValueMaps",
     collection   = cms.InputTag("pixelMatchGsfElectrons"),
-    associations = patAODElectronIsolationLabels,
-)
-
-# re-key ValueMap<IsoDeposit> to Layer 0 output
-layer0ElectronIsolations = cms.EDFilter("CandManyValueMapsSkimmerIsoDeposits",
-    collection   = cms.InputTag("allLayer0Electrons"),
-    backrefs     = cms.InputTag("allLayer0Electrons"),
-    commonLabel  = cms.InputTag("patAODElectronIsolations"),
-    associations = patAODElectronIsolationLabels,
+    associations = patElectronIsolationLabels,
 )
 
 # selecting POG modules that can run on top of AOD
 eleIsoDepositAOD = cms.Sequence( eleIsoDepositTk * eleIsoDepositEcalFromClusts * eleIsoDepositHcalFromTowers)
 
 # sequence to run on AOD before PAT
-patAODElectronIsolation = cms.Sequence(
+patElectronIsolation = cms.Sequence(
         egammaSuperClusterMerger *  ## 
         egammaBasicClusterMerger *  ## 
-        eleIsoDepositAOD *          ## Not needed any more, we use values from RECO
-        patAODElectronIsolations)
+        eleIsoDepositAOD *          ## 
+        patElectronIsolations)
 
-# sequence to run after the PAT cleaners
-patLayer0ElectronIsolation = cms.Sequence(layer0ElectronIsolations)
-
-def useElectronAODIsolation(process,layers=(0,1,)):
-    if (layers.__contains__(0)):
-        print "Switching to isolation computed from AOD info for Electrons in PAT Layer 0"
-        patAODElectronIsolationLabels = cms.VInputTag(
-            cms.InputTag("eleIsoDepositTk"),
-            cms.InputTag("eleIsoDepositEcalFromClusts"),
-            cms.InputTag("eleIsoDepositHcalFromTowers"),
-        )
-        process.patAODElectronIsolations.associations = patAODElectronIsolationLabels
-        process.layer0ElectronIsolations.associations = patAODElectronIsolationLabels
-        #This does not work yet :-(
-        # process.patAODElectronIsolation = cms.Sequence(
-        #    egammaSuperClusterMerger * egammaBasicClusterMerger +  
-        #    eleIsoDepositAOD +
-        #    patAODElectronIsolations
-        # )
-        process.allLayer0Electrons.isolation.ecal.src = cms.InputTag("patAODElectronIsolations","eleIsoDepositEcalFromClusts")
-        process.allLayer0Electrons.isolation.hcal.src = cms.InputTag("patAODElectronIsolations","eleIsoDepositHcalFromTowers")
-    if (layers.__contains__(1)):
-        print "Switching to isolation computed from AOD info for Electrons in PAT Layer 1"
-        process.allLayer1Electrons.isolation.ecal.src = cms.InputTag("layer0ElectronIsolations","eleIsoDepositEcalFromClusts")
-        process.allLayer1Electrons.isolation.hcal.src = cms.InputTag("layer0ElectronIsolations","eleIsoDepositHcalFromTowers")
-        process.allLayer1Electrons.isoDeposits.ecal   = cms.InputTag("layer0ElectronIsolations","eleIsoDepositEcalFromClusts")
-        process.allLayer1Electrons.isoDeposits.hcal   = cms.InputTag("layer0ElectronIsolations","eleIsoDepositHcalFromTowers")
-
-def useElectronRecHitIsolation(process,layers=(0,1,)):
-    if (layers.__contains__(0)):
-        print "Switching to RecHit isolation for Electrons in PAT Layer 0"
-        patAODElectronIsolationLabels = cms.VInputTag(
-            cms.InputTag("eleIsoDepositTk"),
-            cms.InputTag("eleIsoDepositEcalFromHits"),
-            cms.InputTag("eleIsoDepositHcalFromHits"),
-        )
-        process.patAODElectronIsolations.associations = patAODElectronIsolationLabels
-        process.layer0ElectronIsolations.associations = patAODElectronIsolationLabels
-        #This does not work yet :-(
-        # process.patAODElectronIsolation = cms.Sequence( patAODElectronIsolations )
-        process.allLayer0Electrons.isolation.ecal.src = cms.InputTag("patAODElectronIsolations","eleIsoDepositEcalFromHits")
-        process.allLayer0Electrons.isolation.hcal.src = cms.InputTag("patAODElectronIsolations","eleIsoDepositHcalFromHits")
-    if (layers.__contains__(1)):
-        print "Switching to RecHit isolation for Electrons in PAT Layer 1"
-        process.allLayer1Electrons.isolation.ecal.src = cms.InputTag("layer0ElectronIsolations","eleIsoDepositEcalFromHits")
-        process.allLayer1Electrons.isolation.hcal.src = cms.InputTag("layer0ElectronIsolations","eleIsoDepositHcalFromHits")
-        process.allLayer1Electrons.isoDeposits.ecal   = cms.InputTag("layer0ElectronIsolations","eleIsoDepositEcalFromHits")
-        process.allLayer1Electrons.isoDeposits.hcal   = cms.InputTag("layer0ElectronIsolations","eleIsoDepositHcalFromHits")
-
+####    def useElectronAODIsolation(process,layers=(0,1,)):
+####        if (layers.__contains__(0)):
+####            print "Switching to isolation computed from AOD info for Electrons in PAT Layer 0"
+####            patElectronIsolationLabels = cms.VInputTag(
+####                cms.InputTag("eleIsoDepositTk"),
+####                cms.InputTag("eleIsoDepositEcalFromClusts"),
+####                cms.InputTag("eleIsoDepositHcalFromTowers"),
+####            )
+####            process.patElectronIsolations.associations = patElectronIsolationLabels
+####            process.layer0ElectronIsolations.associations = patElectronIsolationLabels
+####            #This does not work yet :-(
+####            # process.patElectronIsolation = cms.Sequence(
+####            #    egammaSuperClusterMerger * egammaBasicClusterMerger +  
+####            #    eleIsoDepositAOD +
+####            #    patElectronIsolations
+####            # )
+####            process.allLayer0Electrons.isolation.ecal.src = cms.InputTag("patElectronIsolations","eleIsoDepositEcalFromClusts")
+####            process.allLayer0Electrons.isolation.hcal.src = cms.InputTag("patElectronIsolations","eleIsoDepositHcalFromTowers")
+####        if (layers.__contains__(1)):
+####            print "Switching to isolation computed from AOD info for Electrons in PAT Layer 1"
+####            process.allLayer1Electrons.isolation.ecal.src = cms.InputTag("layer0ElectronIsolations","eleIsoDepositEcalFromClusts")
+####            process.allLayer1Electrons.isolation.hcal.src = cms.InputTag("layer0ElectronIsolations","eleIsoDepositHcalFromTowers")
+####            process.allLayer1Electrons.isoDeposits.ecal   = cms.InputTag("layer0ElectronIsolations","eleIsoDepositEcalFromClusts")
+####            process.allLayer1Electrons.isoDeposits.hcal   = cms.InputTag("layer0ElectronIsolations","eleIsoDepositHcalFromTowers")
+####    
+####    def useElectronRecHitIsolation(process,layers=(0,1,)):
+####        if (layers.__contains__(0)):
+####            print "Switching to RecHit isolation for Electrons in PAT Layer 0"
+####            patElectronIsolationLabels = cms.VInputTag(
+####                cms.InputTag("eleIsoDepositTk"),
+####                cms.InputTag("eleIsoDepositEcalFromHits"),
+####                cms.InputTag("eleIsoDepositHcalFromHits"),
+####            )
+####            process.patElectronIsolations.associations = patElectronIsolationLabels
+####            process.layer0ElectronIsolations.associations = patElectronIsolationLabels
+####            #This does not work yet :-(
+####            # process.patElectronIsolation = cms.Sequence( patElectronIsolations )
+####            process.allLayer0Electrons.isolation.ecal.src = cms.InputTag("patElectronIsolations","eleIsoDepositEcalFromHits")
+####            process.allLayer0Electrons.isolation.hcal.src = cms.InputTag("patElectronIsolations","eleIsoDepositHcalFromHits")
+####        if (layers.__contains__(1)):
+####            print "Switching to RecHit isolation for Electrons in PAT Layer 1"
+####            process.allLayer1Electrons.isolation.ecal.src = cms.InputTag("layer0ElectronIsolations","eleIsoDepositEcalFromHits")
+####            process.allLayer1Electrons.isolation.hcal.src = cms.InputTag("layer0ElectronIsolations","eleIsoDepositHcalFromHits")
+####            process.allLayer1Electrons.isoDeposits.ecal   = cms.InputTag("layer0ElectronIsolations","eleIsoDepositEcalFromHits")
+####            process.allLayer1Electrons.isoDeposits.hcal   = cms.InputTag("layer0ElectronIsolations","eleIsoDepositHcalFromHits")
+####    

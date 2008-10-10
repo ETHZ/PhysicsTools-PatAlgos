@@ -2,7 +2,7 @@ import FWCore.ParameterSet.Config as cms
 
 allLayer1Taus = cms.EDProducer("PATTauProducer",
     # General configurables
-    tauSource = cms.InputTag("allLayer0Taus"),
+    tauSource = cms.InputTag("pfRecoTauProducer"),
 
                                
     # user data to add

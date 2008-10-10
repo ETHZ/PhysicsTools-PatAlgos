@@ -8,7 +8,7 @@ import FWCore.ParameterSet.Config as cms
 
 allLayer1Electrons = cms.EDProducer("PATElectronProducer",
     # General configurables
-    electronSource = cms.InputTag("allLayer0Electrons"),
+    electronSource = cms.InputTag("pixelMatchGsfElectrons"),
 
                                     
     # user data to add
@@ -44,7 +44,7 @@ allLayer1Electrons = cms.EDProducer("PATElectronProducer",
     isolation = cms.PSet(
         tracker = cms.PSet(
             # source IsoDeposit
-            src = cms.InputTag("layer0ElectronIsolations","eleIsoDepositTk"),
+            src = cms.InputTag("patElectronIsolations","eleIsoDepositTk"),
             # parameters to compute isolation (Egamma POG defaults)
             deltaR = cms.double(0.3),
             vetos = cms.vstring('0.015', # inner radius veto cone
@@ -53,8 +53,8 @@ allLayer1Electrons = cms.EDProducer("PATElectronProducer",
         ),
         ecal = cms.PSet(
             # source IsoDeposit
-            #src = cms.InputTag("layer0ElectronIsolations","eleIsoDepositEcalFromHits"),
-            src = cms.InputTag("layer0ElectronIsolations","eleIsoDepositEcalFromClusts"),
+            #src = cms.InputTag("patElectronIsolations","eleIsoDepositEcalFromHits"),
+            src = cms.InputTag("patElectronIsolations","eleIsoDepositEcalFromClusts"),
             # parameters to compute isolation (Egamma POG defaults)
             deltaR = cms.double(0.4),
             vetos = cms.vstring('EcalBarrel:0.040', 'EcalBarrel:RectangularEtaPhiVeto(-0.01,0.01,-0.5,0.5)',  # Barrel (|eta| < 1.479)
@@ -63,15 +63,15 @@ allLayer1Electrons = cms.EDProducer("PATElectronProducer",
         ),
         ## other option, using eleIsoDepositEcalSCVetoFromClust (see also recoLayer0/electronIsolation_cff.py)
         #PSet ecal = cms.PSet( 
-        #   src    = cms.InputTag("layer0ElectronIsolations", "eleIsoDepositEcalSCVetoFromClusts")
+        #   src    = cms.InputTag("patElectronIsolations", "eleIsoDepositEcalSCVetoFromClusts")
         #   deltaR = cms.double(0.4)
         #   vetos  = cms.vstring()     # no veto, already done with SC
         #   skipDefaultVeto = cms.bool(True)
         #),
         hcal = cms.PSet(
             # source IsoDeposit
-            #src = cms.InputTag("layer0ElectronIsolations","eleIsoDepositHcalFromHits"),
-            src = cms.InputTag("layer0ElectronIsolations","eleIsoDepositHcalFromTowers"),
+            #src = cms.InputTag("patElectronIsolations","eleIsoDepositHcalFromHits"),
+            src = cms.InputTag("patElectronIsolations","eleIsoDepositHcalFromTowers"),
             # parameters to compute isolation (Egamma POG defaults)
             deltaR = cms.double(0.4),
             skipDefaultVeto = cms.bool(True),
@@ -80,11 +80,11 @@ allLayer1Electrons = cms.EDProducer("PATElectronProducer",
     ),
     # Store IsoDeposits
     isoDeposits = cms.PSet(
-        tracker = cms.InputTag("layer0ElectronIsolations","eleIsoDepositTk"),
-        #ecal    = cms.InputTag("layer0ElectronIsolations","eleIsoDepositEcalFromHits"),
-        ecal    = cms.InputTag("layer0ElectronIsolations","eleIsoDepositEcalFromClusts"),
-        #hcal    = cms.InputTag("layer0ElectronIsolations","eleIsoDepositHcalFromHits"),
-        hcal    = cms.InputTag("layer0ElectronIsolations","eleIsoDepositHcalFromTowers"),
+        tracker = cms.InputTag("patElectronIsolations","eleIsoDepositTk"),
+        #ecal    = cms.InputTag("patElectronIsolations","eleIsoDepositEcalFromHits"),
+        ecal    = cms.InputTag("patElectronIsolations","eleIsoDepositEcalFromClusts"),
+        #hcal    = cms.InputTag("patElectronIsolations","eleIsoDepositHcalFromHits"),
+        hcal    = cms.InputTag("patElectronIsolations","eleIsoDepositHcalFromTowers"),
     ),
 
 

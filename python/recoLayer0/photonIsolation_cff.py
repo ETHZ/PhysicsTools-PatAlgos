@@ -26,7 +26,7 @@ gamIsoDepositHcalFromTowers = cms.EDProducer("CandIsoDepositProducer",
 )
 
 # define module labels for POG isolation
-patAODPhotonIsolationLabels = cms.VInputTag(
+patPhotonIsolationLabels = cms.VInputTag(
         cms.InputTag("gamIsoDepositTk"),
      #   cms.InputTag("gamIsoDepositEcalFromHits"),
      #   cms.InputTag("gamIsoDepositHcalFromHits"),
@@ -35,27 +35,15 @@ patAODPhotonIsolationLabels = cms.VInputTag(
      #  cms.InputTag("gamIsoDepositEcalSCVetoFromClusts"), # this is an alternative to 'gamIsoDepositEcalFromClusts'
 )
 
-# read and convert to ValueMap<IsoDeposit> keyed to Candidate
-patAODPhotonIsolations = cms.EDFilter("MultipleIsoDepositsToValueMaps",
+# read and convert to ValueMap<IsoDeposit> keyed to CandidateA
+# FIXME: no longer needed?
+patPhotonIsolations = cms.EDFilter("MultipleIsoDepositsToValueMaps",
     collection   = cms.InputTag("photons"),
-    associations =  patAODPhotonIsolationLabels,
-)
-
-# re-key to PAT Layer 0 output
-layer0PhotonIsolations = cms.EDFilter("CandManyValueMapsSkimmerIsoDeposits",
-    collection   = cms.InputTag("allLayer0Photons"),
-    backrefs     = cms.InputTag("allLayer0Photons"),
-    commonLabel  = cms.InputTag("patAODPhotonIsolations"),
-    associations =  patAODPhotonIsolationLabels,
+    associations =  patPhotonIsolationLabels,
 )
 
 # selecting POG modules that can run on top of AOD
 gamIsoDepositAOD = cms.Sequence(gamIsoDepositTk * gamIsoDepositEcalFromClusts * gamIsoDepositHcalFromTowers)
 
 # sequence to run on AOD before PAT 
-patAODPhotonIsolation = cms.Sequence(gamIsoDepositAOD * patAODPhotonIsolations)
-# patAODPhotonIsolation = cms.Sequence(patAODPhotonIsolations)
-
-# sequence to run after PAT cleaners
-patLayer0PhotonIsolation = cms.Sequence(layer0PhotonIsolations)
-
+patPhotonIsolation = cms.Sequence(gamIsoDepositAOD * patPhotonIsolations)

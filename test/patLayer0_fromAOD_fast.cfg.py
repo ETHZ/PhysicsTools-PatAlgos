@@ -23,6 +23,7 @@ process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 process.GlobalTag.globaltag = cms.string('STARTUP_V4::All')
 process.load("Configuration.StandardSequences.MagneticField_cff")
 
+
 # PAT Layer 0
 process.load("PhysicsTools.PatAlgos.patLayer0_cff")
 #process.content = cms.EDAnalyzer("EventContentAnalyzer")
@@ -32,14 +33,14 @@ process.p = cms.Path(
             )
 
 # Output module configuration
+from Configuration.EventContent.EventContent_cff import AODSIMEventContent
 process.out = cms.OutputModule("PoolOutputModule",
+    AODSIMEventContent,
     fileName = cms.untracked.string('PATLayer0_Output.fromAOD_fast.root'),
     # save only events passing the full path
     SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring('p') ),
-    outputCommands = cms.untracked.vstring('drop *')
 )
-process.outpath = cms.EndPath(process.out)
+## process.outpath = cms.EndPath(process.out)
 # save PAT Layer 0 output
-process.load("PhysicsTools.PatAlgos.patLayer0_EventContent_cff")
-process.out.outputCommands.extend(process.patLayer0EventContent.outputCommands)
+process.out.outputCommands += 'keep *_*_*_PAT'
 

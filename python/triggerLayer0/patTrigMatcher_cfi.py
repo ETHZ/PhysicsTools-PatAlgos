@@ -7,7 +7,7 @@ from PhysicsTools.PatAlgos.triggerLayer0.patTrigProducer_cfi import *
 # matches to Egamma triggers
 # matches to CandHLT1ElectronStartup
 electronTrigMatchCandHLT1ElectronStartup = cms.EDFilter("PATTrigMatcher",
-    src     = cms.InputTag("allLayer0Electrons"),
+    src     = cms.InputTag("pixelMatchGsfElectrons"),
     matched = cms.InputTag("patCandHLT1ElectronStartup"),
     maxDPtRel = cms.double(1.0),
     maxDeltaR = cms.double(0.2),
@@ -17,7 +17,7 @@ electronTrigMatchCandHLT1ElectronStartup = cms.EDFilter("PATTrigMatcher",
 
 # matches to HLT1Photon
 photonTrigMatchHLT1Photon = cms.EDFilter("PATTrigMatcher",
-    src     = cms.InputTag("allLayer0Photons"),
+    src     = cms.InputTag("photons"),
     matched = cms.InputTag("patHLT1Photon"),
     maxDPtRel = cms.double(1.0),
     maxDeltaR = cms.double(0.2),
@@ -27,7 +27,7 @@ photonTrigMatchHLT1Photon = cms.EDFilter("PATTrigMatcher",
 
 # matches to HLT1PhotonRelaxed
 photonTrigMatchHLT1PhotonRelaxed = cms.EDFilter("PATTrigMatcher",
-    src     = cms.InputTag("allLayer0Photons"),
+    src     = cms.InputTag("photons"),
     matched = cms.InputTag("patHLT1PhotonRelaxed"),
     maxDPtRel = cms.double(1.0),
     maxDeltaR = cms.double(0.2),
@@ -37,7 +37,7 @@ photonTrigMatchHLT1PhotonRelaxed = cms.EDFilter("PATTrigMatcher",
 
 # matches to HLT2Photon
 photonTrigMatchHLT2Photon = cms.EDFilter("PATTrigMatcher",
-    src     = cms.InputTag("allLayer0Photons"),
+    src     = cms.InputTag("photons"),
     matched = cms.InputTag("patHLT2Photon"),
     maxDPtRel = cms.double(1.0),
     maxDeltaR = cms.double(0.2),
@@ -47,7 +47,7 @@ photonTrigMatchHLT2Photon = cms.EDFilter("PATTrigMatcher",
 
 # matches to HLT2PhotonRelaxed
 photonTrigMatchHLT2PhotonRelaxed = cms.EDFilter("PATTrigMatcher",
-    src     = cms.InputTag("allLayer0Photons"),
+    src     = cms.InputTag("photons"),
     matched = cms.InputTag("patHLT2PhotonRelaxed"),
     maxDPtRel = cms.double(1.0),
     maxDeltaR = cms.double(0.2),
@@ -57,7 +57,7 @@ photonTrigMatchHLT2PhotonRelaxed = cms.EDFilter("PATTrigMatcher",
 
 # matches to HLT1Electron
 electronTrigMatchHLT1Electron = cms.EDFilter("PATTrigMatcher",
-    src     = cms.InputTag("allLayer0Electrons"),
+    src     = cms.InputTag("pixelMatchGsfElectrons"),
     matched = cms.InputTag("patHLT1Electron"),
     maxDPtRel = cms.double(1.0),
     maxDeltaR = cms.double(0.2),
@@ -68,7 +68,7 @@ electronTrigMatchHLT1Electron = cms.EDFilter("PATTrigMatcher",
 # matches to HLT1ElectronRelaxed
 # including example of "wrong" match (jets which fired electron trigger),
 electronTrigMatchHLT1ElectronRelaxed = cms.EDFilter("PATTrigMatcher",
-    src     = cms.InputTag("allLayer0Electrons"),
+    src     = cms.InputTag("pixelMatchGsfElectrons"),
     matched = cms.InputTag("patHLT1ElectronRelaxed"),
     maxDPtRel = cms.double(1.0),
     maxDeltaR = cms.double(0.2),
@@ -77,7 +77,7 @@ electronTrigMatchHLT1ElectronRelaxed = cms.EDFilter("PATTrigMatcher",
 )
 
 jetTrigMatchHLT1ElectronRelaxed = cms.EDFilter("PATTrigMatcher",
-    src     = cms.InputTag("allLayer0Jets"),
+    src     = cms.InputTag("iterativeCone5CaloJets"),
     matched = cms.InputTag("patHLT1ElectronRelaxed"),
     maxDPtRel = cms.double(1.0),
     maxDeltaR = cms.double(0.2),
@@ -87,7 +87,7 @@ jetTrigMatchHLT1ElectronRelaxed = cms.EDFilter("PATTrigMatcher",
 
 # matches to HLT2Electron
 electronTrigMatchHLT2Electron = cms.EDFilter("PATTrigMatcher",
-    src     = cms.InputTag("allLayer0Electrons"),
+    src     = cms.InputTag("pixelMatchGsfElectrons"),
     matched = cms.InputTag("patHLT2Electron"),
     maxDPtRel = cms.double(1.0),
     maxDeltaR = cms.double(0.2),
@@ -97,7 +97,7 @@ electronTrigMatchHLT2Electron = cms.EDFilter("PATTrigMatcher",
 
 # matches to HLT2ElectronRelaxed
 electronTrigMatchHLT2ElectronRelaxed = cms.EDFilter("PATTrigMatcher",
-    src     = cms.InputTag("allLayer0Electrons"),
+    src     = cms.InputTag("pixelMatchGsfElectrons"),
     matched = cms.InputTag("patHLT2ElectronRelaxed"),
     maxDPtRel = cms.double(1.0),
     maxDeltaR = cms.double(0.2),
@@ -108,7 +108,7 @@ electronTrigMatchHLT2ElectronRelaxed = cms.EDFilter("PATTrigMatcher",
 # matches to Muon triggers
 # matches to HLT1MuonIso
 muonTrigMatchHLT1MuonIso = cms.EDFilter("PATTrigMatcher",
-    src     = cms.InputTag("allLayer0Muons"),
+    src     = cms.InputTag("muons"),
     matched = cms.InputTag("patHLT1MuonIso"),
     maxDPtRel = cms.double(1.0),
     maxDeltaR = cms.double(0.2),
@@ -118,7 +118,7 @@ muonTrigMatchHLT1MuonIso = cms.EDFilter("PATTrigMatcher",
 
 # matches to HLT1MuonNonIso
 muonTrigMatchHLT1MuonNonIso = cms.EDFilter("PATTrigMatcher",
-    src     = cms.InputTag("allLayer0Muons"),
+    src     = cms.InputTag("muons"),
     matched = cms.InputTag("patHLT1MuonNonIso"),
     maxDPtRel = cms.double(1.0),
     maxDeltaR = cms.double(0.2),
@@ -128,7 +128,7 @@ muonTrigMatchHLT1MuonNonIso = cms.EDFilter("PATTrigMatcher",
 
 # matches to HLT2MuonNonIso
 muonTrigMatchHLT2MuonNonIso = cms.EDFilter("PATTrigMatcher",
-    src     = cms.InputTag("allLayer0Muons"),
+    src     = cms.InputTag("muons"),
     matched = cms.InputTag("patHLT2MuonNonIso"),
     maxDPtRel = cms.double(1.0),
     maxDeltaR = cms.double(0.2),
@@ -139,7 +139,7 @@ muonTrigMatchHLT2MuonNonIso = cms.EDFilter("PATTrigMatcher",
 # matches to BTau triggers
 # matches to HLT1Tau
 tauTrigMatchHLT1Tau = cms.EDFilter("PATTrigMatcher",
-    src     = cms.InputTag("allLayer0Taus"),
+    src     = cms.InputTag("pfRecoTauProducer"),
     matched = cms.InputTag("patHLT1Tau"),
     maxDPtRel = cms.double(1.0),
     maxDeltaR = cms.double(0.2),
@@ -149,7 +149,7 @@ tauTrigMatchHLT1Tau = cms.EDFilter("PATTrigMatcher",
 
 # matches to HLT2TauPixel
 tauTrigMatchHLT2TauPixel = cms.EDFilter("PATTrigMatcher",
-    src     = cms.InputTag("allLayer0Taus"),
+    src     = cms.InputTag("pfRecoTauProducer"),
     matched = cms.InputTag("patHLT2TauPixel"),
     maxDPtRel = cms.double(1.0),
     maxDeltaR = cms.double(0.2),
@@ -160,7 +160,7 @@ tauTrigMatchHLT2TauPixel = cms.EDFilter("PATTrigMatcher",
 # matches to JetMET triggers
 # matches to HLT2jet
 jetTrigMatchHLT2jet = cms.EDFilter("PATTrigMatcher",
-    src     = cms.InputTag("allLayer0Jets"),
+    src     = cms.InputTag("iterativeCone5CaloJets"),
     matched = cms.InputTag("patHLT2jet"),
     maxDPtRel = cms.double(1.0),
     maxDeltaR = cms.double(0.2),
@@ -170,7 +170,7 @@ jetTrigMatchHLT2jet = cms.EDFilter("PATTrigMatcher",
 
 # matches to HLT3jet
 jetTrigMatchHLT3jet = cms.EDFilter("PATTrigMatcher",
-    src     = cms.InputTag("allLayer0Jets"),
+    src     = cms.InputTag("iterativeCone5CaloJets"),
     matched = cms.InputTag("patHLT3jet"),
     maxDPtRel = cms.double(1.0),
     maxDeltaR = cms.double(0.2),
@@ -180,7 +180,7 @@ jetTrigMatchHLT3jet = cms.EDFilter("PATTrigMatcher",
 
 # matches to HLT4jet
 jetTrigMatchHLT4jet = cms.EDFilter("PATTrigMatcher",
-    src     = cms.InputTag("allLayer0Jets"),
+    src     = cms.InputTag("iterativeCone5CaloJets"),
     matched = cms.InputTag("patHLT4jet"),
     maxDPtRel = cms.double(1.0),
     maxDeltaR = cms.double(0.2),
@@ -191,7 +191,7 @@ jetTrigMatchHLT4jet = cms.EDFilter("PATTrigMatcher",
 # matches to HLT1MET65
 # including example of "wrong" match (muons which fired MET trigger),
 metTrigMatchHLT1MET65 = cms.EDFilter("PATTrigMatcher",
-    src     = cms.InputTag("allLayer0METs"),
+    src     = cms.InputTag("corMetType1Icone5Muons"),
     matched = cms.InputTag("patHLT1MET65"),
     maxDPtRel = cms.double(1.0),
     maxDeltaR = cms.double(0.2),
@@ -200,7 +200,7 @@ metTrigMatchHLT1MET65 = cms.EDFilter("PATTrigMatcher",
 )
 
 muonTrigMatchHLT1MET65 = cms.EDFilter("PATTrigMatcher",
-    src     = cms.InputTag("allLayer0Muons"),
+    src     = cms.InputTag("muons"),
     matched = cms.InputTag("patHLT1MET65"),
     maxDPtRel = cms.double(1.0),
     maxDeltaR = cms.double(0.2),

@@ -35,18 +35,6 @@ corMetType1Icone5Muons.TrackAssociatorParameters.useCalo = True ## CaloTowers
 corMetType1Icone5Muons.TrackAssociatorParameters.useMuon = False ## RecoHits
 corMetType1Icone5Muons.TrackAssociatorParameters.truthMatch = False
 
-
-# re-key jet energy corrections to layer 0 output
-layer0JetCorrFactors = cms.EDFilter("JetCorrFactorsValueMapSkimmer",
-    collection  = cms.InputTag("allLayer0Jets"),
-    backrefs    = cms.InputTag("allLayer0Jets"),
-    association = cms.InputTag("jetCorrFactors"),
-)
-
-
 # default PAT sequence for JetMET corrections before cleaners
-patAODJetMETCorrections = cms.Sequence(jetCorrFactors * corMetType1Icone5 * corMetType1Icone5Muons)
-
-# default PAT sequence for JetMET corrections after cleaners
-patLayer0JetMETCorrections = cms.Sequence(layer0JetCorrFactors)
+patJetMETCorrections = cms.Sequence(patJetCorrFactors * corMetType1Icone5 * corMetType1Icone5Muons)
 

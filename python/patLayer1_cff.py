@@ -8,9 +8,43 @@ from PhysicsTools.PatAlgos.producersLayer1.tauProducer_cff import *
 from PhysicsTools.PatAlgos.producersLayer1.photonProducer_cff import *
 from PhysicsTools.PatAlgos.producersLayer1.jetProducer_cff import *
 from PhysicsTools.PatAlgos.producersLayer1.metProducer_cff import *
-from PhysicsTools.PatAlgos.producersLayer1.hemisphereProducer_cff import *
-#FIXME: Why do we need this here?
-from PhysicsTools.PatAlgos.selectionLayer1.leptonCountFilter_cfi import *
-allObjects = cms.Sequence(layer1Muons*layer1Electrons*layer1Taus*countLayer1Leptons*layer1Photons*layer1Jets*layer1METs*layer1Hemispheres)
-patLayer1 = cms.Sequence(allObjects)
 
+from PhysicsTools.PatAlgos.producersLayer1.hemisphereProducer_cfi import *
+from PhysicsTools.PatAlgos.selectionLayer1.leptonCountFilter_cfi import *
+
+
+allLayer1Objects = cms.Sequence(
+        allLayer1Muons +
+        allLayer1Electrons +
+        allLayer1Taus +
+        allLayer1Photons +
+        allLayer1Jets +
+        allLayer1METs
+)
+
+selectedLayer1Objects = cms.Sequence(
+        selectedLayer1Muons +
+        selectedLayer1Electrons +
+        selectedLayer1Taus +
+        selectedLayer1Photons +
+        selectedLayer1Jets +
+        selectedLayer1METs 
+)
+
+countLayer1Objects = cms.Sequence(
+        countLayer1Muons +
+        countLayer1Electrons +
+        countLayer1Taus +
+        countLayer1Photons +
+        countLayer1Jets +
+        countLayer1Leptons    ## << Note that this is not a L1 object collection
+)
+
+
+
+patLayer1 = cms.Sequence(
+    allLayer1Objects +
+    selectedLayer1Objects +
+    selectedLayer1Hemispheres +
+    countLayer1Objects
+)

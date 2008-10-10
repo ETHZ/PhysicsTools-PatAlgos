@@ -13,7 +13,7 @@ trackMuMatch = cms.EDFilter("MCMatcher", # cut on deltaR, deltaPt/Pt; pick best 
     mcStatus = cms.vint32(1),     # PYTHIA status code (1 = stable, 2 = shower, 3 = hard scattering)
     maxDeltaR = cms.double(0.5),  # Minimum deltaR for the match
     maxDPtRel = cms.double(0.5),  # Minimum deltaPt/Pt for the match
-    resolveAmbiguities = cms.bool(True),     # Forbid two RECO objects to match to the same GEN object
+    resolveAmbiguities = cms.bool(False),     # Forbid two RECO objects to match to the same GEN object
     resolveByMatchQuality = cms.bool(False), # False = just match input in order; True = pick lowest deltaR pair first
 )
 
