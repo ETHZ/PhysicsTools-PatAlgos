@@ -6,7 +6,7 @@ import FWCore.ParameterSet.Config as cms
 #
 # These are only dummy cuts
 selectedLayer1Taus = cms.EDFilter("PATTauSelector",
-    src = cms.InputTag("allLayer1Taus"),
+    src = cms.InputTag("cleanLayer1Taus"),
     cut = cms.string('pt > 0. & abs(eta) < 12.')
 )
 

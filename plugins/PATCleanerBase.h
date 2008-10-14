@@ -1,7 +1,7 @@
 #ifndef PhysicsTools_PatAlgos_PATCleanerBase_h
 #define PhysicsTools_PatAlgos_PATCleanerBase_h
 //
-// $Id: PATCleanerBase.h,v 1.4 2008/07/22 12:47:02 gpetrucc Exp $
+// $Id: PATCleanerBase.h,v 1.1.2.1 2008/10/10 19:24:04 gpetrucc Exp $
 //
 
 /**
@@ -12,7 +12,7 @@
    a collection of objects of GenericParticleType.
 
   \author   Steven Lowette, Jeremy Andrea
-  \version  $Id: PATCleanerBase.h,v 1.4 2008/07/22 12:47:02 gpetrucc Exp $
+  \version  $Id: PATCleanerBase.h,v 1.1.2.1 2008/10/10 19:24:04 gpetrucc Exp $
 */
 
 #include "FWCore/Framework/interface/EDProducer.h"
@@ -129,7 +129,7 @@ void pat::PATCleanerBase<T>::produce(edm::Event & iEvent, const edm::EventSetup 
 template <typename T>
 void pat::PATCleanerBase<T>::endJob() { 
     edm::LogVerbatim("PATLayer0Summary|PATCleanerBase") << "PATCleanerBase end job. \n" <<
-            "Input tag was " << src_.encode() <<
+            "Input tag " << src_.encode() <<
             "\t: try " << try_ <<
             ", preselected " << presel_ << " (" << (try_ > 0 ? presel_/double(try_) * 100.0 : 0) << "%)" <<
             ", pass " << sel_ << " (" << (try_ > 0 ? sel_/double(try_) * 100.0 : 0) << "%)" << "\n";

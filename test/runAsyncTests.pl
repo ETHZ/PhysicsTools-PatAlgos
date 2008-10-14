@@ -191,7 +191,7 @@ foreach my $f (@CFGs) {
     if ($info{$f}->{'excep'}) { print "\e[1;31m" . $info{$f}->{'exbody'} . "\e[0m"; }
 
     open LOG, $info{$f}->{'out'}; my @log = <LOG>; close LOG;
-    foreach my $l (grep(/^Input tag \w+\s+: try/, @log)) { 
+    foreach my $l (grep(/^Input tag .*: try/, @log)) { 
         $l =~ s/(try \d+, pass 0.*)$/$1\e[1;31m <== WARNING!!\e[0m/;
         print "  $l"; 
     }
