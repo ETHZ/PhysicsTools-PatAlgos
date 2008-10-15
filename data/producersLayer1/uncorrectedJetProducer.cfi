@@ -1,5 +1,0 @@
-# uncorrected jets from selected layer1 jets
-    module uncorrectedLayer1Jets = PATCorrectedJetProducer {
-      InputTag src = selectedLayer1Jets
-      string correction = "none"
-    }
