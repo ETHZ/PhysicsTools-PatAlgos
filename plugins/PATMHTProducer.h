@@ -13,7 +13,7 @@
 //
 // Original Author:  Xin Shi & Freya Blekman, Cornell University
 //         Created:  Fri Sep 12 17:58:29 CEST 2008
-// $Id: PATMHTProducer.h,v 1.1.2.1 2008/09/16 09:17:20 fblekman Exp $
+// $Id: PATMHTProducer.h,v 1.1.2.2 2008/10/03 13:37:57 xshi Exp $
 //
 //
 
@@ -79,6 +79,9 @@ class PATMHTProducer : public edm::EDProducer {
   edm::InputTag phoLabel_;
   
   std::vector<metsig::SigInputObj> physobjvector_ ;
+
+  double uncertaintyScaleFactor_; // scale factor for the uncertainty parameters.
+
 };
 //define this as a plug-in
 

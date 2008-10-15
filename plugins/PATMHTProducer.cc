@@ -1,5 +1,5 @@
 //
-// $Id: PATMHTProducer.cc,v 1.1.2.7 2008/10/01 13:51:36 xshi Exp $
+// $Id: PATMHTProducer.cc,v 1.1.2.8 2008/10/03 13:37:57 xshi Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATMHTProducer.h"
@@ -13,6 +13,8 @@ pat::PATMHTProducer::PATMHTProducer(const edm::ParameterSet & iConfig){
   tauLabel_ = iConfig.getUntrackedParameter<edm::InputTag>("tauTag");
   phoLabel_ = iConfig.getUntrackedParameter<edm::InputTag>("photonTag");
   
+  uncertaintyScaleFactor_ = iConfig.getParameter<double>( "uncertaintyScaleFactor") ;
+
   produces<pat::MHTCollection>();
 
 }
@@ -56,6 +58,14 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
 	" are (et, phi): " << sigma_et << "," << sigma_phi << " (et,phi): " << jet_et << "," << jet_phi;
     // try to read out the jet resolution from the root file at PatUtils
     //-- Store jet for Significance Calculation --//
+    
+    if (uncertaintyScaleFactor_ != 1.0){
+      sigma_et  = sigma_et  * uncertaintyScaleFactor_;
+      sigma_phi = sigma_phi * uncertaintyScaleFactor_;
+      // edm::LogWarning("PATMHTProducer") << " using uncertainty scale factor: " << uncertaintyScaleFactor_ <<
+      //" , uncertainties for " << objectname <<" changed to (et, phi): " << sigma_et << "," << sigma_phi; 
+    }
+
     metsig::SigInputObj tmp_jet(objectname,jet_et,jet_phi,sigma_et,sigma_phi);
     physobjvector_.push_back(tmp_jet);
      
@@ -79,6 +89,15 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
 	" (et,phi): " << electron_et << "," << electron_phi;
     // try to read out the electron resolution from the root file at PatUtils
     //-- Store electron for Significance Calculation --//
+    
+    if (uncertaintyScaleFactor_ != 1.0){
+      sigma_et  = sigma_et  * uncertaintyScaleFactor_;
+      sigma_phi = sigma_phi * uncertaintyScaleFactor_;
+      // edm::LogWarning("PATMHTProducer") << " using uncertainty scale factor: " << uncertaintyScaleFactor_ <<
+      //" , uncertainties for " << objectname <<" changed to (et, phi): " << sigma_et << "," << sigma_phi; 
+    }
+
+
     metsig::SigInputObj tmp_electron(objectname,electron_et,electron_phi,sigma_et,sigma_phi);
     physobjvector_.push_back(tmp_electron);
      
@@ -102,6 +121,14 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
 	sigma_phi << " (pt,phi): " << muon_pt << "," << muon_phi;
     // try to read out the muon resolution from the root file at PatUtils
     //-- Store muon for Significance Calculation --//
+
+    if (uncertaintyScaleFactor_ != 1.0){
+      sigma_et  = sigma_et  * uncertaintyScaleFactor_;
+      sigma_phi = sigma_phi * uncertaintyScaleFactor_;
+      //edm::LogWarning("PATMHTProducer") << " using uncertainty scale factor: " << uncertaintyScaleFactor_ <<
+      //" , uncertainties for " << objectname <<" changed to (et, phi): " << sigma_et << "," << sigma_phi; 
+    }
+
     metsig::SigInputObj tmp_muon(objectname,muon_pt,muon_phi,sigma_et,sigma_phi);
     physobjvector_.push_back(tmp_muon);
      
