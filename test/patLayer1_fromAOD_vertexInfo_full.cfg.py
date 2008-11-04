@@ -28,6 +28,10 @@ process.load("Configuration.StandardSequences.MagneticField_cff")
 process.load("PhysicsTools.PatAlgos.patLayer0_cff")
 process.load("PhysicsTools.PatAlgos.patLayer1_cff")
 
+## Necessary fixes to run 2.2.X on 2.1.X data (I don't have a 2.2.X sample with pileup)
+from PhysicsTools.PatAlgos.tools.cmsswVersionTools import run22XonSummer08AODSIM
+run22XonSummer08AODSIM(process)
+
 ## ========================== VERTEXING =========================================
 process.bestVertex = cms.EDFilter("PATSingleVertexSelector",
     mode      = cms.string("nearestToCandidate"),

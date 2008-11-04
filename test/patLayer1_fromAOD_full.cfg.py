@@ -14,19 +14,20 @@ process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 
 # source
 process.source = cms.Source("PoolSource", 
-     fileNames = cms.untracked.vstring('file:/afs/cern.ch/cms/PRS/top/cmssw-data/relval200-for-pat-testing/FullSimTTBar-2_1_X_2008-07-08_STARTUP_V4-AODSIM.100.root')
+     fileNames = cms.untracked.vstring('file:/afs/cern.ch/cms/PRS/top/cmssw-data/relval200-for-pat-testing/FullSimTTBar-2_2_X_2008-11-03-STARTUP_V7-AODSIM.100.root')
 )
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
 
 process.load("Configuration.StandardSequences.Geometry_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
-process.GlobalTag.globaltag = cms.string('STARTUP_V4::All')
+process.GlobalTag.globaltag = cms.string('IDEAL_V9::All')
 process.load("Configuration.StandardSequences.MagneticField_cff")
 
 # PAT Layer 0+1
 process.load("PhysicsTools.PatAlgos.patLayer0_cff")
 process.load("PhysicsTools.PatAlgos.patLayer1_cff")
 #process.content = cms.EDAnalyzer("EventContentAnalyzer")
+
 process.p = cms.Path(
                 process.patLayer0  
                 #+ process.content # uncomment to get a dump of the output after layer 0
