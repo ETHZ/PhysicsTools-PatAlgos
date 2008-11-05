@@ -14,7 +14,8 @@ process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 
 # source
 process.source = cms.Source("PoolSource", 
-     fileNames = cms.untracked.vstring('file:/afs/cern.ch/cms/PRS/top/cmssw-data/relval200-for-pat-testing/FullSimTTBar-210p8_IDEAL_V5_LowLumiPileUp-AODSIM.100.root')
+     #fileNames = cms.untracked.vstring('file:/afs/cern.ch/cms/PRS/top/cmssw-data/relval200-for-pat-testing/FullSimTTBar-210p8_IDEAL_V5_LowLumiPileUp-AODSIM.100.root')
+     fileNames = cms.untracked.vstring('file:/afs/cern.ch/cms/PRS/top/cmssw-data/relval200-for-pat-testing/FullSimTTBar-2_2_X_2008-11-03-STARTUP_V7-AODSIM.100.root')
 )
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
 
@@ -27,10 +28,6 @@ process.load("Configuration.StandardSequences.MagneticField_cff")
 # PAT Layer 0+1
 process.load("PhysicsTools.PatAlgos.patLayer0_cff")
 process.load("PhysicsTools.PatAlgos.patLayer1_cff")
-
-## Necessary fixes to run 2.2.X on 2.1.X data (I don't have a 2.2.X sample with pileup)
-from PhysicsTools.PatAlgos.tools.cmsswVersionTools import run22XonSummer08AODSIM
-run22XonSummer08AODSIM(process)
 
 ## ========================== VERTEXING =========================================
 process.bestVertex = cms.EDFilter("PATSingleVertexSelector",
