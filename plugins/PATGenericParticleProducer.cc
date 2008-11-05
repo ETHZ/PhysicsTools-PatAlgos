@@ -1,5 +1,5 @@
 //
-// $Id: PATGenericParticleProducer.cc,v 1.5 2008/07/22 12:47:02 gpetrucc Exp $
+// $Id: PATGenericParticleProducer.cc,v 1.8 2008/11/04 15:42:03 gpetrucc Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATGenericParticleProducer.h"
@@ -170,8 +170,10 @@ void PATGenericParticleProducer::produce(edm::Event & iEvent, const edm::EventSe
     if (vertexingHelper_.enabled()) {
         aGenericParticle.setVertexAssociation( vertexingHelper_(candRef) );
     }
-    // add the GenericParticle to the vector of GenericParticles
-    PATGenericParticles->push_back(aGenericParticle);
+
+    // PATGenericParticles->push_back(aGenericParticle); // NOOOOO!!!!
+    // We have already pushed_back this generic particle in the collection
+    // (we first push an empty particle and then fill it, to avoid useless copies)
   }
 
   // sort GenericParticles in ET
