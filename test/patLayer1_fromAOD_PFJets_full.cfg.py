@@ -37,9 +37,9 @@ switchJetCollection(process, 'iterativeCone5PFJets',
         runCleaner="PFJet", #change this to runCleaner=None if you want no cleaning
         doJTA=True,
         doBTagging=True,
-        jetCorrLabel=None,  # You may want to apply jet energy corrections
-        doType1MET=False)   # even if you set jetCorrLabel to a non-null value, you should keep this to False
-                            # due to limitations in the JetMET module for Type1 corrections
+        jetCorrLabel=('IC5','PF'), # You may want to apply jet energy corrections
+        doType1MET=False)          # even if you set jetCorrLabel to a non-null value, you should keep this to False
+                                   # due to limitations in the JetMET module for Type1 corrections
 process.allLayer1Jets.embedCaloTowers   = False
 
 # Now we break up process.patLayer0
