@@ -31,28 +31,30 @@ process.load("Configuration.StandardSequences.MagneticField_cff")
 
 from PhysicsTools.PatAlgos.tools.jetTools import *
 
-### make also some basic jets for testing
-from RecoJets.JetProducers.BasicJetIcone5_cfi import iterativeCone5BasicJets
-process.iterativeCone5BasicJets = iterativeCone5BasicJets.clone(src = cms.InputTag("towerMaker"))
+# Taking away BasicJets because RecoJets/JetProducers/python/BasicJetIcone5_cfi.py in 2.2.X is wrong
+## FIXME ### make also some basic jets for testing
+## FIXME from RecoJets.JetProducers.BasicJetIcone5_cfi import iterativeCone5BasicJets
+## FIXME process.iterativeCone5BasicJets = iterativeCone5BasicJets.clone(src = cms.InputTag("towerMaker"))
+
 
 addJetCollection(process,'sisCone5CaloJets','SC5',
-                        runCleaner="CaloJet",doJTA=True,doBTagging=True,jetCorrLabel='Scone5',doType1MET=True,doL1Counters=False)
+                        runCleaner="CaloJet",doJTA=True,doBTagging=True,jetCorrLabel=('SC5','Calo'),doType1MET=True,doL1Counters=False)
 addJetCollection(process,'sisCone7CaloJets','SC7',
                         runCleaner="CaloJet",doJTA=True,doBTagging=False,jetCorrLabel=None,doType1MET=True,doL1Counters=False)
 addJetCollection(process,'kt4CaloJets','KT4',
-                        runCleaner=None,doJTA=True,doBTagging=True,jetCorrLabel='FKt4',doType1MET=True,doL1Counters=False)
+                        runCleaner=None,doJTA=True,doBTagging=True,jetCorrLabel=('KT4','Calo'),doType1MET=True,doL1Counters=False)
 addJetCollection(process,'kt6CaloJets','KT6',
                         runCleaner=None,doJTA=True,doBTagging=False,jetCorrLabel=None,doType1MET=True,doL1Counters=False)
-addJetCollection(process,'iterativeCone5BasicJets', 'BJ5',
-                        runCleaner="BasicJet",doJTA=True,doBTagging=True,jetCorrLabel='Mcone5',doType1MET=True,doL1Counters=False)
+## FIXME addJetCollection(process,'iterativeCone5BasicJets', 'BJ5',
+## FIXME                        runCleaner="BasicJet",doJTA=True,doBTagging=True,jetCorrLabel=('MC5','Calo'),doType1MET=True,doL1Counters=False)
 addJetCollection(process,'iterativeCone5PFJets', 'PFc',
-                        runCleaner="PFJet",doJTA=True,doBTagging=True,jetCorrLabel='FKt4',doType1MET=True,doL1Counters=False)
+                        runCleaner="PFJet",doJTA=True,doBTagging=True,jetCorrLabel=('KT4','PF'),doType1MET=True,doL1Counters=False)
 addJetCollection(process,'iterativeCone5PFJets', 'PFr',
                         runCleaner=None,doJTA=True,doBTagging=True,jetCorrLabel=None,doType1MET=True,doL1Counters=False)
 
 process.content = cms.EDAnalyzer("EventContentAnalyzer")
 process.p = cms.Path(
-                process.iterativeCone5BasicJets +  ## Turn on this to run tests on BasicJets
+                ## FIXME process.iterativeCone5BasicJets +  ## Turn on this to run tests on BasicJets
                 process.patLayer0  
                 + process.patLayer1
                 + process.content    # uncomment to get a dump 
@@ -74,9 +76,9 @@ process.out.outputCommands.extend(["keep *_selectedLayer1Jets*_*_*"])
 
 #### Dump the python config
 #
-# f = open("patLayer1_fromAOD_jetSuite_full.dump.py", "w")
-# f.write(process.dumpPython())
-# f.close()
+#f = open("patLayer1_fromAOD_jetSuite_full.dump.py", "w")
+#f.write(process.dumpPython())
+#f.close()
 #
  
 #### GraphViz dumps of sequences and modules, useful for debugging.

@@ -38,7 +38,7 @@ switchJetCollection(process,
         runCleaner="CaloJet",  # =None if not to clean
         doJTA=True,            # Run Jet-Track association & JetCharge
         doBTagging=True,       # Run b-tagging
-        jetCorrLabel='Scone5', # example jet correction name; set to None for no JEC
+        jetCorrLabel=('SC5','Calo'), # example jet correction name; set to None for no JEC
         doType1MET=True)       # recompute Type1 MET using these jets
 
 ## ==== FOR BASIC JETS
@@ -53,8 +53,8 @@ switchJetCollection(process,
 #        runCleaner="BasicJet", # =None for no cleaning
 #        doJTA=True,
 #        doBTagging=True,
-#        jetCorrLabel=None,#='Scone5',    # If you have JES corrections, you can apply them even to BasicJets
-#        doType1MET=False)                # Type1MET dows not work on BasicJets :-(
+#        jetCorrLabel=None,#=('S5','Calo'), # If you have JES corrections, you can apply them even to BasicJets
+#        doType1MET=False)                  # Type1MET dows not work on BasicJets :-(
 
 process.content = cms.EDAnalyzer("EventContentAnalyzer")
 process.p = cms.Path(
