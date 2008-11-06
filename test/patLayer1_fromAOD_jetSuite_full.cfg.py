@@ -48,7 +48,7 @@ addJetCollection(process,'kt6CaloJets','KT6',
 ## FIXME addJetCollection(process,'iterativeCone5BasicJets', 'BJ5',
 ## FIXME                        runCleaner="BasicJet",doJTA=True,doBTagging=True,jetCorrLabel=('MC5','Calo'),doType1MET=True,doL1Counters=False)
 addJetCollection(process,'iterativeCone5PFJets', 'PFc',
-                        runCleaner="PFJet",doJTA=True,doBTagging=True,jetCorrLabel=('KT4','PF'),doType1MET=True,doL1Counters=False)
+                        runCleaner="PFJet",doJTA=True,doBTagging=True,jetCorrLabel=None,doType1MET=True,doL1Counters=False)
 addJetCollection(process,'iterativeCone5PFJets', 'PFr',
                         runCleaner=None,doJTA=True,doBTagging=True,jetCorrLabel=None,doType1MET=True,doL1Counters=False)
 
