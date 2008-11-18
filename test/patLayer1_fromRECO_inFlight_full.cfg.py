@@ -28,7 +28,7 @@ process.load("PhysicsTools.PatAlgos.patLayer0_cff")
 process.load("PhysicsTools.PatAlgos.patLayer1_cff")
 process.load("SimGeneral.HepPDTESSource.pythiapdt_cfi")
 process.inFlightMuons = cms.EDProducer("PATGenCandsFromSimTracksProducer",
-        src           = cms.InputTag("g4SimHits"),
+        src           = cms.InputTag("g4SimHits"), # use "famosSimHits" for FAMOS
         setStatus     = cms.int32(-1),
         particleTypes = cms.vstring("mu+"),       # picks also mu-, of course
         filter        = cms.vstring("pt > 0.5"),  # just for testing
