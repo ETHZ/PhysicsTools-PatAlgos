@@ -32,6 +32,8 @@ process.inFlightMuons = cms.EDProducer("PATGenCandsFromSimTracksProducer",
         setStatus     = cms.int32(-1),
         particleTypes = cms.vstring("mu+"),       # picks also mu-, of course
         filter        = cms.vstring("pt > 0.5"),  # just for testing
+        makeMotherLink = cms.bool(True),
+        genParticles   = cms.InputTag("genParticles"),
 )
 process.muMatch3 = process.muonMatch.clone(mcStatus = cms.vint32(3))
 process.muMatch1 = process.muonMatch.clone(mcStatus = cms.vint32(1))
