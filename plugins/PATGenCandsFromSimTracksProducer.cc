@@ -6,7 +6,7 @@
    
 
   \author   Jordan Tucker (original module), Giovanni Petrucciani (PAT integration)
-  \version  $Id: PATGenCandsFromSimTracksProducer.cc,v 1.2 2008/09/01 14:32:42 gpetrucc Exp $
+  \version  $Id: PATGenCandsFromSimTracksProducer.cc,v 1.2.4.1 2008/11/18 11:10:19 gpetrucc Exp $
 */
 
 #include "FWCore/Framework/interface/Frameworkfwd.h"
@@ -70,6 +70,12 @@ private:
                     const edm::Handle<reco::GenParticleCollection> &gens,
                     const std::vector<int>                         &genBarcodes,
                     bool                                            barcodesAreSorted ) const ;
+  struct LessById {
+    bool operator()(const SimTrack &tk1, const SimTrack &tk2) const { return tk1.trackId() < tk2.trackId(); }
+    bool operator()(const SimTrack &tk1, unsigned int    id ) const { return tk1.trackId() < id;            }
+    bool operator()(unsigned int     id, const SimTrack &tk2) const { return id            < tk2.trackId(); }
+  };
+   
 };
 }
 
@@ -175,7 +181,7 @@ void PATGenCandsFromSimTracksProducer::produce(Event& event,
   const SimTrackContainer * simtracksSorted = &* simtracks;
   if (!__gnu_cxx::is_sorted(simtracks->begin(), simtracks->end(), LessById())) {
     simtracksTmp.reset(new SimTrackContainer(*simtracks));
-    std::sort(simtracksTmp->begin(), simtracksTmp->end(), LessById())
+    std::sort(simtracksTmp->begin(), simtracksTmp->end(), LessById());
     simtracksSorted = &* simtracksTmp;
   }
 
@@ -186,7 +192,7 @@ void PATGenCandsFromSimTracksProducer::produce(Event& event,
   // Get the GenParticles and barcodes, if needed to set mother links
   Handle<GenParticleCollection> gens;
   Handle<std::vector<int> > genBarcodes;
-  bool barcodesAreSorted;
+  bool barcodesAreSorted = true;
   if (makeMotherLink_) {
       event.getByLabel(genParticles_, gens);
       event.getByLabel(genParticles_, genBarcodes);
