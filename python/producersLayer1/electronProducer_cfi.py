@@ -117,10 +117,11 @@ allLayer1Electrons = cms.EDProducer("PATElectronProducer",
     addEfficiencies = cms.bool(False),
     efficiencies    = cms.PSet(),
     
-    # electron cluster shape configurables
-    addElectronShapes = cms.bool(True),
-    reducedBarrelRecHitCollection = cms.InputTag("reducedEcalRecHitsEB"),
-    reducedEndcapRecHitCollection = cms.InputTag("reducedEcalRecHitsEE"),
+##  FIXME: commented to make the code run with 220
+##  # electron cluster shape configurables
+##  addElectronShapes = cms.bool(True),
+##  reducedBarrelRecHitCollection = cms.InputTag("reducedEcalRecHitsEB"),
+##  reducedEndcapRecHitCollection = cms.InputTag("reducedEcalRecHitsEE"),
 
 )
 
