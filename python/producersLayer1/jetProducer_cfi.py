@@ -32,10 +32,7 @@ allLayer1Jets = cms.EDProducer("PATJetProducer",
     jetCorrFactorsSource = cms.InputTag("layer0JetCorrFactors"), ## source of the valuemap containing the jet correction factors
 
     # resolution configurables
-    addResolutions = cms.bool(True),
-    caliJetResoFile  = cms.string('PhysicsTools/PatUtils/data/Resolutions_lJets_MCJetCorJetIcone5.root'),
-    caliBJetResoFile = cms.string('PhysicsTools/PatUtils/data/Resolutions_bJets_MCJetCorJetIcone5.root'),
-    useNNResolutions = cms.bool(False), ## use the neural network approach?
+    addResolutions = cms.bool(False),
 
     # -- BTagging information ---
     addBTagInfo = cms.bool(True), # master switch

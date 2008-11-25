@@ -36,9 +36,7 @@ allLayer1Electrons = cms.EDProducer("PATElectronProducer",
     embedSuperCluster = cms.bool(True), ## whether to embed in AOD externally stored supercluster
 
     # resolution configurables
-    addResolutions   = cms.bool(True),
-    electronResoFile = cms.string('PhysicsTools/PatUtils/data/Resolutions_electron.root'), # input root file for the resolution functions
-    useNNResolutions = cms.bool(False), ## use the neural network approach?
+    addResolutions   = cms.bool(False),
 
     # Store isolation values
     isolation = cms.PSet(
@@ -117,11 +115,10 @@ allLayer1Electrons = cms.EDProducer("PATElectronProducer",
     addEfficiencies = cms.bool(False),
     efficiencies    = cms.PSet(),
     
-##  FIXME: commented to make the code run with 220
-##  # electron cluster shape configurables
-##  addElectronShapes = cms.bool(True),
-##  reducedBarrelRecHitCollection = cms.InputTag("reducedEcalRecHitsEB"),
-##  reducedEndcapRecHitCollection = cms.InputTag("reducedEcalRecHitsEE"),
+    # electron cluster shape configurables
+    addElectronShapes = cms.bool(True),
+    reducedBarrelRecHitCollection = cms.InputTag("reducedEcalRecHitsEB"),
+    reducedEndcapRecHitCollection = cms.InputTag("reducedEcalRecHitsEE"),
 
 )
 

@@ -66,9 +66,7 @@ allLayer1Muons = cms.EDProducer("PATMuonProducer",
     ),
 
     # Resolution configurables
-    addResolutions = cms.bool(True),
-    muonResoFile = cms.string('PhysicsTools/PatUtils/data/Resolutions_muon.root'),
-    useNNResolutions = cms.bool(False), ## use the neural network approach?
+    addResolutions = cms.bool(False),
 
     # Trigger matching configurables
     addTrigMatch = cms.bool(True),

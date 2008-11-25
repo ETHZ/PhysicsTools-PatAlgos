@@ -1,5 +1,5 @@
 //
-// $Id: PATJetProducer.cc,v 1.26 2008/11/04 14:12:58 auterman Exp $
+// $Id: PATJetProducer.cc,v 1.26.2.1 2008/11/18 11:12:22 rwolf Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATJetProducer.h"
@@ -29,7 +29,6 @@
 
 #include "DataFormats/Math/interface/deltaR.h"
 
-#include "PhysicsTools/PatUtils/interface/ObjectResolutionCalc.h"
 #include "DataFormats/PatCandidates/interface/JetCorrFactors.h"
 
 #include "FWCore/Framework/interface/Selector.h"
@@ -61,9 +60,6 @@ PATJetProducer::PATJetProducer(const edm::ParameterSet& iConfig)  :
   addTrigMatch_            = iConfig.getParameter<bool>                       ( "addTrigMatch" );
   trigMatchSrc_            = iConfig.getParameter<std::vector<edm::InputTag> >( "trigPrimMatch" );
   addResolutions_          = iConfig.getParameter<bool> 		      ( "addResolutions" );
-  useNNReso_               = iConfig.getParameter<bool> 		      ( "useNNResolutions" );
-  caliJetResoFile_         = iConfig.getParameter<std::string>  	      ( "caliJetResoFile" );
-  caliBJetResoFile_        = iConfig.getParameter<std::string>  	      ( "caliBJetResoFile" );
   addBTagInfo_             = iConfig.getParameter<bool> 		      ( "addBTagInfo" );
   addDiscriminators_       = iConfig.getParameter<bool> 		      ( "addDiscriminators" );
   discriminatorModule_     = iConfig.getParameter<edm::InputTag>              ( "discriminatorModule" );
@@ -73,12 +69,6 @@ PATJetProducer::PATJetProducer(const edm::ParameterSet& iConfig)  :
   trackAssociation_        = iConfig.getParameter<edm::InputTag>	      ( "trackAssociationSource" );
   addJetCharge_            = iConfig.getParameter<bool> 		      ( "addJetCharge" ); 
   jetCharge_               = iConfig.getParameter<edm::InputTag>	      ( "jetChargeSource" );
-
-  // construct resolution calculator
-//   if (addResolutions_) {
-//     theResoCalc_ = new ObjectResolutionCalc(edm::FileInPath(caliJetResoFile_).fullPath(), useNNReso_);
-//     theBResoCalc_ = new ObjectResolutionCalc(edm::FileInPath(caliBJetResoFile_).fullPath(), useNNReso_);
-//   }
 
   // Efficiency configurables
   addEfficiencies_ = iConfig.getParameter<bool>("addEfficiencies");
@@ -119,10 +109,7 @@ PATJetProducer::PATJetProducer(const edm::ParameterSet& iConfig)  :
 
 
 PATJetProducer::~PATJetProducer() {
-//   if (addResolutions_) {
-//     delete theResoCalc_;
-//     delete theBResoCalc_;
-//   }
+
 }
 
 
@@ -245,15 +232,6 @@ void PATJetProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
         }
       }
     }
-
-    // add resolution info if demanded
-//     if (addResolutions_) {
-//       (*theResoCalc_)(ajet);
-//       Jet abjet(ajet.bCorrJet());
-//       (*theBResoCalc_)(abjet);
-//       ajet.setBResolutions(abjet.resolutionEt(), abjet.resolutionEta(), abjet.resolutionPhi(), abjet.resolutionA(), abjet.resolutionB(), abjet.resolutionC(), abjet.resolutionD(), abjet.resolutionTheta());
-//     }
-
 
     // add b-tag info if available & required
     if (addBTagInfo_) {
