@@ -14,7 +14,7 @@
 //
 // Original Author:  Freya Blekman
 //         Created:  Mon Apr 21 10:03:50 CEST 2008
-// $Id: VerySimplePATAnalysis.cc,v 1.1 2008/04/21 09:16:24 fblekman Exp $
+// $Id: VerySimplePATAnalysis.cc,v 1.2 2008/05/13 10:25:05 fblekman Exp $
 //
 //
 
@@ -127,27 +127,27 @@ VerySimplePATAnalysis::analyze(const edm::Event& iEvent, const edm::EventSetup& 
 
    edm::Handle<edm::View<pat::Muon> > muonHandle;
    iEvent.getByLabel(muoLabel_,muonHandle);
-   edm::View<pat::Muon> muons = *muonHandle;
+   const edm::View<pat::Muon> & muons = *muonHandle;   // const ... &, we don't make a copy of it!
    
    edm::Handle<edm::View<pat::Jet> > jetHandle;
    iEvent.getByLabel(jetLabel_,jetHandle);
-   edm::View<pat::Jet> jets = *jetHandle;
+   const edm::View<pat::Jet> & jets = *jetHandle;
 
    edm::Handle<edm::View<pat::Electron> > electronHandle;
    iEvent.getByLabel(eleLabel_,electronHandle);
-   edm::View<pat::Electron> electrons = *electronHandle;
+   const edm::View<pat::Electron> & electrons = *electronHandle;
 
    edm::Handle<edm::View<pat::MET> > metHandle;
    iEvent.getByLabel(metLabel_,metHandle);
-   edm::View<pat::MET> mets = *metHandle;
+   const edm::View<pat::MET> & mets = *metHandle;
 
    edm::Handle<edm::View<pat::Photon> > phoHandle;
    iEvent.getByLabel(phoLabel_,phoHandle);
-   edm::View<pat::Photon> photons = *phoHandle;
+   const edm::View<pat::Photon> & photons = *phoHandle;
 
    edm::Handle<edm::View<pat::Tau> > tauHandle;
    iEvent.getByLabel(tauLabel_,tauHandle);
-   edm::View<pat::Tau> taus = *tauHandle;
+   const edm::View<pat::Tau> & taus = *tauHandle;
 
    //{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}
    // example of a loop over objects... this works identical for all vectors defined above
