@@ -1,5 +1,5 @@
 //
-// $Id: PATMHTProducer.cc,v 1.1.2.8 2008/10/03 13:37:57 xshi Exp $
+// $Id: PATMHTProducer.cc,v 1.17 2008/12/01 20:10:21 xs32 Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATMHTProducer.h"
@@ -7,6 +7,8 @@
 pat::PATMHTProducer::PATMHTProducer(const edm::ParameterSet & iConfig){
 
   // Initialize the configurables
+  verbose_ = iConfig.getParameter<double>("verbose");
+
   jetLabel_ = iConfig.getUntrackedParameter<edm::InputTag>("jetTag");
   eleLabel_ = iConfig.getUntrackedParameter<edm::InputTag>("electronTag");
   muoLabel_ = iConfig.getUntrackedParameter<edm::InputTag>("muonTag");
@@ -14,7 +16,21 @@ pat::PATMHTProducer::PATMHTProducer(const edm::ParameterSet & iConfig){
   phoLabel_ = iConfig.getUntrackedParameter<edm::InputTag>("photonTag");
   
   uncertaintyScaleFactor_ = iConfig.getParameter<double>( "uncertaintyScaleFactor") ;
+  controlledUncertainty_  = iConfig.getParameter<bool>( "controlledUncertainty") ;
 
+  jetPtMin_     = iConfig.getParameter<double>("jetPtMin");
+  jetEtaMax_    = iConfig.getParameter<double>("jetEtaMax");
+  jetEMfracMax_ = iConfig.getParameter<double>("jetEMfracMax");
+  elePtMin_     = iConfig.getParameter<double>("elePtMin");
+  eleEtaMax_    = iConfig.getParameter<double>("eleEtaMax");
+  muonPtMin_    = iConfig.getParameter<double>("muonPtMin");
+  muonEtaMax_   = iConfig.getParameter<double>("muonEtaMax");
+
+  jetEtUncertaintyParameter0_ =  iConfig.getParameter<double>( "jetEtUncertaintyParameter0") ; 
+  jetEtUncertaintyParameter1_ =  iConfig.getParameter<double>( "jetEtUncertaintyParameter1") ; 
+  jetEtUncertaintyParameter2_ =  iConfig.getParameter<double>( "jetEtUncertaintyParameter2") ; 
+  jetPhiUncertaintyParameter0_=  iConfig.getParameter<double>( "jetPhiUncertaintyParameter0"); 
+    
   produces<pat::MHTCollection>();
 
 }
@@ -24,6 +40,7 @@ pat::PATMHTProducer::~PATMHTProducer() {
 }
 
 void pat::PATMHTProducer::beginJob(const edm::EventSetup& iSetup) {
+  setUncertaintyParameters();
 }
 void pat::PATMHTProducer::beginRun(const edm::EventSetup& iSetup) {
 }
@@ -47,11 +64,38 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
   // Fill Input Vector with Jets 
   std::string objectname="";
   for(edm::View<pat::Jet>::const_iterator jet_iter = jets.begin(); jet_iter!=jets.end(); ++jet_iter){
+    //-- Apply Jet Cuts --//
+    
+    if( (jet_iter->pt()  < jetPtMin_) ||
+	(TMath::Abs(jet_iter->eta()) > jetEtaMax_) || 
+        (jet_iter->emEnergyFraction() > jetEMfracMax_ ) )
+      continue; 
+    
     double jet_et = jet_iter->et();
     double jet_phi = jet_iter->phi();
-    double sigma_et = jet_iter->resolutionEt();
-    double sigma_phi = jet_iter->resolutionPhi();
+
+
+    if (verbose_ > 0.) {
+      std::cout << "jet pt : " << jet_iter->pt() 
+		<< " eta : " << jet_iter->eta() 
+		<< " EMF: "  << jet_iter->emEnergyFraction()
+		<<  std::endl;
+    }
+
+    double sigma_et, sigma_phi ;
+
+    if (controlledUncertainty_) {
+      //-- Use controlled uncertainties --//
+      sigma_et  = jetUncertainty.etUncertainty->Eval(jet_et);
+      sigma_phi = jetUncertainty.phiUncertainty->Eval(jet_et);
+    } 
+    else {
+      sigma_et = jet_iter->resolutionEt();
+      sigma_phi = jet_iter->resolutionPhi();
+    }
+
     objectname="jet";
+
     if(sigma_et<=0 || sigma_phi<=0)
       edm::LogWarning("PATMHTProducer") << 
 	" uncertainties for "  << objectname <<
@@ -62,8 +106,6 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
     if (uncertaintyScaleFactor_ != 1.0){
       sigma_et  = sigma_et  * uncertaintyScaleFactor_;
       sigma_phi = sigma_phi * uncertaintyScaleFactor_;
-      // edm::LogWarning("PATMHTProducer") << " using uncertainty scale factor: " << uncertaintyScaleFactor_ <<
-      //" , uncertainties for " << objectname <<" changed to (et, phi): " << sigma_et << "," << sigma_phi; 
     }
 
     metsig::SigInputObj tmp_jet(objectname,jet_et,jet_phi,sigma_et,sigma_phi);
@@ -77,6 +119,17 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
 
   // Fill Input Vector with Electrons 
   for(edm::View<pat::Electron>::const_iterator electron_iter = electrons.begin(); electron_iter!=electrons.end(); ++electron_iter){
+
+    // Select electrons
+    if (electron_iter->et() < elePtMin_ || 
+	TMath::Abs(electron_iter->eta()) > eleEtaMax_  ) continue; 
+
+    if (verbose_ > 0.) {
+      std::cout << "electron pt = " << electron_iter->pt() 
+		<< " eta : " << electron_iter->eta() 
+		<<  std::endl;
+    }
+
     double electron_et = electron_iter->et();
     double electron_phi = electron_iter->phi();
     double sigma_et = electron_iter->resolutionEt();
@@ -87,14 +140,10 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
 	" uncertainties for "  << objectname <<
 	" are (et, phi): " << sigma_et << "," << sigma_phi << 
 	" (et,phi): " << electron_et << "," << electron_phi;
-    // try to read out the electron resolution from the root file at PatUtils
-    //-- Store electron for Significance Calculation --//
     
     if (uncertaintyScaleFactor_ != 1.0){
       sigma_et  = sigma_et  * uncertaintyScaleFactor_;
       sigma_phi = sigma_phi * uncertaintyScaleFactor_;
-      // edm::LogWarning("PATMHTProducer") << " using uncertainty scale factor: " << uncertaintyScaleFactor_ <<
-      //" , uncertainties for " << objectname <<" changed to (et, phi): " << sigma_et << "," << sigma_phi; 
     }
 
 
@@ -109,6 +158,17 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
 
   // Fill Input Vector with Muons 
   for(edm::View<pat::Muon>::const_iterator muon_iter = muons.begin(); muon_iter!=muons.end(); ++muon_iter){
+    // Select electrons
+    if (muon_iter->pt() < muonPtMin_ || 
+	TMath::Abs(muon_iter->eta()) > muonEtaMax_  ) continue; 
+
+    if (verbose_ > 0.) {
+      std::cout << "muon pt = " << muon_iter->pt() 
+		<< " eta : " << muon_iter->eta() 
+		<<  std::endl;
+    }
+
+
     double muon_pt = muon_iter->pt();
     double muon_phi = muon_iter->phi();
     double sigma_et = muon_iter->resolutionEt();
@@ -119,14 +179,10 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
 	" uncertainties for "  << objectname << 
 	" are (et, phi): " << sigma_et << "," <<
 	sigma_phi << " (pt,phi): " << muon_pt << "," << muon_phi;
-    // try to read out the muon resolution from the root file at PatUtils
-    //-- Store muon for Significance Calculation --//
 
     if (uncertaintyScaleFactor_ != 1.0){
       sigma_et  = sigma_et  * uncertaintyScaleFactor_;
       sigma_phi = sigma_phi * uncertaintyScaleFactor_;
-      //edm::LogWarning("PATMHTProducer") << " using uncertainty scale factor: " << uncertaintyScaleFactor_ <<
-      //" , uncertainties for " << objectname <<" changed to (et, phi): " << sigma_et << "," << sigma_phi; 
     }
 
     metsig::SigInputObj tmp_muon(objectname,muon_pt,muon_phi,sigma_et,sigma_phi);
@@ -134,8 +190,7 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
      
   }
   
-  /* We'll deal with photons and taus later for sure :)
-
+  /* We'll deal with photons and taus later for sure
 
   edm::Handle<edm::View<pat::Photon> > photonHandle;
   iEvent.getByLabel(phoLabel_,photonHandle);
@@ -157,16 +212,20 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
      
   }
 
+
   edm::Handle<edm::View<pat::Tau> > tauHandle;
   iEvent.getByLabel(tauLabel_,tauHandle);
   edm::View<pat::Tau> taus = *tauHandle;
 
+  std::cout << "------ Filling taus ... ---------" <<  std::endl;
   // Fill Input Vector with Taus 
   for(edm::View<pat::Tau>::const_iterator tau_iter = taus.begin(); tau_iter!=taus.end(); ++tau_iter){
     double tau_pt = tau_iter->pt();
     double tau_phi = tau_iter->phi();
     double sigma_et = tau_iter->resolutionEt();
     double sigma_phi = tau_iter->resolutionPhi();
+    std::cout << "sigma_et = " << sigma_et << " , sigma_phi = " << sigma_phi << std::endl;
+
     objectname="tau";
     if(sigma_et<=0 || sigma_phi<=0)
       edm::LogWarning("PATMHTProducer") << " uncertainties for "  << objectname << " are (et, phi): " << sigma_et << "," << sigma_phi << " (pt,phi): " << tau_pt << "," << tau_phi;
@@ -176,8 +235,8 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
     physobjvector_.push_back(tmp_tau);
      
   }
-  
   */
+  
 
 
   double met_x=0;
@@ -200,6 +259,116 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
   iEvent.put( themetsigcoll);
 
 }  
+
+
+//=== Uncertainty Functions ===============================================
+void pat::PATMHTProducer::setUncertaintyParameters(){
+
+  // set the various functions here:
+
+  //-- For Et functions, [0]= par_n, [1]=par_s, [2]= par_c ---//
+  //-- Ecal Uncertainty Functions ------------------------------------//
+  //-- From: FastSimulation/Calorimetry/data/HcalResponse.cfi --//
+  //-- Ecal Barrel --//
+  ecalEBUncertainty.etUncertainty = new TF1("ecalEBEtFunc","x*sqrt(([0]*[0]/(x*x))+([1]*[1]/x)+([2]*[2]))",3);
+  ecalEBUncertainty.etUncertainty->SetParameter(0,0.2);
+  ecalEBUncertainty.etUncertainty->SetParameter(1,0.03);
+  ecalEBUncertainty.etUncertainty->SetParameter(2,0.005);
+
+  ecalEBUncertainty.phiUncertainty = new TF1("ecalEBphiFunc","[0]*x",1);
+  ecalEBUncertainty.phiUncertainty->SetParameter(0,0.0174);
+
+  //-- Ecal Endcap --//
+  ecalEEUncertainty.etUncertainty = new TF1("ecalEEEtFunc","x*sqrt(([0]*[0]/(x*x))+([1]*[1]/x)+([2]*[2]))",3);
+  ecalEEUncertainty.etUncertainty->SetParameter(0,0.2);
+  ecalEEUncertainty.etUncertainty->SetParameter(1,0.03);
+  ecalEEUncertainty.etUncertainty->SetParameter(2,0.005);
+
+  ecalEEUncertainty.phiUncertainty = new TF1("ecalEEphiFunc","[0]*x",1);
+  ecalEEUncertainty.phiUncertainty->SetParameter(0,0.087);
+
+  //-- Hcal Uncertainty Functions --------------------------------------//
+  //-- From: FastSimulation/Calorimetry/data/HcalResponse.cfi --//
+  //-- Hcal Barrel --//
+  hcalHBUncertainty.etUncertainty = new TF1("hcalHBEtFunc","x*sqrt(([0]*[0]/(x*x))+([1]*[1]/x)+([2]*[2]))",3);
+  hcalHBUncertainty.etUncertainty->SetParameter(0,0.);
+  hcalHBUncertainty.etUncertainty->SetParameter(1,1.22);
+  hcalHBUncertainty.etUncertainty->SetParameter(2,0.05);
+
+  hcalHBUncertainty.phiUncertainty = new TF1("ecalHBphiFunc","[0]*x",1);
+  hcalHBUncertainty.phiUncertainty->SetParameter(0,0.087);
+
+  //-- Hcal Endcap --//
+  hcalHEUncertainty.etUncertainty = new TF1("hcalHEEtFunc","x*sqrt(([0]*[0]/(x*x))+([1]*[1]/x)+([2]*[2]))",3);
+  hcalHEUncertainty.etUncertainty->SetParameter(0,0.);
+  hcalHEUncertainty.etUncertainty->SetParameter(1,1.3);
+  hcalHEUncertainty.etUncertainty->SetParameter(2,0.05);
+
+  hcalHEUncertainty.phiUncertainty = new TF1("ecalHEphiFunc","[0]*x",1);
+  hcalHEUncertainty.phiUncertainty->SetParameter(0,0.087);
+
+  //-- Hcal Outer --//
+  hcalHOUncertainty.etUncertainty = new TF1("hcalHOEtFunc","x*sqrt(([0]*[0]/(x*x))+([1]*[1]/x)+([2]*[2]))",3);
+  hcalHOUncertainty.etUncertainty->SetParameter(0,0.);
+  hcalHOUncertainty.etUncertainty->SetParameter(1,1.82);
+  hcalHOUncertainty.etUncertainty->SetParameter(2,0.09);
+
+  hcalHOUncertainty.phiUncertainty = new TF1("ecalHOphiFunc","[0]*x",1);
+  hcalHOUncertainty.phiUncertainty->SetParameter(0,0.087);
+
+  //-- Hcal Forward --//
+  hcalHFUncertainty.etUncertainty = new TF1("hcalHFEtFunc","x*sqrt(([0]*[0]/(x*x))+([1]*[1]/x)+([2]*[2]))",3);
+  hcalHFUncertainty.etUncertainty->SetParameter(0,0.);
+  hcalHFUncertainty.etUncertainty->SetParameter(1,1.82);
+  hcalHFUncertainty.etUncertainty->SetParameter(2,0.09);
+
+  hcalHFUncertainty.phiUncertainty = new TF1("ecalHFphiFunc","[0]*x",1);
+  hcalHFUncertainty.phiUncertainty->SetParameter(0,0.174);
+
+  //--- Jet Uncertainty Functions --------------------------------------//
+  jetUncertainty.etUncertainty = new TF1("jetEtFunc","x*sqrt(([0]*[0]/(x*x))+([1]*[1]/x)+([2]*[2]))",3);
+  //-- values from PTDR 1, ch 11.4 --//
+  jetUncertainty.etUncertainty->SetParameter(0, jetEtUncertaintyParameter0_);
+  jetUncertainty.etUncertainty->SetParameter(1, jetEtUncertaintyParameter1_);
+  jetUncertainty.etUncertainty->SetParameter(2, jetEtUncertaintyParameter2_);
+
+
+  //-- phi value from our own fits --//
+  jetUncertainty.phiUncertainty = new TF1("jetPhiFunc","[0]*x",1);
+  jetUncertainty.phiUncertainty->SetParameter(0, jetPhiUncertaintyParameter0_);
+
+  //-- Jet corrections are assumed not to have an error --//
+  /*jetCorrUncertainty.etUncertainty = new TF1("jetCorrEtFunc","[0]*x",1);
+  jetCorrUncertainty.etUncertainty->SetParameter(0,0.0);
+  jetCorrUncertainty.phiUncertainty = new TF1("jetCorrPhiFunc","[0]*x",1);
+  jetCorrUncertainty.phiUncertainty->SetParameter(0,0.0*(3.14159/180.));*/
+
+
+  //--- Electron Uncertainty Functions ---------------------------------//
+  // completely ambiguious values for electron-like jets...
+  // the egamma group keeps track of these here:
+  // https://twiki.cern.ch/twiki/bin/view/CMS/EgammaCMSSWVal
+  eleUncertainty.etUncertainty = new TF1("eleEtFunc","[0] * x",1);
+  eleUncertainty.etUncertainty->SetParameter(0,0.034); // electron resolution in energy is around 3.4%, measured for 10 < pT < 50 at realistic events with pile-up.
+  eleUncertainty.phiUncertainty = new TF1("elePhiFunc","[0] * x",1);
+  eleUncertainty.phiUncertainty->SetParameter(0,1*(3.14159/180.));
+
+  //--- Muon Uncertainty Functions ------------------------------------//
+  // and ambiguious values for the muons...
+  muonUncertainty.etUncertainty = new TF1("muonEtFunc","[0] * x",1);
+  muonUncertainty.etUncertainty->SetParameter(0,0.01);
+  muonUncertainty.phiUncertainty = new TF1("muonPhiFunc","[0] * x",1);
+  muonUncertainty.phiUncertainty->SetParameter(0,1*(3.14159/180.));
+
+  //-- Muon calo deposites are assumed not to have an error --//
+  /*muonCorrUncertainty.etUncertainty = new TF1("muonCorrEtFunc","[0] * x",1);
+  muonCorrUncertainty.etUncertainty->SetParameter(0,0.0);
+  muonCorrUncertainty.phiUncertainty = new TF1("muonCorrPhiFunc","[0] * x",1);
+  muonCorrUncertainty.phiUncertainty->SetParameter(0,0.0*(3.14159/180.)); */
+ 
+}
+
+
 
 
 using namespace pat; 

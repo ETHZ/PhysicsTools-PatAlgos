@@ -13,7 +13,7 @@
 //
 // Original Author:  Xin Shi & Freya Blekman, Cornell University
 //         Created:  Fri Sep 12 17:58:29 CEST 2008
-// $Id: PATMHTProducer.h,v 1.1.2.2 2008/10/03 13:37:57 xshi Exp $
+// $Id: PATMHTProducer.h,v 1.12 2008/12/01 20:10:21 xs32 Exp $
 //
 //
 
@@ -51,6 +51,8 @@
 #include "RecoMET/METAlgorithms/interface/significanceAlgo.h"
 
 
+#include "TF1.h"
+#include "TMath.h"
 
 //
 // class declaration
@@ -70,6 +72,8 @@ class PATMHTProducer : public edm::EDProducer {
       
       // ----------member data ---------------------------
 
+  double verbose_;
+
   // input tags.
   edm::InputTag mhtLabel_;
   edm::InputTag jetLabel_;
@@ -81,6 +85,70 @@ class PATMHTProducer : public edm::EDProducer {
   std::vector<metsig::SigInputObj> physobjvector_ ;
 
   double uncertaintyScaleFactor_; // scale factor for the uncertainty parameters.
+  bool    controlledUncertainty_; // use controlled uncertainty parameters.
+
+ 
+ //--- test the uncertainty parameters ---//
+
+  class uncertaintyFunctions{
+  public:
+    TF1 *etUncertainty;
+    TF1 *phiUncertainty;
+  };
+
+  void setUncertaintyParameters();// fills the following uncertaintyFunctions objects:
+  uncertaintyFunctions ecalEBUncertainty;
+  uncertaintyFunctions ecalEEUncertainty;
+  uncertaintyFunctions hcalHBUncertainty;
+  uncertaintyFunctions hcalHEUncertainty;
+  uncertaintyFunctions hcalHOUncertainty;
+  uncertaintyFunctions hcalHFUncertainty;
+
+  uncertaintyFunctions jetUncertainty;
+  uncertaintyFunctions jetCorrUncertainty;
+  uncertaintyFunctions eleUncertainty;
+  uncertaintyFunctions muonUncertainty;
+  uncertaintyFunctions muonCorrUncertainty;
+
+  //--- tags and parameters ---//
+  bool useCaloTowers_;
+  bool useJets_;
+  bool useElectrons_;
+  bool useMuons_;
+  bool noHF_;
+
+  double jetPtMin_;
+  double jetEtaMax_;
+  double jetEMfracMax_;
+
+  double elePtMin_;
+  double eleEtaMax_;
+
+  double muonPtMin_;
+  double muonEtaMax_;
+  double muonTrackD0Max_;
+  double muonTrackDzMax_;
+  int muonNHitsMin_;
+  double muonDPtMax_;
+  double muonChiSqMax_;
+
+  //  double uncertaintyScaleFactor_; // scale factor for the uncertainty parameters.
+
+  double jetEtUncertaintyParameter0_ ; 
+  double jetEtUncertaintyParameter1_ ; 
+  double jetEtUncertaintyParameter2_ ; 
+
+  double jetPhiUncertaintyParameter0_ ; 
+
+
+  edm::InputTag CaloJetAlgorithmTag_; 
+  edm::InputTag CorJetAlgorithmTag_;
+  std::string   JetCorrectionService_;
+  edm::InputTag MuonTag_;
+  edm::InputTag ElectronTag_;
+  edm::InputTag CaloTowerTag_;
+  std::string metCollectionLabel_;
+  std::string significanceLabel_;
 
 };
 //define this as a plug-in
