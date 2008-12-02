@@ -1,0 +1,5 @@
+include "PhysicsTools/PatAlgos/data/producersLayer1/mhtProducer.cfi"
+
+sequence layer1MHTs = {
+  allLayer1MHTs
+}

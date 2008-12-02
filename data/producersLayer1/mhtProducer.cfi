@@ -1,0 +1,36 @@
+module allLayer1MHTs = PATMHTProducer {
+
+  ### General configurables
+    double verbose  = 0.
+    
+    untracked InputTag jetTag      = selectedLayer1Jets
+    untracked InputTag electronTag = selectedLayer1Electrons
+    untracked InputTag muonTag     = selectedLayer1Muons
+    untracked InputTag tauTag      = selectedLayer1Taus
+    untracked InputTag photonTag   = selectedLayer1Photons
+    
+  ### Selection configurables
+    
+    double jetPtMin      = 20.
+    double jetEtaMax     = 5.
+    double jetEMfracMax  = 0.9
+    double elePtMin      = 10.
+    double eleEtaMax     = 3.
+    double muonPtMin     = 10.
+    double muonEtaMax    = 2.5
+    
+  ### Resolution configurables
+
+    double uncertaintyScaleFactor = 1.0  
+	
+    bool  controlledUncertainty = true #use controlled uncertainty parameters.
+    
+    # //-- values from PTDR 1, ch 11.4 --//
+    double jetEtUncertaintyParameter0  = 5.6  
+    double jetEtUncertaintyParameter1  = 1.25  
+    double jetEtUncertaintyParameter2  = 0.033
+    double jetPhiUncertaintyParameter0 = 0.046 # = 2.635*(3.14159/180.)  
+    
+}
+
+
