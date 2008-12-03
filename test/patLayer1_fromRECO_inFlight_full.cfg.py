@@ -33,6 +33,7 @@ process.inFlightMuons = cms.EDProducer("PATGenCandsFromSimTracksProducer",
         particleTypes = cms.vstring("mu+"),       # picks also mu-, of course
         filter        = cms.vstring("pt > 0.5"),  # just for testing
         makeMotherLink = cms.bool(True),
+        writeAncestors = cms.bool(True), # save also the intermediate GEANT ancestors of the muons
         genParticles   = cms.InputTag("genParticles"),
 )
 process.muMatch3 = process.muonMatch.clone(mcStatus = cms.vint32(3))
