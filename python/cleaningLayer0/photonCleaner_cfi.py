@@ -1,5 +1,7 @@
 import FWCore.ParameterSet.Config as cms
 
+from RecoEgamma.EgammaIsolationAlgos.gamIsoFromDepsModules_cff import gamIsoFromDepsEcalFromClusts,gamIsoFromDepsHcalFromTowers,gamIsoFromDepsTk
+
 allLayer0Photons = cms.EDFilter("PATPhotonCleaner",
     ## Input collection of Photons
     photonSource = cms.InputTag("photons"),
@@ -51,7 +53,7 @@ allLayer0Photons = cms.EDFilter("PATPhotonCleaner",
             # source IsoDeposit
             src = cms.InputTag("patAODPhotonIsolations","gamIsoDepositHcalFromTowers"), ## ..FromTowers if computed on AOD
             # cut value - just a test, not an official one
-            cut = cms.double(5.0)
+            cut = cms.double(5.0),
             # parameters (E/gamma POG defaults)
             vetos  = gamIsoFromDepsHcalFromTowers.deposits[0].vetos,
             deltaR = gamIsoFromDepsHcalFromTowers.deposits[0].deltaR,
