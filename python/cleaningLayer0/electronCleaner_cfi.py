@@ -7,7 +7,7 @@
 # set isolation but don't reject non-isolated electrons
 import FWCore.ParameterSet.Config as cms
 
-from RecoEgamma.EgammaIsolationAlgos.eleIsoFromDepsModules_cff import eleIsoFromDepsEcalFromClusts,eleIsoFromDepsHcalFromTowers,eleIsoFromDepsTk
+from RecoEgamma.EgammaIsolationAlgos.eleIsoFromDepsModules_cff import eleIsoFromDepsEcalFromHits,eleIsoFromDepsHcalFromHits,eleIsoFromDepsTk
 
 allLayer0Electrons = cms.EDFilter("PATElectronCleaner",
     ## reco electron input source
@@ -43,30 +43,22 @@ allLayer0Electrons = cms.EDFilter("PATElectronCleaner",
             # value for the cut (not optimized, just for testing)
             cut = cms.double(5.0),
             # parameters to compute isolation (Egamma POG defaults)
-            vetos  = eleIsoFromDepsEcalFromClusts.deposits[0].vetos,
-            deltaR = eleIsoFromDepsEcalFromClusts.deposits[0].deltaR,
+            vetos  = eleIsoFromDepsEcalFromHits.deposits[0].vetos,
+            deltaR = eleIsoFromDepsEcalFromHits.deposits[0].deltaR,
             skipDefaultVeto = cms.bool(True), # This overrides previous settings
 #           # Or set your own vetos...
 #            deltaR = cms.double(0.4),
 #            vetos = cms.vstring('EcalBarrel:0.040', 'EcalBarrel:RectangularEtaPhiVeto(-0.01,0.01,-0.5,0.5)',  # Barrel (|eta| < 1.479)
 #                                'EcalEndcaps:0.070','EcalEndcaps:RectangularEtaPhiVeto(-0.02,0.02,-0.5,0.5)'),
         ),
-        ## other option, using eleIsoDepositEcalSCVetoFromClust (see also recoLayer0/electronIsolation_cff.py)
-        #PSet ecal = cms.PSet( 
-        #   src    = cms.InputTag("patAODElectronIsolations", "eleIsoDepositEcalSCVetoFromClusts")
-        #   deltaR = cms.double(0.4)
-        #   vetos  = cms.vstring()     # no veto, already done with SC
-        #   skipDefaultVeto = cms.bool(True)
-        #   cut    = cms.double(5)
-        #),
         hcal = cms.PSet(
             # source IsoDeposit
             src = cms.InputTag("patAODElectronIsolations","eleIsoDepositHcalFromHits"), # FromTowers if computed from AOD
             # value for the cut (not optimized, just for testing)
             cut = cms.double(5.0),
             # parameters to compute isolation (Egamma POG defaults)
-            vetos  = eleIsoFromDepsHcalFromTowers.deposits[0].vetos,
-            deltaR = eleIsoFromDepsHcalFromTowers.deposits[0].deltaR,
+            vetos  = eleIsoFromDepsHcalFromHits.deposits[0].vetos,
+            deltaR = eleIsoFromDepsHcalFromHits.deposits[0].deltaR,
             skipDefaultVeto = cms.bool(True),  # This overrides previous settings            
 #           # Or set your own vetos...
 #            deltaR = cms.double(0.4),

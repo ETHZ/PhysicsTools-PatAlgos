@@ -1,6 +1,6 @@
 import FWCore.ParameterSet.Config as cms
 
-from RecoEgamma.EgammaIsolationAlgos.gamIsoFromDepsModules_cff import gamIsoFromDepsEcalFromClusts,gamIsoFromDepsHcalFromTowers,gamIsoFromDepsTk
+from RecoEgamma.EgammaIsolationAlgos.gamIsoFromDepsModules_cff import gamIsoFromDepsEcalFromHits,gamIsoFromDepsHcalFromHits,gamIsoFromDepsTk
 
 allLayer0Photons = cms.EDFilter("PATPhotonCleaner",
     ## Input collection of Photons
@@ -34,8 +34,8 @@ allLayer0Photons = cms.EDFilter("PATPhotonCleaner",
             # cut value - just a test, not an official one
             cut = cms.double(5.0),
             # parameters (E/gamma POG defaults)
-            vetos  = gamIsoFromDepsEcalFromClusts.deposits[0].vetos,
-            deltaR = gamIsoFromDepsEcalFromClusts.deposits[0].deltaR,
+            vetos  = gamIsoFromDepsEcalFromHits.deposits[0].vetos,
+            deltaR = gamIsoFromDepsEcalFromHits.deposits[0].deltaR,
             skipDefaultVeto = cms.bool(True),
 #           # Or set your own vetos...
 #            deltaR          = cms.double(0.4),
@@ -55,8 +55,8 @@ allLayer0Photons = cms.EDFilter("PATPhotonCleaner",
             # cut value - just a test, not an official one
             cut = cms.double(5.0),
             # parameters (E/gamma POG defaults)
-            vetos  = gamIsoFromDepsHcalFromTowers.deposits[0].vetos,
-            deltaR = gamIsoFromDepsHcalFromTowers.deposits[0].deltaR,
+            vetos  = gamIsoFromDepsHcalFromHits.deposits[0].vetos,
+            deltaR = gamIsoFromDepsHcalFromHits.deposits[0].deltaR,
             skipDefaultVeto = cms.bool(True),
 #           # Or set your own vetos...            
 #            deltaR          = cms.double(0.4),
