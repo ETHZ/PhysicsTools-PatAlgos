@@ -1,11 +1,20 @@
 import FWCore.ParameterSet.Config as cms
 
+### OK, so apparently we need to make IsoDeposits for HCAL Towers ourselves in 2.2.X
+from RecoEgamma.EgammaIsolationAlgos.eleHcalExtractorBlocks_cff import *
+eleIsoDepositHcalFromTowers = cms.EDProducer("CandIsoDepositProducer",      
+        src = cms.InputTag("pixelMatchGsfElectrons"),   
+        MultipleDepositsFlag = cms.bool(False),     
+        trackType = cms.string('candidate'),    
+        ExtractorPSet = cms.PSet( EleIsoHcalFromTowersExtractorBlock )      
+)
+
 # define module labels for old (tk-based isodeposit) POG isolation
 # WARNING: these labels are used in the functions below.
 patAODElectronIsolationLabels = cms.VInputTag(
         cms.InputTag("eleIsoDepositTk"),
         cms.InputTag("eleIsoDepositEcalFromHits"),
-        cms.InputTag("eleIsoDepositHcalFromHits"),
+        cms.InputTag("eleIsoDepositHcalFromTowers"),
 )
 
 # read and convert to ValueMap<IsoDeposit> keyed to Candidate
@@ -23,7 +32,7 @@ layer0ElectronIsolations = cms.EDFilter("CandManyValueMapsSkimmerIsoDeposits",
 )
 
 # sequence to run on AOD before PAT
-patAODElectronIsolation = cms.Sequence(patAODElectronIsolations)
+patAODElectronIsolation = cms.Sequence(eleIsoDepositHcalFromTowers * patAODElectronIsolations)
 
 # sequence to run after the PAT cleaners
 patLayer0ElectronIsolation = cms.Sequence(layer0ElectronIsolations)

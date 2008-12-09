@@ -7,7 +7,7 @@
 # set isolation but don't reject non-isolated electrons
 import FWCore.ParameterSet.Config as cms
 
-from RecoEgamma.EgammaIsolationAlgos.eleIsoFromDepsModules_cff import eleIsoFromDepsEcalFromHits,eleIsoFromDepsHcalFromHits,eleIsoFromDepsTk
+from RecoEgamma.EgammaIsolationAlgos.eleIsoFromDepsModules_cff import eleIsoFromDepsEcalFromHits,eleIsoFromDepsHcalFromTowers,eleIsoFromDepsTk
 
 allLayer0Electrons = cms.EDFilter("PATElectronCleaner",
     ## reco electron input source
@@ -53,12 +53,12 @@ allLayer0Electrons = cms.EDFilter("PATElectronCleaner",
         ),
         hcal = cms.PSet(
             # source IsoDeposit
-            src = cms.InputTag("patAODElectronIsolations","eleIsoDepositHcalFromHits"), # FromTowers if computed from AOD
+            src = cms.InputTag("patAODElectronIsolations","eleIsoDepositHcalFromTowers"), # FromTowers if computed from AOD
             # value for the cut (not optimized, just for testing)
             cut = cms.double(5.0),
             # parameters to compute isolation (Egamma POG defaults)
-            vetos  = eleIsoFromDepsHcalFromHits.deposits[0].vetos,
-            deltaR = eleIsoFromDepsHcalFromHits.deposits[0].deltaR,
+            vetos  = eleIsoFromDepsHcalFromTowers.deposits[0].vetos,
+            deltaR = eleIsoFromDepsHcalFromTowers.deposits[0].deltaR,
             skipDefaultVeto = cms.bool(True),  # This overrides previous settings            
 #           # Or set your own vetos...
 #            deltaR = cms.double(0.4),

@@ -4,7 +4,7 @@
 # inner cone veto (endcaps, |eta| >= 1.479)
 import FWCore.ParameterSet.Config as cms
 
-from RecoEgamma.EgammaIsolationAlgos.gamIsoFromDepsModules_cff import gamIsoFromDepsEcalFromHits,gamIsoFromDepsHcalFromHits,gamIsoFromDepsTk
+from RecoEgamma.EgammaIsolationAlgos.gamIsoFromDepsModules_cff import gamIsoFromDepsEcalFromHits,gamIsoFromDepsHcalFromTowers,gamIsoFromDepsTk
 
 allLayer1Photons = cms.EDProducer("PATPhotonProducer",
     # General configurables
@@ -60,10 +60,10 @@ allLayer1Photons = cms.EDProducer("PATPhotonProducer",
         ),
         hcal = cms.PSet(
             # source IsoDeposit
-            src = cms.InputTag("layer0PhotonIsolations","gamIsoDepositHcalFromHits"),
+            src = cms.InputTag("layer0PhotonIsolations","gamIsoDepositHcalFromTowers"),
             # parameters (E/gamma POG defaults)
-            vetos  = gamIsoFromDepsHcalFromHits.deposits[0].vetos,
-            deltaR = gamIsoFromDepsHcalFromHits.deposits[0].deltaR,
+            vetos  = gamIsoFromDepsHcalFromTowers.deposits[0].vetos,
+            deltaR = gamIsoFromDepsHcalFromTowers.deposits[0].deltaR,
             skipDefaultVeto = cms.bool(True),
 #           # Or set your own vetos...            
 #            deltaR          = cms.double(0.4),
@@ -74,7 +74,7 @@ allLayer1Photons = cms.EDProducer("PATPhotonProducer",
     isoDeposits = cms.PSet(
         tracker = cms.InputTag("layer0PhotonIsolations","gamIsoDepositTk"),
         ecal    = cms.InputTag("layer0PhotonIsolations","gamIsoDepositEcalFromHits"),
-        hcal    = cms.InputTag("layer0PhotonIsolations","gamIsoDepositHcalFromHits"),
+        hcal    = cms.InputTag("layer0PhotonIsolations","gamIsoDepositHcalFromTowers"),
     ),
 
     # PhotonID configurables
