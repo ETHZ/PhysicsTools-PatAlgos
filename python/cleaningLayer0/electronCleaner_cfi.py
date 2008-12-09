@@ -39,7 +39,7 @@ allLayer0Electrons = cms.EDFilter("PATElectronCleaner",
         ),
         ecal = cms.PSet(
             # source IsoDeposit
-            src = cms.InputTag("patAODElectronIsolations","eleIsoDepositEcalFromClusts"), # FromClusts if computed on AOD
+            src = cms.InputTag("patAODElectronIsolations","eleIsoDepositEcalFromHits"), 
             # value for the cut (not optimized, just for testing)
             cut = cms.double(5.0),
             # parameters to compute isolation (Egamma POG defaults)
@@ -61,7 +61,7 @@ allLayer0Electrons = cms.EDFilter("PATElectronCleaner",
         #),
         hcal = cms.PSet(
             # source IsoDeposit
-            src = cms.InputTag("patAODElectronIsolations","eleIsoDepositHcalFromTowers"), # FromTowers if computed from AOD
+            src = cms.InputTag("patAODElectronIsolations","eleIsoDepositHcalFromHits"), # FromTowers if computed from AOD
             # value for the cut (not optimized, just for testing)
             cut = cms.double(5.0),
             # parameters to compute isolation (Egamma POG defaults)

@@ -30,7 +30,7 @@ allLayer0Photons = cms.EDFilter("PATPhotonCleaner",
         ),
         ecal = cms.PSet(
             # source IsoDeposit
-            src = cms.InputTag("patAODPhotonIsolations","gamIsoDepositEcalFromClusts"), # FromClusts if computed from AOD
+            src = cms.InputTag("patAODPhotonIsolations","gamIsoDepositEcalFromHits"), 
             # cut value - just a test, not an official one
             cut = cms.double(5.0),
             # parameters (E/gamma POG defaults)
@@ -51,7 +51,7 @@ allLayer0Photons = cms.EDFilter("PATPhotonCleaner",
         #),
         hcal = cms.PSet(
             # source IsoDeposit
-            src = cms.InputTag("patAODPhotonIsolations","gamIsoDepositHcalFromTowers"), ## ..FromTowers if computed on AOD
+            src = cms.InputTag("patAODPhotonIsolations","gamIsoDepositHcalFromHits"), ## 
             # cut value - just a test, not an official one
             cut = cms.double(5.0),
             # parameters (E/gamma POG defaults)

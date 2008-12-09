@@ -49,7 +49,7 @@ allLayer1Photons = cms.EDProducer("PATPhotonProducer",
         ),
         ecal = cms.PSet(
             # source IsoDeposit
-            src = cms.InputTag("layer0PhotonIsolations","gamIsoDepositEcalFromClusts"),
+            src = cms.InputTag("layer0PhotonIsolations","gamIsoDepositEcalFromHits"),
             # parameters (E/gamma POG defaults)
             vetos  = gamIsoFromDepsEcalFromClusts.deposits[0].vetos,
             deltaR = gamIsoFromDepsEcalFromClusts.deposits[0].deltaR,
@@ -58,16 +58,9 @@ allLayer1Photons = cms.EDProducer("PATPhotonProducer",
 #            deltaR          = cms.double(0.4),
 #            vetos           = cms.vstring('EcalBarrel:0.045', 'EcalEndcaps:0.070'),
         ),
-        ## other option, using gamIsoDepositEcalSCVetoFromClust (see also recoLayer0/photonIsolation_cff.py)
-        #PSet ecal = cms.PSet( 
-        #   src    = cms.InputTag("layer0PhotonIsolations", "gamIsoDepositEcalSCVetoFromClusts")
-        #   deltaR = cms.double(0.4)
-        #   vetos  = cms.vstring()     # no veto, already done with SC
-        #   skipDefaultVeto = cms.bool(True)
-        #),
         hcal = cms.PSet(
             # source IsoDeposit
-            src = cms.InputTag("layer0PhotonIsolations","gamIsoDepositHcalFromTowers"),
+            src = cms.InputTag("layer0PhotonIsolations","gamIsoDepositHcalFromHits"),
             # parameters (E/gamma POG defaults)
             vetos  = gamIsoFromDepsHcalFromTowers.deposits[0].vetos,
             deltaR = gamIsoFromDepsHcalFromTowers.deposits[0].deltaR,
@@ -80,10 +73,8 @@ allLayer1Photons = cms.EDProducer("PATPhotonProducer",
     #   store isodeposits to recompute isolation
     isoDeposits = cms.PSet(
         tracker = cms.InputTag("layer0PhotonIsolations","gamIsoDepositTk"),
-        #ecal    = cms.InputTag("layer0PhotonIsolations","gamIsoDepositEcalFromHits"),
-        ecal    = cms.InputTag("layer0PhotonIsolations","gamIsoDepositEcalFromClusts"),
-        #hcal    = cms.InputTag("layer0PhotonIsolations","gamIsoDepositHcalFromHits"),
-        hcal    = cms.InputTag("layer0PhotonIsolations","gamIsoDepositHcalFromTowers"),
+        ecal    = cms.InputTag("layer0PhotonIsolations","gamIsoDepositEcalFromHits"),
+        hcal    = cms.InputTag("layer0PhotonIsolations","gamIsoDepositHcalFromHits"),
     ),
 
     # PhotonID configurables

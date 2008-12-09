@@ -50,7 +50,7 @@ allLayer1Electrons = cms.EDProducer("PATElectronProducer",
         ),
         ecal = cms.PSet(
             # source IsoDeposit
-            src = cms.InputTag("layer0ElectronIsolations","eleIsoDepositEcalFromClusts"),
+            src = cms.InputTag("layer0ElectronIsolations","eleIsoDepositEcalFromHits"),
             # parameters to compute isolation (Egamma POG defaults)
             vetos  = eleIsoFromDepsEcalFromClusts.deposits[0].vetos,
             deltaR = eleIsoFromDepsEcalFromClusts.deposits[0].deltaR,
@@ -60,16 +60,9 @@ allLayer1Electrons = cms.EDProducer("PATElectronProducer",
 #            vetos = cms.vstring('EcalBarrel:0.040', 'EcalBarrel:RectangularEtaPhiVeto(-0.01,0.01,-0.5,0.5)',  # Barrel (|eta| < 1.479)
 #                                'EcalEndcaps:0.070','EcalEndcaps:RectangularEtaPhiVeto(-0.02,0.02,-0.5,0.5)'),
         ),
-        ## other option, using eleIsoDepositEcalSCVetoFromClust (see also recoLayer0/electronIsolation_cff.py)
-        #PSet ecal = cms.PSet( 
-        #   src    = cms.InputTag("layer0ElectronIsolations", "eleIsoDepositEcalSCVetoFromClusts")
-        #   deltaR = cms.double(0.4)
-        #   vetos  = cms.vstring()     # no veto, already done with SC
-        #   skipDefaultVeto = cms.bool(True)
-        #),
         hcal = cms.PSet(
             # source IsoDeposit
-            src = cms.InputTag("layer0ElectronIsolations","eleIsoDepositHcalFromTowers"),
+            src = cms.InputTag("layer0ElectronIsolations","eleIsoDepositHcalFromHits"),
             # parameters to compute isolation (Egamma POG defaults)
             vetos  = eleIsoFromDepsHcalFromTowers.deposits[0].vetos,
             deltaR = eleIsoFromDepsHcalFromTowers.deposits[0].deltaR,
@@ -82,10 +75,8 @@ allLayer1Electrons = cms.EDProducer("PATElectronProducer",
     # Store IsoDeposits
     isoDeposits = cms.PSet(
         tracker = cms.InputTag("layer0ElectronIsolations","eleIsoDepositTk"),
-        #ecal    = cms.InputTag("layer0ElectronIsolations","eleIsoDepositEcalFromHits"),
-        ecal    = cms.InputTag("layer0ElectronIsolations","eleIsoDepositEcalFromClusts"),
-        #hcal    = cms.InputTag("layer0ElectronIsolations","eleIsoDepositHcalFromHits"),
-        hcal    = cms.InputTag("layer0ElectronIsolations","eleIsoDepositHcalFromTowers"),
+        ecal    = cms.InputTag("layer0ElectronIsolations","eleIsoDepositEcalFromHits"),
+        hcal    = cms.InputTag("layer0ElectronIsolations","eleIsoDepositHcalFromHits"),
     ),
 
 
