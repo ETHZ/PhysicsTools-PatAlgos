@@ -39,7 +39,8 @@ switchJetCollection(process,
         doJTA=True,            # Run Jet-Track association & JetCharge
         doBTagging=True,       # Run b-tagging
         jetCorrLabel=('SC5','Calo'), # example jet correction name; set to None for no JEC
-        doType1MET=True)       # recompute Type1 MET using these jets
+        doType1MET=True,       # recompute Type1 MET using these jets
+        genJetCollection=cms.InputTag("sisCone5GenJets")) 
 
 ## ==== FOR BASIC JETS
 ### make some basic jets for testing

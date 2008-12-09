@@ -82,7 +82,8 @@ def runBTagging(process,jetCollection,label) :
     setattr( process, 'btagging' + label, seq )
     return (seq, labels)
 
-def switchJetCollection(process,jetCollection,layers=[0,1],runCleaner="CaloJet",doJTA=True,doBTagging=True,jetCorrLabel=None,doType1MET=True):
+def switchJetCollection(process,jetCollection,layers=[0,1],runCleaner="CaloJet",doJTA=True,doBTagging=True,jetCorrLabel=None,doType1MET=True,
+                                genJetCollection=cms.InputTag("iterativeCone5GenJets")):
     """Switch the collection of jets in PAT from the default value.
           layers      : Determine which PAT layers will be affected ([0], [0,1])   
           runCleaner  : Run the layer 0 jet cleaner. Value is the C++ type of the jet CaloJet, PFJet, BasicJet), or None.
@@ -96,6 +97,7 @@ def switchJetCollection(process,jetCollection,layers=[0,1],runCleaner="CaloJet",
                         JetCorrectionServiceChain of 'L2RelativeJetCorrector' and 'L3AbsoluteJetCorrector'
           doType1MET  : If jetCorrLabel is not 'None', set this to 'True' to remake Type1 MET from these jets
                         NOTE: at the moment it must be False for non-CaloJets otherwise the JetMET POG module crashes.
+          genJetCollection : GenJet collection to match to.
 
        Note: When turning off the cleaner, bTagging, JTA, jet corrections, MC and Trigger matching will be run directly on jetCollection
              The outputs will still be called 'layer0BTags', 'layer0JetTracksAssociatior' and so on.
@@ -113,6 +115,7 @@ def switchJetCollection(process,jetCollection,layers=[0,1],runCleaner="CaloJet",
         # MC match
         process.jetPartonMatch.src        = cms.InputTag(jetCollection)
         process.jetGenJetMatch.src        = cms.InputTag(jetCollection)
+        process.jetGenJetMatch.match      = genJetCollection
         process.jetPartonAssociation.jets = cms.InputTag(jetCollection)
         massSearchReplaceParam(process.patTrigMatch, 'src', cms.InputTag("allLayer0Jets"), cms.InputTag(jetCollection))
         if layers.count(1) != 0:
@@ -190,7 +193,8 @@ def switchJetCollection(process,jetCollection,layers=[0,1],runCleaner="CaloJet",
             process.allLayer1Jets.addJetCorrFactors = False
 
 def addJetCollection(process,jetCollection,postfixLabel,
-                        layers=[0,1],runCleaner="CaloJet",doJTA=True,doBTagging=True,jetCorrLabel=None,doType1MET=True,doL1Counters=False):
+                        layers=[0,1],runCleaner="CaloJet",doJTA=True,doBTagging=True,jetCorrLabel=None,doType1MET=True,doL1Counters=False,
+                        genJetCollection=cms.InputTag("iterativeCone5GenJets")):
     """Add a new collection of jets in PAT from the default value.
           postfixLabel: Postpone this label to the name of all modules that work with these jet collection.
                         it can't be an empty string
@@ -206,6 +210,7 @@ def addJetCollection(process,jetCollection,postfixLabel,
                         JetCorrectionServiceChain of 'L2RelativeJetCorrector' and 'L3AbsoluteJetCorrector'
           doType1MET  : Make also a new MET (NOT IMPLEMENTED)
           doL1Counters: copy also the filter modules that accept/reject the event looking at the number of jets
+          genJetCollection : GenJet collection to match to.
 
        Notes:
        1)  This takes the configuration from the already-configured layer 0+1 jets, so if you do 
@@ -250,7 +255,7 @@ def addJetCollection(process,jetCollection,postfixLabel,
             l1Jets.jetSource = cms.InputTag(jetCollection)
     if runCleaner != None:
         addClone('jetPartonMatch',       src = cms.InputTag(newLabel0))
-        addClone('jetGenJetMatch',       src = cms.InputTag(newLabel0))
+        addClone('jetGenJetMatch',       src = cms.InputTag(newLabel0), match = genJetCollection)
         addClone('jetPartonAssociation', jets = cms.InputTag(newLabel0))
         addClone('jetFlavourAssociation',srcByReference = cms.InputTag('jetPartonAssociation' + postfixLabel))
         triggers = MassSearchParamVisitor('src', cms.InputTag("allLayer0Jets"))
