@@ -13,7 +13,7 @@
 //
 // Original Author:  Xin Shi & Freya Blekman, Cornell University
 //         Created:  Fri Sep 12 17:58:29 CEST 2008
-// $Id: PATMHTProducer.h,v 1.12 2008/12/01 20:10:21 xs32 Exp $
+// $Id: PATMHTProducer.h,v 1.15 2008/12/16 02:44:17 xs32 Exp $
 //
 //
 
@@ -139,7 +139,14 @@ class PATMHTProducer : public edm::EDProducer {
   double jetEtUncertaintyParameter2_ ; 
 
   double jetPhiUncertaintyParameter0_ ; 
+  double jetPhiUncertaintyParameter1_ ; 
+  double jetPhiUncertaintyParameter2_ ; 
 
+  double eleEtUncertaintyParameter0_ ; 
+  double elePhiUncertaintyParameter0_ ; 
+
+  double muonEtUncertaintyParameter0_ ; 
+  double muonPhiUncertaintyParameter0_ ; 
 
   edm::InputTag CaloJetAlgorithmTag_; 
   edm::InputTag CorJetAlgorithmTag_;

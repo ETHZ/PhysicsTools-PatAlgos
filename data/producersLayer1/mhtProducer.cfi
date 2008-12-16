@@ -25,12 +25,32 @@ module allLayer1MHTs = PATMHTProducer {
 	
     bool  controlledUncertainty = true #use controlled uncertainty parameters.
     
+    # -------------------------------------------
+    #  Jet Uncertainties
+    # -------------------------------------------
     # //-- values from PTDR 1, ch 11.4 --//
     double jetEtUncertaintyParameter0  = 5.6  
     double jetEtUncertaintyParameter1  = 1.25  
     double jetEtUncertaintyParameter2  = 0.033
-    double jetPhiUncertaintyParameter0 = 0.046 # = 2.635*(3.14159/180.)  
-    
+
+    # // values from :
+    # http://indico.cern.ch/getFile.py/access?contribId=9&sessionId=0&resId=0&materialId=slides&confId=46394
+    double jetPhiUncertaintyParameter0 = 4.75
+    double jetPhiUncertaintyParameter1 = -0.426
+    double jetPhiUncertaintyParameter2 = 0.023
+ 
+    # -------------------------------------------
+    #  Electron Uncertainties
+    # -------------------------------------------
+    double eleEtUncertaintyParameter0  = 0.  
+    double elePhiUncertaintyParameter0 = 0.  
+
+    # -------------------------------------------
+    #  Muon Uncertainties
+    # -------------------------------------------
+    double muonEtUncertaintyParameter0  = 0.  
+    double muonPhiUncertaintyParameter0 = 0.  
+ 
 }
 
 

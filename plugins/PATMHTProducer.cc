@@ -1,5 +1,5 @@
 //
-// $Id: PATMHTProducer.cc,v 1.17 2008/12/01 20:10:21 xs32 Exp $
+// $Id: PATMHTProducer.cc,v 1.20 2008/12/16 02:44:17 xs32 Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATMHTProducer.h"
@@ -30,7 +30,15 @@ pat::PATMHTProducer::PATMHTProducer(const edm::ParameterSet & iConfig){
   jetEtUncertaintyParameter1_ =  iConfig.getParameter<double>( "jetEtUncertaintyParameter1") ; 
   jetEtUncertaintyParameter2_ =  iConfig.getParameter<double>( "jetEtUncertaintyParameter2") ; 
   jetPhiUncertaintyParameter0_=  iConfig.getParameter<double>( "jetPhiUncertaintyParameter0"); 
+  jetPhiUncertaintyParameter1_=  iConfig.getParameter<double>( "jetPhiUncertaintyParameter1"); 
+  jetPhiUncertaintyParameter2_=  iConfig.getParameter<double>( "jetPhiUncertaintyParameter2"); 
     
+  eleEtUncertaintyParameter0_  =  iConfig.getParameter<double>( "eleEtUncertaintyParameter0") ; 
+  elePhiUncertaintyParameter0_ =  iConfig.getParameter<double>( "elePhiUncertaintyParameter0") ; 
+
+  muonEtUncertaintyParameter0_  =  iConfig.getParameter<double>( "muonEtUncertaintyParameter0") ; 
+  muonPhiUncertaintyParameter0_ =  iConfig.getParameter<double>( "muonPhiUncertaintyParameter0") ; 
+
   produces<pat::MHTCollection>();
 
 }
@@ -55,7 +63,9 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
     physobjvector_.erase(physobjvector_.begin(),physobjvector_.end());
 
   }
-  // Get the jet object
+  // -------------------------------------------------- 
+  //    Jets
+  // -------------------------------------------------- 
 
   edm::Handle<edm::View<pat::Jet> > jetHandle;
   iEvent.getByLabel(jetLabel_,jetHandle);
@@ -94,6 +104,11 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
       sigma_phi = jet_iter->resolutionPhi();
     }
 
+    if (verbose_ > 0.) {
+      std::cout << "jet sigma_et : " << sigma_et
+		<< ", jet sigma_phi : " << sigma_phi
+		<<  std::endl;}
+
     objectname="jet";
 
     if(sigma_et<=0 || sigma_phi<=0)
@@ -113,6 +128,11 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
      
   }
 
+  // -------------------------------------------------- 
+  //    Electrons 
+  // -------------------------------------------------- 
+
+
   edm::Handle<edm::View<pat::Electron> > electronHandle;
   iEvent.getByLabel(eleLabel_,electronHandle);
   edm::View<pat::Electron> electrons = *electronHandle;
@@ -130,12 +150,33 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
 		<<  std::endl;
     }
 
-    double electron_et = electron_iter->et();
+    double electron_et  = electron_iter->et();
     double electron_phi = electron_iter->phi();
-    double sigma_et = electron_iter->resolutionEt();
-    double sigma_phi = electron_iter->resolutionPhi();
+
+    double sigma_et, sigma_phi ;
+
+    if (controlledUncertainty_) {
+      //-- Use controlled uncertainties --//
+      sigma_et  = eleUncertainty.etUncertainty->Eval(electron_et);
+      sigma_phi = eleUncertainty.phiUncertainty->Eval(electron_et);
+    } 
+    else {
+      sigma_et = electron_iter->resolutionEt();
+      sigma_phi = electron_iter->resolutionPhi();
+    }
+
+    if (verbose_ > 0.) {
+      std::cout << "electron sigma_et : " << sigma_et
+		<< ", electron sigma_phi : " << sigma_phi
+		<<  std::endl;}
+
+
+    //    double sigma_et = electron_iter->resolutionEt();
+    //    double sigma_phi = electron_iter->resolutionPhi();
+
     objectname="electron";
-    if(sigma_et<=0 || sigma_phi<=0)
+    //    if(sigma_et<=0 || sigma_phi<=0)
+    if(sigma_et< 0 || sigma_phi< 0)
       edm::LogWarning("PATMHTProducer") <<
 	" uncertainties for "  << objectname <<
 	" are (et, phi): " << sigma_et << "," << sigma_phi << 
@@ -151,6 +192,11 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
     physobjvector_.push_back(tmp_electron);
      
   }
+
+
+  // -------------------------------------------------- 
+  //    Muons 
+  // -------------------------------------------------- 
 
   edm::Handle<edm::View<pat::Muon> > muonHandle;
   iEvent.getByLabel(muoLabel_,muonHandle);
@@ -169,12 +215,32 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
     }
 
 
-    double muon_pt = muon_iter->pt();
+    double muon_pt  = muon_iter->pt();
     double muon_phi = muon_iter->phi();
-    double sigma_et = muon_iter->resolutionEt();
-    double sigma_phi = muon_iter->resolutionPhi();
+
+    double sigma_et, sigma_phi ;
+
+    if (controlledUncertainty_) {
+       sigma_et  = muonUncertainty.etUncertainty->Eval(muon_pt);
+       sigma_phi = muonUncertainty.phiUncertainty->Eval(muon_pt);
+    } 
+    else {
+      sigma_et  = muon_iter->resolutionEt();
+      sigma_phi = muon_iter->resolutionPhi();
+    }
+
+    if (verbose_ > 0.) {
+      std::cout << "muon sigma_et : " << sigma_et
+		<< ", muon sigma_phi : " << sigma_phi
+		<<  std::endl;}
+
+
+    //    double sigma_et = muon_iter->resolutionEt();
+    //    double sigma_phi = muon_iter->resolutionPhi();
+
     objectname="muon";
-    if(sigma_et<=0 || sigma_phi<=0)
+    //    if(sigma_et<=0 || sigma_phi<=0)
+    if(sigma_et< 0 || sigma_phi< 0)
       edm::LogWarning("PATMHTProducer") << 
 	" uncertainties for "  << objectname << 
 	" are (et, phi): " << sigma_et << "," <<
@@ -334,8 +400,17 @@ void pat::PATMHTProducer::setUncertaintyParameters(){
 
 
   //-- phi value from our own fits --//
-  jetUncertainty.phiUncertainty = new TF1("jetPhiFunc","[0]*x",1);
+  //jetUncertainty.phiUncertainty = new TF1("jetPhiFunc","[0]*x",1);
+  //jetUncertainty.phiUncertainty->SetParameter(0, jetPhiUncertaintyParameter0_);
+
+  //-- phi Functions and values from 
+  // http://indico.cern.ch/getFile.py/access?contribId=9&sessionId=0&resId=0&materialId=slides&confId=46394
+  jetUncertainty.phiUncertainty = new TF1("jetPhiFunc","x*sqrt(([0]*[0]/(x*x))+([1]*[1]/x)+([2]*[2]))",3);
   jetUncertainty.phiUncertainty->SetParameter(0, jetPhiUncertaintyParameter0_);
+  jetUncertainty.phiUncertainty->SetParameter(1, jetPhiUncertaintyParameter1_);
+  jetUncertainty.phiUncertainty->SetParameter(2, jetPhiUncertaintyParameter2_);
+  
+
 
   //-- Jet corrections are assumed not to have an error --//
   /*jetCorrUncertainty.etUncertainty = new TF1("jetCorrEtFunc","[0]*x",1);
@@ -348,17 +423,26 @@ void pat::PATMHTProducer::setUncertaintyParameters(){
   // completely ambiguious values for electron-like jets...
   // the egamma group keeps track of these here:
   // https://twiki.cern.ch/twiki/bin/view/CMS/EgammaCMSSWVal
+  // electron resolution in energy is around 3.4%, measured for 10 < pT < 50 at realistic events with pile-up.
+  
   eleUncertainty.etUncertainty = new TF1("eleEtFunc","[0] * x",1);
-  eleUncertainty.etUncertainty->SetParameter(0,0.034); // electron resolution in energy is around 3.4%, measured for 10 < pT < 50 at realistic events with pile-up.
+  //  eleUncertainty.etUncertainty->SetParameter(0,0.034); 
+  eleUncertainty.etUncertainty->SetParameter(0, eleEtUncertaintyParameter0_); 
+
+
   eleUncertainty.phiUncertainty = new TF1("elePhiFunc","[0] * x",1);
-  eleUncertainty.phiUncertainty->SetParameter(0,1*(3.14159/180.));
+  //  eleUncertainty.phiUncertainty->SetParameter(0,1*(3.14159/180.));
+  eleUncertainty.phiUncertainty->SetParameter(0, elePhiUncertaintyParameter0_);
 
   //--- Muon Uncertainty Functions ------------------------------------//
   // and ambiguious values for the muons...
+  
   muonUncertainty.etUncertainty = new TF1("muonEtFunc","[0] * x",1);
-  muonUncertainty.etUncertainty->SetParameter(0,0.01);
+  //  muonUncertainty.etUncertainty->SetParameter(0,0.01);
+  muonUncertainty.etUncertainty->SetParameter(0, muonEtUncertaintyParameter0_);
   muonUncertainty.phiUncertainty = new TF1("muonPhiFunc","[0] * x",1);
-  muonUncertainty.phiUncertainty->SetParameter(0,1*(3.14159/180.));
+  //  muonUncertainty.phiUncertainty->SetParameter(0,1*(3.14159/180.));
+  muonUncertainty.phiUncertainty->SetParameter(0, muonPhiUncertaintyParameter0_);
 
   //-- Muon calo deposites are assumed not to have an error --//
   /*muonCorrUncertainty.etUncertainty = new TF1("muonCorrEtFunc","[0] * x",1);
