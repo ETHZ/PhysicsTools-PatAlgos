@@ -75,4 +75,5 @@ process.outpath = cms.EndPath(process.out)
 # save PAT Layer 1 output
 process.load("PhysicsTools.PatAlgos.patLayer1_EventContent_cff")
 process.out.outputCommands.extend(process.patLayer1EventContent.outputCommands)
+process.out.outputCommands += [ 'keep *_selectedLayer1PFMETs_*_*' ]
 
