@@ -42,14 +42,14 @@ module allLayer1MHTs = PATMHTProducer {
     # -------------------------------------------
     #  Electron Uncertainties
     # -------------------------------------------
-    double eleEtUncertaintyParameter0  = 0.  
-    double elePhiUncertaintyParameter0 = 0.  
+    double eleEtUncertaintyParameter0  = 0.01   
+    double elePhiUncertaintyParameter0 = 0.01   
 
     # -------------------------------------------
     #  Muon Uncertainties
     # -------------------------------------------
-    double muonEtUncertaintyParameter0  = 0.  
-    double muonPhiUncertaintyParameter0 = 0.  
+    double muonEtUncertaintyParameter0  = 0.01   
+    double muonPhiUncertaintyParameter0 = 0.01   
  
 }
 
