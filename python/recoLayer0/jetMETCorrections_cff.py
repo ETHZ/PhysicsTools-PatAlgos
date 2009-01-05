@@ -33,7 +33,7 @@ corMetType1Icone5.corrector = cms.string('L2L3JetCorrectorIC5Calo')
 from JetMETCorrections.Type1MET.MetMuonCorrections_cff import corMetGlobalMuons, goodMuonsforMETCorrection
 # muon MET correction maker 
 # 
-corMetType1Icone5Muons = corMetGlobalMuons.clone(inputUncorMetLabel = cms.InputTag('corMetType1Icone5'),
+corMetType1Icone5Muons = corMetGlobalMuons.clone(uncorMETInputTag = cms.InputTag('corMetType1Icone5'),
                                                  muonsInputTag      = cms.InputTag('goodMuonsforMETCorrection'))
 
 # It would be better to get this config to JetMETCorrections/Type1MET/data/ at some point
