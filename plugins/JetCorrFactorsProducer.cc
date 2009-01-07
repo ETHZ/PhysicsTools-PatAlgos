@@ -1,5 +1,5 @@
 //
-// $Id: JetCorrFactorsProducer.cc,v 1.2 2008/03/10 14:38:57 lowette Exp $
+// $Id: JetCorrFactorsProducer.cc,v 1.3 2008/11/04 14:12:58 auterman Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/JetCorrFactorsProducer.h"
@@ -34,6 +34,7 @@ JetCorrFactorsProducer::JetCorrFactorsProducer(const edm::ParameterSet& iConfig)
   L7gluJetCorrService_ = iConfig.getParameter<std::string>( "L7gluonJetCorrector" );
   L7cJetCorrService_   = iConfig.getParameter<std::string>( "L7cJetCorrector" );
   L7bJetCorrService_   = iConfig.getParameter<std::string>( "L7bJetCorrector" );
+  ModuleLabel_         = iConfig.getParameter<std::string>( "@module_label" );
   
   bl1_    = (L1JetCorrService_.compare("none")==0)    ? false : true;
   bl2_    = (L2JetCorrService_.compare("none")==0)    ? false : true;
@@ -51,7 +52,6 @@ JetCorrFactorsProducer::JetCorrFactorsProducer(const edm::ParameterSet& iConfig)
 
   // produces valuemap of jet correction factors
   produces<JetCorrFactorsMap>();
-
 }
 
 
@@ -103,7 +103,7 @@ void JetCorrFactorsProducer::produce(edm::Event & iEvent, const edm::EventSetup 
     if (bl7b_)   l7.b =   L7bJetCorr->correction( *itJet );
 
     // create the actual object with scalefactos we want the valuemap to refer to
-    JetCorrFactors aJetCorr( l1, l2, l3, l4, l5, l6, l7 );
+    JetCorrFactors aJetCorr( ModuleLabel_, l1, l2, l3, l4, l5, l6, l7 );
 
     jetCorrs.push_back(aJetCorr);
   }

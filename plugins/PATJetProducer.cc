@@ -1,5 +1,5 @@
 //
-// $Id: PATJetProducer.cc,v 1.26.2.1 2008/11/18 11:12:22 rwolf Exp $
+// $Id: PATJetProducer.cc,v 1.26.2.2 2008/11/25 15:39:40 gpetrucc Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATJetProducer.h"
@@ -56,7 +56,7 @@ PATJetProducer::PATJetProducer(const edm::ParameterSet& iConfig)  :
   addPartonJetMatch_       = iConfig.getParameter<bool> 		      ( "addPartonJetMatch" );
   partonJetSrc_            = iConfig.getParameter<edm::InputTag>	      ( "partonJetSource" );
   addJetCorrFactors_       = iConfig.getParameter<bool>                       ( "addJetCorrFactors" );
-  jetCorrFactorsSrc_       = iConfig.getParameter<edm::InputTag>              ( "jetCorrFactorsSource" );
+  jetCorrFactorsSrc_       = iConfig.getParameter<std::vector<edm::InputTag> >( "jetCorrFactorsSource" );
   addTrigMatch_            = iConfig.getParameter<bool>                       ( "addTrigMatch" );
   trigMatchSrc_            = iConfig.getParameter<std::vector<edm::InputTag> >( "trigPrimMatch" );
   addResolutions_          = iConfig.getParameter<bool> 		      ( "addResolutions" );
@@ -102,7 +102,6 @@ PATJetProducer::PATJetProducer(const edm::ParameterSet& iConfig)  :
     useUserData_ = true;
   }
 
-
   // produces vector of jets
   produces<std::vector<Jet> >();
 }
@@ -137,9 +136,15 @@ void PATJetProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
   if (addPartonJetMatch_) iEvent.getByLabel(partonJetSrc_, partonJets);
 */
 
-  // read in the jet correction factors ValueMap
-  edm::Handle<edm::ValueMap<JetCorrFactors> > jetCorrs;
-  if (addJetCorrFactors_) iEvent.getByLabel(jetCorrFactorsSrc_, jetCorrs);
+  // read in the jet correction factors ValueMaps
+  std::vector<edm::ValueMap<JetCorrFactors> > jetCorrs;
+  if (addJetCorrFactors_) {
+    for ( size_t i = 0; i < jetCorrFactorsSrc_.size(); ++i ) {
+      edm::Handle<edm::ValueMap<JetCorrFactors> > jetCorr;
+      iEvent.getByLabel(jetCorrFactorsSrc_[i], jetCorr);
+      jetCorrs.push_back( *jetCorr );
+    }
+  }  
 
   // Get the vector of jet tags with b-tagging info
   std::vector<edm::Handle<edm::ValueMap<float> > > jetDiscriminators;
@@ -185,13 +190,24 @@ void PATJetProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
         ajet.setCaloTowers( cj->getCaloConstituents() );
     }
 
+    // Add Jet Energy Scale Corrections
     if (addJetCorrFactors_) {
-      // calculate the energy correction factors
-      const JetCorrFactors & jcf = (*jetCorrs)[jetRef];
-      ajet.setJetCorrFactors(jcf);
-      // set current defauklt which is JetCorrFactors::L3
-      ajet.setJetCorrStep(JetCorrFactors::L3);
-      ajet.setP4(fabs(jcf.correction(JetCorrFactors::L3)) * itJet->p4());
+      // In case only one set of jet correction factors is used, clear the string
+      // that contains the name of the jcf-module, to save storage per jet:
+      if (jetCorrFactorsSrc_.size()<=1)
+        jetCorrs.front()[jetRef].clearLabel();
+      // The default jet correction is the first in the vector
+      const JetCorrFactors & jcf = jetCorrs.front()[jetRef];
+      //attach first (default) jet correction factors set to the jet
+      ajet.setCorrFactors(jcf);
+      // set current default which is JetCorrFactors::L3, change P4 of ajet 
+      ajet.setCorrStep(JetCorrFactors::L3);
+      
+      // add additional JetCorrs for syst. studies, if present
+      for ( size_t i = 1; i < jetCorrFactorsSrc_.size(); ++i ) {
+	const JetCorrFactors & jcf = jetCorrs[i][jetRef];
+	ajet.addCorrFactors(jcf);
+      }
     }
 
     // get the MC flavour information for this jet
