@@ -277,6 +277,7 @@ def addJetCollection(process,jetCollection,postfixLabel,
             setattr( process, mod.label() + postfixLabel, newmod )
             process.patTrigMatch.replace( mod, mod * newmod )
     def fixInputTag(x): x.setModuleLabel(x.moduleLabel+postfixLabel)
+    def fixVInputTag(x): x[0].setModuleLabel(x[0].moduleLabel+postfixLabel)
     if l1Jets != None:
         fixInputTag(l1Jets.JetPartonMapSource)
         fixInputTag(l1Jets.genJetMatch)
@@ -384,7 +385,7 @@ def addJetCollection(process,jetCollection,postfixLabel,
                                                 defaultJetCorrector = cms.string('L2L3JetCorrector%s%s' % jetCorrLabel)))
             switchJECParameters( getattr(process,'layer0JetCorrFactors'+postfixLabel), jetCorrLabel[0], jetCorrLabel[1], oldalgo='IC5',oldtype='Calo' )
         if l1Jets != None:
-            fixInputTag(l1Jets.jetCorrFactorsSource)
+            fixVInputTag(l1Jets.jetCorrFactorsSource)
     else:
         if l1Jets != None:
             l1Jets.addJetCorrFactors = False
