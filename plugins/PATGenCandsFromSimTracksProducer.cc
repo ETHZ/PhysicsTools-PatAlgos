@@ -6,7 +6,7 @@
    
 
   \author   Jordan Tucker (original module), Giovanni Petrucciani (PAT integration)
-  \version  $Id: PATGenCandsFromSimTracksProducer.cc,v 1.2.4.2 2008/11/18 11:42:55 gpetrucc Exp $
+  \version  $Id: PATGenCandsFromSimTracksProducer.cc,v 1.2.4.3 2008/12/03 19:12:56 gpetrucc Exp $
 */
 
 #include "FWCore/Framework/interface/Frameworkfwd.h"
@@ -40,6 +40,8 @@ private:
   int setStatus_;
   std::set<int>         pdgIds_; // these are the ones we really use
   std::vector<PdtEntry> pdts_;   // these are needed before we get the EventSetup
+  std::set<int>         motherPdgIds_; // these are the ones we really use
+  std::vector<PdtEntry> motherPdts_;   // these are needed before we get the EventSetup
 
   typedef StringCutObjectSelector<reco::GenParticle> StrFilter;
   std::auto_ptr<StrFilter> filter_;
@@ -122,6 +124,9 @@ PATGenCandsFromSimTracksProducer::PATGenCandsFromSimTracksProducer(const Paramet
     if (cfg.exists("particleTypes")) {
         pdts_ = cfg.getParameter<vector<PdtEntry> >("particleTypes");
     }
+    if (cfg.exists("motherTypes")) {
+        motherPdts_ = cfg.getParameter<vector<PdtEntry> >("motherTypes");
+    }
 
     // Possibly allow a string cut
     if (cfg.existsAs<string>("filter")) {
@@ -149,6 +154,15 @@ void PATGenCandsFromSimTracksProducer::beginJob(const EventSetup &iSetup)
         }
         pdts_.clear();
     }
+    if (!motherPdts_.empty()) {
+        motherPdgIds_.clear();
+        for (vector<PdtEntry>::iterator itp = motherPdts_.begin(), edp = motherPdts_.end(); itp != edp; ++itp) {
+            itp->setup(iSetup); // decode string->pdgId and vice-versa
+            motherPdgIds_.insert(abs(itp->pdgId()));
+        }
+        motherPdts_.clear();
+    }
+
 }
 
 const SimTrack * 
@@ -282,6 +296,13 @@ void PATGenCandsFromSimTracksProducer::produce(Event& event,
       // Maybe apply filter on the particle
       if (filter_.get() != 0) {
         if (!(*filter_)(genp)) continue;
+      }
+
+      // Maybe apply the mother PdgId filter
+      if (!motherPdgIds_.empty()) {
+           const SimTrack *motherSimTk = findGeantMother(*isimtrk, globals);
+           if (motherSimTk == 0) continue;
+           if (motherPdgIds_.find(abs(motherSimTk->type())) == motherPdgIds_.end()) continue;
       }
 
       if (makeMotherLink_ || writeAncestors_) {
