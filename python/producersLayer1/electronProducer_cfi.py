@@ -1,10 +1,8 @@
 import FWCore.ParameterSet.Config as cms
 
-from RecoEgamma.EgammaIsolationAlgos.eleIsoFromDepsModules_cff import eleIsoFromDepsEcalFromHits,eleIsoFromDepsHcalFromTowers,eleIsoFromDepsTk
-
 allLayer1Electrons = cms.EDProducer("PATElectronProducer",
     # General configurables
-    electronSource = cms.InputTag("allLayer0Electrons"),
+    electronSource = cms.InputTag("electronsNoDuplicates"),
 
                                     
     # user data to add
@@ -37,46 +35,21 @@ allLayer1Electrons = cms.EDProducer("PATElectronProducer",
     # Store isolation values
     isolation = cms.PSet(
         tracker = cms.PSet(
-            # source IsoDeposit
-            src = cms.InputTag("layer0ElectronIsolations","eleIsoDepositTk"),
-            # parameters to compute isolation (Egamma POG defaults)
-            vetos  = eleIsoFromDepsTk.deposits[0].vetos,
-            deltaR = eleIsoFromDepsTk.deposits[0].deltaR,
-            skipDefaultVeto = cms.bool(True), # This overrides previous settings
-#           # Or set your own vetos...
-#            deltaR = cms.double(0.3),
-#            vetos = cms.vstring('0.015', # inner radius veto cone
-#                'Threshold(1.0)'),       # threshold on individual track pt
+            src = cms.InputTag("eleIsoFromDepsTk"),
         ),
         ecal = cms.PSet(
-            # source IsoDeposit
-            src = cms.InputTag("layer0ElectronIsolations","eleIsoDepositEcalFromHits"),
-            # parameters to compute isolation (Egamma POG defaults)
-            vetos  = eleIsoFromDepsEcalFromHits.deposits[0].vetos,
-            deltaR = eleIsoFromDepsEcalFromHits.deposits[0].deltaR,
-            skipDefaultVeto = cms.bool(True), # This overrides previous settings
-#           # Or set your own vetos...
-#            deltaR = cms.double(0.4),
-#            vetos = cms.vstring('EcalBarrel:0.040', 'EcalBarrel:RectangularEtaPhiVeto(-0.01,0.01,-0.5,0.5)',  # Barrel (|eta| < 1.479)
-#                                'EcalEndcaps:0.070','EcalEndcaps:RectangularEtaPhiVeto(-0.02,0.02,-0.5,0.5)'),
+            src = cms.InputTag("eleIsoFromDepsEcalFromHits"),
         ),
         hcal = cms.PSet(
-            # source IsoDeposit
-            src = cms.InputTag("layer0ElectronIsolations","eleIsoDepositHcalFromTowers"),
-            # parameters to compute isolation (Egamma POG defaults)
-            vetos  = eleIsoFromDepsHcalFromTowers.deposits[0].vetos,
-            deltaR = eleIsoFromDepsHcalFromTowers.deposits[0].deltaR,
-            skipDefaultVeto = cms.bool(True),  # This overrides previous settings
-#           # Or set your own vetos...
-#            deltaR = cms.double(0.4),
+            src = cms.InputTag("eleIsoFromDepsHcalFromTowers"),
         ),
         user = cms.VPSet(),
     ),
     # Store IsoDeposits
     isoDeposits = cms.PSet(
-        tracker = cms.InputTag("layer0ElectronIsolations","eleIsoDepositTk"),
-        ecal    = cms.InputTag("layer0ElectronIsolations","eleIsoDepositEcalFromHits"),
-        hcal    = cms.InputTag("layer0ElectronIsolations","eleIsoDepositHcalFromTowers"),
+        tracker = cms.InputTag("eleIsoDepositTk"),
+        ecal    = cms.InputTag("eleIsoDepositEcalFromHits"),
+        hcal    = cms.InputTag("eleIsoDepositHcalFromTowers"),
     ),
 
 
@@ -85,11 +58,11 @@ allLayer1Electrons = cms.EDProducer("PATElectronProducer",
     electronIDSources = cms.PSet(
         # configure many IDs as InputTag <someName> = <someTag>
         # you can comment out those you don't want to save some disk space
-        eidRobustLoose = cms.InputTag("patElectronIds","eidRobustLoose"),
-        eidRobustTight = cms.InputTag("patElectronIds","eidRobustTight"),
-        eidLoose       = cms.InputTag("patElectronIds","eidLoose"),
-        eidTight       = cms.InputTag("patElectronIds","eidTight"),
-        eidRobustHighEnergy = cms.InputTag("patElectronIds","eidRobustHighEnergy"),
+        eidRobustLoose      = cms.InputTag("eidRobustLoose"),
+        eidRobustTight      = cms.InputTag("eidRobustTight"),
+        eidLoose            = cms.InputTag("eidLoose"),
+        eidTight            = cms.InputTag("eidTight"),
+        eidRobustHighEnergy = cms.InputTag("eidRobustHighEnergy"),
     ),
 
     # Trigger matching configurables

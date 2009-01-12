@@ -9,30 +9,13 @@ eleIsoDepositHcalFromTowers = cms.EDProducer("CandIsoDepositProducer",
         ExtractorPSet = cms.PSet( EleIsoHcalFromTowersExtractorBlock )      
 )
 
-# define module labels for old (tk-based isodeposit) POG isolation
-# WARNING: these labels are used in the functions below.
-patAODElectronIsolationLabels = cms.VInputTag(
-        cms.InputTag("eleIsoDepositTk"),
-        cms.InputTag("eleIsoDepositEcalFromHits"),
-        cms.InputTag("eleIsoDepositHcalFromTowers"),
+### Compute isolation values, using POG modules
+from RecoEgamma.EgammaIsolationAlgos.eleIsoFromDepsModules_cff  import *
+
+# sequence to run on AOD 
+patElectronIsolation = cms.Sequence(
+    eleIsoFromDepsTk +
+    eleIsoFromDepsEcalFromHits +
+    eleIsoDepositHcalFromTowers * eleIsoFromDepsHcalFromTowers 
 )
 
-# read and convert to ValueMap<IsoDeposit> keyed to Candidate
-patAODElectronIsolations = cms.EDFilter("MultipleIsoDepositsToValueMaps",
-    collection   = cms.InputTag("pixelMatchGsfElectrons"),
-    associations = patAODElectronIsolationLabels,
-)
-
-# re-key ValueMap<IsoDeposit> to Layer 0 output
-layer0ElectronIsolations = cms.EDFilter("CandManyValueMapsSkimmerIsoDeposits",
-    collection   = cms.InputTag("allLayer0Electrons"),
-    backrefs     = cms.InputTag("allLayer0Electrons"),
-    commonLabel  = cms.InputTag("patAODElectronIsolations"),
-    associations = patAODElectronIsolationLabels,
-)
-
-# sequence to run on AOD before PAT
-patAODElectronIsolation = cms.Sequence(eleIsoDepositHcalFromTowers * patAODElectronIsolations)
-
-# sequence to run after the PAT cleaners
-patLayer0ElectronIsolation = cms.Sequence(layer0ElectronIsolations)

@@ -5,10 +5,10 @@ process = cms.Process("PAT")
 # initialize MessageLogger and output report
 process.load("FWCore.MessageLogger.MessageLogger_cfi")
 process.MessageLogger.cerr.threshold = 'INFO'
-process.MessageLogger.categories.append('PATLayer0Summary')
+process.MessageLogger.categories.append('PATSummaryTables')
 process.MessageLogger.cerr.INFO = cms.untracked.PSet(
     default          = cms.untracked.PSet( limit = cms.untracked.int32(0)  ),
-    PATLayer0Summary = cms.untracked.PSet( limit = cms.untracked.int32(-1) )
+    PATSummaryTables = cms.untracked.PSet( limit = cms.untracked.int32(-1) )
 )
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 

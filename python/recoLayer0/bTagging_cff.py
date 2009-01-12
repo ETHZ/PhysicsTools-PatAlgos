@@ -24,35 +24,17 @@ patBTaggingTagInfoLabels = cms.VInputTag(
 )
 
 # Need to convert all JetTags to ValueMap<double>
-patAODBTags = cms.EDFilter("MultipleDiscriminatorsToValueMaps",
+patBTags = cms.EDFilter("MultipleDiscriminatorsToValueMaps",
     collection   = cms.InputTag("iterativeCone5CaloJets"),
     associations = patBTaggingDiscriminatorLabels,
     failSilently = cms.untracked.bool(True) 
 )
 
 # Need to convert all JetTagInfoss to ValueMap<Ptr<BaseTagInfo>>
-patAODTagInfos = cms.EDFilter("MultipleTagInfosToValueMaps",
+patBTagInfos = cms.EDFilter("MultipleTagInfosToValueMaps",
     collection   = cms.InputTag("iterativeCone5CaloJets"),
     associations = patBTaggingTagInfoLabels,
     failSilently = cms.untracked.bool(True) 
 )
 
-layer0BTags = cms.EDFilter("CandManyValueMapsSkimmerFloat",
-    collection = cms.InputTag("allLayer0Jets"),
-    backrefs   = cms.InputTag("allLayer0Jets"),
-    commonLabel  = cms.InputTag("patAODBTags"),
-    associations = patBTaggingDiscriminatorLabels,
-    failSilently = cms.untracked.bool(True),
-)
-
-layer0TagInfos = cms.EDFilter("CandManyValueMapsSkimmerTagInfo",
-    collection = cms.InputTag("allLayer0Jets"),
-    backrefs   = cms.InputTag("allLayer0Jets"),
-    commonLabel  = cms.InputTag("patAODTagInfos"),
-    associations = patBTaggingTagInfoLabels,
-    failSilently = cms.untracked.bool(True),
-)
-
-patAODBTagging    = cms.Sequence(patAODBTags * patAODTagInfos)
-patLayer0BTagging = cms.Sequence(layer0BTags * layer0TagInfos)
-
+patBTagging    = cms.Sequence(patBTags * patBTagInfos)

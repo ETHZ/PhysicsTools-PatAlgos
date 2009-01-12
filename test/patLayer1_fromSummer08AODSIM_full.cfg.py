@@ -5,10 +5,10 @@ process = cms.Process("PAT")
 # initialize MessageLogger and output report
 process.load("FWCore.MessageLogger.MessageLogger_cfi")
 process.MessageLogger.cerr.threshold = 'INFO'
-process.MessageLogger.categories.append('PATLayer0Summary')
+process.MessageLogger.categories.append('PATSummaryTables')
 process.MessageLogger.cerr.INFO = cms.untracked.PSet(
     default          = cms.untracked.PSet( limit = cms.untracked.int32(0)  ),
-    PATLayer0Summary = cms.untracked.PSet( limit = cms.untracked.int32(-1) )
+    PATSummaryTables = cms.untracked.PSet( limit = cms.untracked.int32(-1) )
 )
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 
@@ -24,28 +24,24 @@ process.GlobalTag.globaltag = cms.string('IDEAL_V9::All')
 process.load("Configuration.StandardSequences.MagneticField_cff")
 
 # PAT Layer 0+1
-process.load("PhysicsTools.PatAlgos.patLayer0_cff")
-process.load("PhysicsTools.PatAlgos.patLayer1_cff")
+process.load("PhysicsTools.PatAlgos.patSequences_cff")
 
 ## Necessary fixes to run 2.2.X on 2.1.X data
 from PhysicsTools.PatAlgos.tools.cmsswVersionTools import run22XonSummer08AODSIM
 run22XonSummer08AODSIM(process)
 
 process.p = cms.Path(
-                process.patLayer0  
-                #+ process.content # uncomment to get a dump of the output after layer 0
-                + process.patLayer1  
-            )
+    process.patDefaultSequence  
+)
 
 # Output module configuration
+from PhysicsTools.PatAlgos.patEventContent_cff import patEventContent
 process.out = cms.OutputModule("PoolOutputModule",
     fileName = cms.untracked.string('PATLayer1_Output.fromAOD_full.root'),
     # save only events passing the full path
     SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring('p') ),
-    outputCommands = cms.untracked.vstring('drop *')
+    # save PAT Layer 1 output
+    outputCommands = cms.untracked.vstring('drop *', *patEventContent ) # you need a '*' to unpack the list of commands 'patEventContent'
 )
 process.outpath = cms.EndPath(process.out)
-# save PAT Layer 1 output
-process.load("PhysicsTools.PatAlgos.patLayer1_EventContent_cff")
-process.out.outputCommands.extend(process.patLayer1EventContent.outputCommands)
 

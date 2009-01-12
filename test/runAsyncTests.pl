@@ -12,18 +12,24 @@ my $fake   :shared = 0;
 my $repdef :shared = "";
 
 use Getopt::Long;
-my $help;
+my ($help,$base,$extra,$all);
+my @summary :shared;
 GetOptions( 'h|?|help' => \$help, 
             'n|dry-run' => \$fake,
-            'replace-defaults|rd=s' => \$repdef );
+            'b|base' => \$base,
+            'a|all' => \$all,
+            'e|extra' => \$extra,
+            's|summary=s' => \@summary);
+@summary = split(/,/, join(',',@summary));
 if ($help) {
     my $name = `basename $0`; chomp $name;
     print "Usage: perl $name [-n|--dry-run] [cfg.pys]\n" .
-          "   -n or --dry-run:      just read the output, don't run cmsRun\n".
-          "   -h or --help:         print this help\n".
-          "   --replace-defaults X  turn on ReplaceDefaults for layer X (X can be 0, 1 or 01 for both)\n".
-          "                         they must already be in the CFG file, commented with # or // \n".
-          "   If no cfgs are specified, it will use PATLayer[01]_from*_{fast,full}.cfg.py\n\n";
+          "   -n or --dry-run: just read the output, don't run cmsRun\n".
+          "   -h or --help:    print this help\n".
+          "   -b or --base:    add base standard PAT config files to the jobs to run\n".   
+          "   -e or --extra:   add the extra standard PAT config files to the jobs to run (that is, those not in base)\n".   
+          "   -a or --all:     add all standard PAT config files to the jobs to run\n". 
+          "   -s or --summary: print summary table of objects (argument can be 'aod', 'allLayer1', 'selectedLayer1', ...)\n";
     exit(0);
 }
 if ($fake) {
@@ -32,51 +38,36 @@ if ($fake) {
 
 my @CFGs = @ARGV;
 
+my @anyCFGs    = glob("pat*.cfg.py"); 
+my @baseCFGs   = grep($_ =~ /fromAOD_(full|fast)|fromSummer08AODSIM|fromScratch_fast/, @anyCFGs);
+my @extraCFGs  = grep($_ !~ /fromAOD_(full|fast)|fromSummer08AODSIM|fromScratch_fast/, @anyCFGs);
+if ($base ) { push @CFGs, @baseCFGs;  }
+if ($all  ) { push @CFGs, @anyCFGs;   }
+if ($extra) { push @CFGs, @extraCFGs; }
 if (@CFGs) {
-    my @allCFGs = ();
-    foreach my $cfg (@CFGs) { push @allCFGs, grep(/\.cfg\.py$/, glob($cfg)); }
-    @CFGs = @allCFGs;
+    #pass through a hash, to remove duplicates
+    my %allCFGs = ();
+    foreach my $cfg (@CFGs) { 
+        foreach my $cfgfile (grep(/\.cfg\.py$/, glob($cfg))) { $allCFGs{$cfgfile} = 1; }
+    }
+    @CFGs = sort(keys(%allCFGs));
 } else {
-    @CFGs = glob("patLayer[01]_from*_*.cfg.py"); 
+    print STDERR "Please specify a cfg, or use --base, --all, --extra to select the standard ones\n"; exit(0);
 }
+
 print "Will run " . scalar(@CFGs) . " config files: " . join(' ', @CFGs) . "\n\n";
 
 foreach my $cfg (@CFGs) { 
     unless (-f $cfg) {  die "Config file $cfg does not exist in $dir\n"; } 
-    #repDef($cfg);
-}
-
-sub repDef {
-    my $f = shift;
-    open CFG, $f or die "Can't open cfg file '$f'\n";
-    my $text = join('',<CFG>); my $original = $text;
-    close CFG;
-    foreach my $l (0, 1) {
-        if ($repdef =~ /$l/) {
-            #print STDERR "Toggling ON  ReplaceDefaults for patLayer$l in $f \n";
-            $text =~ s!(?://\s*|\x23\s*)*(include\s+["']PhysicsTools/PatAlgos/test/patLayer${l}_ReplaceDefaults_\w+.cff.)!$1!g;
-            $text =~ s!(?://\s*|\x23\s*)*(include\s+["']PhysicsTools/PatAlgos/data/famos/patLayer${l}_FamosSetup.cff.)!\x23$1!g;
-        } else {
-            #print STDERR "Toggling OFF ReplaceDefaults for patLayer$l in $f \n";  # \x23 is the '#' sign
-            $text =~ s!(?://\s*|\x23\s*)*(include\s+["']PhysicsTools/PatAlgos/test/patLayer${l}_ReplaceDefaults_\w+.cff.)!\x23$1!g;
-            $text =~ s!(?://\s*|\x23\s*)*(include\s+["']PhysicsTools/PatAlgos/data/famos/patLayer${l}_FamosSetup.cff.)!$1!g;
-        }
-    }
-    if ($text ne $original) {
-        open CFG, "> $f" or die "Can't update cfg file '$f'\n";
-        print CFG $text;
-        close CFG;
-        #print "============== OLD ===================\n$original\n============== NEW ===================\n$text\n";
-    }
 }
 
 sub cmsRun {
     my ($f, $o) = ($_[0], $_[1]);
     unless ($fake) {
-        repDef($f);
         system("sh -c 'cmsRun $f > $o 2>&1 '");
     } else {
-        system("sh -c 'sleep ". int(rand(5)+2) ."'");
+        #system("sh -c 'sleep ". int(rand(5)+2) ."'");
+        system("sh -c 'sleep 1'");
     }
     $done{$f} = time();
 }
@@ -185,15 +176,23 @@ while (scalar(keys(%done)) < scalar(@CFGs)) {
 foreach my $f (@txt) { print "\e[F\e[M"; }
 
 print "All jobs done.\n";
-  
+
+sub redIf($$) {
+    return ($_[1] ? "\e[1;31m E> " . $_[0] . "\e[0m" : "    ".$_[0]);
+}
 foreach my $f (@CFGs) {
     print printDone ($f), "\n";
     if ($info{$f}->{'excep'}) { print "\e[1;31m" . $info{$f}->{'exbody'} . "\e[0m"; }
 
     open LOG, $info{$f}->{'out'}; my @log = <LOG>; close LOG;
-    foreach my $l (grep(/^Input tag was|Summary info:/, @log)) { 
-        $l =~ s/try (\d+), fail \1$/try $1, fail $1 \e[1;31m <== WARNING!!\e[0m/;
-        print "  $l"; 
+    my $log = join('',@log);
+    foreach my $table (@summary) {
+        if ($log =~ m/(^Summary Table\s+$table.*\n(^    .*\n)*)/m) {
+            my $info = $1;
+            $info =~ s/^    (.*present\s+\d+\s+\(\s*(\d+\.?\d*)\s*%\).*)$/redIf($1,$2 ne '100')/meg;
+            $info =~ s/^    (.*total\s+0\s.*)$/\e[1;31m E> $1\e[0m/mg;
+            print "  ".$info; 
+        }
     }
     foreach my $l (grep(/TrigReport Events total =/, @log)) { print "  \e[1m$l\e[0m"; }
 

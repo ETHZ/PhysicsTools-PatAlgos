@@ -2,23 +2,19 @@ import FWCore.ParameterSet.Config as cms
 
 from PhysicsTools.PatAlgos.tools.helpers import *
    
-def switchToCaloTau(process,layers=[0,1]):
-    process.patLayer0.remove(process.pfRecoTauDiscriminationByIsolation)
-    process.load("PhysicsTools.PatAlgos.cleaningLayer0.caloTauCleaner_cfi")
-    process.patLayer0.remove(process.pfRecoTauDiscriminationByIsolation)
-    process.patLayer0.replace(process.allLayer0Taus, process.allLayer0CaloTaus)
-    process.patLayer0.replace(process.patPFTauDiscrimination, process.patCaloTauDiscrimination)
-    # reconfigure MC, Trigger match and Layer 1 to use CaloTaus
-    process.tauMatch.src                 = cms.InputTag('allLayer0CaloTaus')
-    process.tauGenJetMatch.src           = cms.InputTag('allLayer0CaloTaus')
-    massSearchReplaceParam(process.patTrigMatch, 'src', cms.InputTag("allLayer0Taus"), cms.InputTag('allLayer0CaloTaus'))
-    massSearchReplaceParam(process.patTrigMatch_patTuple, 'src', cms.InputTag("allLayer0Taus"), cms.InputTag('allLayer0CaloTaus'))
-    if layers.count(1) != 0:
-        process.allLayer1Taus.tauSource      = cms.InputTag('allLayer0CaloTaus')
-        process.allLayer1Taus.tauIDSources = cms.PSet(
-                leadingTrackFinding = cms.InputTag("patCaloRecoTauDiscriminationByLeadingTrackFinding"),
-                leadingTrackPtCut   = cms.InputTag("patCaloRecoTauDiscriminationByLeadingTrackPtCut"),
-                byIsolation         = cms.InputTag("patCaloRecoTauDiscriminationByIsolation"),
-                #againstElectron = cms.InputTag("patCaloRecoTauDiscriminationAgainstElectron"),  # Not on AOD
-        )
-
+def switchToCaloTau(process,pfTauLabel=cms.InputTag('pfRecoTauProducer'), caloTauLabel=cms.InputTag('caloRecoTauProducer')):
+    # swap the discriminators we compute # FIXME: remove if they're already on AOD
+    process.patAODReco.replace(process.patPFTauDiscrimination, process.patCaloTauDiscrimination)
+    massSearchReplaceParam(process.patTrigMatch, 'src', pfTauLabel, caloTauLabel)
+    massSearchReplaceParam(process.patMCTruth,   'src', pfTauLabel, caloTauLabel)
+    process.allLayer1Taus.tauSource      = caloTauLabel
+    process.allLayer1Taus.tauIDSources = cms.PSet(  ## FIXME: get this list from process.patCaloTauDiscrimination
+            leadingTrackFinding = cms.InputTag("caloRecoTauDiscriminationByLeadingTrackFinding"),
+            leadingTrackPtCut   = cms.InputTag("caloRecoTauDiscriminationByLeadingTrackPtCut"),
+            byIsolation         = cms.InputTag("caloRecoTauDiscriminationByIsolation"),
+           #againstElectron     = cms.InputTag("caloRecoTauDiscriminationAgainstElectron"),  # Not on AOD
+    )
+    if pfTauLabel in process.aodSummary.candidates:
+        process.aodSummary.candidates[process.aodSummary.candidates.index(pfTauLabel)] = caloTauLabel
+    else:
+        process.aodSummary.candidates += [caloTauLabel]

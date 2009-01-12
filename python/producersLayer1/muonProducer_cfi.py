@@ -3,7 +3,7 @@ import FWCore.ParameterSet.Config as cms
 allLayer1Muons = cms.EDProducer("PATMuonProducer",
 
     # General configurables
-    muonSource = cms.InputTag("allLayer0Muons"),
+    muonSource = cms.InputTag("muons"),
     pfMuonSource = cms.InputTag("pfMuons"),
     useParticleFlow =  cms.bool( False ),
 
@@ -34,34 +34,34 @@ allLayer1Muons = cms.EDProducer("PATMuonProducer",
     # isolation configurables
     isolation = cms.PSet(
         hcal = cms.PSet(
-            src = cms.InputTag("layer0MuonIsolations","muIsoDepositCalByAssociatorTowershcal"),
+            src = cms.InputTag("patMuonIsolations","muIsoDepositCalByAssociatorTowershcal"),
             deltaR = cms.double(0.3)
         ),
         tracker = cms.PSet(
-            src = cms.InputTag("layer0MuonIsolations","muIsoDepositTk"),
+            src = cms.InputTag("patMuonIsolations","muIsoDepositTk"),
             deltaR = cms.double(0.3)
         ),
         user = cms.VPSet(cms.PSet(
-            src = cms.InputTag("layer0MuonIsolations","muIsoDepositCalByAssociatorTowersho"),
+            src = cms.InputTag("patMuonIsolations","muIsoDepositCalByAssociatorTowersho"),
             deltaR = cms.double(0.3)
-        ), 
+            ), 
             cms.PSet(
-                src = cms.InputTag("layer0MuonIsolations","muIsoDepositJets"),
+                src = cms.InputTag("patMuonIsolations","muIsoDepositJets"),
                 deltaR = cms.double(0.3)
             )),
         ecal = cms.PSet(
-            src = cms.InputTag("layer0MuonIsolations","muIsoDepositCalByAssociatorTowersecal"),
+            src = cms.InputTag("patMuonIsolations","muIsoDepositCalByAssociatorTowersecal"),
             deltaR = cms.double(0.3)
         )
     ),
     # embed IsoDeposits to recompute isolation easily
     isoDeposits = cms.PSet(
-        tracker = cms.InputTag("layer0MuonIsolations","muIsoDepositTk"),
-        ecal    = cms.InputTag("layer0MuonIsolations","muIsoDepositCalByAssociatorTowersecal"),
-        hcal    = cms.InputTag("layer0MuonIsolations","muIsoDepositCalByAssociatorTowershcal"),
+        tracker = cms.InputTag("patMuonIsolations","muIsoDepositTk"),
+        ecal    = cms.InputTag("patMuonIsolations","muIsoDepositCalByAssociatorTowersecal"),
+        hcal    = cms.InputTag("patMuonIsolations","muIsoDepositCalByAssociatorTowershcal"),
         user    = cms.VInputTag(
-                     cms.InputTag("layer0MuonIsolations","muIsoDepositCalByAssociatorTowersho"), 
-                     cms.InputTag("layer0MuonIsolations","muIsoDepositJets")
+                     cms.InputTag("patMuonIsolations","muIsoDepositCalByAssociatorTowersho"), 
+                     cms.InputTag("patMuonIsolations","muIsoDepositJets")
                   ),
     ),
 

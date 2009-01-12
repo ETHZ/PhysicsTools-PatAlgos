@@ -1,5 +1,5 @@
 //
-// $Id: DuplicatedPhotonCleaner.cc,v 1.1.2.1 2008/10/10 13:10:33 gpetrucc Exp $
+// $Id: DuplicatedPhotonCleaner.cc,v 1.1.2.2 2008/10/10 19:24:04 gpetrucc Exp $
 //
 
 /**
@@ -11,11 +11,11 @@
    Among the two, the one with highest Et is kept.
    This is performed by the DuplicatedPhotonRemover in PhysicsTools/PatUtils
 
-   The output is an edm::PtrVector<reco:::Photon>, 
+   The output is an edm::RefToBaseVector<reco:::Photon>, 
    which can be read through edm::View<reco::Photon>
 
   \author   Giovanni Petrucciani
-  \version  $Id: DuplicatedPhotonCleaner.cc,v 1.1.2.1 2008/10/10 13:10:33 gpetrucc Exp $
+  \version  $Id: DuplicatedPhotonCleaner.cc,v 1.1.2.2 2008/10/10 19:24:04 gpetrucc Exp $
 */
 
 
@@ -24,7 +24,8 @@
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/ParameterSet/interface/InputTag.h"
 
-#include "DataFormats/Common/interface/PtrVector.h"
+//#include "DataFormats/Common/interface/PtrVector.h"
+#include "DataFormats/Common/interface/RefToBaseVector.h"
 
 #include "DataFormats/EgammaCandidates/interface/PhotonFwd.h"
 #include "DataFormats/EgammaCandidates/interface/Photon.h"
@@ -59,7 +60,7 @@ pat::DuplicatedPhotonCleaner::DuplicatedPhotonCleaner(const edm::ParameterSet & 
     removalAlgo_(fromString(iConfig, "removalAlgo")),
     try_(0), pass_(0)
 {
-    produces<edm::PtrVector<reco::Photon> >();
+    produces<edm::RefToBaseVector<reco::Photon> >();
 }
 
 pat::DuplicatedPhotonCleaner::~DuplicatedPhotonCleaner() {
@@ -87,7 +88,7 @@ pat::DuplicatedPhotonCleaner::produce(edm::Event & iEvent, const edm::EventSetup
   iEvent.getByLabel(photonSrc_, photons);
   try_ += photons->size();
 
-  std::auto_ptr<PtrVector<reco::Photon> > result(new PtrVector<reco::Photon>());
+  std::auto_ptr<RefToBaseVector<reco::Photon> > result(new RefToBaseVector<reco::Photon>());
 
   std::auto_ptr< std::vector<size_t> > duplicates;
   switch (removalAlgo_) {
@@ -102,7 +103,8 @@ pat::DuplicatedPhotonCleaner::produce(edm::Event & iEvent, const edm::EventSetup
   for (size_t i = 0, n = photons->size(); i < n; ++i) {
         while ((itdup != enddup) && (*itdup < i)) { ++itdup; }
         if ((itdup != enddup) && (*itdup == i)) continue;
-        result->push_back(photons->ptrAt(i));
+        //result->push_back(photons->ptrAt(i));
+        result->push_back(photons->refAt(i));
   }
 
   pass_ += result->size();

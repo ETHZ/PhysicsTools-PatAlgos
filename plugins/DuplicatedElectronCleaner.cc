@@ -1,5 +1,5 @@
 //
-// $Id: DuplicatedElectronCleaner.cc,v 1.1.2.1 2008/10/10 13:10:32 gpetrucc Exp $
+// $Id: DuplicatedElectronCleaner.cc,v 1.1.2.2 2008/10/10 19:24:04 gpetrucc Exp $
 //
 
 /**
@@ -11,11 +11,11 @@
    Among the two, the one with |E/P| nearest to 1 is kept.
    This is performed by the DuplicatedElectronRemover in PhysicsTools/PatUtils
 
-   The output is an edm::PtrVector<reco:::GsfElectron>, 
+   The output is an edm::RefVector<reco:::GsfElectron>, 
    which can be read through edm::View<reco::GsfElectron>
 
   \author   Giovanni Petrucciani
-  \version  $Id: DuplicatedElectronCleaner.cc,v 1.1.2.1 2008/10/10 13:10:32 gpetrucc Exp $
+  \version  $Id: DuplicatedElectronCleaner.cc,v 1.1.2.2 2008/10/10 19:24:04 gpetrucc Exp $
 */
 
 
@@ -24,7 +24,9 @@
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/ParameterSet/interface/InputTag.h"
 
-#include "DataFormats/Common/interface/PtrVector.h"
+//#include "DataFormats/Common/interface/RefVector.h"
+#include "DataFormats/Common/interface/RefToBaseVector.h"
+//#include "DataFormats/Common/interface/PtrVector.h"
 
 #include "DataFormats/EgammaCandidates/interface/GsfElectronFwd.h"
 #include "DataFormats/EgammaCandidates/interface/GsfElectron.h"
@@ -53,7 +55,9 @@ pat::DuplicatedElectronCleaner::DuplicatedElectronCleaner(const edm::ParameterSe
     electronSrc_(iConfig.getParameter<edm::InputTag>("electronSource")),
     try_(0), pass_(0)
 {
-    produces<edm::PtrVector<reco::GsfElectron> >();
+    //produces<edm::RefVector<reco::GsfElectronCollection> >();
+    produces<edm::RefToBaseVector<reco::GsfElectron> >();
+    //produces<edm::PtrVector<reco::GsfElectron> >();
 }
 
 pat::DuplicatedElectronCleaner::~DuplicatedElectronCleaner() {
@@ -62,12 +66,13 @@ pat::DuplicatedElectronCleaner::~DuplicatedElectronCleaner() {
 void 
 pat::DuplicatedElectronCleaner::produce(edm::Event & iEvent, const edm::EventSetup & iSetup) {
   using namespace edm;
-
   Handle<View<reco::GsfElectron> > electrons;
   iEvent.getByLabel(electronSrc_, electrons);
   try_ += electrons->size();
 
-  std::auto_ptr<PtrVector<reco::GsfElectron> > result(new PtrVector<reco::GsfElectron>());
+  //std::auto_ptr<RefVector<reco::GsfElectronCollection> > result(new RefVector<reco::GsfElectronCollection>());
+  std::auto_ptr<RefToBaseVector<reco::GsfElectron> > result(new RefToBaseVector<reco::GsfElectron>());
+  //std::auto_ptr<PtrVector<reco::GsfElectron> > result(new PtrVector<reco::GsfElectron>());
 
   std::auto_ptr< std::vector<size_t> > duplicates = duplicateRemover_.duplicatesToRemove(*electrons);
 
@@ -75,22 +80,18 @@ pat::DuplicatedElectronCleaner::produce(edm::Event & iEvent, const edm::EventSet
   for (size_t i = 0, n = electrons->size(); i < n; ++i) {
         while ((itdup != enddup) && (*itdup < i)) { ++itdup; }
         if ((itdup != enddup) && (*itdup == i)) continue;
-        result->push_back(electrons->ptrAt(i));
+        //result->push_back(electrons->refAt(i).castTo<edm::Ref<reco::GsfElectronCollection> >());
+        result->push_back(electrons->refAt(i));
+        //result->push_back(electrons->ptrAt(i));
   }
 
-  pass_ += result->size();
-
+  pass_ += result->size(); 
   iEvent.put(result);
 }
 
 
 void 
 pat::DuplicatedElectronCleaner::endJob() { 
-    edm::LogVerbatim("PATLayer0Summary|DuplicatedElectronCleaner") << "DuplicatedElectronCleaner end job. \n" <<
-            "Input tag " << electronSrc_.encode() <<
-            "\t: try " << try_ << 
-            ", pass " << pass_ << " (" << (try_ > 0 ? pass_/double(try_) * 100.0 : 0) << "%)" << 
-            ", fail " << (try_-pass_) << " (" << (try_ > 0 ? (try_-pass_)/double(try_) * 100.0 : 0) << "%)" << "\n";
 }
 
 #include "FWCore/Framework/interface/MakerMacros.h"

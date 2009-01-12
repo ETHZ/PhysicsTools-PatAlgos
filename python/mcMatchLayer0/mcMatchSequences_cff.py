@@ -19,12 +19,6 @@ patMCTruth_Tau =  cms.Sequence ( tauMatch+
                                  tauGenJets*
                                  tauGenJetMatch )
 
-patMCTruth_withoutTau = cms.Sequence(patMCTruth_LeptonPhoton+
-                                     patMCTruth_Jet)
-
-patMCTruth_withoutLeptonPhoton = cms.Sequence(patMCTruth_Jet+
-                                              patMCTruth_Tau )
-
 patMCTruth = cms.Sequence(patMCTruth_LeptonPhoton+
                           patMCTruth_Jet+
                           patMCTruth_Tau )

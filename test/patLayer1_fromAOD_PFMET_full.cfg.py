@@ -5,10 +5,10 @@ process = cms.Process("PAT")
 # initialize MessageLogger and output report
 process.load("FWCore.MessageLogger.MessageLogger_cfi")
 process.MessageLogger.cerr.threshold = 'INFO'
-process.MessageLogger.categories.append('PATLayer0Summary')
+process.MessageLogger.categories.append('PATSummaryTables')
 process.MessageLogger.cerr.INFO = cms.untracked.PSet(
     default          = cms.untracked.PSet( limit = cms.untracked.int32(0)  ),
-    PATLayer0Summary = cms.untracked.PSet( limit = cms.untracked.int32(-1) )
+    PATSummaryTables = cms.untracked.PSet( limit = cms.untracked.int32(-1) )
 )
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 
@@ -20,8 +20,7 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
 
 
 # PAT Layer 0+1
-process.load("PhysicsTools.PatAlgos.patLayer0_cff")
-process.load("PhysicsTools.PatAlgos.patLayer1_cff")
+process.load("PhysicsTools.PatAlgos.patSequences_cff")
 
 
 ## Load additional RECO config
@@ -35,15 +34,14 @@ process.load("PhysicsTools.PFCandProducer.pfMET_cfi")
 
 ### Use this to add the PF MET side-by-side to the PAT MET (it will be called 'selectedLayer1PFMETs')
 ### This doesn't take care of the trigger matching
-process.patLayer0.replace(process.allLayer0METs, process.allLayer0METs + process.pfMET)
 process.allLayer1PFMETs = process.allLayer1METs.clone(
     metSource = cms.InputTag("pfMET"),
     addTrigMatch = cms.bool(False),
     addMuonCorrections = cms.bool(False),
 )
 process.selectedLayer1PFMETs = process.selectedLayer1METs.clone(src = cms.InputTag("allLayer1PFMETs"))
-process.patLayer1.replace(process.allLayer1METs,      process.allLayer1METs      + process.allLayer1PFMETs)
-process.patLayer1.replace(process.selectedLayer1METs, process.selectedLayer1METs + process.selectedLayer1PFMETs)
+process.allLayer1Objects.replace( process.allLayer1METs, process.allLayer1METs + process.allLayer1PFMETs)
+process.selectedLayer1Objects.replace(process.selectedLayer1METs, process.selectedLayer1METs + process.selectedLayer1PFMETs)
 
 ### Use this if you want to totally replace the PAT MET with the PF MET
 ##
@@ -60,20 +58,22 @@ process.patLayer1.replace(process.selectedLayer1METs, process.selectedLayer1METs
 
 # Now we break up process.patLayer0
 process.p = cms.Path(
-                process.patLayer0  
-                + process.patLayer1
-            )
+    process.pfMET +
+    process.patDefaultSequence  
+)
 
 # Output module configuration
+from PhysicsTools.PatAlgos.patEventContent_cff import patEventContent
 process.out = cms.OutputModule("PoolOutputModule",
     fileName = cms.untracked.string('PATLayer1_Output.fromAOD_PFMET_full.root'),
     # save only events passing the full path
     SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring('p') ),
-    outputCommands = cms.untracked.vstring('drop *')
+    # save PAT Layer 1 output
+    outputCommands = cms.untracked.vstring(
+                'drop *', 
+                'keep *_selectedLayer1PFMETs_*_*',
+                *patEventContent  # you need a '*' to unpack the list of commands 'patEventContent'
+    )
 )
 process.outpath = cms.EndPath(process.out)
-# save PAT Layer 1 output
-process.load("PhysicsTools.PatAlgos.patLayer1_EventContent_cff")
-process.out.outputCommands.extend(process.patLayer1EventContent.outputCommands)
-process.out.outputCommands += [ 'keep *_selectedLayer1PFMETs_*_*' ]
 
