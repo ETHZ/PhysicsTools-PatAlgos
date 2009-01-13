@@ -1,5 +1,5 @@
 //
-// $Id: PATJetProducer.cc,v 1.26.2.3 2009/01/07 11:45:26 auterman Exp $
+// $Id: PATJetProducer.cc,v 1.26.2.4 2009/01/13 10:01:55 gpetrucc Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATJetProducer.h"
@@ -11,17 +11,13 @@
 #include "DataFormats/Common/interface/Association.h"
 #include "DataFormats/Candidate/interface/CandAssociation.h"
 
-//#include "DataFormats/BTauReco/interface/JetTagFwd.h"
+#include "DataFormats/JetReco/interface/JetTracksAssociation.h"
 #include "DataFormats/BTauReco/interface/JetTag.h"
 #include "DataFormats/BTauReco/interface/TrackProbabilityTagInfo.h"
-//#include "DataFormats/BTauReco/interface/TrackProbabilityTagInfoFwd.h"
 #include "DataFormats/BTauReco/interface/TrackIPTagInfo.h"
 #include "DataFormats/BTauReco/interface/TrackCountingTagInfo.h"
 #include "DataFormats/BTauReco/interface/SecondaryVertexTagInfo.h"
-//#include "DataFormats/BTauReco/interface/TrackCountingTagInfoFwd.h"
 #include "DataFormats/BTauReco/interface/SoftLeptonTagInfo.h"
-//#include "DataFormats/BTauReco/interface/SoftLeptonTagInfoFwd.h"
-#include "DataFormats/JetReco/interface/JetTracksAssociation.h"
 
 #include "DataFormats/Candidate/interface/CandMatchMap.h"
 #include "SimDataFormats/JetMatching/interface/JetFlavourMatching.h"
@@ -64,9 +60,9 @@ PATJetProducer::PATJetProducer(const edm::ParameterSet& iConfig)  :
   addResolutions_          = iConfig.getParameter<bool> 		      ( "addResolutions" );
   addBTagInfo_             = iConfig.getParameter<bool> 		      ( "addBTagInfo" );
   addDiscriminators_       = iConfig.getParameter<bool> 		      ( "addDiscriminators" );
-  discriminatorModule_     = iConfig.getParameter<edm::InputTag>              ( "discriminatorModule" );
-  addTagInfoRefs_          = iConfig.getParameter<bool> 		      ( "addTagInfoRefs" );
-  tagInfoModule_           = iConfig.getParameter<edm::InputTag>              ( "tagInfoModule" );
+  discriminatorTags_       = iConfig.getParameter<std::vector<edm::InputTag> >( "discriminatorSources" );
+  addTagInfos_             = iConfig.getParameter<bool> 		      ( "addTagInfos" );
+  tagInfoTags_             = iConfig.getParameter<std::vector<edm::InputTag> >( "tagInfoSources" );
   addAssociatedTracks_     = iConfig.getParameter<bool> 		      ( "addAssociatedTracks" ); 
   trackAssociation_        = iConfig.getParameter<edm::InputTag>	      ( "trackAssociationSource" );
   addJetCharge_            = iConfig.getParameter<bool> 		      ( "addJetCharge" ); 
@@ -78,25 +74,33 @@ PATJetProducer::PATJetProducer(const edm::ParameterSet& iConfig)  :
      efficiencyLoader_ = pat::helper::EfficiencyLoader(iConfig.getParameter<edm::ParameterSet>("efficiencies"));
   }
 
-  std::vector<std::string> discriminatorNames = iConfig.getParameter<std::vector<std::string> >("discriminatorNames");
-  if (discriminatorNames.empty()) { 
-    addDiscriminators_ = false; // there's no point to read all discriminators and save none ;-)
-  } else if (std::find(discriminatorNames.begin(), discriminatorNames.end(), "*") == discriminatorNames.end()) {
-    discriminatorNames_.insert(discriminatorNames.begin(), discriminatorNames.end());
+
+  if (discriminatorTags_.empty()) { 
+    addDiscriminators_ = false; 
   } else {
-    // we just leave the set empty, and catch everything we can
+    for (std::vector<edm::InputTag>::const_iterator it = discriminatorTags_.begin(), ed = discriminatorTags_.end(); it != ed; ++it) {
+        std::string label = it->label();
+        std::string::size_type pos = label.find("JetTags");
+        if ((pos !=  std::string::npos) && (pos != label.length() - 7)) {
+            label.erase(pos+7); // trim a tail after "JetTags"
+        }
+        discriminatorLabels_.push_back(label);
+    }
+  }
+  if (tagInfoTags_.empty()) { 
+    addTagInfos_ = false; 
+  } else {
+    for (std::vector<edm::InputTag>::const_iterator it = tagInfoTags_.begin(), ed = tagInfoTags_.end(); it != ed; ++it) {
+        std::string label = it->label();
+        std::string::size_type pos = label.find("TagInfos");
+        if ((pos !=  std::string::npos) && (pos != label.length() - 8)) {
+            label.erase(pos+8); // trim a tail after "TagInfos"
+        }
+        tagInfoLabels_.push_back(label);
+    }
   }
 
-  std::vector<std::string> tagInfoNames = iConfig.getParameter<std::vector<std::string> >("tagInfoNames");
-  if (tagInfoNames.empty()) { 
-    addTagInfoRefs_ = false; // there's no point to read all tagInfos and save none ;-)
-  } else if (std::find(tagInfoNames.begin(), tagInfoNames.end(), "*") == tagInfoNames.end()) {
-    tagInfoNames_.insert(tagInfoNames.begin(), tagInfoNames.end());
-  } else {
-    // we just leave the set empty, and catch everything we can
-  }
-
-  if (!addBTagInfo_) { addDiscriminators_ = false; addTagInfoRefs_ = false; }
+  if (!addBTagInfo_) { addDiscriminators_ = false; addTagInfos_ = false; }
 
   // Check to see if the user wants to add user data
   useUserData_ = false;
@@ -149,24 +153,18 @@ void PATJetProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
   }  
 
   // Get the vector of jet tags with b-tagging info
-  std::vector<edm::Handle<edm::ValueMap<float> > > jetDiscriminators;
+  std::vector<edm::Handle<reco::JetFloatAssociation::Container> > jetDiscriminators;
   if (addBTagInfo_ && addDiscriminators_) {
-    if (discriminatorModule_.process().empty()) {
-        edm::ModuleLabelSelector selector(discriminatorModule_.label());
-        iEvent.getMany(selector, jetDiscriminators);
-    } else {
-        edm::Selector selector(edm::ModuleLabelSelector(discriminatorModule_.label()) && edm::ProcessNameSelector(discriminatorModule_.process()));
-        iEvent.getMany(selector, jetDiscriminators);
+    jetDiscriminators.resize(discriminatorTags_.size());
+    for (size_t i = 0; i < discriminatorTags_.size(); ++i) {
+        iEvent.getByLabel(discriminatorTags_[i], jetDiscriminators[i]);
     }
   }
-  std::vector<edm::Handle<edm::ValueMap<edm::Ptr<reco::BaseTagInfo> > > > jetTagInfos;
-  if (addBTagInfo_ && addTagInfoRefs_) {
-    if (tagInfoModule_.process().empty()) {
-        edm::ModuleLabelSelector selector(tagInfoModule_.label());
-        iEvent.getMany(selector, jetTagInfos);
-    } else {
-        edm::Selector selector(edm::ModuleLabelSelector(tagInfoModule_.label()) && edm::ProcessNameSelector(tagInfoModule_.process()));
-        iEvent.getMany(selector, jetTagInfos);
+  std::vector<edm::Handle<edm::View<reco::BaseTagInfo> > > jetTagInfos;
+  if (addBTagInfo_ && addTagInfos_) {
+    jetTagInfos.resize(tagInfoTags_.size());
+    for (size_t i = 0; i < tagInfoTags_.size(); ++i) {
+        iEvent.getByLabel(tagInfoTags_[i], jetTagInfos[i]);
     }
   }
  
@@ -255,35 +253,25 @@ void PATJetProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
     if (addBTagInfo_) {
         if (addDiscriminators_) {
             for (size_t k=0; k<jetDiscriminators.size(); ++k) {
-                const edm::Handle<edm::ValueMap<float> > & jetDiscHandle = jetDiscriminators[k];
-                std::pair<std::string,float> pairDiscri(jetDiscHandle.provenance()->productInstanceName(), -1000.0);
-                std::string::size_type pos = pairDiscri.first.find("JetTags"); 
-                if ((pos !=  std::string::npos) && (pos != pairDiscri.first.length() - 7)) {
-                    pairDiscri.first.erase(pos+7); // trim a tail after "JetTags"
-                }
-                if ( discriminatorNames_.empty() || 
-                        (discriminatorNames_.find(pairDiscri.first) != discriminatorNames_.end()) ) {
-                    if (jetDiscHandle->contains(jetRef.id())) {
-                        pairDiscri.second = (*jetDiscHandle)[jetRef];
-                        ajet.addBDiscriminatorPair(pairDiscri);
-                    }
-                }
+                float value = (*jetDiscriminators[k])[jetRef];
+                ajet.addBDiscriminatorPair(std::make_pair(discriminatorLabels_[k], value));
             }
         }    
-        if (addTagInfoRefs_) {
+        if (addTagInfos_) {
             for (size_t k=0; k<jetTagInfos.size(); ++k) {
-                const edm::Handle<edm::ValueMap<edm::Ptr<reco::BaseTagInfo> > > & jetTagInfoHandle = jetTagInfos[k];
-                std::string label = jetTagInfoHandle.provenance()->productInstanceName();
-                std::string::size_type pos = label.find("TagInfos");
-                if ((pos !=  std::string::npos) && (pos != label.length() - 8)) {
-                    label.erase(pos+8); // trim a tail after "TagInfos"
-                }
-                if ( tagInfoNames_.empty() || 
-                        (tagInfoNames_.find(label) != tagInfoNames_.end()) ) {
-                    if (jetTagInfoHandle->contains(jetRef.id())) {
-                        ajet.addTagInfo(label, (*jetTagInfoHandle)[jetRef]);
+                const edm::View<reco::BaseTagInfo> & taginfos = *jetTagInfos[k];
+                // This is not associative, so we have to search the jet
+                const reco::BaseTagInfo * match = 0;
+                // Try first by 'same index'
+                if ((idx < taginfos.size()) && (taginfos[idx].jet() == jetRef)) {
+                    match = &taginfos[idx];
+                } else {
+                    // otherwise fail back to a simple search
+                    for (edm::View<reco::BaseTagInfo>::const_iterator itTI = taginfos.begin(), edTI = taginfos.end(); itTI != edTI; ++itTI) {
+                        if (itTI->jet() == jetRef) { match = &*itTI; break; }
                     }
                 }
+                if (match != 0) ajet.addTagInfo(tagInfoLabels_[k], *match);
             }
         }    
     }

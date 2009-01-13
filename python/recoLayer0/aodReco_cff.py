@@ -26,7 +26,7 @@ patAODCoreReco = cms.Sequence(
 # Sequences needed to deliver external information for objects
 # You can remove modules from here if you don't need these features
 patAODExtraReco = cms.Sequence(
-    patBTagging +
+    #patBTagging +       # Empty sequences not supported yet
     patElectronId +
     patElectronIsolation +
     patJetFlavourId +

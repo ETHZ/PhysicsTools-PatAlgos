@@ -38,14 +38,29 @@ allLayer1Jets = cms.EDProducer("PATJetProducer",
     addBTagInfo = cms.bool(True), # master switch
     # copy discriminators in the pat::Jet
     addDiscriminators   = cms.bool(True),   ## switch on/off the addition of the btag discriminators
-    discriminatorModule = cms.InputTag("patBTags"), ## meta-module which provides the list of discriminators. DO NOT specify an instance label
-    discriminatorNames  = cms.vstring('*'), ## name of the JetTags to keep ( '*' = all )
+    discriminatorSources = cms.VInputTag(
+        cms.InputTag("combinedSecondaryVertexBJetTags"),
+        cms.InputTag("combinedSecondaryVertexMVABJetTags"),
+        cms.InputTag("impactParameterMVABJetTags"),
+        cms.InputTag("jetBProbabilityBJetTags"),
+        cms.InputTag("jetProbabilityBJetTags"),
+        cms.InputTag("simpleSecondaryVertexBJetTags"),
+        cms.InputTag("softElectronBJetTags"),
+        cms.InputTag("softMuonBJetTags"),
+        cms.InputTag("softMuonNoIPBJetTags"),
+        cms.InputTag("trackCountingHighEffBJetTags"),
+        cms.InputTag("trackCountingHighPurBJetTags"),
+    ),
     # clone tag infos in the pat::Jet
     # watch out: these take lots of space!
     # usually the discriminators from the default algos suffice
-    addTagInfoRefs = cms.bool(True),
-    tagInfoModule  = cms.InputTag("patTagInfos"),
-    tagInfoNames   = cms.vstring('secondaryVertexTagInfos','softElectronTagInfos','softMuonTagInfos','impactParameterTagInfos'),
+    addTagInfos = cms.bool(True),
+    tagInfoSources  = cms.VInputTag(
+        cms.InputTag("secondaryVertexTagInfos"),
+        cms.InputTag("softElectronTagInfos"), 
+        cms.InputTag("softMuonTagInfos"),
+        cms.InputTag("impactParameterTagInfos"),
+    ),
 
     # track association configurables
     addAssociatedTracks    = cms.bool(True),

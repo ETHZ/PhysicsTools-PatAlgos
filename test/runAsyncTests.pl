@@ -12,10 +12,11 @@ my $fake   :shared = 0;
 my $repdef :shared = "";
 
 use Getopt::Long;
-my ($help,$base,$extra,$all);
+my ($help,$base,$one,$extra,$all);
 my @summary :shared;
 GetOptions( 'h|?|help' => \$help, 
             'n|dry-run' => \$fake,
+            '1|one' => \$one,
             'b|base' => \$base,
             'a|all' => \$all,
             'e|extra' => \$extra,
@@ -26,6 +27,7 @@ if ($help) {
     print "Usage: perl $name [-n|--dry-run] [cfg.pys]\n" .
           "   -n or --dry-run: just read the output, don't run cmsRun\n".
           "   -h or --help:    print this help\n".
+          "   -1 or --one:     add patLayer1_fromAOD_full to the jobs to run\n".   
           "   -b or --base:    add base standard PAT config files to the jobs to run\n".   
           "   -e or --extra:   add the extra standard PAT config files to the jobs to run (that is, those not in base)\n".   
           "   -a or --all:     add all standard PAT config files to the jobs to run\n". 
@@ -42,6 +44,7 @@ my @CFGs = map({$_ =~ /\.py$|\*$/ ? $_ : "*$_*"}   @ARGV);
 my @anyCFGs    = glob("pat*.cfg.py"); 
 my @baseCFGs   = grep($_ =~ /fromAOD_(full|fast)|fromSummer08AODSIM|fromScratch_fast/, @anyCFGs);
 my @extraCFGs  = grep($_ !~ /fromAOD_(full|fast)|fromSummer08AODSIM|fromScratch_fast/, @anyCFGs);
+if ($one )  { push @CFGs, grep(m/fromAOD_full/, @anyCFGs);  }
 if ($base ) { push @CFGs, @baseCFGs;  }
 if ($all  ) { push @CFGs, @anyCFGs;   }
 if ($extra) { push @CFGs, @extraCFGs; }
@@ -49,11 +52,11 @@ if (@CFGs) {
     #pass through a hash, to remove duplicates
     my %allCFGs = ();
     foreach my $cfg (@CFGs) { 
-        foreach my $cfgfile (grep(/\.cfg\.py$/, glob($cfg))) { $allCFGs{$cfgfile} = 1; }
+        foreach my $cfgfile (grep(/cfg\.py$/, glob($cfg))) { $allCFGs{$cfgfile} = 1; }
     }
     @CFGs = sort(keys(%allCFGs));
 } else {
-    print STDERR "Please specify a cfg, or use --base, --all, --extra to select the standard ones\n"; exit(0);
+    print STDERR "Please specify a cfg, or use --one, --base, --all, --extra to select the standard ones\n"; exit(0);
 }
 
 print "Will run " . scalar(@CFGs) . " config files: " . join(' ', @CFGs) . "\n\n";
