@@ -33,7 +33,7 @@ patAODExtraReco = cms.Sequence(
     patJetFlavourId +
     patJetMETCorrections +
     patJetTracksCharge +
-    patMuonIsolation +
+    #patMuonIsolation +   # Empty sequences not supported yet
     patPhotonID +
     patPhotonIsolation +
     patTauDiscrimination

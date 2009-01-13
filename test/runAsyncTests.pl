@@ -36,7 +36,8 @@ if ($fake) {
     print "=== NOT ACTUALLLY RUNNING cmsRun, JUST READING OUTPUT LOGS ===\n";
 }
 
-my @CFGs = @ARGV;
+my @CFGs = map({$_ =~ /\.py$|\*$/ ? $_ : "*$_*"}   @ARGV);
+
 
 my @anyCFGs    = glob("pat*.cfg.py"); 
 my @baseCFGs   = grep($_ =~ /fromAOD_(full|fast)|fromSummer08AODSIM|fromScratch_fast/, @anyCFGs);

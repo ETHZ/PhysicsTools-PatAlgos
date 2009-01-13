@@ -1,5 +1,5 @@
 //
-// $Id: PATJetProducer.cc,v 1.26.2.2 2008/11/25 15:39:40 gpetrucc Exp $
+// $Id: PATJetProducer.cc,v 1.26.2.3 2009/01/07 11:45:26 auterman Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATJetProducer.h"
@@ -21,6 +21,8 @@
 //#include "DataFormats/BTauReco/interface/TrackCountingTagInfoFwd.h"
 #include "DataFormats/BTauReco/interface/SoftLeptonTagInfo.h"
 //#include "DataFormats/BTauReco/interface/SoftLeptonTagInfoFwd.h"
+#include "DataFormats/JetReco/interface/JetTracksAssociation.h"
+
 #include "DataFormats/Candidate/interface/CandMatchMap.h"
 #include "SimDataFormats/JetMatching/interface/JetFlavourMatching.h"
 
@@ -169,9 +171,9 @@ void PATJetProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
   }
  
   // tracks Jet Track Association
-  edm::Handle<edm::ValueMap<reco::TrackRefVector> > hTrackAss;
+  edm::Handle<reco::JetTracksAssociation::Container > hTrackAss;
   if (addAssociatedTracks_) iEvent.getByLabel(trackAssociation_, hTrackAss);
-  edm::Handle<edm::ValueMap<float> > hJetChargeAss;
+  edm::Handle<reco::JetFloatAssociation::Container > hJetChargeAss;
   if (addJetCharge_) iEvent.getByLabel(jetCharge_, hJetChargeAss);
 
   // loop over jets

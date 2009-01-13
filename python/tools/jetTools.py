@@ -104,13 +104,12 @@ def switchJetCollection(process,jetCollection,doJTA=True,doBTagging=True,jetCorr
     if doBTagging :
         (btagSeq, btagLabels) = runBTagging(process, jetCollection, 'AOD')
         process.patAODReco.replace(process.patBTagging, btagSeq + process.patBTagging)
-        process.patJetTracksAssociator.src       = jetCollection
-        process.patJetTracksAssociator.tracks    = btagLabels['jta']
-        process.patJetCharge.src                 = jetCollection
-        process.patBTagInfos.collection          = jetCollection
-        process.patBTags.collection              = jetCollection
-        process.patBTagInfos.associations        = btagLabels['tagInfos']
-        process.patBTags.associations            = btagLabels['jetTags']
+        process.patJetCharge.src                     = btagLabels['jta']
+        process.allLayer1Jets.trackAssociationSource = btagLabels['jta']
+        process.patBTagInfos.collection   = jetCollection
+        process.patBTags.collection       = jetCollection
+        process.patBTagInfos.associations = btagLabels['tagInfos']
+        process.patBTags.associations     = btagLabels['jetTags']
     else:
         process.patAODReco.remove(process.patBTagging)
         process.allLayer1Jets.addBTagInfo = False
@@ -120,10 +119,10 @@ def switchJetCollection(process,jetCollection,doJTA=True,doBTagging=True,jetCorr
             from RecoJets.JetAssociationProducers.ic5JetTracksAssociatorAtVertex_cfi import ic5JetTracksAssociatorAtVertex
             process.jetTracksAssociatorAtVertex = ic5JetTracksAssociatorAtVertex.clone(jets = cms.InputTag(jetCollection))
             process.patAODReco.replace(process.patJetTracksCharge, process.jetTracksAssociatorAtVertex + process.patJetTracksCharge)
-            process.patJetTracksAssociator.src       = jetCollection
-            process.patJetTracksAssociator.tracks    = 'jetTracksAssociatorAtVertex'
+            process.patJetCharge.src                     = 'jetTracksAssociatorAtVertex'
+            process.allLayer1Jets.trackAssociationSource = 'jetTracksAssociatorAtVertex'
     else: ## no JTA
-        process.patAODReco.remove(process.patLayer0JetTracksCharge)
+        process.patAODReco.remove(process.patJetTracksCharge)
         process.allLayer1Jets.addAssociatedTracks = False
         process.allLayer1Jets.addJetCharge = False
     if jetCorrLabel != None:
@@ -211,16 +210,13 @@ def addJetCollection(process,jetCollection,postfixLabel,
     if doBTagging :
         (btagSeq, btagLabels) = runBTagging(process, jetCollection, postfixLabel)
         process.patAODReco.replace(process.patBTagging, btagSeq + process.patBTagging)
-        addClone('patJetTracksAssociator', src=cms.InputTag(jetCollection), 
-                                           tracks=cms.InputTag(btagLabels['jta']))
-        addClone('patJetCharge'          , src=cms.InputTag(jetCollection),
-                                           jetTracksAssociation=cms.InputTag('patJetTracksAssociator'+postfixLabel))
+        addClone('patJetCharge'          , src=cms.InputTag(btagLabels['jta']))
         addClone('patBTagInfos'           , collection=cms.InputTag(jetCollection), 
                                             associations=vit(*btagLabels['tagInfos']))
         addClone('patBTags'              , collection=cms.InputTag(jetCollection),
                                            associations=vit(*btagLabels['jetTags']))
+        l1Jets.trackAssociationSource = cms.InputTag(btagLabels['jta'])
         fixInputTag(l1Jets.jetChargeSource)
-        fixInputTag(l1Jets.trackAssociationSource)
         fixInputTag(l1Jets.tagInfoModule)
         fixInputTag(l1Jets.discriminatorModule)
         if l1Jets.discriminatorNames != cms.vstring("*"): 
@@ -236,12 +232,9 @@ def addJetCollection(process,jetCollection,postfixLabel,
             jtaLabel = 'jetTracksAssociatorAtVertex' + postfixLabel
             setattr( process, jtaLabel, ic5JetTracksAssociatorAtVertex.clone(jets = cms.InputTag(jetCollection)) )
             process.patAODReco.replace(process.patJetTracksCharge, getattr(process,jtaLabel) + process.patJetTracksCharge)
-            addClone('patJetTracksAssociator', src=cms.InputTag(jetCollection), 
-                                               tracks=cms.InputTag(jtaLabel))
-            addClone('patJetCharge'          , src=cms.InputTag(jetCollection),
-                                               jetTracksAssociation=cms.InputTag('patJetTracksAssociator'+postfixLabel))
+            l1Jets.trackAssociationSource = cms.InputTag(jtaLabel)
+            addClone('patJetCharge', src=cms.InputTag(jtaLabel)),
             fixInputTag(l1Jets.jetChargeSource)
-            fixInputTag(l1Jets.trackAssociationSource)
     else: ## no JTA
         l1Jets.addAssociatedTracks = False
         l1Jets.addJetCharge = False

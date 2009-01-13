@@ -49,7 +49,7 @@ allLayer1Jets = cms.EDProducer("PATJetProducer",
 
     # track association configurables
     addAssociatedTracks    = cms.bool(True),
-    trackAssociationSource = cms.InputTag("patJetTracksAssociator"), ## the track association parameter set
+    trackAssociationSource = cms.InputTag("ic5JetTracksAssociatorAtVertex"), ## now a standard reco::JetTracksAssociation::Container
 
     # Jet charge configurables
     addJetCharge    = cms.bool(True),
