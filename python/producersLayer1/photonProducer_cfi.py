@@ -49,7 +49,7 @@ allLayer1Photons = cms.EDProducer("PATPhotonProducer",
 
     # PhotonID configurables
     addPhotonID = cms.bool(True),
-    photonIDSource = cms.InputTag("patPhotonIDs"), ## ValueMap<reco::PhotonID> keyed to photonSource
+    photonIDSource = cms.InputTag("PhotonIDProd","PhotonAssociatedID"), ## ValueMap<reco::PhotonID> keyed to photonSource
 
     # Trigger matching configurables
     addTrigMatch = cms.bool(True),
