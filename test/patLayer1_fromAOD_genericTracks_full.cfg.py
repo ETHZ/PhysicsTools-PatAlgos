@@ -21,12 +21,11 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
 
 process.load("Configuration.StandardSequences.Geometry_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
-process.GlobalTag.globaltag = cms.string('STARTUP_V4::All')
+process.GlobalTag.globaltag = cms.string('STARTUP_V7::All')
 process.load("Configuration.StandardSequences.MagneticField_cff")
 
 # PAT Layer 0+1
-process.load("PhysicsTools.PatAlgos.patLayer0_cff")
-process.load("PhysicsTools.PatAlgos.patLayer1_cff")
+process.load("PhysicsTools.PatAlgos.patSequences_cff")
 
 from PhysicsTools.PatAlgos.tools.trackTools import *
 makeTrackCandidates(process, 
@@ -34,18 +33,18 @@ makeTrackCandidates(process,
         tracks=cms.InputTag('generalTracks'), # input track collection
         particleType="pi+",                   # particle type (for assigning a mass)
         preselection='pt > 10',               # preselection cut on candidates. Only methods of 'reco::Candidate' are available
-        cleaning=True,                        # Run the PATGenericParticleCleaner ('allLayer0TrackCands')
         selection='pt > 10',                  # Selection on PAT Layer 1 objects ('selectedLayer1TrackCands')
-        isolation=['tracker','caloTowers'],   # Isolations to use (currently only 'tracker' and 'caloTowers' are valid options)
-                                              # You can also set it to 'None' to avoid computing isolatio alltogether
-        mcAs='allLayer0Muons',                # Replicate MC match as the one used for Muons
-        triggerAs=['allLayer0Muons']          # Replicate trigger match as all the ones used for Muons
+        isolation={'tracker':0.3,             # Isolations to use ('source':deltaR; set to {} for None)
+                   'ecalTowers':0.3,          # 'tracker' => as muon track iso
+                   'hcalTowers':0.3},         # 'ecalTowers', 'hcalTowers' => as muon iso from calo towers.
+        isodeposits=[],                       # examples: 'tracker','ecalTowers','hcalTowers'; [] = empty list = none   
+        mcAs=cms.InputTag("muons"),           # Replicate MC match as the one used by PAT on this AOD collection (None = no mc match)
+        triggerAs=[]                          # Replicate trigger match as all the ones used by PAT on these AOD collections (None = no trig.)
         );                                    #  you can specify more than one collection for this
 
 
 process.p = cms.Path(
-        process.patLayer0 *
-        process.patLayer1 
+        process.patDefaultSequence 
 )
 
 # Output module configuration
@@ -57,8 +56,8 @@ process.out = cms.OutputModule("PoolOutputModule",
 )
 process.outpath = cms.EndPath(process.out)
 # save PAT Layer 1 output
-process.load("PhysicsTools.PatAlgos.patLayer1_EventContent_cff")
-process.out.outputCommands.extend(process.patLayer1EventContent.outputCommands)
+from PhysicsTools.PatAlgos.patEventContent_cff import *
+process.out.outputCommands += patEventContent 
 process.out.outputCommands.append('keep *_selectedLayer1TrackCands_*_*')
 
 #### Dump the python config

@@ -26,7 +26,7 @@ process.load("PhysicsTools.PatAlgos.patSequences_cff")
 ## Load additional RECO config
 process.load("Configuration.StandardSequences.Geometry_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
-process.GlobalTag.globaltag = cms.string('STARTUP_V4::All')
+process.GlobalTag.globaltag = cms.string('STARTUP_V7::All')
 process.load("Configuration.StandardSequences.MagneticField_cff")
 
 # switch the JET collection
