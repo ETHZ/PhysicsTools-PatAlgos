@@ -16,6 +16,76 @@ module allLayer1METs = PATMETProducer {
   ### Resolution configurables
   bool     addResolutions     = true                    # switch on/off the resolution calculation
   bool     useNNResolutions   = false                   # use the neural network approach?
-  string   metResoFile        = "PhysicsTools/PatUtils/data/Resolutions_met.root"
+  string   metResoFile        = "PhysicsTools/PatUtils/data/Resolutions_met.root" 
                                                         # input root file for the resolution functions
+    
+  ### --------------------------------------------------
+  ### For MET Significance 
+  ### --------------------------------------------------
+
+    double verbose  = 0.
+    
+    untracked InputTag jetTag      = selectedLayer1Jets
+    untracked InputTag electronTag = selectedLayer1Electrons
+    untracked InputTag muonTag     = selectedLayer1Muons
+    untracked InputTag tauTag      = selectedLayer1Taus
+    untracked InputTag photonTag   = selectedLayer1Photons
+
+  ### Selection configurables
+
+    double jetPtMin      = 20.
+    double jetEtaMax     = 5.
+    double jetEMfracMax  = 0.9
+    double elePtMin      = 10.
+    double eleEtaMax     = 3.
+    double muonPtMin     = 10.
+    double muonEtaMax    = 2.5
+
+
+  ### Resolution configurables
+
+    double uncertaintyScaleFactor = 1.0  
+	
+    bool  controlledUncertainty = true #use controlled uncertainty parameters.
+
+    # -------------------------------------------
+    #  Jet Uncertainties
+    # -------------------------------------------
+    # //-- values from PTDR 1, ch 11.4 --//
+    double jetEtUncertaintyParameter0  = 5.6  
+    double jetEtUncertaintyParameter1  = 1.25  
+    double jetEtUncertaintyParameter2  = 0.033
+
+    # // values from :
+    # http://indico.cern.ch/getFile.py/access?contribId=9&sessionId=0&resId=0&materialId=slides&confId=46394
+    double jetPhiUncertaintyParameter0 = 4.75
+    double jetPhiUncertaintyParameter1 = -0.426
+    double jetPhiUncertaintyParameter2 = 0.023
+ 
+    # -------------------------------------------
+    #  Electron Uncertainties
+    # -------------------------------------------
+    double eleEtUncertaintyParameter0  = 0.01   
+    double elePhiUncertaintyParameter0 = 0.01   
+
+    # -------------------------------------------
+    #  Muon Uncertainties
+    # -------------------------------------------
+    double muonEtUncertaintyParameter0  = 0.01   
+    double muonPhiUncertaintyParameter0 = 0.01   
+ 
+    InputTag CaloTowerTag = caloTowers
+    bool noHF              = false
+
 }
+
+    # --------------------------------------------------
+    #  Specify Calorimeter Geometry 
+    # --------------------------------------------------
+include "Geometry/CMSCommonData/data/cmsIdealGeometryXML.cfi"
+include "Geometry/CaloEventSetup/data/CaloGeometry.cff"
+es_module = CaloTowerConstituentsMapBuilder 
+{ untracked string  
+	MapFile="Geometry/CaloTopology/data/CaloTowerEEGeometric.map.gz"
+}
+
