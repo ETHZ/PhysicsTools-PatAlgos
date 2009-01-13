@@ -20,8 +20,7 @@ from TrackingTools.TransientTrack.TransientTrackBuilder_cfi import *  # needed f
 # Sequences needed to deliver the objects
 # You shouldn't remove modules from here unless you *know* what you're doing
 patAODCoreReco = cms.Sequence(
-    electronsNoDuplicates +
-    photonsNoDuplicates 
+    electronsNoDuplicates 
 )
 
 # Sequences needed to deliver external information for objects
@@ -35,8 +34,8 @@ patAODExtraReco = cms.Sequence(
     patJetTracksCharge +
     #patMuonIsolation +   # Empty sequences not supported yet
     #patPhotonID +        # Empty sequences not supported yet
-    patPhotonIsolation +
-    patTauDiscrimination
+    patPhotonIsolation 
+    #patTauDiscrimination # Empty sequences not supported yet
 )
 
 # One module to count some AOD Objects that are usually input to PAT
@@ -49,7 +48,6 @@ aodSummary = cms.EDAnalyzer("CandidateSummaryTable",
         cms.InputTag("caloRecoTauProducer"),
         cms.InputTag("pfRecoTauProducer"),
         cms.InputTag("photons"),
-        cms.InputTag("photonsNoDuplicates"),
         cms.InputTag("iterativeCone5CaloJets"),
         cms.InputTag("met"),
     )

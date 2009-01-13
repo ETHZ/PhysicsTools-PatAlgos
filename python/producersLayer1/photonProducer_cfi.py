@@ -2,7 +2,7 @@ import FWCore.ParameterSet.Config as cms
 
 allLayer1Photons = cms.EDProducer("PATPhotonProducer",
     # General configurables
-    photonSource = cms.InputTag("photonsNoDuplicates"),
+    photonSource = cms.InputTag("photons"),
 
                                   
     # user data to add

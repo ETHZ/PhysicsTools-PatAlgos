@@ -21,7 +21,4 @@ patCaloTauDiscrimination = cms.Sequence(
     caloRecoTauDiscriminationByLeadingTrackPtCut 
 )
 
-patTauDiscrimination = cms.Sequence (
-    patPFTauDiscrimination         ## Current default is PF Only
-    # patCaloTauDiscrimination  
-)
+#patTauDiscrimination = cms.Sequence ()  # Empty sequences not yet supported
