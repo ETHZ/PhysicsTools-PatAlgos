@@ -2,14 +2,24 @@
 
 import FWCore.ParameterSet.Config as cms
 
-patEventContent = [
+patEventContentBeforeCleaning = [
     'keep *_selectedLayer1Photons_*_*', 
     'keep *_selectedLayer1Electrons_*_*', 
     'keep *_selectedLayer1Muons_*_*', 
     'keep *_selectedLayer1Taus_*_*', 
     'keep *_selectedLayer1Jets_*_*', 
-    'keep *_selectedLayer1METs_*_*',
-    'keep *_selectedLayer1Hemispheres_*_*',
+    'keep *_layer1METs_*_*',
+    'keep patPFParticles_*_*_*',
+]
+
+patEventContent = [
+    'keep *_cleanLayer1Photons_*_*', 
+    'keep *_cleanLayer1Electrons_*_*', 
+    'keep *_cleanLayer1Muons_*_*', 
+    'keep *_cleanLayer1Taus_*_*', 
+    'keep *_cleanLayer1Jets_*_*', 
+    'keep *_layer1METs_*_*',
+    'keep *_cleanLayer1Hemispheres_*_*',
     'keep patPFParticles_*_*_*',
 ]
 

@@ -17,7 +17,6 @@ allLayer1Summary = cms.EDAnalyzer("CandidateSummaryTable",
         cms.InputTag("allLayer1Taus"),
         cms.InputTag("allLayer1Photons"),
         cms.InputTag("allLayer1Jets"),
-        cms.InputTag("allLayer1METs"),
     )
 )
 
@@ -27,7 +26,7 @@ allLayer1Objects = cms.Sequence(
     allLayer1Taus +
     allLayer1Photons +
     allLayer1Jets +
-    allLayer1METs +
+    layer1METs +
     allLayer1Summary
 )
 allLayer1Objects.doc = "Produce PAT objects, without any selection"

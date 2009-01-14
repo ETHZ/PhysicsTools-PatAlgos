@@ -6,7 +6,6 @@ def switchTriggerOff(process):
     process.allLayer1Electrons.addTrigMatch = False
     process.allLayer1Muons.addTrigMatch     = False
     process.allLayer1Jets.addTrigMatch      = False
-    process.allLayer1METs.addTrigMatch      = False
     process.allLayer1Photons.addTrigMatch   = False
     process.allLayer1Taus.addTrigMatch      = False
-
+    process.layer1METs.addTrigMatch         = False

@@ -5,6 +5,7 @@ from PhysicsTools.PatAlgos.mcMatchLayer0.muonMatch_cfi import *
 from PhysicsTools.PatAlgos.mcMatchLayer0.tauMatch_cfi import *
 from PhysicsTools.PatAlgos.mcMatchLayer0.photonMatch_cfi import *
 from PhysicsTools.PatAlgos.mcMatchLayer0.jetMatch_cfi import *
+from PhysicsTools.PatAlgos.mcMatchLayer0.jetFlavourId_cff import *
 from PhysicsTools.JetMCAlgos.TauGenJets_cfi import tauGenJets
 
 
@@ -13,7 +14,8 @@ patMCTruth_LeptonPhoton = cms.Sequence (electronMatch+
                                         photonMatch)
 
 patMCTruth_Jet = cms.Sequence (jetPartonMatch+
-                               jetGenJetMatch)
+                               jetGenJetMatch+
+                               jetFlavourId )
 
 patMCTruth_Tau =  cms.Sequence ( tauMatch+
                                  tauGenJets*

@@ -34,27 +34,25 @@ process.load("PhysicsTools.PFCandProducer.pfMET_cfi")
 
 ### Use this to add the PF MET side-by-side to the PAT MET (it will be called 'selectedLayer1PFMETs')
 ### This doesn't take care of the trigger matching
-process.allLayer1PFMETs = process.allLayer1METs.clone(
+process.layer1PFMETs = process.layer1METs.clone(
     metSource = cms.InputTag("pfMET"),
     addTrigMatch = cms.bool(False),
     addMuonCorrections = cms.bool(False),
 )
-process.selectedLayer1PFMETs = process.selectedLayer1METs.clone(src = cms.InputTag("allLayer1PFMETs"))
-process.allLayer1Objects.replace( process.allLayer1METs, process.allLayer1METs + process.allLayer1PFMETs)
-process.selectedLayer1Objects.replace(process.selectedLayer1METs, process.selectedLayer1METs + process.selectedLayer1PFMETs)
+process.allLayer1Objects.replace( process.layer1METs, process.layer1METs + process.layer1PFMETs)
 
 ### Use this if you want to totally replace the PAT MET with the PF MET
 ##
-##   # Replace Layer 0 MET with PF MET
-##   process.patLayer0.replace(process.allLayer0METs, process.pfMET)
+##   # Get old label for MET
+##   oldMETSource = process.layer1METs.metSource
 ##   
-##   # Replace 'allLayer0METs' with 'pfMET' in trigger matching
+##   # Replace 'old MET' with 'pfMET' in trigger matching
 ##   from PhysicsTools.PatAlgos.tools.helpers import massSearchReplaceParam
-##   massSearchReplaceParam(process.patTrigMatch, "src", cms.InputTag("allLayer0METs"), cms.InputTag("pfMET"))
+##   massSearchReplaceParam(process.patTrigMatch, "src", oldMETSource, cms.InputTag("pfMET"))
 ##   
 ##   # Use PF MET to make PAT MET
-##   process.allLayer1METs.metSource = cms.InputTag("pfMET")
-##   process.allLayer1METs.addMuonCorrections = False
+##   process.layer1METs.metSource = cms.InputTag("pfMET")
+##   process.layer1METs.addMuonCorrections = False
 
 # Now we break up process.patLayer0
 process.p = cms.Path(

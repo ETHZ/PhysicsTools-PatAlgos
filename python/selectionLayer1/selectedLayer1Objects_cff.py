@@ -5,7 +5,6 @@ from PhysicsTools.PatAlgos.selectionLayer1.muonSelector_cfi import *
 from PhysicsTools.PatAlgos.selectionLayer1.tauSelector_cfi import *
 from PhysicsTools.PatAlgos.selectionLayer1.photonSelector_cfi import *
 from PhysicsTools.PatAlgos.selectionLayer1.jetSelector_cfi import *
-from PhysicsTools.PatAlgos.selectionLayer1.metSelector_cfi import *
 
 #from PhysicsTools.PatAlgos.producersLayer1.hemisphereProducer_cfi import *
 
@@ -18,7 +17,6 @@ selectedLayer1Summary = cms.EDAnalyzer("CandidateSummaryTable",
         cms.InputTag("selectedLayer1Taus"),
         cms.InputTag("selectedLayer1Photons"),
         cms.InputTag("selectedLayer1Jets"),
-        cms.InputTag("selectedLayer1METs"),
     )
 )
 
@@ -29,7 +27,6 @@ selectedLayer1Objects = cms.Sequence(
     selectedLayer1Taus +
     selectedLayer1Photons +
     selectedLayer1Jets +
-    selectedLayer1METs +
  #  selectedLayer1Hemispheres +
     selectedLayer1Summary
 )

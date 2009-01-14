@@ -16,5 +16,5 @@ jetFlavourAssociation = cms.EDFilter("JetFlavourIdentifier",
 )
 
 # default PAT sequence for jet flavour identification
-patJetFlavourId = cms.Sequence(jetPartons * jetPartonAssociation * jetFlavourAssociation)
+jetFlavourId = cms.Sequence(jetPartons * jetPartonAssociation * jetFlavourAssociation)
 

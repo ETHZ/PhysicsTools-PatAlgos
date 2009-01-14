@@ -27,18 +27,32 @@ def makePATTrackCandidates(process,
         mcAs=cms.InputTag("muons"),             # Replicate MC match as the one used by PAT on this AOD collection (None = no mc match)
         triggerAs=[]):                          # Replicate trigger match as all the ones used by PAT on these AOD collections (None = no trig.)
     from PhysicsTools.PatAlgos.producersLayer1.genericParticleProducer_cfi import allLayer1GenericParticles
+    from PhysicsTools.PatAlgos.cleaningLayer1.genericTrackCleaner_cfi     import cleanLayer1Tracks
+    # Define Modules
+    #   producer
     setattr(process, 'allLayer1' + label, allLayer1GenericParticles.clone(src = input))
-    l1cands = getattr(process, 'allLayer1' + label)
-    process.allLayer1Objects.replace(process.allLayer1Summary, l1cands + process.allLayer1Summary)
-    process.aodSummary.candidates += [ input ]
-    process.allLayer1Summary.candidates += [ cms.InputTag("allLayer1"+label) ]
-    process.selectedLayer1Summary.candidates += [ cms.InputTag("selectedLayer1"+label) ]
+    #   selector
     setattr(process, 'selectedLayer1' + label, 
         cms.EDFilter("PATGenericParticleSelector",
             src = cms.InputTag("allLayer1"+label),
-            cut = cms.string(selection) ) )
-    process.selectedLayer1Objects.replace(process.selectedLayer1Summary, 
-        getattr(process, 'selectedLayer1' + label) + process.selectedLayer1Summary)
+            cut = cms.string(selection) 
+        ) 
+    )
+    #   cleaner
+    setattr(process, 'cleanLayer1' + label, cleanLayer1Tracks.clone(src = cms.InputTag('selectedLayer1' + label)))
+    # Get them as variables, so we can put them in the sequences and/or configure them
+    l1cands = getattr(process, 'allLayer1' + label)
+    selectedL1cands = getattr(process, 'selectedLayer1' + label)
+    cleanL1cands    = getattr(process, 'cleanLayer1' + label)
+    # Insert in sequence, after electrons
+    process.allLayer1Objects.replace(process.allLayer1Electrons, l1cands + process.allLayer1Electrons)
+    process.selectedLayer1Objects.replace(process.selectedLayer1Electrons, process.selectedLayer1Electrons + selectedL1cands)
+    process.cleanLayer1Objects.replace(process.cleanLayer1Electrons, process.cleanLayer1Electrons + cleanL1cands)
+    # Add to Summary Tables
+    process.aodSummary.candidates += [ input ]
+    process.allLayer1Summary.candidates += [ cms.InputTag("allLayer1"+label) ]
+    process.selectedLayer1Summary.candidates += [ cms.InputTag("selectedLayer1"+label) ]
+    process.cleanLayer1Summary.candidates += [ cms.InputTag("cleanLayer1"+label) ]
     
     # Isolation: start with empty config
     isoModules = []

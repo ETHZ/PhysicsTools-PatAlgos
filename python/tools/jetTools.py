@@ -187,9 +187,9 @@ def addJetCollection(process,jetCollection,postfixLabel,
     addClone('allLayer1Jets', jetSource = cms.InputTag(jetCollection))
     l1Jets = getattr(process, 'allLayer1Jets'+postfixLabel)
     addClone('selectedLayer1Jets', src=cms.InputTag('allLayer1Jets'+postfixLabel))
+    addClone('cleanLayer1Jets', src=cms.InputTag('selectedLayer1Jets'+postfixLabel))
     if doL1Counters:
-        addClone('minLayer1Jets',      src=cms.InputTag('selectedLayer1Jets'+postfixLabel))
-        addClone('maxLayer1Jets',      src=cms.InputTag('selectedLayer1Jets'+postfixLabel))
+        addClone('countLayer1Jets', src=cms.InputTag('cleanLayer1Jets'+postfixLabel))
     addClone('jetPartonMatch',       src = cms.InputTag(jetCollection))
     addClone('jetGenJetMatch',       src = cms.InputTag(jetCollection))
     addClone('jetPartonAssociation', jets = cms.InputTag(jetCollection))

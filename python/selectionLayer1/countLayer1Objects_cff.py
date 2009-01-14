@@ -1,10 +1,10 @@
 import FWCore.ParameterSet.Config as cms
 
-from PhysicsTools.PatAlgos.selectionLayer1.electronCountFilter_cff import *
-from PhysicsTools.PatAlgos.selectionLayer1.muonCountFilter_cff import *
-from PhysicsTools.PatAlgos.selectionLayer1.tauCountFilter_cff import *
-from PhysicsTools.PatAlgos.selectionLayer1.photonCountFilter_cff import *
-from PhysicsTools.PatAlgos.selectionLayer1.jetCountFilter_cff import *
+from PhysicsTools.PatAlgos.selectionLayer1.electronCountFilter_cfi import *
+from PhysicsTools.PatAlgos.selectionLayer1.muonCountFilter_cfi import *
+from PhysicsTools.PatAlgos.selectionLayer1.tauCountFilter_cfi import *
+from PhysicsTools.PatAlgos.selectionLayer1.photonCountFilter_cfi import *
+from PhysicsTools.PatAlgos.selectionLayer1.jetCountFilter_cfi import *
 
 from PhysicsTools.PatAlgos.selectionLayer1.leptonCountFilter_cfi import *
 
