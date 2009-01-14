@@ -15,6 +15,9 @@ from PhysicsTools.PatAlgos.producersLayer1.allLayer1Objects_cff import *
 # select layer 1 objects, make hemispheres: sequence selectedLayer1Objects
 from PhysicsTools.PatAlgos.selectionLayer1.selectedLayer1Objects_cff import *
 
+# clean layer 1 objects, make hemispheres: sequence cleanLayer1Objects
+from PhysicsTools.PatAlgos.cleaningLayer1.cleanLayer1Objects_cff import *
+
 # count selected layer 1 objects (including total number of leptons): sequence countLayer1Objects
 from PhysicsTools.PatAlgos.selectionLayer1.countLayer1Objects_cff import *
 
@@ -23,12 +26,13 @@ beforeLayer1Objects = cms.Sequence(
     patMCTruth +  # among these sequences
     patTrigMatch
 )
-beforeLayer1Objects.doc = "Sequence to be run before producing PAT Objects"
+#beforeLayer1Objects.doc = "Sequence to be run before producing PAT Objects"
 
 patDefaultSequence = cms.Sequence(
     beforeLayer1Objects *    # using '*', as the order is fixed.
     allLayer1Objects *
     selectedLayer1Objects *
+    cleanLayer1Objects *
     countLayer1Objects
 )
-patDefaultSequence.doc = "Default PAT Sequence from AOD to PAT Objects, including filters"
+#patDefaultSequence.doc = "Default PAT Sequence from AOD to PAT Objects, including filters"

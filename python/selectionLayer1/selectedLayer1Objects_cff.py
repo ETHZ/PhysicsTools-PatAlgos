@@ -7,7 +7,7 @@ from PhysicsTools.PatAlgos.selectionLayer1.photonSelector_cfi import *
 from PhysicsTools.PatAlgos.selectionLayer1.jetSelector_cfi import *
 from PhysicsTools.PatAlgos.selectionLayer1.metSelector_cfi import *
 
-from PhysicsTools.PatAlgos.producersLayer1.hemisphereProducer_cfi import *
+#from PhysicsTools.PatAlgos.producersLayer1.hemisphereProducer_cfi import *
 
 # One module to count objects
 selectedLayer1Summary = cms.EDAnalyzer("CandidateSummaryTable",
@@ -30,6 +30,6 @@ selectedLayer1Objects = cms.Sequence(
     selectedLayer1Photons +
     selectedLayer1Jets +
     selectedLayer1METs +
-    selectedLayer1Hemispheres +
+ #  selectedLayer1Hemispheres +
     selectedLayer1Summary
 )

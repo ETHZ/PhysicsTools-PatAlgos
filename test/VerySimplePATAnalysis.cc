@@ -14,7 +14,7 @@
 //
 // Original Author:  Freya Blekman
 //         Created:  Mon Apr 21 10:03:50 CEST 2008
-// $Id: VerySimplePATAnalysis.cc,v 1.2 2008/05/13 10:25:05 fblekman Exp $
+// $Id: VerySimplePATAnalysis.cc,v 1.2.6.1 2008/11/25 18:31:36 gpetrucc Exp $
 //
 //
 
@@ -177,6 +177,7 @@ VerySimplePATAnalysis::analyze(const edm::Event& iEvent, const edm::EventSetup& 
    histocontainer_["nphotons"]->Fill(photons.size());
    histocontainer_["nmuons"]->Fill(muons.size());
    histocontainer_["ntaus"]->Fill(taus.size());
+   histocontainer_["met"]->Fill(mets.empty() ? 0 : mets[0].et());
 }
 // ------------ method called once each job just before starting event loop  ------------
 void 
@@ -205,6 +206,8 @@ VerySimplePATAnalysis::beginJob(const edm::EventSetup&)
   histocontainer_["ntaus"]=fs->make<TH1D>("ntaus","tau multiplicity",10,0,10);
   histocontainer_["nphotons"]=fs->make<TH1D>("nphotons","photon multiplicity",10,0,10);
   histocontainer_["nmuons"]=fs->make<TH1D>("nmuons","muon multiplicity",10,0,10);
+
+  histocontainer_["met"]=fs->make<TH1D>("met","missing E_{T}",20,0,100);
 
 }
 

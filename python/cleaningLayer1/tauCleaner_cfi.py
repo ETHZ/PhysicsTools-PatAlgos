@@ -1,25 +1,31 @@
 import FWCore.ParameterSet.Config as cms
 
 cleanLayer1Taus = cms.EDFilter("PATTauCleaner",
-    ## uncalibrated reco tau input source
-    src = cms.InputTag("allLayer1Taus"), 
+    src = cms.InputTag("selectedLayer1Taus"), 
 
     # preselection (any string-based cut on pat::Tau)
-    preselection = cms.string(''),
+    preselection = cms.string('tauID("byIsolation") > 0'),
 
-    # selection (e.g. ID)
-    selection = cms.PSet(
-        type = cms.string('none')
+    # overlap checking configurables
+    checkOverlaps = cms.PSet(
+        muons = cms.PSet(
+           src       = cms.InputTag("cleanLayer1Muons"),
+           algorithm = cms.string("byDeltaR"),
+           preselection        = cms.string(""),
+           deltaR              = cms.double(0.3),
+           checkRecoComponents = cms.bool(False), # don't check if they share some AOD object ref
+           requireNoOvelaps = cms.bool(False), # overlaps don't cause the electron to be discared
+        ),
+        electrons = cms.PSet(
+           src       = cms.InputTag("cleanLayer1Electrons"),
+           algorithm = cms.string("byDeltaR"),
+           preselection        = cms.string(""),
+           deltaR              = cms.double(0.3),
+           checkRecoComponents = cms.bool(False), # don't check if they share some AOD object ref
+           requireNoOvelaps = cms.bool(False), # overlaps don't cause the electron to be discared
+        ),
     ),
 
-    removeOverlaps = cms.PSet(
-        ## Flag or discard jets that match with clean electrons
-        #electrons = cms.PSet( 
-        #    collection = cms.InputTag("cleanLayer1Electrons"), ## 
-        #    deltaR = cms.double(0.3), ##
-        #    #cut = cms.string('pt > 10'),              ## as in LeptonTauIsolationAngle
-        #    #flags = cms.vstring('Isolation/Tracker'), ## request the item to be marked as isolated in the tracker
-        #    #                                          ## by the PATElectronCleaner
-        #),
-    ),
+    # finalCut (any string-based cut on pat::Tau)
+    finalCut = cms.string(''),
 )
