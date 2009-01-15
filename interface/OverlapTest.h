@@ -9,6 +9,7 @@
 #include "DataFormats/Candidate/interface/Candidate.h"
 #include "DataFormats/RecoCandidate/interface/RecoCandidate.h"
 #include "PhysicsTools/PatUtils/interface/StringParserTools.h"
+#include "PhysicsTools/PatUtils/interface/PATDiObjectProxy.h"
 
 namespace pat { namespace helper {
 
@@ -45,7 +46,8 @@ class BasicOverlapTest : public OverlapTest {
             OverlapTest(name, iConfig),
             presel_(iConfig.getParameter<std::string>("preselection")),
             deltaR_(iConfig.getParameter<double>("deltaR")),
-            checkRecoComponents_(iConfig.getParameter<bool>("checkRecoComponents")) {}
+            checkRecoComponents_(iConfig.getParameter<bool>("checkRecoComponents")),
+            pairCut_(iConfig.getParameter<std::string>("pairCut")) {}
         // implementation of mother methods
         /// Read input, apply preselection cut
         virtual void readInput(const edm::Event & iEvent, const edm::EventSetup &iSetup) ;
@@ -59,6 +61,8 @@ class BasicOverlapTest : public OverlapTest {
         double deltaR_;
         /// Check the overlapping by RECO components
         bool checkRecoComponents_;
+        /// Cut on the pair of objects together
+        StringCutObjectSelector<pat::DiObjectProxy> pairCut_;
         // ---- working variables ----
         /// The collection to check overlaps against
         edm::Handle<reco::CandidateView> candidates_;

@@ -14,6 +14,7 @@ cleanLayer1Taus = cms.EDFilter("PATTauCleaner",
            preselection        = cms.string(""),
            deltaR              = cms.double(0.3),
            checkRecoComponents = cms.bool(False), # don't check if they share some AOD object ref
+           pairCut             = cms.string(""),
            requireNoOvelaps = cms.bool(False), # overlaps don't cause the electron to be discared
         ),
         electrons = cms.PSet(
@@ -22,6 +23,7 @@ cleanLayer1Taus = cms.EDFilter("PATTauCleaner",
            preselection        = cms.string(""),
            deltaR              = cms.double(0.3),
            checkRecoComponents = cms.bool(False), # don't check if they share some AOD object ref
+           pairCut             = cms.string(""),
            requireNoOvelaps = cms.bool(False), # overlaps don't cause the electron to be discared
         ),
     ),

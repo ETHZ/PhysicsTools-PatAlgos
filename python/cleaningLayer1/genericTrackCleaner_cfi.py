@@ -14,6 +14,7 @@ cleanLayer1Tracks = cms.EDFilter("PATGenericParticleCleaner",
            preselection        = cms.string(""),
            deltaR              = cms.double(0.3),
            checkRecoComponents = cms.bool(True), # remove them if the use the same reco::Track
+           pairCut             = cms.string(""),
            requireNoOvelaps = cms.bool(True), # overlaps don't cause the electron to be discared
         ),
         electrons = cms.PSet(
@@ -23,6 +24,8 @@ cleanLayer1Tracks = cms.EDFilter("PATGenericParticleCleaner",
            deltaR              = cms.double(0.3),
            checkRecoComponents = cms.bool(False), # don't check if they share some AOD object ref
                                                   # as electrons have reco::GsfTrack, not reco::Track
+           pairCut             = cms.string("0.5 < ele.pt/part.pt < 1.5"),  # let's do a check on relative P_T
+                                                                            # 'part' is the generic particle, 'ele' the electron
            requireNoOvelaps = cms.bool(True), # overlaps don't cause the electron to be discared
         ),
     ),

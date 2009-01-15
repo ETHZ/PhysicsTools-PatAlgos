@@ -32,6 +32,7 @@ BasicOverlapTest::fillOverlapsForItem(const reco::Candidate &item, reco::Candida
                 OverlapChecker overlaps;
                 if (!overlaps(item, *it)) continue;
             }
+            if (!pairCut_(pat::DiObjectProxy(item,*it))) continue;
             matches.push_back(std::make_pair(dr, idx));
         }
     }
