@@ -32,6 +32,11 @@ allLayer1Electrons = cms.EDProducer("PATElectronProducer",
     # resolution configurables
     addResolutions   = cms.bool(False),
 
+    # pflow specific
+    pfElectronSource = cms.InputTag("pfElectrons"),
+    useParticleFlow =  cms.bool( False ),
+    embedPFCandidate = cms.bool(False),
+
     # Store isolation values
     isolation = cms.PSet(
         tracker = cms.PSet(
