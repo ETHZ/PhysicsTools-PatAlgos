@@ -1,5 +1,5 @@
 //
-// $Id: PATJetProducer.h,v 1.10 2008/09/30 21:33:05 srappocc Exp $
+// $Id: PATJetProducer.h,v 1.10.4.1 2008/11/25 15:39:40 gpetrucc Exp $
 //
 
 #ifndef PhysicsTools_PatAlgos_PATJetProducer_h
@@ -13,7 +13,7 @@
    a collection of objects of JetType.
 
   \author   Steven Lowette, Jeremy Andrea
-  \version  $Id: PATJetProducer.h,v 1.10 2008/09/30 21:33:05 srappocc Exp $
+  \version  $Id: PATJetProducer.h,v 1.10.4.1 2008/11/25 15:39:40 gpetrucc Exp $
 */
 
 
@@ -23,7 +23,7 @@
 #include "FWCore/ParameterSet/interface/InputTag.h"
 #include "DataFormats/Common/interface/View.h"
 
-#include "PhysicsTools/Utilities/interface/EtComparator.h"
+#include "PhysicsTools/Utilities/interface/PtComparator.h"
 
 #include "DataFormats/PatCandidates/interface/Jet.h"
 #include "DataFormats/PatCandidates/interface/Electron.h"
@@ -79,7 +79,7 @@ namespace pat {
       bool                     addJetCharge_;
       edm::InputTag            jetCharge_;
       // tools
-      GreaterByEt<Jet>                   eTComparator_;
+      GreaterByPt<Jet>                   pTComparator_;
 
       bool addEfficiencies_;
       pat::helper::EfficiencyLoader efficiencyLoader_;
