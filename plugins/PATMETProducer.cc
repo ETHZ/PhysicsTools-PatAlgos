@@ -1,5 +1,5 @@
 //
-// $Id: PATMETProducer.cc,v 1.20 2009/01/13 19:24:34 xs32 Exp $
+// $Id: PATMETProducer.cc,v 1.22 2009/01/20 14:52:50 xs32 Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATMETProducer.h"
@@ -114,9 +114,30 @@ void pat::PATMETProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
       (*metResoCalc_)(amet);
     }
 
-    // add MET Significance
-    double sgf = getSignificance(iEvent, iSetup);
+    // Calculate MET Significance
+
+    while(physobjvector_.size()>0){
+      physobjvector_.erase(physobjvector_.begin(),physobjvector_.end());
+    }
+
+    double number_of_jets = getJets(iEvent, iSetup);
+    double number_of_electrons = getElectrons(iEvent, iSetup);
+    double number_of_muons = getMuons(iEvent, iSetup);
+    amet.setNumberOfJets(number_of_jets);
+    amet.setNumberOfElectrons(number_of_electrons);
+    amet.setNumberOfMuons(number_of_muons);
+    
+    getTowers(iEvent, iSetup);
+
+    double met_et=0;
+    double met_phi=0;
+    double met_set=0;
+    
+    double sgf = metsig::ASignificance(physobjvector_, met_et, met_phi, met_set);
+
     amet.setSignificance(sgf);
+
+
 
     // correct for muons if demanded ... never more: it's now done by JetMETCorrections
     // add the MET to the vector of METs
@@ -133,40 +154,9 @@ void pat::PATMETProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
 }
 
 
-//------------------------------------------------------------
-//  Produce the MET Significance
-//------------------------------------------------------------
-
-double pat::PATMETProducer::getSignificance(edm::Event& iEvent, const edm::EventSetup & iSetup){
-
-  // make sure the SigInputObj container is empty
-  while(physobjvector_.size()>0){
-    physobjvector_.erase(physobjvector_.begin(),physobjvector_.end());
-
-  }
-
-  getJets(iEvent, iSetup);
-
-  getElectrons(iEvent, iSetup);
-
-  getMuons(iEvent, iSetup);
-
-  getTowers(iEvent, iSetup);
-
-  // calculate the significance
-
-  double met_et=0;
-  double met_phi=0;
-  double met_set=0;
-  
-  double significance = metsig::ASignificance(physobjvector_, met_et, met_phi, met_set);
- 
-  return significance;
-}
-
-
 //=== Uncertainty Functions ===============================================
-void pat::PATMETProducer::setUncertaintyParameters(){
+void 
+pat::PATMETProducer::setUncertaintyParameters(){
 
   // set the various functions here:
 
@@ -296,9 +286,13 @@ void pat::PATMETProducer::setUncertaintyParameters(){
 // --------------------------------------------------
 //  Fill Input Vector with Jets
 // --------------------------------------------------
-void pat::PATMETProducer::getJets(edm::Event& iEvent, const edm::EventSetup & iSetup){
 
-  objectname="jet";
+
+double
+pat::PATMETProducer::getJets(edm::Event& iEvent, const edm::EventSetup & iSetup){
+
+  std::string objectname = "jet";
+  double number_of_jets_ = 0.0;
 
   edm::Handle<edm::View<pat::Jet> > jetHandle;
   iEvent.getByLabel(jetLabel_,jetHandle);
@@ -347,7 +341,7 @@ void pat::PATMETProducer::getJets(edm::Event& iEvent, const edm::EventSetup & iS
 
     metsig::SigInputObj tmp_jet(objectname,jet_et,jet_phi,sigma_et,sigma_phi);
     physobjvector_.push_back(tmp_jet);
-
+    number_of_jets_ ++;
     //-- Store tower DetId's to be removed from Calo Tower sum later --//
     std::vector<CaloTowerRef> v_towers = jet_iter->getCaloConstituents();
     for (unsigned int ii=0; ii < v_towers.size(); ii++) {
@@ -355,6 +349,9 @@ void pat::PATMETProducer::getJets(edm::Event& iEvent, const edm::EventSetup & iS
     }
 
   }
+
+  return number_of_jets_;
+
 }
 
 
@@ -363,9 +360,12 @@ void pat::PATMETProducer::getJets(edm::Event& iEvent, const edm::EventSetup & iS
 // --------------------------------------------------
 //  Fill Input Vector with Electrons
 // --------------------------------------------------
-void pat::PATMETProducer::getElectrons(edm::Event& iEvent, const edm::EventSetup & iSetup){
+double
+pat::PATMETProducer::getElectrons(edm::Event& iEvent, const edm::EventSetup & iSetup){
 
-  objectname="electron";
+  std::string objectname="electron";
+
+  double number_of_electrons_ = 0.0;
 
   edm::ESHandle<CaloTowerConstituentsMap> cttopo;
   iSetup.get<IdealGeometryRecord>().get(cttopo);
@@ -420,7 +420,8 @@ void pat::PATMETProducer::getElectrons(edm::Event& iEvent, const edm::EventSetup
 
     metsig::SigInputObj tmp_electron(objectname,electron_et,electron_phi,sigma_et,sigma_phi);
     physobjvector_.push_back(tmp_electron);
-     
+    number_of_electrons_ ++; 
+
     //-- Store tower DetId's to be removed from Calo Tower sum later --//
     const SuperCluster& eleSC = *( electron_iter->superCluster() );
 
@@ -440,6 +441,7 @@ void pat::PATMETProducer::getElectrons(edm::Event& iEvent, const edm::EventSetup
     }
 
   }
+  return number_of_electrons_; 
 
 }
 
@@ -447,9 +449,12 @@ void pat::PATMETProducer::getElectrons(edm::Event& iEvent, const edm::EventSetup
 // --------------------------------------------------
 //  Fill Input Vector with Muons
 // --------------------------------------------------
-void pat::PATMETProducer::getMuons(edm::Event& iEvent, const edm::EventSetup & iSetup){
+double
+pat::PATMETProducer::getMuons(edm::Event& iEvent, const edm::EventSetup & iSetup){
 
-  objectname="muon";
+  std::string objectname="muon";
+  double number_of_muons_ = 0.0;
+
   edm::Handle<edm::View<pat::Muon> > muonHandle;
   iEvent.getByLabel(muoLabel_,muonHandle);
   edm::View<pat::Muon> muons = *muonHandle;
@@ -495,8 +500,9 @@ void pat::PATMETProducer::getMuons(edm::Event& iEvent, const edm::EventSetup & i
 
     metsig::SigInputObj tmp_muon(objectname,muon_pt,muon_phi,sigma_et,sigma_phi);
     physobjvector_.push_back(tmp_muon);
-     
+    number_of_muons_ ++; 
   }
+  return number_of_muons_;
 }
 
 

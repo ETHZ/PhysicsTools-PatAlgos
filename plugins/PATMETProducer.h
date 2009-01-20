@@ -1,5 +1,5 @@
 //
-// $Id: PATMETProducer.h,v 1.17 2009/01/13 19:24:34 xs32 Exp $
+// $Id: PATMETProducer.h,v 1.18 2009/01/20 14:52:50 xs32 Exp $
 //
 
 #ifndef PhysicsTools_PatAlgos_PATMETProducer_h
@@ -13,7 +13,7 @@
    a collection of objects of METType.
 
   \author   Steven Lowette
-  \version  $Id: PATMETProducer.h,v 1.17 2009/01/13 19:24:34 xs32 Exp $
+  \version  $Id: PATMETProducer.h,v 1.18 2009/01/20 14:52:50 xs32 Exp $
 */
 
 
@@ -95,13 +95,12 @@ namespace pat {
     // Calculate MET Significance
     // --------------------------------------------------
     std::vector<metsig::SigInputObj> physobjvector_;
-    double getSignificance(edm::Event&, const edm::EventSetup&);
-    void getJets(edm::Event&, const edm::EventSetup&);
-    void getElectrons(edm::Event&, const edm::EventSetup&);
-    void getMuons(edm::Event&, const edm::EventSetup&);
+    //double getSignificance(edm::Event&, const edm::EventSetup&);
+    double getJets(edm::Event&, const edm::EventSetup&);
+    double getElectrons(edm::Event&, const edm::EventSetup&);
+    double getMuons(edm::Event&, const edm::EventSetup&);
     void getTowers(edm::Event&, const edm::EventSetup&);
  
-
     double verbose_;
     double uncertaintyScaleFactor_; // scale factor for the uncertainty parameters.
     bool    controlledUncertainty_; // use controlled uncertainty parameters.

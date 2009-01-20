@@ -1,5 +1,5 @@
 //
-// $Id: PATMHTProducer.cc,v 1.20 2008/12/16 02:44:17 xs32 Exp $
+// $Id: PATMHTProducer.cc,v 1.23 2009/01/19 19:38:31 xs32 Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATMHTProducer.h"
@@ -57,24 +57,71 @@ void pat::PATMHTProducer::endJob() {
 }
 
 
-void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup) {
+void 
+pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup) 
+{
   // make sure the SigInputObj container is empty
   while(physobjvector_.size()>0){
     physobjvector_.erase(physobjvector_.begin(),physobjvector_.end());
-
   }
-  // -------------------------------------------------- 
-  //    Jets
-  // -------------------------------------------------- 
+
+  double number_of_jets = getJets(iEvent, iSetup);
+
+  double number_of_electrons = getElectrons(iEvent, iSetup);
+
+  double number_of_muons = getMuons(iEvent, iSetup);
+
+  if (verbose_ > 1.) {
+    std::cout << ">>>---> Number of jets: "  <<  number_of_jets << std::endl;
+    std::cout << ">>>---> Number of electrons: "  <<  number_of_jets << std::endl;
+    std::cout << ">>>---> Number of muons: " <<  number_of_muons << std::endl;
+  }
+
+  double met_x=0;
+  double met_y=0;
+  double met_et=0;
+  double met_phi=0;
+  double met_set=0;
+  
+  // calculate the significance
+
+  double significance = ASignificance(physobjvector_, met_et, met_phi, met_set);
+  met_x=met_et*cos(met_phi);
+  met_y=met_et*sin(met_phi);
+
+  edm::LogInfo("PATMHTProducer")    << " met x,y: " << met_x << "," << met_y << " met_set: " << met_set << " met_et/sqrt(met_set): " << met_et/sqrt(met_set) << " met_phi: " << met_phi << " met_et: " << met_et << " met_et/sqrt(x,y): " << met_et/sqrt(met_x*met_x+met_y*met_y) << " met_sign: " << significance << std::endl;
+  // and fill the output into the event..
+
+  std::auto_ptr<pat::MHTCollection>  themetsigcoll (new pat::MHTCollection);
+  pat::MHT themetsigobj(Particle::LorentzVector(met_x,met_y,0,met_et),met_set,significance);
+
+
+  // Store the number of jets, electrons, muons
+  themetsigobj.setNumberOfJets(number_of_jets);
+  themetsigobj.setNumberOfElectrons(number_of_electrons);
+  themetsigobj.setNumberOfMuons(number_of_muons);
+
+  themetsigcoll->push_back(themetsigobj);
+
+  iEvent.put( themetsigcoll);
+
+}  
+
+// --------------------------------------------------
+//  Fill Input Vector with Jets
+// --------------------------------------------------
+double 
+pat::PATMHTProducer::getJets(edm::Event& iEvent, const edm::EventSetup & iSetup){
+
+  std::string objectname="jet";
+
+  double number_of_jets_ = 0.0;
 
   edm::Handle<edm::View<pat::Jet> > jetHandle;
   iEvent.getByLabel(jetLabel_,jetHandle);
   edm::View<pat::Jet> jets = *jetHandle;
 
-  // Fill Input Vector with Jets 
-  std::string objectname="";
   for(edm::View<pat::Jet>::const_iterator jet_iter = jets.begin(); jet_iter!=jets.end(); ++jet_iter){
-    //-- Apply Jet Cuts --//
     
     if( (jet_iter->pt()  < jetPtMin_) ||
 	(TMath::Abs(jet_iter->eta()) > jetEtaMax_) || 
@@ -83,19 +130,15 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
     
     double jet_et = jet_iter->et();
     double jet_phi = jet_iter->phi();
-
-
-    if (verbose_ > 0.) {
-      std::cout << "jet pt : " << jet_iter->pt() 
-		<< " eta : " << jet_iter->eta() 
-		<< " EMF: "  << jet_iter->emEnergyFraction()
-		<<  std::endl;
+    
+    if (verbose_ > 1.) {
+      std::cout << "jet pt : " << jet_iter->pt() << " eta : " << jet_iter->eta() 
+		<< " EMF: "  << jet_iter->emEnergyFraction() <<  std::endl;
     }
-
+    
     double sigma_et, sigma_phi ;
 
     if (controlledUncertainty_) {
-      //-- Use controlled uncertainties --//
       sigma_et  = jetUncertainty.etUncertainty->Eval(jet_et);
       sigma_phi = jetUncertainty.phiUncertainty->Eval(jet_et);
     } 
@@ -104,20 +147,16 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
       sigma_phi = jet_iter->resolutionPhi();
     }
 
-    if (verbose_ > 0.) {
-      std::cout << "jet sigma_et : " << sigma_et
-		<< ", jet sigma_phi : " << sigma_phi
-		<<  std::endl;}
-
-    objectname="jet";
+    if (verbose_ > 1.) {
+      std::cout << "jet sigma_et : " << sigma_et << ", jet sigma_phi : " << sigma_phi <<  std::endl;
+    }
 
     if(sigma_et<=0 || sigma_phi<=0)
       edm::LogWarning("PATMHTProducer") << 
 	" uncertainties for "  << objectname <<
 	" are (et, phi): " << sigma_et << "," << sigma_phi << " (et,phi): " << jet_et << "," << jet_phi;
-    // try to read out the jet resolution from the root file at PatUtils
+
     //-- Store jet for Significance Calculation --//
-    
     if (uncertaintyScaleFactor_ != 1.0){
       sigma_et  = sigma_et  * uncertaintyScaleFactor_;
       sigma_phi = sigma_phi * uncertaintyScaleFactor_;
@@ -125,17 +164,28 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
 
     metsig::SigInputObj tmp_jet(objectname,jet_et,jet_phi,sigma_et,sigma_phi);
     physobjvector_.push_back(tmp_jet);
-     
+    number_of_jets_ ++;
   }
+  
+  return number_of_jets_;
 
-  // -------------------------------------------------- 
-  //    Electrons 
-  // -------------------------------------------------- 
+}
 
+
+// --------------------------------------------------
+//  Fill Input Vector with Electrons
+// --------------------------------------------------
+double
+pat::PATMHTProducer::getElectrons(edm::Event& iEvent, const edm::EventSetup & iSetup){
+
+  std::string objectname="electron";
+
+  double number_of_electrons_ = 0.0;
 
   edm::Handle<edm::View<pat::Electron> > electronHandle;
   iEvent.getByLabel(eleLabel_,electronHandle);
   edm::View<pat::Electron> electrons = *electronHandle;
+  DetId nullDetId;
 
   // Fill Input Vector with Electrons 
   for(edm::View<pat::Electron>::const_iterator electron_iter = electrons.begin(); electron_iter!=electrons.end(); ++electron_iter){
@@ -144,9 +194,8 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
     if (electron_iter->et() < elePtMin_ || 
 	TMath::Abs(electron_iter->eta()) > eleEtaMax_  ) continue; 
 
-    if (verbose_ > 0.) {
-      std::cout << "electron pt = " << electron_iter->pt() 
-		<< " eta : " << electron_iter->eta() 
+    if (verbose_ > 1.) {
+      std::cout << "electron pt = " << electron_iter->pt()  << " eta : " << electron_iter->eta() 
 		<<  std::endl;
     }
 
@@ -156,7 +205,6 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
     double sigma_et, sigma_phi ;
 
     if (controlledUncertainty_) {
-      //-- Use controlled uncertainties --//
       sigma_et  = eleUncertainty.etUncertainty->Eval(electron_et);
       sigma_phi = eleUncertainty.phiUncertainty->Eval(electron_et);
     } 
@@ -165,55 +213,52 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
       sigma_phi = electron_iter->resolutionPhi();
     }
 
-    if (verbose_ > 0.) {
-      std::cout << "electron sigma_et : " << sigma_et
-		<< ", electron sigma_phi : " << sigma_phi
+    if (verbose_ > 1.) {
+      std::cout << "electron sigma_et : " << sigma_et << ", electron sigma_phi : " << sigma_phi
 		<<  std::endl;}
 
-
-    //    double sigma_et = electron_iter->resolutionEt();
-    //    double sigma_phi = electron_iter->resolutionPhi();
-
-    objectname="electron";
-    //    if(sigma_et<=0 || sigma_phi<=0)
     if(sigma_et< 0 || sigma_phi< 0)
-      edm::LogWarning("PATMHTProducer") <<
-	" uncertainties for "  << objectname <<
-	" are (et, phi): " << sigma_et << "," << sigma_phi << 
-	" (et,phi): " << electron_et << "," << electron_phi;
+      edm::LogWarning("PATMHTProducer") << " uncertainties for "  << objectname 
+					<<" are (et, phi): " << sigma_et 
+					<< "," << sigma_phi <<  " (et,phi): " 
+					<< electron_et << "," << electron_phi;
     
     if (uncertaintyScaleFactor_ != 1.0){
       sigma_et  = sigma_et  * uncertaintyScaleFactor_;
       sigma_phi = sigma_phi * uncertaintyScaleFactor_;
     }
 
-
     metsig::SigInputObj tmp_electron(objectname,electron_et,electron_phi,sigma_et,sigma_phi);
     physobjvector_.push_back(tmp_electron);
-     
+    number_of_electrons_ ++; 
+    
   }
 
+  return number_of_electrons_; 
+}
 
-  // -------------------------------------------------- 
-  //    Muons 
-  // -------------------------------------------------- 
 
+
+// --------------------------------------------------
+//  Fill Input Vector with Muons
+// --------------------------------------------------
+
+double pat::PATMHTProducer::getMuons(edm::Event& iEvent, const edm::EventSetup & iSetup){
+
+  std::string objectname="muon";
   edm::Handle<edm::View<pat::Muon> > muonHandle;
   iEvent.getByLabel(muoLabel_,muonHandle);
   edm::View<pat::Muon> muons = *muonHandle;
 
-  // Fill Input Vector with Muons 
+  double number_of_muons_ = 0.0;
+
   for(edm::View<pat::Muon>::const_iterator muon_iter = muons.begin(); muon_iter!=muons.end(); ++muon_iter){
-    // Select electrons
-    if (muon_iter->pt() < muonPtMin_ || 
-	TMath::Abs(muon_iter->eta()) > muonEtaMax_  ) continue; 
 
-    if (verbose_ > 0.) {
-      std::cout << "muon pt = " << muon_iter->pt() 
-		<< " eta : " << muon_iter->eta() 
-		<<  std::endl;
+    if (muon_iter->pt() < muonPtMin_ || TMath::Abs(muon_iter->eta()) > muonEtaMax_  ) continue; 
+
+    if (verbose_ > 1.) {
+      std::cout << "muon pt = " << muon_iter->pt() << " eta : " << muon_iter->eta() <<  std::endl;
     }
-
 
     double muon_pt  = muon_iter->pt();
     double muon_phi = muon_iter->phi();
@@ -229,21 +274,14 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
       sigma_phi = muon_iter->resolutionPhi();
     }
 
-    if (verbose_ > 0.) {
+    if (verbose_ > 1.) {
       std::cout << "muon sigma_et : " << sigma_et
 		<< ", muon sigma_phi : " << sigma_phi
 		<<  std::endl;}
 
-
-    //    double sigma_et = muon_iter->resolutionEt();
-    //    double sigma_phi = muon_iter->resolutionPhi();
-
-    objectname="muon";
-    //    if(sigma_et<=0 || sigma_phi<=0)
-    if(sigma_et< 0 || sigma_phi< 0)
+   if(sigma_et< 0 || sigma_phi< 0)
       edm::LogWarning("PATMHTProducer") << 
-	" uncertainties for "  << objectname << 
-	" are (et, phi): " << sigma_et << "," <<
+	" uncertainties for "  << objectname << " are (et, phi): " << sigma_et << "," <<
 	sigma_phi << " (pt,phi): " << muon_pt << "," << muon_phi;
 
     if (uncertaintyScaleFactor_ != 1.0){
@@ -253,9 +291,17 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
 
     metsig::SigInputObj tmp_muon(objectname,muon_pt,muon_phi,sigma_et,sigma_phi);
     physobjvector_.push_back(tmp_muon);
-     
+    number_of_muons_ ++;
   }
-  
+
+  return number_of_muons_;
+}
+
+
+// --------------------------------------------------
+//  Fill Input Vector with Taus and Photons ...
+// --------------------------------------------------
+
   /* We'll deal with photons and taus later for sure
 
   edm::Handle<edm::View<pat::Photon> > photonHandle;
@@ -302,29 +348,8 @@ void pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
      
   }
   */
-  
 
 
-  double met_x=0;
-  double met_y=0;
-  double met_et=0;
-  double met_phi=0;
-  double met_set=0;
-  
-  // calculate the significance
-
-  double significance = ASignificance(physobjvector_, met_et, met_phi, met_set);
-  met_x=met_et*cos(met_phi);
-  met_y=met_et*sin(met_phi);
-  edm::LogInfo("PATMHTProducer")    << " met x,y: " << met_x << "," << met_y << " met_set: " << met_set << " met_et/sqrt(met_set): " << met_et/sqrt(met_set) << " met_phi: " << met_phi << " met_et: " << met_et << " met_et/sqrt(x,y): " << met_et/sqrt(met_x*met_x+met_y*met_y) << " met_sign: " << significance << std::endl;
-  // and fill the output into the event..
-  std::auto_ptr<pat::MHTCollection>  themetsigcoll (new pat::MHTCollection);
-  pat::MHT themetsigobj(Particle::LorentzVector(met_x,met_y,0,met_et),met_set,significance);
-  themetsigcoll->push_back(themetsigobj);
-
-  iEvent.put( themetsigcoll);
-
-}  
 
 
 //=== Uncertainty Functions ===============================================
