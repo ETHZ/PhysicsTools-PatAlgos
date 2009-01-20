@@ -1,13 +1,14 @@
 ###  Layer 1 default sequence
 
 
-# build the Objects (Jets, Muons, Electrons, METs, Taus)
+# build the Objects (Jets, Muons, Electrons, METs, Taus, MHTs)
 include "PhysicsTools/PatAlgos/data/producersLayer1/electronProducer.cff"
 include "PhysicsTools/PatAlgos/data/producersLayer1/muonProducer.cff"
 include "PhysicsTools/PatAlgos/data/producersLayer1/tauProducer.cff"
 include "PhysicsTools/PatAlgos/data/producersLayer1/photonProducer.cff"
 include "PhysicsTools/PatAlgos/data/producersLayer1/jetProducer.cff"
 include "PhysicsTools/PatAlgos/data/producersLayer1/metProducer.cff"
+include "PhysicsTools/PatAlgos/data/producersLayer1/mhtProducer.cff"
 include "PhysicsTools/PatAlgos/data/producersLayer1/hemisphereProducer.cff"
 
 #FIXME: Why do we need this here?
@@ -18,6 +19,7 @@ sequence allObjects = {
   layer1Photons ,
   layer1Jets ,
   layer1METs,
+  layer1MHTs,
   layer1Hemispheres
 }
 
