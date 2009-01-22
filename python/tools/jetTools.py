@@ -39,11 +39,11 @@ def runBTagging(process,jetCollection,label) :
     smTILabel = 'softMuonTagInfos'            + label
     
     # make JTA and TagInfos
-    setattr( process, jtaLabel,  ic5JetTracksAssociatorAtVertex.clone(jets = cms.InputTag(jetCollection)))
+    setattr( process, jtaLabel,  ic5JetTracksAssociatorAtVertex.clone(jets = jetCollection))
     setattr( process, ipTILabel, btag.impactParameterTagInfos.clone(jetTracks = cms.InputTag(jtaLabel)) )
     setattr( process, svTILabel, btag.secondaryVertexTagInfos.clone(trackIPTagInfos = cms.InputTag(ipTILabel)) )
-    setattr( process, seTILabel, btag.softElectronTagInfos.clone(jets = cms.InputTag(jetCollection)) )
-    setattr( process, smTILabel, btag.softMuonTagInfos.clone(jets = cms.InputTag(jetCollection)) )
+    setattr( process, seTILabel, btag.softElectronTagInfos.clone(jets = jetCollection) )
+    setattr( process, smTILabel, btag.softMuonTagInfos.clone(jets = jetCollection) )
     setattr( process, 'jetBProbabilityBJetTags'+label, btag.jetBProbabilityBJetTags.clone(tagInfos = vit(ipTILabel)) )
     setattr( process, 'jetProbabilityBJetTags' +label,  btag.jetProbabilityBJetTags.clone(tagInfos = vit(ipTILabel)) )
     setattr( process, 'trackCountingHighPurBJetTags'+label, btag.trackCountingHighPurBJetTags.clone(tagInfos = vit(ipTILabel)) )
@@ -95,12 +95,12 @@ def switchJetCollection(process,jetCollection,doJTA=True,doBTagging=True,jetCorr
                         NOTE: at the moment it must be False for non-CaloJets otherwise the JetMET POG module crashes.
           genJetCollection : GenJet collection to match to."""
     oldLabel = process.allLayer1Jets.jetSource;
-    process.jetPartonMatch.src        = cms.InputTag(jetCollection)
-    process.jetGenJetMatch.src        = cms.InputTag(jetCollection)
+    process.jetPartonMatch.src        = jetCollection
+    process.jetGenJetMatch.src        = jetCollection
     process.jetGenJetMatch.match      = genJetCollection
-    process.jetPartonAssociation.jets = cms.InputTag(jetCollection)
-    massSearchReplaceParam(process.patTrigMatch, 'src', oldLabel, cms.InputTag(jetCollection))
-    process.allLayer1Jets.jetSource = cms.InputTag(jetCollection)
+    process.jetPartonAssociation.jets = jetCollection
+    massSearchReplaceParam(process.patTrigMatch, 'src', oldLabel, jetCollection)
+    process.allLayer1Jets.jetSource = jetCollection
     # quickly make VInputTag from strings
     def vit(*args) : return cms.VInputTag( *[ cms.InputTag(x) for x in args ] )
     if doBTagging :
@@ -117,7 +117,7 @@ def switchJetCollection(process,jetCollection,doJTA=True,doBTagging=True,jetCorr
         if not doBTagging:
             process.load("RecoJets.JetAssociationProducers.ic5JetTracksAssociatorAtVertex_cfi")
             from RecoJets.JetAssociationProducers.ic5JetTracksAssociatorAtVertex_cfi import ic5JetTracksAssociatorAtVertex
-            process.jetTracksAssociatorAtVertex = ic5JetTracksAssociatorAtVertex.clone(jets = cms.InputTag(jetCollection))
+            process.jetTracksAssociatorAtVertex = ic5JetTracksAssociatorAtVertex.clone(jets = jetCollection)
             process.patAODReco.replace(process.patJetTracksCharge, process.jetTracksAssociatorAtVertex + process.patJetTracksCharge)
             process.patJetCharge.src                     = 'jetTracksAssociatorAtVertex'
             process.allLayer1Jets.trackAssociationSource = 'jetTracksAssociatorAtVertex'
@@ -142,16 +142,16 @@ def switchJetCollection(process,jetCollection,doJTA=True,doBTagging=True,jetCorr
         switchJECParameters(process.jetCorrFactors, jetCorrLabel[0], jetCorrLabel[1], oldalgo='IC5',oldtype='Calo')
         process.jetCorrFactors.jetSource = jetCollection
         if doType1MET:
-            process.corMetType1Icone5.inputUncorJetsLabel = jetCollection
+            process.corMetType1Icone5.inputUncorJetsLabel = jetCollection.value() # FIXME it's corMetType1Icone5 that's broken
             process.corMetType1Icone5.corrector           = 'L2L3JetCorrector%s%s' % jetCorrLabel
     else:
         process.patJetMETCorrections.remove(process.jetCorrFactors)
         process.allLayer1Jets.addJetCorrFactors = False
     ## Add this to the summary tables (not strictly needed, but useful)
     if oldLabel in process.aodSummary.candidates: 
-        process.aodSummary.candidates[process.aodSummary.candidates.index(oldLabel)] = cms.InputTag(jetCollection)
+        process.aodSummary.candidates[process.aodSummary.candidates.index(oldLabel)] = jetCollection
     else:
-        process.aodSummary.candidates += [cms.InputTag(jetCollection)]
+        process.aodSummary.candidates += [jetCollection]
         
 
 def addJetCollection(process,jetCollection,postfixLabel,
@@ -170,13 +170,9 @@ def addJetCollection(process,jetCollection,postfixLabel,
           doL1Counters: copy also the filter modules that accept/reject the event looking at the number of jets
           genJetCollection : GenJet collection to match to.
 
-       Notes:
-       1)  This takes the configuration from the already-configured layer 0+1 jets, so if you do 
-           replaces before calling addJetCollection then they will affect also the new jets
-           DON'T DON'T DON'T call this after having switched off cleaning of layer 0 jets!
-    
-       2)  When turning off the cleaner, bTagging, JTA, jet corrections, MC and Trigger matching will be run directly on jetCollection
-             The outputs will still be called 'layer0BTags'+postfixLabel, 'layer0JetTracksAssociatior'+postfixLabel and so on."""
+       Note: This takes the configuration from the already-configured jets, so if you do 
+             replaces before calling addJetCollection then they will affect also the new jets
+    """
     def addAlso (label,value):
         existing = getattr(process, label)
         setattr( process, label + postfixLabel, value)
@@ -184,20 +180,20 @@ def addJetCollection(process,jetCollection,postfixLabel,
     def addClone(label,**replaceStatements):
         new      = getattr(process, label).clone(**replaceStatements)
         addAlso(label, new)
-    addClone('allLayer1Jets', jetSource = cms.InputTag(jetCollection))
+    addClone('allLayer1Jets', jetSource = jetCollection)
     l1Jets = getattr(process, 'allLayer1Jets'+postfixLabel)
     addClone('selectedLayer1Jets', src=cms.InputTag('allLayer1Jets'+postfixLabel))
     addClone('cleanLayer1Jets', src=cms.InputTag('selectedLayer1Jets'+postfixLabel))
     if doL1Counters:
         addClone('countLayer1Jets', src=cms.InputTag('cleanLayer1Jets'+postfixLabel))
-    addClone('jetPartonMatch',       src = cms.InputTag(jetCollection))
-    addClone('jetGenJetMatch',       src = cms.InputTag(jetCollection))
-    addClone('jetPartonAssociation', jets = cms.InputTag(jetCollection))
+    addClone('jetPartonMatch',       src = jetCollection)
+    addClone('jetGenJetMatch',       src = jetCollection)
+    addClone('jetPartonAssociation', jets = jetCollection)
     addClone('jetFlavourAssociation',srcByReference = cms.InputTag('jetPartonAssociation' + postfixLabel))
     triggers = MassSearchParamVisitor('src', process.allLayer1Jets.jetSource)
     process.patTrigMatch.visit(triggers)
     for mod in triggers.modules():
-        newmod = mod.clone(src = cms.InputTag(jetCollection))
+        newmod = mod.clone(src = jetCollection)
         setattr( process, mod.label() + postfixLabel, newmod )
         process.patTrigMatch.replace( mod, mod * newmod )
     def fixInputTag(x): x.setModuleLabel(x.moduleLabel+postfixLabel)
@@ -222,7 +218,7 @@ def addJetCollection(process,jetCollection,postfixLabel,
             process.load("RecoJets.JetAssociationProducers.ic5JetTracksAssociatorAtVertex_cfi")
             from RecoJets.JetAssociationProducers.ic5JetTracksAssociatorAtVertex_cfi import ic5JetTracksAssociatorAtVertex
             jtaLabel = 'jetTracksAssociatorAtVertex' + postfixLabel
-            setattr( process, jtaLabel, ic5JetTracksAssociatorAtVertex.clone(jets = cms.InputTag(jetCollection)) )
+            setattr( process, jtaLabel, ic5JetTracksAssociatorAtVertex.clone(jets = jetCollection) )
             process.patAODReco.replace(process.patJetTracksCharge, getattr(process,jtaLabel) + process.patJetTracksCharge)
             l1Jets.trackAssociationSource = cms.InputTag(jtaLabel)
             addClone('patJetCharge', src=cms.InputTag(jtaLabel)),
@@ -244,14 +240,14 @@ def addJetCollection(process,jetCollection,postfixLabel,
                             label      = cms.string('L2L3JetCorrector%s%s' % jetCorrLabel)
                         )
                     )
-        addClone('jetCorrFactors',       jetSource           = cms.InputTag(jetCollection), 
+        addClone('jetCorrFactors',       jetSource           = jetCollection, 
                                          defaultJetCorrector = cms.string('L2L3JetCorrector%s%s' % jetCorrLabel))
         switchJECParameters( getattr(process,'jetCorrFactors'+postfixLabel), jetCorrLabel[0], jetCorrLabel[1], oldalgo='IC5',oldtype='Calo' )
         fixVInputTag(l1Jets.jetCorrFactorsSource)
     else:
         l1Jets.addJetCorrFactors = False
     ## Add this to the summary tables (not strictly needed, but useful)
-    if cms.InputTag(jetCollection) not in process.aodSummary.candidates: 
-        process.aodSummary.candidates += [ cms.InputTag(jetCollection) ]
+    if jetCollection not in process.aodSummary.candidates: 
+        process.aodSummary.candidates += [ jetCollection ]
     process.allLayer1Summary.candidates      += [ cms.InputTag('allLayer1Jets'+postfixLabel) ]
     process.selectedLayer1Summary.candidates += [ cms.InputTag('selectedLayer1Jets'+postfixLabel) ]

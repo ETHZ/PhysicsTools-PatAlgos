@@ -31,7 +31,7 @@ process.load("Configuration.StandardSequences.MagneticField_cff")
 
 # switch the JET collection
 from PhysicsTools.PatAlgos.tools.jetTools import *
-switchJetCollection(process, 'iterativeCone5PFJets', 
+switchJetCollection(process, cms.InputTag('iterativeCone5PFJets'), 
         doJTA=True,
         doBTagging=True,
         jetCorrLabel=None, # You may want to apply jet energy corrections

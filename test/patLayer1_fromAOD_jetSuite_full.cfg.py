@@ -36,24 +36,24 @@ from PhysicsTools.PatAlgos.tools.jetTools import *
 ## FIXME process.iterativeCone5BasicJets = iterativeCone5BasicJets.clone(src = cms.InputTag("towerMaker"))
 
 
-addJetCollection(process,'sisCone5CaloJets','SC5',
+addJetCollection(process,cms.InputTag('sisCone5CaloJets'),'SC5',
                         doJTA=True,doBTagging=True,jetCorrLabel=('SC5','Calo'),doType1MET=True,doL1Counters=False,
                         genJetCollection=cms.InputTag("sisCone5GenJets"))
-addJetCollection(process,'sisCone7CaloJets','SC7',
+addJetCollection(process,cms.InputTag('sisCone7CaloJets'),'SC7',
                         doJTA=True,doBTagging=False,jetCorrLabel=None,doType1MET=True,doL1Counters=False,
                         genJetCollection=cms.InputTag("sisCone5GenJets"))
-addJetCollection(process,'kt4CaloJets','KT4',
+addJetCollection(process,cms.InputTag('kt4CaloJets'),'KT4',
                         doJTA=True,doBTagging=True,jetCorrLabel=('KT4','Calo'),doType1MET=True,doL1Counters=False,
                         genJetCollection=cms.InputTag("kt4GenJets"))
-addJetCollection(process,'kt6CaloJets','KT6',
+addJetCollection(process,cms.InputTag('kt6CaloJets'),'KT6',
                         doJTA=True,doBTagging=False,jetCorrLabel=None,doType1MET=True,doL1Counters=False,
                         genJetCollection=cms.InputTag("kt6GenJets"))
-## FIXME addJetCollection(process,'iterativeCone5BasicJets', 'BJ5',
+## FIXME addJetCollection(process,cms.InputTag('iterativeCone5BasicJets'), 'BJ5',
 ## FIXME                        doJTA=True,doBTagging=True,jetCorrLabel=('MC5','Calo'),doType1MET=True,doL1Counters=False)
-addJetCollection(process,'iterativeCone5PFJets', 'PFc',
+addJetCollection(process,cms.InputTag('iterativeCone5PFJets'), 'PFc',
                         doJTA=True,doBTagging=True,jetCorrLabel=None,doType1MET=True,doL1Counters=False,
                         genJetCollection=cms.InputTag("iterativeCone5GenJets"))
-addJetCollection(process,'iterativeCone5PFJets', 'PFr',
+addJetCollection(process,cms.InputTag('iterativeCone5PFJets'), 'PFr',
                         doJTA=True,doBTagging=True,jetCorrLabel=None,doType1MET=True,doL1Counters=False,
                         genJetCollection=cms.InputTag("iterativeCone5GenJets"))
 

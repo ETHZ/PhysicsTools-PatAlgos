@@ -32,7 +32,7 @@ from PhysicsTools.PatAlgos.tools.jetTools import *
 
 ## ==== Example with CaloJets
 switchJetCollection(process, 
-        'sisCone5CaloJets',    # Jet collection; must be already in the event when patLayer0 sequence is executed
+        cms.InputTag('sisCone5CaloJets'),  # Jet collection; must be already in the event when patDefaultSequence is executed
         doJTA=True,            # Run Jet-Track association & JetCharge
         doBTagging=True,       # Run b-tagging
         jetCorrLabel=('SC5','Calo'), # example jet correction name; set to None for no JEC
@@ -46,7 +46,7 @@ switchJetCollection(process,
 #
 ### configure PAT
 # switchJetCollection(process, 
-#        'iterativeCone5BasicJets', # Jet collection; must be already in the event patLayer0 sequence is executed
+#        cms.InputTag('iterativeCone5BasicJets'), # Jet collection; must be already in the event patLayer0 sequence is executed
 #        doJTA=True,
 #        doBTagging=True,
 #        jetCorrLabel=None,#=('S5','Calo'), # If you have JES corrections, you can apply them even to BasicJets
