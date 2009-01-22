@@ -49,6 +49,17 @@ class MassSearchReplaceAnyInputTagVisitor(object):
     def leave(self,visitee):
         pass
 
+class GatherAllModulesVisitor(object):
+    """Visitor that travels within a cms.Sequence, and returns a list of modules that have it"""
+    def __init__(self):
+        self._modules = []
+    def enter(self,visitee):
+        self._modules.append(visitee)
+    def leave(self,visitee):
+        pass
+    def modules(self):
+        return self._modules
+ 
 
 class MassSearchParamVisitor(object):
     """Visitor that travels within a cms.Sequence, looks for a parameter and returns a list of modules that have it"""
@@ -67,6 +78,11 @@ class MassSearchParamVisitor(object):
     
 def massSearchReplaceParam(sequence,paramName,paramOldValue,paramValue):
     sequence.visit(MassSearchReplaceParamVisitor(paramName,paramOldValue,paramValue))
+
+def listModules(sequence):
+    visitor = GatherAllModulesVisitor()
+    sequence.visit(visitor)
+    return visitor.modules()
 
 def massSearchReplaceAnyInputTag(sequence, oldInputTag, newInputTag) : 
     """Replace InputTag oldInputTag with newInputTag, at any level of nesting within PSets, VPSets, VInputTags..."""

@@ -2,7 +2,7 @@
 
 import FWCore.ParameterSet.Config as cms
 
-patEventContentBeforeCleaning = [
+patEventContentNoLayer1Cleaning = [
     'keep *_selectedLayer1Photons_*_*', 
     'keep *_selectedLayer1Electrons_*_*', 
     'keep *_selectedLayer1Muons_*_*', 

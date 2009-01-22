@@ -12,7 +12,7 @@ my $fake   :shared = 0;
 my $repdef :shared = "";
 
 use Getopt::Long;
-my ($help,$base,$one,$extra,$all);
+my ($help,$base,$one,$extra,$all,$shy);
 my @summary :shared;
 GetOptions( 'h|?|help' => \$help, 
             'n|dry-run' => \$fake,
@@ -20,7 +20,8 @@ GetOptions( 'h|?|help' => \$help,
             'b|base' => \$base,
             'a|all' => \$all,
             'e|extra' => \$extra,
-            's|summary=s' => \@summary);
+            's|summary=s' => \@summary,
+            'q|quiet' => \$shy);
 @summary = split(/,/, join(',',@summary));
 if ($help) {
     my $name = `basename $0`; chomp $name;
@@ -31,7 +32,8 @@ if ($help) {
           "   -b or --base:    add base standard PAT config files to the jobs to run\n".   
           "   -e or --extra:   add the extra standard PAT config files to the jobs to run (that is, those not in base)\n".   
           "   -a or --all:     add all standard PAT config files to the jobs to run\n". 
-          "   -s or --summary: print summary table of objects (argument can be 'aod', 'allLayer1', 'selectedLayer1', ...)\n";
+          "   -s or --summary: print summary table of objects (argument can be 'aod', 'allLayer1', 'selectedLayer1', ...)\n".
+          "   -q or --quiet:   print summary tables only if there are warnings/errors in that table.\n";
     exit(0);
 }
 if ($fake) {
@@ -195,7 +197,9 @@ foreach my $f (@CFGs) {
             my $info = $1;
             $info =~ s/^    (.*present\s+\d+\s+\(\s*(\d+\.?\d*)\s*%\).*)$/redIf($1,$2 ne '100')/meg;
             $info =~ s/^    (.*total\s+0\s.*)$/\e[1;31m E> $1\e[0m/mg;
-            print "  ".$info; 
+            if (!$shy or ($info =~ /\e\[1;31m E>/)) {
+                print "  ".$info; 
+            }
         }
     }
     foreach my $l (grep(/TrigReport Events total =/, @log)) { print "  \e[1m$l\e[0m"; }

@@ -49,7 +49,8 @@ corMetType1Icone5Muons.TrackAssociatorParameters.useMuon = False ## RecoHits
 corMetType1Icone5Muons.TrackAssociatorParameters.truthMatch = False
 
 
+patMETCorrections = cms.Sequence(goodMuonsforMETCorrection * corMetType1Icone5 * corMetType1Icone5Muons)
+
 # default PAT sequence for JetMET corrections before cleaners
-patJetMETCorrections = cms.Sequence(jetCorrFactors +
-                                       goodMuonsforMETCorrection * corMetType1Icone5 * corMetType1Icone5Muons)
+patJetMETCorrections = cms.Sequence(jetCorrFactors + patMETCorrections)
 
