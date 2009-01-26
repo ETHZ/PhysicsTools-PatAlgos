@@ -9,7 +9,7 @@ patEventContentNoLayer1Cleaning = [
     'keep *_selectedLayer1Taus_*_*', 
     'keep *_selectedLayer1Jets_*_*', 
     'keep *_layer1METs_*_*',
-    'keep patPFParticles_*_*_*',
+    'keep *_selectedLayer1PFParticles_*_*',
 ]
 
 patEventContent = [
@@ -20,7 +20,7 @@ patEventContent = [
     'keep *_cleanLayer1Jets_*_*', 
     'keep *_layer1METs_*_*',
     'keep *_cleanLayer1Hemispheres_*_*',
-    'keep patPFParticles_*_*_*',
+    'keep *_cleanLayer1PFParticles_*_*',
 ]
 
 patExtraAodEventContent = [

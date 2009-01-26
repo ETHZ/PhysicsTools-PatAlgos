@@ -82,13 +82,19 @@ def usePF2PAT(process,runPF2PAT=True):
     process.aodSummary.candidates.append(process.allLayer1Muons.pfMuonSource)
     
     # Electrons
-    process.allLayer1Electrons.pfElectronSource = cms.InputTag("pfElectrons")
-    adaptPFElectrons(process,process.allLayer1Electrons)
-    switchMCAndTriggerMatch(process,process.allLayer1Electrons.electronSource,process.allLayer1Electrons.pfElectronSource)
-    process.aodSummary.candidates.append(process.allLayer1Electrons.pfElectronSource)
+#    process.allLayer1Electrons.pfElectronSource = cms.InputTag("pfElectrons")
+#    adaptPFElectrons(process,process.allLayer1Electrons)
+#    switchMCAndTriggerMatch(process,process.allLayer1Electrons.electronSource,process.allLayer1Electrons.pfElectronSource)
+#    process.aodSummary.candidates.append(process.allLayer1Electrons.pfElectronSource)
+#    process.patAODCoreReco.remove(process.electronsNoDuplicates)
+#    process.patAODExtraReco.remove(process.patElectronId)
+#    process.patAODExtraReco.remove(process.patElectronIsolation)
+    print "Temporarily switching off electrons completely"
+    removeSpecificPATObject(process,'Electrons')
     process.patAODCoreReco.remove(process.electronsNoDuplicates)
     process.patAODExtraReco.remove(process.patElectronId)
     process.patAODExtraReco.remove(process.patElectronIsolation)
+    #process.countLayer1Leptons.countElectrons = False
     
     # Photons
     print "Temporarily switching off photons completely"

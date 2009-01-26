@@ -12,8 +12,21 @@ def removeSpecificPATObject(process,name):
     process.allLayer1Objects.remove( getattr(process, 'allLayer1'+name) )
     process.selectedLayer1Objects.remove( getattr(process, 'selectedLayer1'+name) )
     process.cleanLayer1Objects.remove( getattr(process, 'cleanLayer1'+name) )
+
+    # counting
     process.countLayer1Objects.remove( getattr(process, 'countLayer1'+name) )
+    # in the case of leptons, the lepton counter must be modified as well
+    if name == 'Electrons':
+        print 'removing electrons'
+        process.countLayer1Leptons.countElectrons = False
+    elif name == 'Muons':
+        print 'removing muons - to be tested!'
+        process.countLayer1Leptons.countMuons = False
+    elif name == 'Taus':
+        print 'removing taus - to be tested!'
+        process.countLayer1Leptons.countTaus = False
     # remove from summary
+
     process.allLayer1Summary.candidates.remove( cms.InputTag('allLayer1'+name) )
     process.selectedLayer1Summary.candidates.remove( cms.InputTag('selectedLayer1'+name) )
     process.cleanLayer1Summary.candidates.remove( cms.InputTag('cleanLayer1'+name) )

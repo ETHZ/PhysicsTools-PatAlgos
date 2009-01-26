@@ -10,13 +10,13 @@ process.MessageLogger.cerr.INFO = cms.untracked.PSet(
     default          = cms.untracked.PSet( limit = cms.untracked.int32(0)  ),
     PATSummaryTables = cms.untracked.PSet( limit = cms.untracked.int32(-1) )
 )
-process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
+process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(False) )
 
 # source
 process.source = cms.Source("PoolSource", 
-    fileNames = cms.untracked.vstring('file:/afs/cern.ch/user/c/cbern/public/PF2PAT.root')
+    fileNames = cms.untracked.vstring('file:PF2PAT.root')
 )
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(77) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 process.load("Configuration.StandardSequences.Geometry_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
