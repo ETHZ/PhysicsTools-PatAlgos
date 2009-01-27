@@ -1,5 +1,5 @@
 //
-// $Id: JetCorrFactorsProducer.cc,v 1.2 2008/03/10 14:38:57 lowette Exp $
+// $Id: JetCorrFactorsProducer.cc,v 1.3 2008/11/04 14:12:58 auterman Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/JetCorrFactorsProducer.h"
@@ -88,19 +88,75 @@ void JetCorrFactorsProducer::produce(edm::Event & iEvent, const edm::EventSetup 
     // retrieve the energy correction factors
     float l1=-1, l2=-1, l3=-1, l4=-1, l6=-1;
     JetCorrFactors::FlavourCorrections l5, l7; 
-    if (bl1_)	 l1 =	  L1JetCorr->correction( *itJet );
-    if (bl2_)	 l2 =	  L2JetCorr->correction( *itJet );  
-    if (bl3_)	 l3 =	  L3JetCorr->correction( *itJet );
-    if (bl4_)	 l4 =	  L4JetCorr->correction( *itJet );
-    if (bl6_)	 l6 =	  L6JetCorr->correction( *itJet );
-    if (bl5uds_) l5.uds = L5udsJetCorr->correction( *itJet );
-    if (bl5g_)   l5.g =   L5gluJetCorr->correction( *itJet );
-    if (bl5c_)   l5.c =   L5cJetCorr->correction( *itJet );
-    if (bl5b_)   l5.b =   L5bJetCorr->correction( *itJet );
-    if (bl7uds_) l7.uds = L7udsJetCorr->correction( *itJet );
-    if (bl7g_)   l7.g =   L7gluJetCorr->correction( *itJet );
-    if (bl7c_)   l7.c =   L7cJetCorr->correction( *itJet );
-    if (bl7b_)   l7.b =   L7bJetCorr->correction( *itJet );
+    // start from RAW; then nest all subsequent correction step,
+    // i.e. input is the 4-vector of jet correted up to level n-1
+    reco::Jet refJet = (*itJet);
+    if (bl1_){
+      l1 = L1JetCorr->correction( refJet );
+      refJet.setP4(l1*refJet.p4());
+    }
+    if (bl2_){
+      l2 = L2JetCorr->correction( refJet );  
+      refJet.setP4(l2*refJet.p4());
+    }
+    if (bl3_){
+      l3 = L3JetCorr->correction( refJet );
+      refJet.setP4(l3*refJet.p4());
+    }
+    if (bl4_){
+      l4 = L4JetCorr->correction( refJet );
+      refJet.setP4(l4*refJet.p4());
+    }
+    if (bl6_){
+      l6 = L6JetCorr->correction( refJet );
+      refJet.setP4(l6*refJet.p4());
+    }
+
+    // from here on 4 variations of jet corrections co-exist, which 
+    // start from the up to level 4 full corrected jet
+    reco::Jet refJetuds = refJet;
+    reco::Jet refJetg   = refJet;
+    reco::Jet refJetc   = refJet;
+    reco::Jet refJetb   = refJet;
+
+    // ----------------------------------
+    // L5 hadron level corrections
+    // ----------------------------------
+    if (bl5uds_){
+      l5.uds = L5udsJetCorr->correction( refJetuds );
+      refJetuds.setP4(l5.uds*refJet.p4());
+    }
+    if (bl5g_){
+      l5.g   = L5gluJetCorr->correction( refJetg   );
+      refJetg  .setP4(l5.g  *refJet.p4());
+    }
+    if (bl5c_){
+      l5.c   = L5cJetCorr->correction  ( refJetc   );
+      refJetc  .setP4(l5.c  *refJet.p4());
+    }
+    if (bl5b_){
+      l5.b   = L5bJetCorr->correction  ( refJetb   );
+      refJetb  .setP4(l5.b  *refJet.p4());
+    }
+    // ----------------------------------
+    // L7 parton level corrections
+    // ----------------------------------
+    if (bl7uds_){
+      l7.uds = L7udsJetCorr->correction( refJetuds );
+      refJetuds.setP4(l7.uds*refJet.p4());
+    }
+    if (bl7g_){
+      l7.g   = L7gluJetCorr->correction( refJetg   );
+      refJetg  .setP4(l7.g  *refJet.p4());
+    }
+    if (bl7c_){
+      l7.c   = L7cJetCorr->correction  ( refJetc   );
+      refJetc  .setP4(l7.c  *refJet.p4());
+    }
+    if (bl7b_){
+      l7.b   = L7bJetCorr->correction  ( refJetb   );
+      refJetb  .setP4(l7.b  *refJet.p4());
+    }
 
     // create the actual object with scalefactos we want the valuemap to refer to
     JetCorrFactors aJetCorr( l1, l2, l3, l4, l5, l6, l7 );
