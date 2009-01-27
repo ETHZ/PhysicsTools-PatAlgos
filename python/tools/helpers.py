@@ -21,26 +21,29 @@ class MassSearchReplaceAnyInputTagVisitor(object):
     """Visitor that travels within a cms.Sequence, looks for a parameter and replace its value
        It will climb down within PSets, VPSets and VInputTags to find its target"""
     def __init__(self,paramSearch,paramReplace):
-        self._paramName    = paramName
         self._paramSearch  = paramSearch
         self._paramReplace = paramReplace
         self._moduleName   = ''
     def doIt(self,pset,base):
-        for name, value in pset.parameters_().items():
-            type = value.pythonTypeName()
-            if type == 'cms.PSet':  
-                self.doIt(value,base+"."+name)
-            elif type == 'cms.VPSet':
-                for (i,ps) in enumerate(value): self.doIt(ps, "%s.%s[%d]"%(base,name,i) )
-            elif type == 'cms.VInputTag':
-                for (i,n) in enumerate(value): 
-                    if (it == paramSearch):
-                        print "Replace %s.%s[%d] %s ==> %s " % (base, name, i, self._paramSearch, self._paramReplace)
-                        value[i] == paramReplace
-            elif type == 'cms.InputTag':
-                if value == paramSearch:
-                    print "Replace %s.%s %s ==> %s " % (base, name, self._paramSearch, self._paramReplace)
-                    setattr(pset, name, paramReplace)
+        if isinstance(pset, cms._Parameterizable):
+            for name in pset.parameters_().keys():
+                # if I use pset.parameters_().items() I get copies of the parameter values
+                # so I can't modify the nested pset
+                value = getattr(pset,name) 
+                type = value.pythonTypeName()
+                if type == 'cms.PSet':  
+                    self.doIt(value,base+"."+name)
+                elif type == 'cms.VPSet':
+                    for (i,ps) in enumerate(value): self.doIt(ps, "%s.%s[%d]"%(base,name,i) )
+                elif type == 'cms.VInputTag':
+                    for (i,n) in enumerate(value): 
+                        if (it == self._paramSearch):
+                            print "Replace %s.%s[%d] %s ==> %s " % (base, name, i, self._paramSearch, self._paramReplace)
+                            value[i] == self._paramReplace
+                elif type == 'cms.InputTag':
+                    if value == self._paramSearch:
+                        print "Replace %s.%s %s ==> %s " % (base, name, self._paramSearch, self._paramReplace)
+                        setattr(pset, name, self._paramReplace)
     def enter(self,visitee):
         label = ''
         try:    label = visitee.label()
@@ -86,5 +89,5 @@ def listModules(sequence):
 
 def massSearchReplaceAnyInputTag(sequence, oldInputTag, newInputTag) : 
     """Replace InputTag oldInputTag with newInputTag, at any level of nesting within PSets, VPSets, VInputTags..."""
-    sequence.visit(MassSearchReplaceAnyInputTagVisitor(paramName,oldInputTag,newInputTag))
+    sequence.visit(MassSearchReplaceAnyInputTagVisitor(oldInputTag,newInputTag))
     
