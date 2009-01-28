@@ -37,12 +37,15 @@ process.p = cms.Path(
 
 # Output module configuration
 from PhysicsTools.PatAlgos.patEventContent_cff import patEventContentNoLayer1Cleaning
+from PhysicsTools.PatAlgos.patEventContent_cff import patExtraAodEventContent
 process.out = cms.OutputModule("PoolOutputModule",
     fileName = cms.untracked.string('patLayer1_fromPF2PAT.root'),
     # save only events passing the full path
     SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring('p') ),
     # save PAT Layer 1 output
-    outputCommands = cms.untracked.vstring('drop *', *patEventContentNoLayer1Cleaning ) # you need a '*' to unpack the list of commands 'patEventContentNoLayer1Cleaning'
+    outputCommands = cms.untracked.vstring('drop *',
+                                           *(patEventContentNoLayer1Cleaning+patExtraAodEventContent) )
+                               # you need a '*' to unpack the list of commands 'patEventContentNoLayer1Cleaning'
 )
 process.outpath = cms.EndPath(process.out)
 
