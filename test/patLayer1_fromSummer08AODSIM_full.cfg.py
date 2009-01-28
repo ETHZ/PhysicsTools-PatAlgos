@@ -37,7 +37,7 @@ process.p = cms.Path(
 # Output module configuration
 from PhysicsTools.PatAlgos.patEventContent_cff import patEventContent
 process.out = cms.OutputModule("PoolOutputModule",
-    fileName = cms.untracked.string('PATLayer1_Output.fromAOD_full.root'),
+    fileName = cms.untracked.string('PATLayer1_Output.fromSummer08AODSIM_full.root'),
     # save only events passing the full path
     SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring('p') ),
     # save PAT Layer 1 output
