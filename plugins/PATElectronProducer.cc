@@ -1,5 +1,5 @@
 //
-// $Id: PATElectronProducer.cc,v 1.20.2.2 2008/11/25 15:39:40 gpetrucc Exp $
+// $Id: PATElectronProducer.cc,v 1.20.2.3 2009/01/16 15:55:21 pioppi Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATElectronProducer.h"
@@ -190,7 +190,7 @@ void PATElectronProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
     edm::Handle< reco::IsolatedPFCandidateCollection >  pfElectrons;
     iEvent.getByLabel(pfElecSrc_, pfElectrons);
     unsigned index=0;
-    std::cout<<"PFEL "<<pfElectrons->size()<<std::endl;
+  
     for( reco::IsolatedPFCandidateConstIterator i = pfElectrons->begin(); 
 	 i != pfElectrons->end(); ++i, ++index) {
       
@@ -212,7 +212,7 @@ void PATElectronProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
 	  Matched=true;
 	  anElectron.setPFCandidateRef( pfRef  );
 	  if( embedPFCandidate_ ) anElectron.embedPFCandidate();
-	  
+	  patElectrons->push_back(anElectron);
 	}
 
 	
@@ -226,6 +226,7 @@ void PATElectronProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
       //Electron Shapes
       if (addElecShapes_) {
       }
+      
     }
   }
 
