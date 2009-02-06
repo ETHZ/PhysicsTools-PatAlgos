@@ -1,5 +1,5 @@
 //
-// $Id: PATElectronProducer.cc,v 1.20.2.3 2009/01/16 15:55:21 pioppi Exp $
+// $Id: PATElectronProducer.cc,v 1.20.2.4 2009/01/28 16:40:47 pioppi Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATElectronProducer.h"
@@ -12,8 +12,8 @@
 #include "DataFormats/HepMCCandidate/interface/GenParticleFwd.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 
-#include "DataFormats/ParticleFlowCandidate/interface/IsolatedPFCandidateFwd.h"
-#include "DataFormats/ParticleFlowCandidate/interface/IsolatedPFCandidate.h"
+#include "DataFormats/ParticleFlowCandidate/interface/PFCandidateFwd.h"
+#include "DataFormats/ParticleFlowCandidate/interface/PFCandidate.h"
 
 #include "PhysicsTools/PatUtils/interface/TrackerIsolationPt.h"
 #include "PhysicsTools/PatUtils/interface/CaloIsolationEnergy.h"
@@ -187,15 +187,15 @@ void PATElectronProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
 
 
   if( useParticleFlow_ ) {
-    edm::Handle< reco::IsolatedPFCandidateCollection >  pfElectrons;
+    edm::Handle< reco::PFCandidateCollection >  pfElectrons;
     iEvent.getByLabel(pfElecSrc_, pfElectrons);
     unsigned index=0;
   
-    for( reco::IsolatedPFCandidateConstIterator i = pfElectrons->begin(); 
+    for( reco::PFCandidateConstIterator i = pfElectrons->begin(); 
 	 i != pfElectrons->end(); ++i, ++index) {
       
-      const reco::IsolatedPFCandidate& pfel = *i;
-      reco::IsolatedPFCandidateRef pfRef( pfElectrons, index );
+      const reco::PFCandidate& pfel = *i;
+      reco::PFCandidateRef pfRef( pfElectrons, index );
       reco::CandidateBaseRef pfBaseRef( pfRef ); 
 
       reco::GsfTrackRef PfTk= i->gsfTrackRef();
