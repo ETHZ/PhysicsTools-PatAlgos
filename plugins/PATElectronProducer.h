@@ -1,5 +1,5 @@
 //
-// $Id: PATElectronProducer.h,v 1.12.2.2 2008/11/25 15:39:40 gpetrucc Exp $
+// $Id: PATElectronProducer.h,v 1.12.2.3 2009/01/16 15:55:21 pioppi Exp $
 //
 
 #ifndef PhysicsTools_PatAlgos_PATElectronProducer_h
@@ -13,7 +13,7 @@
    a collection of objects of ElectronType.
 
   \author   Steven Lowette, James Lamb
-  \version  $Id: PATElectronProducer.h,v 1.12.2.2 2008/11/25 15:39:40 gpetrucc Exp $
+  \version  $Id: PATElectronProducer.h,v 1.12.2.3 2009/01/16 15:55:21 pioppi Exp $
 */
 
 
@@ -107,6 +107,9 @@ namespace pat {
       
       //Add electron Cluster Shapes */
       bool         addElecShapes_;
+      //Ecal Cluster Lazy Tools
+      std::auto_ptr<EcalClusterLazyTools> lazyTools_;
+
       //For the Cluster Shape reading */
       edm::InputTag reducedBarrelRecHitCollection_;
       edm::InputTag reducedEndcapRecHitCollection_;
