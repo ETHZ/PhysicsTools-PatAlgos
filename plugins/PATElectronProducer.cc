@@ -1,5 +1,5 @@
 //
-// $Id: PATElectronProducer.cc,v 1.20.2.6 2009/02/06 23:54:55 pioppi Exp $
+// $Id: PATElectronProducer.cc,v 1.20.2.7 2009/02/07 00:06:57 pioppi Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATElectronProducer.h"
@@ -227,7 +227,7 @@ void PATElectronProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
 	      anElectron.setIsolation(it->first, it->second);
 	    }
 	    for (size_t j = 0, nd = deposits.size(); j < nd; ++j) {
-	      anElectron.setIsoDeposit(isoDepositLabels_[j].first, (*deposits[j])[elecsRef]);
+	      anElectron.setIsoDeposit(isoDepositLabels_[j].first, (*deposits[j])[mother]);
 	    }
 	  }
 	  //Electron Id
