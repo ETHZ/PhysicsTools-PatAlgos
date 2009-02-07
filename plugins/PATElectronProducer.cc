@@ -1,5 +1,5 @@
 //
-// $Id: PATElectronProducer.cc,v 1.20.2.5 2009/02/06 21:19:56 gpetrucc Exp $
+// $Id: PATElectronProducer.cc,v 1.20.2.6 2009/02/06 23:54:55 pioppi Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATElectronProducer.h"
@@ -237,8 +237,8 @@ void PATElectronProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
 	      ids[i].second = (*idhandles[i])[elecsRef];    
 	    }
 	    //SPECIFIC PF ID
-	    ids.push_back(make_pair("pf_evspi",pfRef->mva_e_pi()));
-	    ids.push_back(make_pair("pf_evsmu",pfRef->mva_e_mu()));
+	    ids.push_back(std::make_pair("pf_evspi",pfRef->mva_e_pi()));
+	    ids.push_back(std::make_pair("pf_evsmu",pfRef->mva_e_mu()));
 	    anElectron.setElectronIDs(ids);
 	  }
 
