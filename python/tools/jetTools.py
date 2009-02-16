@@ -2,6 +2,15 @@ import FWCore.ParameterSet.Config as cms
 
 from PhysicsTools.PatAlgos.tools.helpers import *
 
+def switchJECcff(process, newCff, oldCff='JetMETCorrections.Configuration.L2L3Corrections_Summer08_cff'):
+    oldModules = __import__(oldCff,globals(),locals(),['*'])
+    newModules = __import__(newCff,globals(),locals(),['*'])
+    for mn in dir(oldModules):
+        if mn[0] == 'L' and hasattr(newModules,mn): 
+            print "Module %s from %s replaced with same module from %s" % (mn,oldCff,newCff)  
+            delattr(process,mn)
+    process.load(newCff)
+
 def switchJECParameters(jetCorrFactors,newalgo,newtype="Calo",oldalgo="IC5",oldtype="Calo"):
     """Replace input tags in the JetCorrFactorsProducer"""
     for (k,v) in jetCorrFactors.parameters_().items(): 
@@ -385,6 +394,21 @@ def addJetCollection(process,jetCollection,postfixLabel,
             switchJECParameters( getattr(process,'layer0JetCorrFactors'+postfixLabel), jetCorrLabel[0], jetCorrLabel[1], oldalgo='IC5',oldtype='Calo' )
         if l1Jets != None:
             fixInputTag(l1Jets.jetCorrFactorsSource)
+        if doType1MET:
+            addClone('corMetType1Icone5', inputUncorJetsLabel = cms.string(jetCollection), 
+                                          corrector = cms.string('L2L3JetCorrector%s%s' % jetCorrLabel))
+            addClone('corMetType1Icone5Muons', uncorMETInputTag = cms.InputTag("corMetType1Icone5"+postfixLabel))
+            addClone('allLayer0METs', metSource = cms.InputTag("corMetType1Icone5Muons"+postfixLabel))
+            if l1Jets != None:
+                addClone('allLayer1METs', metSource = cms.InputTag("allLayer0METs"+postfixLabel))
+                l1MET = getattr(process, 'allLayer1METs'+postfixLabel)
+                mettriggers = MassSearchParamVisitor('src', cms.InputTag("allLayer0METs"))
+                process.patTrigMatch.visit(mettriggers)
+                for mod in mettriggers.modules():
+                    newmod = mod.clone(src = cms.InputTag("allLayer0METs"+postfixLabel))
+                    setattr( process, mod.label() + postfixLabel, newmod )
+                    process.patTrigMatch.replace( mod, mod * newmod )
+                for it in l1MET.trigPrimMatch.value(): fixInputTag(it)
     else:
         if l1Jets != None:
             l1Jets.addJetCorrFactors = False
