@@ -1,5 +1,5 @@
 //
-// $Id: PATJetProducer.cc,v 1.26.2.2 2008/11/25 15:39:40 gpetrucc Exp $
+// $Id: PATJetProducer.cc,v 1.26.2.2.2.1 2009/01/16 22:10:33 srappocc Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATJetProducer.h"
@@ -102,26 +102,26 @@ PATJetProducer::PATJetProducer(const edm::ParameterSet& iConfig)  :
     useUserData_ = true;
   }
 
-
   // produces vector of jets
   produces<std::vector<Jet> >();
 }
 
 
-PATJetProducer::~PATJetProducer() {
-
+PATJetProducer::~PATJetProducer() 
+{
 }
 
 
-void PATJetProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup) {
-
+void 
+PATJetProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup) 
+{
   // Get the vector of jets
   edm::Handle<edm::View<JetType> > jets;
   iEvent.getByLabel(jetsSrc_, jets);
 
   if (efficiencyLoader_.enabled()) efficiencyLoader_.newEvent(iEvent);
 
-  // for jet flavour
+  // For jet flavour
   edm::Handle<reco::JetFlavourMatchingCollection> jetFlavMatch;
   if (getJetMCFlavour_) iEvent.getByLabel (jetPartonMapSource_, jetFlavMatch);
 
@@ -189,9 +189,11 @@ void PATJetProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
       // calculate the energy correction factors
       const JetCorrFactors & jcf = (*jetCorrs)[jetRef];
       ajet.setJetCorrFactors(jcf);
-      // set current defauklt which is JetCorrFactors::L3
+      // set current default which is JetCorrFactors::L3
       ajet.setJetCorrStep(JetCorrFactors::L3);
-      ajet.setP4(fabs(jcf.correction(JetCorrFactors::L3)) * itJet->p4());
+      ajet.setP4(jcf.correction(JetCorrFactors::L3) * itJet->p4());
+      // print JetCorrFactors for debugging
+      // jcf.print();
     }
 
     // get the MC flavour information for this jet
