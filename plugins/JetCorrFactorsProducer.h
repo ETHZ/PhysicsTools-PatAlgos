@@ -1,5 +1,5 @@
 //
-// $Id: JetCorrFactorsProducer.h,v 1.3 2008/11/04 14:12:58 auterman Exp $
+// $Id: JetCorrFactorsProducer.h,v 1.3.2.1 2009/01/07 11:45:26 auterman Exp $
 //
 
 #ifndef PhysicsTools_PatAlgos_JetCorrFactorsProducer_h
@@ -18,7 +18,7 @@
    created in the PAT Layer-1.
 
   \author   Steven Lowette
-  \version  $Id: JetCorrFactorsProducer.h,v 1.3 2008/11/04 14:12:58 auterman Exp $
+  \version  $Id: JetCorrFactorsProducer.h,v 1.3.2.1 2009/01/07 11:45:26 auterman Exp $
 */
 
 
@@ -67,10 +67,7 @@ namespace pat {
       std::string ModuleLabel_;
       
       bool bl1_,bl2_,bl3_,bl4_,bl6_,bl5uds_,bl5g_,bl5c_,bl5b_,bl7uds_,bl7g_,bl7c_,bl7b_;
-
   };
-
-
 }
 
 #endif

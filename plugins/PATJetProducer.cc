@@ -1,5 +1,5 @@
 //
-// $Id: PATJetProducer.cc,v 1.26.2.5 2009/01/13 17:05:52 gpetrucc Exp $
+// $Id: PATJetProducer.cc,v 1.26.2.6 2009/01/16 22:21:52 srappocc Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATJetProducer.h"
@@ -190,9 +190,9 @@ void PATJetProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
         ajet.setCaloTowers( cj->getCaloConstituents() );
     }
 
-    // Add Jet Energy Scale Corrections
+    // add jet energy scale corrections
     if (addJetCorrFactors_) {
-      // In case only one set of jet correction factors is used, clear the string
+      // in case only one set of jet correction factors is used, clear the string
       // that contains the name of the jcf-module, to save storage per jet:
       if (jetCorrFactorsSrc_.size()<=1)
         jetCorrs.front()[jetRef].clearLabel();
