@@ -5,11 +5,19 @@ from PhysicsTools.PatAlgos.tools.helpers import *
 def switchJECcff(process, newCff, oldCff='JetMETCorrections.Configuration.L2L3Corrections_Summer08_cff'):
     oldModules = __import__(oldCff,globals(),locals(),['*'])
     newModules = __import__(newCff,globals(),locals(),['*'])
+    from FWCore.ParameterSet.SequenceTypes import _Sequenceable
     for mn in dir(oldModules):
         if mn[0] == 'L' and hasattr(newModules,mn): 
             print "Module %s from %s replaced with same module from %s" % (mn,oldCff,newCff)  
-            delattr(process,mn)
-    process.load(newCff)
+            module = getattr(newModules, mn)
+            if isinstance(module, _Sequenceable):
+                # use global replace
+                process.globalReplace(mn, module)
+                delattr(newModules, mn) # otherwise below we'll add it another time
+            else:
+                # otherwise we remove it by hand
+                delattr(process, mn)
+    process.extend(newModules)
 
 def switchJECParameters(jetCorrFactors,newalgo,newtype="Calo",oldalgo="IC5",oldtype="Calo"):
     """Replace input tags in the JetCorrFactorsProducer"""
