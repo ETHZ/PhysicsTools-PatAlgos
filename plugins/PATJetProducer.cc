@@ -1,5 +1,5 @@
 //
-// $Id: PATJetProducer.cc,v 1.26.2.6 2009/01/16 22:21:52 srappocc Exp $
+// $Id: PATJetProducer.cc,v 1.26.2.7 2009/02/17 18:49:47 rwolf Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATJetProducer.h"
@@ -198,6 +198,8 @@ void PATJetProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
         jetCorrs.front()[jetRef].clearLabel();
       // The default jet correction is the first in the vector
       const JetCorrFactors & jcf = jetCorrs.front()[jetRef];
+      // uncomment for debugging
+      // jcf.print();
       //attach first (default) jet correction factors set to the jet
       ajet.setCorrFactors(jcf);
       // set current default which is JetCorrFactors::L3, change P4 of ajet 
