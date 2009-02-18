@@ -1,5 +1,5 @@
 //
-// $Id: JetCorrFactorsProducer.h,v 1.3.2.2 2009/02/17 18:49:47 rwolf Exp $
+// $Id: JetCorrFactorsProducer.h,v 1.3.2.3 2009/02/18 15:53:55 rwolf Exp $
 //
 
 #ifndef PhysicsTools_PatAlgos_JetCorrFactorsProducer_h
@@ -18,7 +18,7 @@
    created in the PAT Layer-1.
 
   \author   Steven Lowette
-  \version  $Id: JetCorrFactorsProducer.h,v 1.3.2.2 2009/02/17 18:49:47 rwolf Exp $
+  \version  $Id: JetCorrFactorsProducer.h,v 1.3.2.3 2009/02/18 15:53:55 rwolf Exp $
 */
 
 #include "FWCore/Framework/interface/Event.h"
@@ -81,24 +81,7 @@ namespace pat {
       CombinedJetCorrector* jetCorrectorC_;
       /// CombinedJetCorrector: b
       CombinedJetCorrector* jetCorrectorB_;
-      
-/*       // configurables */
-/*       edm::InputTag jetsSrc_; */
-/*       std::string L1JetCorrService_; */
-/*       std::string L2JetCorrService_; */
-/*       std::string L3JetCorrService_; */
-/*       std::string L4JetCorrService_; */
-/*       std::string L6JetCorrService_; */
-/*       std::string L5udsJetCorrService_; */
-/*       std::string L5gluJetCorrService_; */
-/*       std::string L5cJetCorrService_; */
-/*       std::string L5bJetCorrService_; */
-/*       std::string L7udsJetCorrService_; */
-/*       std::string L7gluJetCorrService_; */
-/*       std::string L7cJetCorrService_; */
-/*       std::string L7bJetCorrService_; */
-/*       bool bl1_,bl2_,bl3_,bl4_,bl6_,bl5uds_,bl5g_,bl5c_,bl5b_,bl7uds_,bl7g_,bl7c_,bl7b_; */
-   };
+  };
 }
 
 #endif
