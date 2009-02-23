@@ -4,7 +4,6 @@ allLayer1Taus = cms.EDProducer("PATTauProducer",
     # General configurables
     tauSource = cms.InputTag("allLayer0Taus"),
 
-                               
     # user data to add
     userData = cms.PSet(
       # add custom classes here
@@ -29,11 +28,37 @@ allLayer1Taus = cms.EDProducer("PATTauProducer",
     embedIsolationTracks = cms.bool(False), ## whether to embed in AOD externally stored isolation tracks
 
     # resolution configurables
-    addResolutions = cms.bool(False),
+    addResolutions = cms.bool(True),
+    tauResoFile = cms.string('PhysicsTools/PatUtils/data/Resolutions_tau.root'),
+    useNNResolutions = cms.bool(True), ## use the neural network approach?
 
     # isolation configurables
-    isolation = cms.PSet(),
-    isoDeposits = cms.PSet(),
+    # Store isolation values
+    isolation = cms.PSet(
+        pfAllParticles = cms.PSet(
+            src = cms.InputTag("patLayer0PFTauIsolation", "tauIsoDepositPFCandidates"),
+            deltaR = cms.double(0.5)
+        ),
+        pfChargedHadron = cms.PSet(
+            src = cms.InputTag("patLayer0PFTauIsolation", "tauIsoDepositPFChargedHadrons"),
+            deltaR = cms.double(0.5)
+        ),
+        pfNeutralHadron = cms.PSet(
+            src = cms.InputTag("patLayer0PFTauIsolation", "tauIsoDepositPFNeutralHadrons"),
+            deltaR = cms.double(0.5)
+        ),
+        pfGamma = cms.PSet(
+            src = cms.InputTag("patLayer0PFTauIsolation", "tauIsoDepositPFGammas"),
+            deltaR = cms.double(0.5)
+        )
+    ),                           
+    # Store IsoDeposits
+    isoDeposits = cms.PSet(
+        pfAllParticles = cms.InputTag("patLayer0PFTauIsolation", "tauIsoDepositPFCandidates"),
+        pfChargedHadron = cms.InputTag("patLayer0PFTauIsolation", "tauIsoDepositPFChargedHadrons"),
+        pfNeutralHadron = cms.InputTag("patLayer0PFTauIsolation", "tauIsoDepositPFNeutralHadrons"),
+        pfGamma = cms.InputTag("patLayer0PFTauIsolation", "tauIsoDepositPFGammas")
+    ),
 
     # tau ID configurables
     # (for efficiency studies)
@@ -68,8 +93,7 @@ allLayer1Taus = cms.EDProducer("PATTauProducer",
 
     # Efficiencies
     addEfficiencies = cms.bool(False),
-    efficiencies    = cms.PSet(),
-
+    efficiencies    = cms.PSet()
 )
 
 
