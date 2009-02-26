@@ -4,8 +4,8 @@ from PhysicsTools.PatAlgos.tools.helpers import *
 
 def switchJECParameters(jetCorrFactors,newalgo,newtype="Calo",oldalgo="IC5",oldtype="Calo"):
     """Replace input tags in the JetCorrFactorsProducer"""
-    for (k,v) in jetCorrFactors.parameters_().items(): 
-        vv = v.value();
+    for k in ['L1Offset', 'L2Relative', 'L3Absolute', 'L4EMF', 'L5Flavor', 'L6UE', 'L7Parton']:
+        vv = getattr(jetCorrFactors, k).value();
         if (vv != "none"): 
             setattr(jetCorrFactors, k, vv.replace(oldalgo+oldtype,newalgo+newtype).replace(oldalgo,newalgo) )
             # the first replace is good for L2, L3; the last for L7 (which don't have type dependency, at least not in the name)
@@ -244,6 +244,20 @@ def addJetCollection(process,jetCollection,postfixLabel,
                                          defaultJetCorrector = cms.string('L2L3JetCorrector%s%s' % jetCorrLabel))
         switchJECParameters( getattr(process,'jetCorrFactors'+postfixLabel), jetCorrLabel[0], jetCorrLabel[1], oldalgo='IC5',oldtype='Calo' )
         fixVInputTag(l1Jets.jetCorrFactorsSource)
+        if doType1MET:
+            addClone('corMetType1Icone5', inputUncorJetsLabel = jetCollection.value(),
+                                          corrector = cms.string('L2L3JetCorrector%s%s' % jetCorrLabel))
+            addClone('corMetType1Icone5Muons', uncorMETInputTag = cms.InputTag("corMetType1Icone5"+postfixLabel))
+            addClone('layer1METs',              metSource = cms.InputTag("corMetType1Icone5Muons"+postfixLabel))
+            l1MET = getattr(process, 'layer1METs'+postfixLabel)
+            mettriggers = MassSearchParamVisitor('src', process.layer1METs.metSource)
+            process.patTrigMatch.visit(mettriggers)
+            for mod in mettriggers.modules():
+                newmod = mod.clone(src = l1MET.metSource)
+                setattr( process, mod.label() + postfixLabel, newmod )
+                process.patTrigMatch.replace( mod, mod * newmod )
+            for it in l1MET.trigPrimMatch.value(): fixInputTag(it)
+            process.allLayer1Summary.candidates += [ cms.InputTag('layer1METs'+postfixLabel) ]
     else:
         l1Jets.addJetCorrFactors = False
     ## Add this to the summary tables (not strictly needed, but useful)

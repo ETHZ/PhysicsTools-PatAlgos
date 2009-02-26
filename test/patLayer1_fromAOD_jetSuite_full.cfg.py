@@ -76,7 +76,7 @@ process.outpath = cms.EndPath(process.out)
 # save PAT Layer 1 output
 from PhysicsTools.PatAlgos.patEventContent_cff import *
 process.out.outputCommands += patEventContent
-process.out.outputCommands += ["keep *_selectedLayer1Jets*_*_*"]
+process.out.outputCommands += ["keep *_selectedLayer1Jets*_*_*", "keep *_layer1METs*_*_*"]
 
 #### Dump the python config
 #
