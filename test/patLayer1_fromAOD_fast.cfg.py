@@ -26,6 +26,10 @@ process.load("Configuration.StandardSequences.MagneticField_cff")
 # PAT Layer 0+1
 process.load("PhysicsTools.PatAlgos.patLayer0_cff")
 process.load("PhysicsTools.PatAlgos.patLayer1_cff")
+
+from PhysicsTools.PatAlgos.tools.jetTools import *
+switchJECSet(process,newName='Winter09',oldName='Summer08Redigi') # change from old to Winter08
+
 #process.content = cms.EDAnalyzer("EventContentAnalyzer")
 process.p = cms.Path(
                 #process.content   +  # to get a dump of the event content

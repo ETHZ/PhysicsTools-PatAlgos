@@ -2,6 +2,26 @@ import FWCore.ParameterSet.Config as cms
 
 from PhysicsTools.PatAlgos.tools.helpers import *
 
+def switchJECSet(process,newName,oldName):
+    """Replace tags in the JetCorrFactorsProducer
+       For end-users, taking the process as first argument"""
+    switchJECSet_(process.jetCorrFactors,newName,oldName)
+    
+def switchJECSet_(jetCorrFactors,newName,oldName,
+                  steps=['L1Offset', 'L2Relative', 'L3Absolute', 'L4EMF', 'L5Flavor', 'L6UE', 'L7Parton']):
+    """Replace tags in the JetCorrFactorsProducer
+       Inner implementation taking a jetCorrFactors object"""
+    found = False
+    for k in steps:
+        vv = getattr(jetCorrFactors, k).value();
+        if vv.find(oldName) != -1: found = True
+        if (vv != "none"): 
+            setattr(jetCorrFactors, k, vv.replace(oldName,newName))
+            # the first replace is good for L2, L3; the last for L7 (which don't have type dependency, at least not in the name)
+    if not found:
+        raise RuntimeError, """None of the JEC steps uses old name %s, so I can't replace %s with %s.
+                               The full configuration is %s""" % (newName,oldName,newName,jetCorrFactors.dumpPython())
+
 def switchJECParameters(jetCorrFactors,newalgo,newtype="Calo",oldalgo="IC5",oldtype="Calo"):
     """Replace tags in the JetCorrFactorsProducer"""
     for k in ['L1Offset', 'L2Relative', 'L3Absolute', 'L4EMF', 'L5Flavor', 'L6UE', 'L7Parton']:
