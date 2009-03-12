@@ -2,27 +2,10 @@ import FWCore.ParameterSet.Config as cms
 
 from PhysicsTools.PatAlgos.tools.helpers import *
 
-def switchJECcff(process, newCff, oldCff='JetMETCorrections.Configuration.L2L3Corrections_Summer08_cff'):
-    oldModules = __import__(oldCff,globals(),locals(),['*'])
-    newModules = __import__(newCff,globals(),locals(),['*'])
-    from FWCore.ParameterSet.SequenceTypes import _Sequenceable
-    for mn in dir(oldModules):
-        if mn[0] == 'L' and hasattr(newModules,mn): 
-            print "Module %s from %s replaced with same module from %s" % (mn,oldCff,newCff)  
-            module = getattr(newModules, mn)
-            if isinstance(module, _Sequenceable):
-                # use global replace
-                process.globalReplace(mn, module)
-                delattr(newModules, mn) # otherwise below we'll add it another time
-            else:
-                # otherwise we remove it by hand
-                delattr(process, mn)
-    process.extend(newModules)
-
 def switchJECParameters(jetCorrFactors,newalgo,newtype="Calo",oldalgo="IC5",oldtype="Calo"):
-    """Replace input tags in the JetCorrFactorsProducer"""
-    for (k,v) in jetCorrFactors.parameters_().items(): 
-        vv = v.value();
+    """Replace tags in the JetCorrFactorsProducer"""
+    for k in ['L1Offset', 'L2Relative', 'L3Absolute', 'L4EMF', 'L5Flavor', 'L6UE', 'L7Parton']:
+        vv = getattr(jetCorrFactors, k).value();
         if (vv != "none"): 
             setattr(jetCorrFactors, k, vv.replace(oldalgo+oldtype,newalgo+newtype).replace(oldalgo,newalgo) )
             # the first replace is good for L2, L3; the last for L7 (which don't have type dependency, at least not in the name)
