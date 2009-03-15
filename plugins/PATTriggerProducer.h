@@ -7,7 +7,7 @@
 // Package:    PatAlgos
 // Class:      pat::PATTriggerProducer
 //
-// $Id$
+// $Id: PATTriggerProducer.h,v 1.1.2.6 2009/03/13 12:10:36 vadler Exp $
 //
 /**
   \class    pat::PATTriggerProducer PATTriggerProducer.h "PhysicsTools/PatAlgos/plugins/PATTriggerProducer.h"
@@ -16,7 +16,7 @@
    [...]
 
   \author   Volker Adler
-  \version  $Id$
+  \version  $Id: PATTriggerProducer.h,v 1.1.2.6 2009/03/13 12:10:36 vadler Exp $
 */
 
 
@@ -61,6 +61,9 @@ namespace pat {
       std::string       nameProcess_;
       edm::InputTag     tagTriggerResults_;
       edm::InputTag     tagTriggerEvent_;
+      
+      // trigger path
+      bool addPathModuleLabels_;
 
   };
 
