@@ -1,9 +1,5 @@
 //
-<<<<<<< PATMuonProducer.cc
-// $Id: PATMuonProducer.cc,v 1.19.2.1 2008/11/25 15:39:40  Exp $
-=======
 // $Id: PATMuonProducer.cc,v 1.19.2.2 2009/03/12 16:24:14 tucker Exp $
->>>>>>> 1.19.2.2
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATMuonProducer.h"
@@ -32,7 +28,7 @@
 
 
 using namespace pat;
-//using namespace std;
+using namespace std;
 
 
 PATMuonProducer::PATMuonProducer(const edm::ParameterSet & iConfig) :
@@ -44,25 +40,16 @@ PATMuonProducer::PATMuonProducer(const edm::ParameterSet & iConfig) :
   
   // general configurables
   muonSrc_             = iConfig.getParameter<edm::InputTag>( "muonSource" );
-  
-    embedTrack_          = iConfig.getParameter<bool>         ( "embedTrack" );
+  pfMuonSrc_           = iConfig.getParameter<edm::InputTag>( "pfMuonSource" );
+  useParticleFlow_        = iConfig.getParameter<bool>( "useParticleFlow" );
+
+  embedTrack_          = iConfig.getParameter<bool>         ( "embedTrack" );
   embedStandAloneMuon_ = iConfig.getParameter<bool>         ( "embedStandAloneMuon" );
   embedCombinedMuon_   = iConfig.getParameter<bool>         ( "embedCombinedMuon" );
-<<<<<<< PATMuonProducer.cc
-=======
   embedPickyMuon_      = iConfig.getParameter<bool>         ( "embedPickyMuon" );
   embedTpfmsMuon_      = iConfig.getParameter<bool>         ( "embedTpfmsMuon" );
   embedPFCandidate_   = iConfig.getParameter<bool>( "embedPFCandidate" );
->>>>>>> 1.19.2.2
   
-<<<<<<< PATMuonProducer.cc
-  
-  // pflow specific
-  pfMuonSrc_           = iConfig.getParameter<edm::InputTag>( "pfMuonSource" );
-  useParticleFlow_        = iConfig.getParameter<bool>( "useParticleFlow" );
-  embedPFCandidate_   = iConfig.getParameter<bool>( "embedPFCandidate" );
-
-=======
   // TeV refit names
   addTeVRefits_ = iConfig.getParameter<bool>("addTeVRefits");
   if (addTeVRefits_) {
@@ -70,7 +57,6 @@ PATMuonProducer::PATMuonProducer(const edm::ParameterSet & iConfig) :
     tpfmsSrc_ = iConfig.getParameter<edm::InputTag>("tpfmsSrc");
   }
 
->>>>>>> 1.19.2.2
   // MC matching configurables
   addGenMatch_   = iConfig.getParameter<bool>         ( "addGenMatch" );
   if (addGenMatch_) {
@@ -95,17 +81,16 @@ PATMuonProducer::PATMuonProducer(const edm::ParameterSet & iConfig) :
      efficiencyLoader_ = pat::helper::EfficiencyLoader(iConfig.getParameter<edm::ParameterSet>("efficiencies"));
   }
 
-  // IsoDeposit configurables
   if (iConfig.exists("isoDeposits")) {
      edm::ParameterSet depconf = iConfig.getParameter<edm::ParameterSet>("isoDeposits");
      if (depconf.exists("tracker")) isoDepositLabels_.push_back(std::make_pair(TrackerIso, depconf.getParameter<edm::InputTag>("tracker")));
      if (depconf.exists("ecal"))    isoDepositLabels_.push_back(std::make_pair(ECalIso, depconf.getParameter<edm::InputTag>("ecal")));
      if (depconf.exists("hcal"))    isoDepositLabels_.push_back(std::make_pair(HCalIso, depconf.getParameter<edm::InputTag>("hcal")));
-     if (depconf.exists("particle"))           isoDepositLabels_.push_back(std::make_pair(ParticleIso, depconf.getParameter<edm::InputTag>("particle")));
+
+if (depconf.exists("particle"))           isoDepositLabels_.push_back(std::make_pair(ParticleIso, depconf.getParameter<edm::InputTag>("particle")));
      if (depconf.exists("chargedparticle"))    isoDepositLabels_.push_back(std::make_pair(ChargedParticleIso, depconf.getParameter<edm::InputTag>("chargedparticle")));
      if (depconf.exists("neutralparticle")) isoDepositLabels_.push_back(std::make_pair(NeutralParticleIso,depconf.getParameter<edm::InputTag>("neutralparticle")));
      if (depconf.exists("gammaparticle"))    isoDepositLabels_.push_back(std::make_pair(GammaParticleIso, depconf.getParameter<edm::InputTag>("gammaparticle")));
-
 
      if (depconf.exists("user")) {
         std::vector<edm::InputTag> userdeps = depconf.getParameter<std::vector<edm::InputTag> >("user");
@@ -133,12 +118,10 @@ PATMuonProducer::~PATMuonProducer() {
 }
 
 void PATMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup) {
-
-// loop over muons
-  // Get the collection of muons from the event
-  edm::Handle<edm::View<MuonType> > muons;
-  iEvent.getByLabel(muonSrc_, muons);
   
+edm::Handle<edm::View<MuonType> > muons;
+  iEvent.getByLabel(muonSrc_, muons);
+
   if (isolator_.enabled()) isolator_.beginEvent(iEvent,iSetup);
 
   if (efficiencyLoader_.enabled()) efficiencyLoader_.newEvent(iEvent);
@@ -167,9 +150,9 @@ void PATMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetu
 
   std::vector<Muon> * patMuons = new std::vector<Muon>();
 
+  // loop over muons
+  // Get the collection of muons from the event
   
-
-
 
   if( useParticleFlow_ ) {
     edm::Handle< reco::PFCandidateCollection >  pfMuons;
@@ -178,38 +161,38 @@ void PATMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetu
     for( reco::PFCandidateConstIterator i = pfMuons->begin(); 
 	 i != pfMuons->end(); ++i, ++index) {
       
-
-      // const reco::IsolatedPFCandidate& pfmu = *i;
-//       // std::cout<<pfmu<<std::endl;
-
-//       const reco::MuonRef& muonRef = pfmu.muonRef();
-//       assert( muonRef.isNonnull() );
-
-
-//       MuonBaseRef muonBaseRef(muonRef);
-//       Muon aMuon(muonBaseRef);
-
-      reco::PFCandidateRef pfRef( pfMuons, index );
+      //const reco::IsolaPFCandidate& pfmu = *i;
+      // std::cout<<pfmu<<std::endl;
+      reco::PFCandidateRef pfRef(pfMuons,index);
       reco::PFCandidatePtr ptrToMother(pfMuons,index);
       reco::CandidateBaseRef pfBaseRef( pfRef ); 
-       
-      reco::TrackRef PfTk= i->TrackRef();
-      bool Matched=false;
-for (edm::View<MuonType>::const_iterator itMuon = muons->begin(); itMuon != muons->end(); ++itMuon) {
 
+      //const reco::MuonRef& muonRef = pfmu.muonRef();
+      //assert( muonRef.isNonnull() );
+      reco::TrackRef PfTk= i->TrackRef();
+
+      //MuonBaseRef muonBaseRef(muonRef);
+      //Muon aMuon(muonBaseRef);
+
+      //reco::IsolatedPFCandidateRef pfRef( pfMuons, index );
+      //reco::CandidateBaseRef pfBaseRef( pfRef ); 
+      bool Matched=false;
+      for (edm::View<MuonType>::const_iterator itMuon = muons->begin(); itMuon != muons->end(); ++itMuon) {
 unsigned int idx = itMuon - muons->begin();
-if (Matched) continue;
-reco::TrackRef MuTk= itMuon->Track();
-if (itMuon->Track()==i->TrackRef()){
+	if (Matched) continue;
+	reco::TrackRef MgTk= itMuon->Track();
+	if (itMuon->Track()==i->TrackRef()){
 	  const MuonBaseRef muonsRef = muons->refAt(idx);
 	  Muon aMuon(muonsRef);
+
       fillMuon( aMuon, muonBaseRef, pfBaseRef, genMatches, trigMatches);
       Matched=true;
+      aMuon.setPFCandidateRef( pfRef  );
+	  if( embedPFCandidate_ ) aMuon.embedPFCandidate();
 
       aMuon.setPFCandidateRef( pfRef );
       if( embedPFCandidate_ ) aMuon.embedPFCandidate();
-      
- if (isolator_.enabled()){
+       if (isolator_.enabled()){
 	    reco::CandidatePtr mother =  ptrToMother->sourceCandidatePtr(0);
 	    isolator_.fill(mother, isolatorTmpStorage_);
 	    typedef pat::helper::MultiIsolator::IsolationValuePairs IsolationValuePairs;
@@ -222,15 +205,12 @@ if (itMuon->Track()==i->TrackRef()){
 	    }
 	  }
 
+
       patMuons->push_back(aMuon);
       
     } 
   }
   else {
-<<<<<<< PATMuonProducer.cc
-    //edm::Handle<edm::View<MuonType> > muons;
-    //iEvent.getByLabel(muonSrc_, muons);
-=======
     edm::Handle<edm::View<MuonType> > muons;
     iEvent.getByLabel(muonSrc_, muons);
 
@@ -241,7 +221,6 @@ if (itMuon->Track()==i->TrackRef()){
       iEvent.getByLabel(tpfmsSrc_, tpfmsMap);
     }
     
->>>>>>> 1.19.2.2
     for (edm::View<MuonType>::const_iterator itMuon = muons->begin(); itMuon != muons->end(); ++itMuon) {
       
       
@@ -291,7 +270,7 @@ if (itMuon->Track()==i->TrackRef()){
       }
 
       // add sel to selected
-      //edm::Ptr<MuonType> muonsPtr = muons->ptrAt(idx);
+      edm::Ptr<MuonType> muonsPtr = muons->ptrAt(idx);
       if ( useUserData_ ) {
 	userDataHelper_.add( aMuon, iEvent, iSetup );
       }
@@ -307,7 +286,7 @@ if (itMuon->Track()==i->TrackRef()){
   // put genEvt object in Event
   std::auto_ptr<std::vector<Muon> > ptr(patMuons);
   iEvent.put(ptr);
-  // clean up
+
   if (isolator_.enabled()) isolator_.endEvent();
 }
 
