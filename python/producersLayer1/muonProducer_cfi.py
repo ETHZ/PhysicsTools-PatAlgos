@@ -40,31 +40,27 @@ allLayer1Muons = cms.EDProducer("PATMuonProducer",
     useParticleFlow =  cms.bool( False ),
     embedPFCandidate = cms.bool(False),
 
-
-    # isolation configurables
+# Store isolation values
     isolation = cms.PSet(
-        hcal = cms.PSet(
-            src = cms.InputTag("muIsoFromDepsHcalFromTowers"),
-            #deltaR = cms.double(0.3)
-        ),
         tracker = cms.PSet(
             src = cms.InputTag("muIsoFromDepsTk"),
-            #deltaR = cms.double(0.3)
         ),
-        user = cms.VPSet(), 
         ecal = cms.PSet(
-            src = cms.InputTag("eleIsoFromDepsEcalFromHits"),
-            #deltaR = cms.double(0.3)
-        )
+            src = cms.InputTag("muIsoFromDepsEcalFromHits"),
+        ),
+        hcal = cms.PSet(
+            src = cms.InputTag("muIsoFromDepsHcalFromTowers"),
+        ),
+        user = cms.VPSet(),
     ),
-    # embed IsoDeposits to recompute isolation easily
+    # Store IsoDeposits
     isoDeposits = cms.PSet(
         tracker = cms.InputTag("muIsoDepositTk"),
         ecal    = cms.InputTag("muIsoDepositEcalFromHits"),
         hcal    = cms.InputTag("muIsoDepositHcalFromTowers"),
-
     ),
 
+    
     # Resolution configurables
     addResolutions = cms.bool(False),
 
@@ -80,7 +76,7 @@ allLayer1Muons = cms.EDProducer("PATMuonProducer",
     # Efficiencies
     addEfficiencies = cms.bool(False),
     efficiencies    = cms.PSet(),
-
+                                
     # TeV refit tracks
     addTeVRefits = cms.bool(True),
     pickySrc = cms.InputTag("tevMuons", "picky"),
