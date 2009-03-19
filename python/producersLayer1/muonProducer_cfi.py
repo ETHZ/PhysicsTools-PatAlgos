@@ -31,7 +31,7 @@ allLayer1Muons = cms.EDProducer("PATMuonProducer",
     embedStandAloneMuon = cms.bool(True), ## whether to embed in AOD externally stored standalone muon track
     embedPickyMuon      = cms.bool(True), ## whether to embed in AOD externally stored TeV-refit picky muon track
     embedTpfmsMuon      = cms.bool(True), ## whether to embed in AOD externally stored TeV-refit TPFMS muon track
-    embedPFCandidate = cms.bool(False),
+ 
 
 # resolution configurables
     addResolutions   = cms.bool(False),
@@ -61,8 +61,6 @@ allLayer1Muons = cms.EDProducer("PATMuonProducer",
     ),
 
     
-    # Resolution configurables
-    addResolutions = cms.bool(False),
 
     # Trigger matching configurables
     addTrigMatch = cms.bool(True),
