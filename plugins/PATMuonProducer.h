@@ -1,5 +1,5 @@
 //
-// $Id: PATMuonProducer.h,v 1.14.2.3 2009/03/19 17:17:42 lusito Exp $
+// $Id: PATMuonProducer.h,v 1.14.2.4 2009/03/19 18:57:58 lusito Exp $
 //
 
 #ifndef PhysicsTools_PatAlgos_PATMuonProducer_h
@@ -13,7 +13,7 @@
    a collection of objects of MuonType.
 
   \author   Steven Lowette, Roger Wolf
-  \version  $Id: PATMuonProducer.h,v 1.14.2.3 2009/03/19 17:17:42 lusito Exp $
+  \version  $Id: PATMuonProducer.h,v 1.14.2.4 2009/03/19 18:57:58 lusito Exp $
 */
 
 
@@ -38,9 +38,10 @@
 
 namespace pat {
 
+  class LeptonLRCalc;
   class TrackerIsolationPt;
   class CaloIsolationEnergy;
-  class LeptonLRCalc;
+
 
   class PATMuonProducer : public edm::EDProducer {
 
@@ -56,17 +57,20 @@ namespace pat {
 
       // configurables
       edm::InputTag muonSrc_;
+
       bool          embedTrack_;
       bool          embedStandAloneMuon_;
       bool          embedCombinedMuon_;
 
+
       bool          embedPickyMuon_;
       bool          embedTpfmsMuon_;
-      bool          embedPFCandidate_;
+      
       bool          addTeVRefits_;
       edm::InputTag pickySrc_;
       edm::InputTag tpfmsSrc_;
 
+  
       bool          addGenMatch_;
       bool          embedGenMatch_;
       std::vector<edm::InputTag> genMatchSrc_;
@@ -75,10 +79,12 @@ namespace pat {
       bool          addResolutions_;
       bool          addLRValues_;
 
-      /// pflow specific
+
+      // pflow specific
       bool          useParticleFlow_;
       edm::InputTag pfMuonSrc_;
       bool          embedPFCandidate_;
+
 
       typedef std::vector<edm::Handle<edm::Association<reco::GenParticleCollection> > > GenAssociations;
 
@@ -92,6 +98,7 @@ namespace pat {
 		     const TrigAssociations&  trigMatches) const;
 
      
+
       // tools
       GreaterByPt<Muon>      pTComparator_;
 
