@@ -5,10 +5,10 @@ process = cms.Process("PAT")
 # initialize MessageLogger and output report
 process.load("FWCore.MessageLogger.MessageLogger_cfi")
 process.MessageLogger.cerr.threshold = 'INFO'
-process.MessageLogger.categories.append('PATLayer0Summary')
+process.MessageLogger.categories.append('PATSummaryTables')
 process.MessageLogger.cerr.INFO = cms.untracked.PSet(
     default          = cms.untracked.PSet( limit = cms.untracked.int32(0)  ),
-    PATLayer0Summary = cms.untracked.PSet( limit = cms.untracked.int32(-1) )
+    PATSummaryTables = cms.untracked.PSet( limit = cms.untracked.int32(-1) )
 )
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 
@@ -21,12 +21,11 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
 
 process.load("Configuration.StandardSequences.Geometry_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
-process.GlobalTag.globaltag = cms.string('STARTUP_V4::All')
+process.GlobalTag.globaltag = cms.string('STARTUP_V7::All')
 process.load("Configuration.StandardSequences.MagneticField_cff")
 
 # PAT Layer 0+1
-process.load("PhysicsTools.PatAlgos.patLayer0_cff")
-process.load("PhysicsTools.PatAlgos.patLayer1_cff")
+process.load("PhysicsTools.PatAlgos.patSequences_cff")
 #process.content = cms.EDAnalyzer("EventContentAnalyzer")
 
 # Switch to CaloTau (outputs will be allLayer0CaloTaus, allLayer1Taus, selectedLayer1Taus)
@@ -35,8 +34,7 @@ switchToCaloTau(process)
 
 process.p = cms.Path(
         #process.content +             # uncomment to get a dump of the input to PAT
-        process.patLayer0 +
-        process.patLayer1
+        process.patDefaultSequence 
 )
 
 
@@ -49,6 +47,6 @@ process.out = cms.OutputModule("PoolOutputModule",
 )
 process.outpath = cms.EndPath(process.out)
 # save PAT Layer 1 output
-process.load("PhysicsTools.PatAlgos.patLayer1_EventContent_cff")
-process.out.outputCommands.extend(process.patLayer1EventContent.outputCommands)
+from PhysicsTools.PatAlgos.patEventContent_cff import *
+process.out.outputCommands += patEventContent
 

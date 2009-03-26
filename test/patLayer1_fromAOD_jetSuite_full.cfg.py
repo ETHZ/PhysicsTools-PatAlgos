@@ -5,10 +5,10 @@ process = cms.Process("PAT")
 # initialize MessageLogger and output report
 process.load("FWCore.MessageLogger.MessageLogger_cfi")
 process.MessageLogger.cerr.threshold = 'INFO'
-process.MessageLogger.categories.append('PATLayer0Summary')
+process.MessageLogger.categories.append('PATSummaryTables')
 process.MessageLogger.cerr.INFO = cms.untracked.PSet(
     default          = cms.untracked.PSet( limit = cms.untracked.int32(0)  ),
-    PATLayer0Summary = cms.untracked.PSet( limit = cms.untracked.int32(-1) )
+    PATSummaryTables = cms.untracked.PSet( limit = cms.untracked.int32(-1) )
 )
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 
@@ -20,13 +20,12 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
 
 
 # PAT Layer 0+1
-process.load("PhysicsTools.PatAlgos.patLayer0_cff")
-process.load("PhysicsTools.PatAlgos.patLayer1_cff")
+process.load("PhysicsTools.PatAlgos.patSequences_cff")
 
 ## Load additional RECO config
 process.load("Configuration.StandardSequences.Geometry_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
-process.GlobalTag.globaltag = cms.string('STARTUP_V4::All')
+process.GlobalTag.globaltag = cms.string('STARTUP_V7::All')
 process.load("Configuration.StandardSequences.MagneticField_cff")
 
 from PhysicsTools.PatAlgos.tools.jetTools import *
@@ -37,27 +36,32 @@ from PhysicsTools.PatAlgos.tools.jetTools import *
 ## FIXME process.iterativeCone5BasicJets = iterativeCone5BasicJets.clone(src = cms.InputTag("towerMaker"))
 
 
-addJetCollection(process,'sisCone5CaloJets','SC5',
-                        runCleaner="CaloJet",doJTA=True,doBTagging=True,jetCorrLabel=('SC5','Calo'),doType1MET=True,doL1Counters=False)
-addJetCollection(process,'sisCone7CaloJets','SC7',
-                        runCleaner="CaloJet",doJTA=True,doBTagging=False,jetCorrLabel=None,doType1MET=True,doL1Counters=False)
-addJetCollection(process,'kt4CaloJets','KT4',
-                        runCleaner=None,doJTA=True,doBTagging=True,jetCorrLabel=('KT4','Calo'),doType1MET=True,doL1Counters=False)
-addJetCollection(process,'kt6CaloJets','KT6',
-                        runCleaner=None,doJTA=True,doBTagging=False,jetCorrLabel=None,doType1MET=True,doL1Counters=False)
-## FIXME addJetCollection(process,'iterativeCone5BasicJets', 'BJ5',
-## FIXME                        runCleaner="BasicJet",doJTA=True,doBTagging=True,jetCorrLabel=('MC5','Calo'),doType1MET=True,doL1Counters=False)
-addJetCollection(process,'iterativeCone5PFJets', 'PFc',
-                        runCleaner="PFJet",doJTA=True,doBTagging=True,jetCorrLabel=None,doType1MET=True,doL1Counters=False)
-addJetCollection(process,'iterativeCone5PFJets', 'PFr',
-                        runCleaner=None,doJTA=True,doBTagging=True,jetCorrLabel=None,doType1MET=True,doL1Counters=False)
+addJetCollection(process,cms.InputTag('sisCone5CaloJets'),'SC5',
+                        doJTA=True,doBTagging=True,jetCorrLabel=('SC5','Calo'),doType1MET=True,doL1Counters=False,
+                        genJetCollection=cms.InputTag("sisCone5GenJets"))
+addJetCollection(process,cms.InputTag('sisCone7CaloJets'),'SC7',
+                        doJTA=True,doBTagging=False,jetCorrLabel=None,doType1MET=True,doL1Counters=False,
+                        genJetCollection=cms.InputTag("sisCone5GenJets"))
+addJetCollection(process,cms.InputTag('kt4CaloJets'),'KT4',
+                        doJTA=True,doBTagging=True,jetCorrLabel=('KT4','Calo'),doType1MET=True,doL1Counters=False,
+                        genJetCollection=cms.InputTag("kt4GenJets"))
+addJetCollection(process,cms.InputTag('kt6CaloJets'),'KT6',
+                        doJTA=True,doBTagging=False,jetCorrLabel=None,doType1MET=True,doL1Counters=False,
+                        genJetCollection=cms.InputTag("kt6GenJets"))
+## FIXME addJetCollection(process,cms.InputTag('iterativeCone5BasicJets'), 'BJ5',
+## FIXME                        doJTA=True,doBTagging=True,jetCorrLabel=('MC5','Calo'),doType1MET=True,doL1Counters=False)
+addJetCollection(process,cms.InputTag('iterativeCone5PFJets'), 'PFc',
+                        doJTA=True,doBTagging=True,jetCorrLabel=None,doType1MET=True,doL1Counters=False,
+                        genJetCollection=cms.InputTag("iterativeCone5GenJets"))
+addJetCollection(process,cms.InputTag('iterativeCone5PFJets'), 'PFr',
+                        doJTA=True,doBTagging=True,jetCorrLabel=None,doType1MET=True,doL1Counters=False,
+                        genJetCollection=cms.InputTag("iterativeCone5GenJets"))
 
 process.content = cms.EDAnalyzer("EventContentAnalyzer")
 process.p = cms.Path(
                 ## FIXME process.iterativeCone5BasicJets +  ## Turn on this to run tests on BasicJets
-                process.patLayer0  
-                + process.patLayer1
-                + process.content    # uncomment to get a dump 
+                process.patDefaultSequence  
+                #+ process.content    # uncomment to get a dump 
             )
 
 
@@ -70,9 +74,9 @@ process.out = cms.OutputModule("PoolOutputModule",
 )
 process.outpath = cms.EndPath(process.out)
 # save PAT Layer 1 output
-process.load("PhysicsTools.PatAlgos.patLayer1_EventContent_cff")
-process.out.outputCommands.extend(process.patLayer1EventContent.outputCommands)
-process.out.outputCommands.extend(["keep *_selectedLayer1Jets*_*_*"])
+from PhysicsTools.PatAlgos.patEventContent_cff import *
+process.out.outputCommands += patEventContent
+process.out.outputCommands += ["keep *_selectedLayer1Jets*_*_*", "keep *_layer1METs*_*_*"]
 
 #### Dump the python config
 #
