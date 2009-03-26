@@ -1,5 +1,5 @@
 //
-// $Id: JetCorrFactorsProducer.h,v 1.3 2008/11/04 14:12:58 auterman Exp $
+// $Id: JetCorrFactorsProducer.h,v 1.3.4.1 2009/02/16 23:38:21 rwolf Exp $
 //
 
 #ifndef PhysicsTools_PatAlgos_JetCorrFactorsProducer_h
@@ -18,7 +18,7 @@
    pat::Jet when it is created in the PAT Layer-1.
 
   \author   Steven Lowette
-  \version  $Id: JetCorrFactorsProducer.h,v 1.3 2008/11/04 14:12:58 auterman Exp $
+  \version  $Id: JetCorrFactorsProducer.h,v 1.3.4.1 2009/02/16 23:38:21 rwolf Exp $
 */
 
 
@@ -47,16 +47,14 @@ namespace pat {
 
       explicit JetCorrFactorsProducer(const edm::ParameterSet & iConfig);
       ~JetCorrFactorsProducer();
-
       virtual void produce(edm::Event & iEvent, const edm::EventSetup & iSetup);
 
-
     private:
+
       /// configure the constructor strings for the CombinedJetCorrector
       void configure(std::string level, std::string tag);
       /// evaluate the jet correction foactor according to level and corrector type
       double evaluate(edm::View<reco::Jet>::const_iterator& jet, CombinedJetCorrector* corrector, int& idx);
-
 
     private:
 

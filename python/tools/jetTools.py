@@ -23,8 +23,8 @@ def switchJECSet_(jetCorrFactors,newName,oldName,
                                The full configuration is %s""" % (newName,oldName,newName,jetCorrFactors.dumpPython())
 
 def switchJECParameters(jetCorrFactors,newalgo,newtype="Calo",oldalgo="IC5",oldtype="Calo"):
-    """Replace tags in the JetCorrFactorsProducer"""
-    for k in ['L1Offset', 'L2Relative', 'L3Absolute', 'L4EMF', 'L5Flavor', 'L6UE', 'L7Parton']:
+    """Replace tags in the JetCorrFactorsProducer -- L5Flavor is taken out as it is said not to be dependend on the specific jet algorithm"""
+    for k in ['L1Offset', 'L2Relative', 'L3Absolute', 'L4EMF', 'L6UE', 'L7Parton']:
         vv = getattr(jetCorrFactors, k).value();
         if (vv != "none"): 
             setattr(jetCorrFactors, k, vv.replace(oldalgo+oldtype,newalgo+newtype).replace(oldalgo,newalgo) )
