@@ -17,6 +17,7 @@ from JetMETCorrections.Configuration.L7PartonCorrections_cff import *
 
 # produce associated jet correction factors in a valuemap
 from PhysicsTools.PatAlgos.recoLayer0.jetCorrFactors_cfi import *
+from PhysicsTools.PatAlgos.recoLayer0.jptJetCorrFactors_cfi import *
 
 # Pick the L2+L3 corrections
 #es_prefer_L2L3JetCorrectorIcone5 = cms.ESPrefer("JetCorrectionServiceChain","L2L3JetCorrectorIcone5")
@@ -52,5 +53,5 @@ corMetType1Icone5Muons.TrackAssociatorParameters.truthMatch = False
 patMETCorrections = cms.Sequence(goodMuonsforMETCorrection * corMetType1Icone5 * corMetType1Icone5Muons)
 
 # default PAT sequence for JetMET corrections before cleaners
-patJetMETCorrections = cms.Sequence(jetCorrFactors + patMETCorrections)
+patJetMETCorrections = cms.Sequence( jetCorrFactors + jptJetCorrFactors + patMETCorrections)
 
