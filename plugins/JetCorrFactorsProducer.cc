@@ -1,5 +1,5 @@
 //
-// $Id: JetCorrFactorsProducer.cc,v 1.3.4.3 2009/03/26 18:37:52 rwolf Exp $
+// $Id: JetCorrFactorsProducer.cc,v 1.3.4.4 2009/03/30 11:38:17 rwolf Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/JetCorrFactorsProducer.h"
@@ -52,7 +52,7 @@ JetCorrFactorsProducer::JetCorrFactorsProducer(const edm::ParameterSet& iConfig)
   case  1: type = kTtbar; break;
   default: 
     throw cms::Exception("InvalidRequest") 
-      << "you ask for a sample type for het energy corrections which does not exist \n";  
+      << "you ask for a sample type for jet energy corrections which does not exist \n";  
   }
 
   if( corr==kPlain ){
