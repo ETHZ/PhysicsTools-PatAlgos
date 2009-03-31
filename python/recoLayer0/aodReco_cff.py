@@ -12,7 +12,6 @@ from PhysicsTools.PatAlgos.recoLayer0.tauDiscriminators_cff import *
 
 # These two duplicate removals are here because they're AOD bugfixes
 from PhysicsTools.PatAlgos.recoLayer0.duplicatedElectrons_cfi import *
-from PhysicsTools.PatAlgos.recoLayer0.duplicatedPhotons_cfi   import *
 
 from TrackingTools.TransientTrack.TransientTrackBuilder_cfi import *  # needed for the MET
 
