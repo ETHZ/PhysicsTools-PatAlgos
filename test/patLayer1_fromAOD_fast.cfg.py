@@ -28,7 +28,7 @@ process.load("PhysicsTools.PatAlgos.patSequences_cff")
 #process.content = cms.EDAnalyzer("EventContentAnalyzer")
 
 from PhysicsTools.PatAlgos.tools.jetTools import *
-switchJECSet(process,newName='Winter09',oldName='Summer08Redigi') # change from old to Winter08
+switchJECSet(process,newName='Winter09',oldName='Summer08') # change from old to Winter08
 
 process.p = cms.Path(
     process.patDefaultSequence  
