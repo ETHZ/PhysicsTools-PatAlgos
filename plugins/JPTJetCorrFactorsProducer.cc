@@ -44,6 +44,7 @@ void JPTJetCorrFactorsProducer::produce( edm::Event& event, const edm::EventSetu
   
   // Correction factors
   std::vector<JetCorrFactors> corrections;
+  corrections.reserve( jets->size() );
   
   // Iterate through jets
   edm::View<reco::Jet>::const_iterator ijet = jets->begin();
