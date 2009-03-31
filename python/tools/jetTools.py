@@ -117,7 +117,7 @@ def switchJetCollection(process,jetCollection,doJTA=True,doBTagging=True,jetCorr
     oldLabel = process.allLayer1Jets.jetSource;
     process.jetPartonMatch.src        = jetCollection
     process.jetGenJetMatch.src        = jetCollection
-    process.jetGenJetMatch.match      = genJetCollection
+    process.jetGenJetMatch.matched    = genJetCollection
     process.jetPartonAssociation.jets = jetCollection
     massSearchReplaceParam(process.patTrigMatch, 'src', oldLabel, jetCollection)
     process.allLayer1Jets.jetSource = jetCollection
@@ -207,7 +207,7 @@ def addJetCollection(process,jetCollection,postfixLabel,
     if doL1Counters:
         addClone('countLayer1Jets', src=cms.InputTag('cleanLayer1Jets'+postfixLabel))
     addClone('jetPartonMatch',       src = jetCollection)
-    addClone('jetGenJetMatch',       src = jetCollection)
+    addClone('jetGenJetMatch',       src = jetCollection, matched = genJetCollection)
     addClone('jetPartonAssociation', jets = jetCollection)
     addClone('jetFlavourAssociation',srcByReference = cms.InputTag('jetPartonAssociation' + postfixLabel))
     triggers = MassSearchParamVisitor('src', process.allLayer1Jets.jetSource)
