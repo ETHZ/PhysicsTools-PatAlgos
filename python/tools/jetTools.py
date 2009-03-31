@@ -135,7 +135,6 @@ def switchJetCollection(process,jetCollection,layers=[0,1],runCleaner="CaloJet",
         # MC match
         process.jetPartonMatch.src        = cms.InputTag(jetCollection)
         process.jetGenJetMatch.src        = cms.InputTag(jetCollection)
-        process.jetGenJetMatch.match      = genJetCollection
         process.jetPartonAssociation.jets = cms.InputTag(jetCollection)
         massSearchReplaceParam(process.patTrigMatch, 'src', cms.InputTag("allLayer0Jets"), cms.InputTag(jetCollection))
         if layers.count(1) != 0:
@@ -144,6 +143,8 @@ def switchJetCollection(process,jetCollection,layers=[0,1],runCleaner="CaloJet",
         raise ValueError, "In switchJetCollection, the value None for runCleaner must be written without quotes"
     else:
         raise ValueError, ("Cleaner '%s' not known" % (runCleaner,))
+    # The GenJet match should be changed irrespectively of the type of cleaning
+    process.jetGenJetMatch.matched = genJetCollection
     if doBTagging :
           (btagSeq, btagLabels) = runBTagging(process, jetCollection, 'AOD')
           process.patLayer0.replace(process.patBeforeLevel0Reco, btagSeq + process.patBeforeLevel0Reco)
@@ -275,7 +276,7 @@ def addJetCollection(process,jetCollection,postfixLabel,
             l1Jets.jetSource = cms.InputTag(jetCollection)
     if runCleaner != None:
         addClone('jetPartonMatch',       src = cms.InputTag(newLabel0))
-        addClone('jetGenJetMatch',       src = cms.InputTag(newLabel0), match = genJetCollection)
+        addClone('jetGenJetMatch',       src = cms.InputTag(newLabel0), matched = genJetCollection)
         addClone('jetPartonAssociation', jets = cms.InputTag(newLabel0))
         addClone('jetFlavourAssociation',srcByReference = cms.InputTag('jetPartonAssociation' + postfixLabel))
         triggers = MassSearchParamVisitor('src', cms.InputTag("allLayer0Jets"))
