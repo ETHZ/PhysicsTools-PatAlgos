@@ -23,12 +23,22 @@ process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 process.GlobalTag.globaltag = cms.string('IDEAL_30X::All')
 process.load("Configuration.StandardSequences.MagneticField_cff")
 
-# PAT Layer 0+1
-process.load("PhysicsTools.PatAlgos.patSequences_cff")
-process.content = cms.EDAnalyzer("EventContentAnalyzer")
+# PAT Layer 0+1 for electrons
+process.load("PhysicsTools.PatAlgos.recoLayer0.electronId_cff")
+process.load("PhysicsTools.PatAlgos.recoLayer0.electronIsolation_cff")
+process.load("PhysicsTools.PatAlgos.mcMatchLayer0.mcMatchSequences_cff")
+process.load("PhysicsTools.PatAlgos.producersLayer1.electronProducer_cfi")
+#process.content = cms.EDAnalyzer("EventContentAnalyzer")
+
+# replacements to make the muons work
+process.allLayer1Electrons.addTrigMatch  = False
+process.allLayer1Electrons.trigPrimMatch = [] 
 
 process.p = cms.Path(
-    process.patDefaultSequence  
+    process.patElectronId *
+    process.patElectronIsolation *
+    process.electronMatch *
+    process.allLayer1Electrons
 )
 
 # Output module configuration
