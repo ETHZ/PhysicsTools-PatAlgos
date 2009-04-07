@@ -15,8 +15,7 @@ process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 # source
 process.source = cms.Source("PoolSource", 
     fileNames = cms.untracked.vstring(
-    'rfio:/castor/cern.ch/cms/store/relval/CMSSW_3_1_0_pre3/RelValTTbar/GEN-SIM-RECO/IDEAL_30X_v1/0001/3C8AABDF-FA0A-DE11-80A5-001D09F290BF.root'
-    #'rfio:/castor/cern.ch/cms/store/relval/CMSSW_3_1_0_pre4/RelValTTbar/GEN-SIM-RECO/IDEAL_30X_v1/0003/00E48100-3A16-DE11-A693-001617DBCF6A.root'
+    'rfio:/castor/cern.ch/cms/store/relval/CMSSW_3_1_0_pre4/RelValTTbar/GEN-SIM-RECO/IDEAL_30X_v1/0003/00E48100-3A16-DE11-A693-001617DBCF6A.root'
     )
 )
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
@@ -26,7 +25,7 @@ process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 process.GlobalTag.globaltag = cms.string('IDEAL_30X::All')
 process.load("Configuration.StandardSequences.MagneticField_cff")
 
-# PAT Layer 0+1 for electrons
+# extraction of electron sequences
 process.load("PhysicsTools.PatAlgos.recoLayer0.electronId_cff")
 process.load("PhysicsTools.PatAlgos.recoLayer0.electronIsolation_cff")
 process.load("PhysicsTools.PatAlgos.recoLayer0.duplicatedElectrons_cfi")
@@ -44,7 +43,6 @@ process.allLayer1Electrons.trigPrimMatch     = []         ## switch off trigger 
 process.allLayer1Electrons.addGenMatch       = False      ## switch off genMatch
 process.allLayer1Electrons.genParticleMatch  = ""         ## switch off genMatch
 process.allLayer1Electrons.addElectronShapes = False      ## switch off electron shapes
-
 
 process.p = cms.Path(
 #   process.electronsNoDuplicates         ## produces segfault
@@ -64,5 +62,5 @@ process.out = cms.OutputModule("PoolOutputModule",
     # save PAT Layer 1 output
     outputCommands = cms.untracked.vstring('drop *', *patEventContent ) # you need a '*' to unpack the list of commands 'patEventContent'
 )
-#process.outpath = cms.EndPath(process.out)
+process.outpath = cms.EndPath(process.out)
 

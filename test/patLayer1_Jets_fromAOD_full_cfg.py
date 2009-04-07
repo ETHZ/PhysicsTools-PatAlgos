@@ -25,15 +25,32 @@ process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 process.GlobalTag.globaltag = cms.string('IDEAL_30X::All')
 process.load("Configuration.StandardSequences.MagneticField_cff")
 
-# extraction of muon sequences
-process.load("PhysicsTools.PatAlgos.recoLayer0.muonIsolation_cff")
-process.load("PhysicsTools.PatAlgos.producersLayer1.muonProducer_cfi")
+# extraction of jet sequences
+process.load("PhysicsTools.PatAlgos.recoLayer0.bTagging_cff")         ## empty
+process.load("PhysicsTools.PatAlgos.recoLayer0.jetTracksCharge_cff")
+process.load("PhysicsTools.PatAlgos.recoLayer0.jetMETCorrections_cff")
 process.load("PhysicsTools.PatAlgos.mcMatchLayer0.mcMatchSequences_cff")
+process.load("PhysicsTools.PatAlgos.producersLayer1.jetProducer_cfi")
 #process.content = cms.EDAnalyzer("EventContentAnalyzer")
 
+# replacements to make the muons work
+process.allLayer1Jets.addBTagInfo            = False  ## NAN
+process.allLayer1Jets.addDiscriminators      = False  ## NAN
+process.allLayer1Jets.discriminatorSources   = []     ## NAN
+process.allLayer1Jets.addTagInfos            = False  ## NAN
+process.allLayer1Jets.tagInfoSources         = []     ## NAN
+process.allLayer1Jets.addTrigMatch            = False ## NAN
+process.allLayer1Jets.trigPrimMatch           = []    ## NAN
+process.allLayer1Jets.addGenJetMatch          = False ## missing in sequence
+process.allLayer1Jets.genJetMatch             = ''    ## missign in sequence
+
 process.p = cms.Path(
-    process.muonMatch *
-    process.allLayer1Muons
+     process.patJetCharge *  
+     process.patJetCorrections *
+     process.jetPartonMatch *
+#    process.jetGenJetMatch *  ## missing dictionary to genJet
+     process.jetFlavourId *  
+     process.allLayer1Jets
 )
 
 # Output module configuration
