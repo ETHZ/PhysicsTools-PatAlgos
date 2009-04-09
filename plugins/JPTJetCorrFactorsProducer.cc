@@ -69,7 +69,7 @@ void JPTJetCorrFactorsProducer::produce( edm::Event& event, const edm::EventSetu
     // Create JetCorrFactors object
     float corr = 1.;
     JetCorrFactors::FlavourCorrections corrs(1.,1.,1.,1.);
-    JetCorrFactors correction( label_, l1, corr, l3, corr, corrs, corr, corrs );
+    JetCorrFactors correction( label_, l1, corr, l3, corr, corrs, corrs, corrs );
     
     // Store corrections
     corrections.push_back(correction);
