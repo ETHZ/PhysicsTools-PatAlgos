@@ -15,7 +15,8 @@ process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 # source
 process.source = cms.Source("PoolSource", 
     fileNames = cms.untracked.vstring(
-    'rfio:/castor/cern.ch/cms/store/relval/CMSSW_3_1_0_pre4/RelValTTbar/GEN-SIM-RECO/IDEAL_30X_v1/0003/00E48100-3A16-DE11-A693-001617DBCF6A.root'
+    'file:/afs/cern.ch/user/h/hegner/public/test2.root'
+   #'rfio:/castor/cern.ch/cms/store/relval/CMSSW_3_1_0_pre4/RelValTTbar/GEN-SIM-RECO/IDEAL_30X_v1/0003/00E48100-3A16-DE11-A693-001617DBCF6A.root'
     )
 )
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
@@ -33,23 +34,12 @@ process.load("PhysicsTools.PatAlgos.mcMatchLayer0.mcMatchSequences_cff")
 process.load("PhysicsTools.PatAlgos.producersLayer1.electronProducer_cfi")
 #process.content = cms.EDAnalyzer("EventContentAnalyzer")
 
-# replacements to make the electrons work
-process.allLayer1Electrons.isolation         = cms.PSet() ## switch off electron isolation
-process.allLayer1Electrons.isoDeposits       = cms.PSet() ## switch off electron isolation
-process.allLayer1Electrons.addElectronID     = False      ## switch off electronID
-process.allLayer1Electrons.electronIDSources = cms.PSet() ## switch off electronID
-process.allLayer1Electrons.addTrigMatch      = False      ## switch off trigger matching
-process.allLayer1Electrons.trigPrimMatch     = []         ## switch off trigger matching
-process.allLayer1Electrons.addGenMatch       = False      ## switch off genMatch
-process.allLayer1Electrons.genParticleMatch  = ""         ## switch off genMatch
-process.allLayer1Electrons.addElectronShapes = False      ## switch off electron shapes
-
 process.p = cms.Path(
-#   process.electronsNoDuplicates         ## produces segfault
-#   process.patElectronId *               ## doesn't find gsfElectron
-#   process.patElectronIsolation *        ## doesn't find gsfElectron
-#   process.electronMatch *               ## produces segfault
-#   process.allLayer1Electrons            ## produces segfault 
+    process.electronsNoDuplicates *
+    process.patElectronId *        
+    process.patElectronIsolation * 
+    process.electronMatch *        
+    process.allLayer1Electrons     
 #   process.content
 )
 

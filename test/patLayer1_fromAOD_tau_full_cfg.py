@@ -15,7 +15,8 @@ process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 # source
 process.source = cms.Source("PoolSource", 
     fileNames = cms.untracked.vstring(
-    'rfio:/castor/cern.ch/cms/store/relval/CMSSW_3_1_0_pre4/RelValTTbar/GEN-SIM-RECO/IDEAL_30X_v1/0003/00E48100-3A16-DE11-A693-001617DBCF6A.root'
+    'file:/afs/cern.ch/user/h/hegner/public/test2.root' 
+   #'rfio:/castor/cern.ch/cms/store/relval/CMSSW_3_1_0_pre4/RelValTTbar/GEN-SIM-RECO/IDEAL_30X_v1/0003/00E48100-3A16-DE11-A693-001617DBCF6A.root'
     )
 )
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
@@ -40,7 +41,7 @@ process.allLayer1Taus.isolation       = cms.PSet()  ## NAN
 process.allLayer1Taus.isoDeposits     = cms.PSet()  ## NAN
 
 process.p = cms.Path(
-#     process.patPFTauIsolation *    ## missing modules and inputs
+#     process.patPFTauIsolation      ## missing modules and inputs
       process.tauMatch +
       process.tauGenJets *
 #     process.tauGenJetMatch         ## missing dictionary for tauGenJet
