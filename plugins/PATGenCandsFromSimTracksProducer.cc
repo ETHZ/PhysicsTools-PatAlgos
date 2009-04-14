@@ -6,7 +6,7 @@
    
 
   \author   Jordan Tucker (original module), Giovanni Petrucciani (PAT integration)
-  \version  $Id: PATGenCandsFromSimTracksProducer.cc,v 1.2.4.3 2008/12/03 19:12:56 gpetrucc Exp $
+  \version  $Id: PATGenCandsFromSimTracksProducer.cc,v 1.2.4.4 2009/01/09 14:41:51 gpetrucc Exp $
 */
 
 #include "FWCore/Framework/interface/Frameworkfwd.h"
@@ -53,6 +53,9 @@ private:
 
   /// Collection of GenParticles I need to make refs to. It must also have its associated vector<int> of barcodes, aligned with them.
   edm::InputTag genParticles_;
+  
+  /// Make SimTracks even for original GenParticles, if they are outside this cylinder
+  double minRho_, minZ_;
 
   /// Global context for all recursive methods
   struct GlobalContext {
@@ -118,7 +121,9 @@ PATGenCandsFromSimTracksProducer::PATGenCandsFromSimTracksProducer(const Paramet
   setStatus_(cfg.getParameter<int32_t>("setStatus")), // set status of GenParticle to this code
   makeMotherLink_(cfg.existsAs<bool>("makeMotherLink") ? cfg.getParameter<bool>("makeMotherLink") : false),
   writeAncestors_(cfg.existsAs<bool>("writeAncestors") ? cfg.getParameter<bool>("writeAncestors") : false),
-  genParticles_(makeMotherLink_ ? cfg.getParameter<InputTag>("genParticles") : edm::InputTag())
+  genParticles_(makeMotherLink_ ? cfg.getParameter<InputTag>("genParticles") : edm::InputTag()),
+  minRho_(cfg.existsAs<double>("minRho") ? cfg.getParameter<double>("minRho") : -1),  
+  minZ_(cfg.existsAs<double>("minZ") ? cfg.getParameter<double>("minZ") : -1)  
 {
     // Possibly allow a list of particle types
     if (cfg.exists("particleTypes")) {
@@ -167,7 +172,7 @@ void PATGenCandsFromSimTracksProducer::beginJob(const EventSetup &iSetup)
 
 const SimTrack * 
 PATGenCandsFromSimTracksProducer::findGeantMother(const SimTrack &tk, const GlobalContext &g) const {
-   assert(tk.genpartIndex() == -1); // MUST NOT be called with a PYTHIA track
+   // assert(tk.genpartIndex() == -1); // MUST NOT be called with a PYTHIA track // why not?
    if (!tk.noVertex()) {
        const SimVertex &vtx = g.simvtxs[tk.vertIndex()];
        if (!vtx.noParent()) {
@@ -183,7 +188,14 @@ PATGenCandsFromSimTracksProducer::findGeantMother(const SimTrack &tk, const Glob
 
 edm::Ref<reco::GenParticleCollection> 
 PATGenCandsFromSimTracksProducer::findRef(const SimTrack &tk, GlobalContext &g) const {
-    if (tk.genpartIndex() != -1) return makeMotherLink_ ? generatorRef_(tk, g) : edm::Ref<reco::GenParticleCollection>();
+    if (tk.genpartIndex() != -1) {
+        bool stopNow = false;
+        if (minZ_ <= 0 && minRho_ <= 0) stopNow = true;
+        if (tk.noVertex()) stopNow = true;
+        Particle::Point vtx(g.simvtxs[tk.vertIndex()].position());
+        if ((vtx.Rho() <= minRho_) && (fabs(vtx.z()) <= minZ_)) stopNow = true;
+        if (stopNow) return makeMotherLink_ ? generatorRef_(tk, g) : edm::Ref<reco::GenParticleCollection>();
+    }
     const SimTrack * simMother = findGeantMother(tk, g);
 
     edm::Ref<reco::GenParticleCollection> motherRef;
@@ -284,8 +296,12 @@ void PATGenCandsFromSimTracksProducer::produce(Event& event,
           isimtrk != simtracks->end(); ++isimtrk) {
 
       // Skip PYTHIA tracks.
-      if (isimtrk->genpartIndex() != -1) continue; 
-
+      if (isimtrk->genpartIndex() != -1) {
+          if (minZ_ <= 0 && minRho_ <= 0) continue;
+          if (isimtrk->noVertex()) continue;
+          Particle::Point vtx((*simvertices)[isimtrk->vertIndex()].position());
+          if ((vtx.Rho() <= minRho_) && (fabs(vtx.z()) <= minZ_)) continue;
+      } 
       // Maybe apply the PdgId filter
       if (!pdgIds_.empty()) { // if we have a filter on pdg ids
            if (pdgIds_.find(abs(isimtrk->type())) == pdgIds_.end()) continue;
