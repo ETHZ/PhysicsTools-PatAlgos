@@ -29,17 +29,19 @@ process.load("Configuration.StandardSequences.MagneticField_cff")
 # extraction of tau sequences
 process.load("PhysicsTools.JetMCAlgos.TauGenJets_cfi")
 process.load("PhysicsTools.PatAlgos.mcMatchLayer0.tauMatch_cfi")
+process.load("PhysicsTools.PatAlgos.recoLayer0.pfCandidateIsoDepositSelection_cff")
 process.load("PhysicsTools.PatAlgos.recoLayer0.tauIsolation_cff")
 process.load("PhysicsTools.PatAlgos.recoLayer0.tauDiscriminators_cff")  ##missing modules and inputs
 process.load("PhysicsTools.PatAlgos.producersLayer1.tauProducer_cfi")
 #process.content = cms.EDAnalyzer("EventContentAnalyzer")
 
 process.p = cms.Path(
-     process.patPFTauIsolation +      ## missing modules and inputs
-     process.tauMatch +
-     process.tauGenJets +
-     process.tauGenJetMatch +        ## missing dictionary for tauGenJet
-     process.allLayer1Taus
+    process.patPFCandidateIsoDepositSelection +
+    process.patPFTauIsolation +
+    process.tauMatch +
+    process.tauGenJets +
+    process.tauGenJetMatch +
+    process.allLayer1Taus
 )
 
 # Output module configuration
