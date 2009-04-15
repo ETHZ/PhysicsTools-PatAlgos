@@ -34,18 +34,12 @@ process.load("PhysicsTools.PatAlgos.recoLayer0.tauDiscriminators_cff")  ##missin
 process.load("PhysicsTools.PatAlgos.producersLayer1.tauProducer_cfi")
 #process.content = cms.EDAnalyzer("EventContentAnalyzer")
 
-# replacements to make the taus work
-process.allLayer1Taus.addGenJetMatch  = False       ## NAN
-process.allLayer1Taus.genJetMatch     = ''          ## NAN
-process.allLayer1Taus.isolation       = cms.PSet()  ## NAN
-process.allLayer1Taus.isoDeposits     = cms.PSet()  ## NAN
-
 process.p = cms.Path(
-#     process.patPFTauIsolation      ## missing modules and inputs
-      process.tauMatch +
-      process.tauGenJets *
-#     process.tauGenJetMatch         ## missing dictionary for tauGenJet
-      process.allLayer1Taus
+     process.patPFTauIsolation +      ## missing modules and inputs
+     process.tauMatch +
+     process.tauGenJets +
+     process.tauGenJetMatch +        ## missing dictionary for tauGenJet
+     process.allLayer1Taus
 )
 
 # Output module configuration
