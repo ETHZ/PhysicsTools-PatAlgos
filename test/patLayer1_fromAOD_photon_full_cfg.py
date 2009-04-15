@@ -7,7 +7,7 @@ process.load("FWCore.MessageLogger.MessageLogger_cfi")
 process.MessageLogger.cerr.threshold = 'INFO'
 process.MessageLogger.categories.append('PATSummaryTables')
 process.MessageLogger.cerr.INFO = cms.untracked.PSet(
-    default          = cms.untracked.PSet( limit = cms.untracked.int32(0)  ),
+    default          = cms.untracked.PSet( limit = cms.untracked.int32( 1) ),
     PATSummaryTables = cms.untracked.PSet( limit = cms.untracked.int32(-1) )
 )
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
@@ -15,7 +15,7 @@ process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 # source
 process.source = cms.Source("PoolSource", 
     fileNames = cms.untracked.vstring(
-    'file:/afs/cern.ch/user/h/hegner/public/test2.root' 
+    'file:/afs/cern.ch/user/h/hegner/public/test2.root'
    #'rfio:/castor/cern.ch/cms/store/relval/CMSSW_3_1_0_pre4/RelValTTbar/GEN-SIM-RECO/IDEAL_30X_v1/0003/00E48100-3A16-DE11-A693-001617DBCF6A.root'
     )
 )
@@ -26,16 +26,18 @@ process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 process.GlobalTag.globaltag = cms.string('IDEAL_30X::All')
 process.load("Configuration.StandardSequences.MagneticField_cff")
 
-# PAT Layer 0+1
-process.load("PhysicsTools.PatAlgos.patSequences_cff")
-process.content = cms.EDAnalyzer("EventContentAnalyzer")
-
-# replacements to make the muons work
-process.allLayer1Jets.addDiscriminators    = False  ## NAN
-process.allLayer1Jets.discriminatorSources = []     ## NAN
+# extraction of electron sequences
+process.load("PhysicsTools.PatAlgos.recoLayer0.photonId_cff")
+process.load("PhysicsTools.PatAlgos.recoLayer0.photonIsolation_cff")
+process.load("PhysicsTools.PatAlgos.mcMatchLayer0.mcMatchSequences_cff")
+process.load("PhysicsTools.PatAlgos.producersLayer1.photonProducer_cfi")
+#process.content = cms.EDAnalyzer("EventContentAnalyzer")
 
 process.p = cms.Path(
-    process.patDefaultSequence  
+    process.patPhotonIsolation * 
+    process.photonMatch *        
+    process.allLayer1Photons     
+#   process.content
 )
 
 # Output module configuration
