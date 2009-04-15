@@ -1,5 +1,5 @@
 //
-// $Id: PATElectronProducer.h,v 1.12.2.3 2009/01/16 15:55:21 pioppi Exp $
+// $Id: PATElectronProducer.h,v 1.14 2009/03/26 05:02:42 hegner Exp $
 //
 
 #ifndef PhysicsTools_PatAlgos_PATElectronProducer_h
@@ -10,10 +10,10 @@
   \brief    Produces pat::Electron's
 
    The PATElectronProducer produces analysis-level pat::Electron's starting from
-   a collection of objects of ElectronType.
+   a collection of objects of reco::GsfElectron.
 
   \author   Steven Lowette, James Lamb
-  \version  $Id: PATElectronProducer.h,v 1.12.2.3 2009/01/16 15:55:21 pioppi Exp $
+  \version  $Id: PATElectronProducer.h,v 1.14 2009/03/26 05:02:42 hegner Exp $
 */
 
 
@@ -25,7 +25,7 @@
 #include "DataFormats/Common/interface/ValueMap.h"
 #include "DataFormats/Candidate/interface/CandAssociation.h"
 
-#include "PhysicsTools/Utilities/interface/PtComparator.h"
+#include "CommonTools/Utils/interface/PtComparator.h"
 
 #include "PhysicsTools/PatAlgos/interface/MultiIsolator.h"
 #include "PhysicsTools/PatAlgos/interface/EfficiencyLoader.h"
@@ -56,7 +56,6 @@ namespace pat {
       ~PATElectronProducer();  
 
       virtual void produce(edm::Event & iEvent, const edm::EventSetup & iSetup);
-      typedef edm::RefToBase<ElectronType> ElectronBaseRef;
 
     private:
 
@@ -83,7 +82,7 @@ namespace pat {
       typedef std::vector<edm::Handle<edm::Association<TriggerPrimitiveCollection> > > TrigAssociations;
 
       void FillElectron(Electron& aEl,
-			const ElectronBaseRef& elecRef,
+			const edm::RefToBase<reco::GsfElectron>& elecRef,
 			const reco::CandidateBaseRef& baseRef,
 			const GenAssociations& genMatches,
 			const TrigAssociations& trigMatches) const;

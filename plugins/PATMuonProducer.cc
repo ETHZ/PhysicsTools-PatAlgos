@@ -1,5 +1,5 @@
 //
-// $Id: PATMuonProducer.cc,v 1.19.2.4 2009/03/19 18:57:30 lusito Exp $
+// $Id: PATMuonProducer.cc,v 1.22 2009/03/26 22:38:58 hegner Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATMuonProducer.h"
@@ -33,8 +33,7 @@ using namespace std;
 
 PATMuonProducer::PATMuonProducer(const edm::ParameterSet & iConfig) :
   isolator_(iConfig.exists("isolation") ? iConfig.getParameter<edm::ParameterSet>("isolation") : edm::ParameterSet(), false),
-  userDataHelper_ ( iConfig.getParameter<edm::ParameterSet>("userData") )
-
+  useUserData_(iConfig.exists("userData"))
 {
 
   
@@ -119,9 +118,8 @@ PATMuonProducer::PATMuonProducer(const edm::ParameterSet & iConfig) :
   }
 
   // Check to see if the user wants to add user data
-  useUserData_ = false;
-  if ( iConfig.exists("userData") ) {
-    useUserData_ = true;
+  if ( useUserData_ ) {
+    userDataHelper_ = PATUserDataHelper<Muon>(iConfig.getParameter<edm::ParameterSet>("userData"));
   }
 
   // produces vector of muons
@@ -135,7 +133,7 @@ PATMuonProducer::~PATMuonProducer() {
 
 void PATMuonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup) {
   
-edm::Handle<edm::View<MuonType> > muons;
+edm::Handle<edm::View<reco::Muon> > muons;
   iEvent.getByLabel(muonSrc_, muons);
 
   if (isolator_.enabled()) isolator_.beginEvent(iEvent,iSetup);
@@ -205,7 +203,7 @@ edm::Handle<edm::View<MuonType> > muons;
     } 
   }
   else {
-    edm::Handle<edm::View<MuonType> > muons;
+    edm::Handle<edm::View<reco::Muon> > muons;
     iEvent.getByLabel(muonSrc_, muons);
 
     // prepare the TeV refit track retrieval
@@ -215,8 +213,7 @@ edm::Handle<edm::View<MuonType> > muons;
       iEvent.getByLabel(tpfmsSrc_, tpfmsMap);
     }
     
-    for (edm::View<MuonType>::const_iterator itMuon = muons->begin(); itMuon != muons->end(); ++itMuon) {
-      
+    for (edm::View<reco::Muon>::const_iterator itMuon = muons->begin(); itMuon != muons->end(); ++itMuon) {
       
       // construct the Muon from the ref -> save ref to original object
       unsigned int idx = itMuon - muons->begin();
@@ -265,7 +262,7 @@ edm::Handle<edm::View<MuonType> > muons;
       }
 
       // add sel to selected
-      edm::Ptr<MuonType> muonsPtr = muons->ptrAt(idx);
+      edm::Ptr<reco::Muon> muonsPtr = muons->ptrAt(idx);
       if ( useUserData_ ) {
 	userDataHelper_.add( aMuon, iEvent, iSetup );
       }
