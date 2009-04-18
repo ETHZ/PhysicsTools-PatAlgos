@@ -25,9 +25,9 @@ process.load("PhysicsTools.PatAlgos.patSequences_cff")
 # Magnetic field now needs to be in the high-level py
 process.load("Configuration.StandardSequences.MagneticField_cff")
 
-## Switch off trigger matching (just to make things easier)
-from PhysicsTools.PatAlgos.tools.trigTools import switchTriggerOff
-switchTriggerOff(process)
+# Switch off old trigger matching
+from PhysicsTools.PatAlgos.tools.trigTools import switchOffTriggerMatchingOld
+switchOffTriggerMatchingOld( process )
 
 #process.content = cms.EDAnalyzer("EventContentAnalyzer")
 process.p = cms.Path(

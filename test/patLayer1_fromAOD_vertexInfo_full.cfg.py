@@ -70,6 +70,9 @@ process.patAODExtraReco += process.bestVertex * process.patTrackVertexInfo
 process.allLayer1TrackCands.vertexing = cms.PSet(
     vertexAssociations = cms.InputTag("patTrackVertexInfo"),
 )
+# Switch off old trigger matching
+from PhysicsTools.PatAlgos.tools.trigTools import switchOffTriggerMatchingOld
+switchOffTriggerMatchingOld( process )
 
 process.p = cms.Path(
         process.patDefaultSequence 

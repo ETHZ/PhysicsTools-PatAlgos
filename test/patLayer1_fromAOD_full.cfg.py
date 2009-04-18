@@ -26,6 +26,9 @@ process.load("Configuration.StandardSequences.MagneticField_cff")
 # PAT Layer 0+1
 process.load("PhysicsTools.PatAlgos.patSequences_cff")
 #process.content = cms.EDAnalyzer("EventContentAnalyzer")
+# Switch off old trigger matching
+from PhysicsTools.PatAlgos.tools.trigTools import switchOffTriggerMatchingOld
+switchOffTriggerMatchingOld( process )
 
 process.p = cms.Path(
     process.patDefaultSequence  

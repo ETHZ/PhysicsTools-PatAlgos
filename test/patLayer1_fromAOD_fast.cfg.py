@@ -29,6 +29,9 @@ process.load("PhysicsTools.PatAlgos.patSequences_cff")
 
 from PhysicsTools.PatAlgos.tools.jetTools import *
 switchJECSet(process,newName='Winter09',oldName='Summer08Redigi') # change from old to Winter08
+# Switch off old trigger matching
+from PhysicsTools.PatAlgos.tools.trigTools import switchOffTriggerMatchingOld
+switchOffTriggerMatchingOld( process )
 
 process.p = cms.Path(
     process.patDefaultSequence  

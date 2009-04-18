@@ -45,6 +45,9 @@ process.allLayer1Muons.genParticleMatch = cms.VInputTag(
     cms.InputTag("muMatch1"), 
     cms.InputTag("muMatchF"),
 )
+# Switch off old trigger matching
+from PhysicsTools.PatAlgos.tools.trigTools import switchOffTriggerMatchingOld
+switchOffTriggerMatchingOld( process )
 
 #process.content = cms.EDAnalyzer("EventContentAnalyzer")
 process.p = cms.Path(
