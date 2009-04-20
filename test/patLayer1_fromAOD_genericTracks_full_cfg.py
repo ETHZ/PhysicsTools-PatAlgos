@@ -42,6 +42,9 @@ makeTrackCandidates(process,
         triggerAs=[]                          # Replicate trigger match as all the ones used by PAT on these AOD collections (None = no trig.)
         );                                    #  you can specify more than one collection for this
 
+# Switch off old trigger matching
+from PhysicsTools.PatAlgos.tools.trigTools import switchOffTriggerMatchingOld
+switchOffTriggerMatchingOld( process )
 
 process.p = cms.Path(
         process.patDefaultSequence 

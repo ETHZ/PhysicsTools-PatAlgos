@@ -54,6 +54,10 @@ process.allLayer1Objects.replace( process.layer1METs, process.layer1METs + proce
 ##   process.layer1METs.metSource = cms.InputTag("pfMET")
 ##   process.layer1METs.addMuonCorrections = False
 
+# Switch off old trigger matching
+from PhysicsTools.PatAlgos.tools.trigTools import switchOffTriggerMatchingOld
+switchOffTriggerMatchingOld( process )
+
 # Now we break up process.patLayer0
 process.p = cms.Path(
     process.pfMET +

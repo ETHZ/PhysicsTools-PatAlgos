@@ -31,14 +31,9 @@ process.inFlightMuons = cms.EDProducer("PATGenCandsFromSimTracksProducer",
         setStatus     = cms.int32(-1),
         particleTypes = cms.vstring("mu+"),       # picks also mu-, of course
         filter        = cms.vstring("pt > 0.5"),  # just for testing
-<<<<<<< patLayer1_fromRECO_inFlight_full.cfg.py
-        makeMotherLink = cms.bool(True),
-        genParticles   = cms.InputTag("genParticles"),
-=======
         makeMotherLink = cms.bool(True),
         writeAncestors = cms.bool(True), # save also the intermediate GEANT ancestors of the muons
         genParticles   = cms.InputTag("genParticles"),
->>>>>>> 1.3.2.4
 )
 process.muMatch3 = process.muonMatch.clone(mcStatus = cms.vint32(3))
 process.muMatch1 = process.muonMatch.clone(mcStatus = cms.vint32(1))
@@ -50,6 +45,10 @@ process.allLayer1Muons.genParticleMatch = cms.VInputTag(
     cms.InputTag("muMatch1"), 
     cms.InputTag("muMatchF"),
 )
+
+# Switch off old trigger matching
+from PhysicsTools.PatAlgos.tools.trigTools import switchOffTriggerMatchingOld
+switchOffTriggerMatchingOld( process )
 
 #process.content = cms.EDAnalyzer("EventContentAnalyzer")
 process.p = cms.Path(

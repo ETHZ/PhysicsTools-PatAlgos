@@ -33,6 +33,9 @@ process.content = cms.EDAnalyzer("EventContentAnalyzer")
 # replacements to make the muons work
 process.allLayer1Jets.addDiscriminators    = False  ## NAN
 process.allLayer1Jets.discriminatorSources = []     ## NAN
+# Switch off old trigger matching
+from PhysicsTools.PatAlgos.tools.trigTools import switchOffTriggerMatchingOld
+switchOffTriggerMatchingOld( process )
 
 process.p = cms.Path(
     process.patDefaultSequence  
