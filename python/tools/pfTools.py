@@ -116,6 +116,20 @@ def usePF2PAT(process,runPF2PAT=True):
     switchMCAndTriggerMatch(process, oldTaus, process.allLayer1Taus.tauSource)
     redoPFTauDiscriminators(process, oldTaus, process.allLayer1Taus.tauSource)
     process.aodSummary.candidates.append(process.allLayer1Taus.tauSource)
+    ##print "Change src in calculation of pf-isodep for taus"
+    #pfNoPileUpColl = cms.InputTag("pfNoPileUp","PFCandidates")
+    process.tauIsoDepositPFCandidates.src = process.allLayer1Taus.tauSource
+    process.tauIsoDepositPFCandidates.ExtractorPSet.tauSource = process.allLayer1Taus.tauSource
+    #process.tauIsoDepositPFCandidates.ExtractorPSet.candidateSource = pfNoPileUpColl
+    process.tauIsoDepositPFChargedHadrons.src = process.allLayer1Taus.tauSource
+    process.tauIsoDepositPFChargedHadrons.ExtractorPSet.tauSource = process.allLayer1Taus.tauSource
+    #process.pfAllChargedHadrons.src = pfNoPileUpColl
+    process.tauIsoDepositPFNeutralHadrons.src = process.allLayer1Taus.tauSource
+    process.tauIsoDepositPFNeutralHadrons.ExtractorPSet.tauSource = process.allLayer1Taus.tauSource
+    #process.pfAllNeutralHadrons.src = pfNoPileUpColl
+    process.tauIsoDepositPFGammas.src = process.allLayer1Taus.tauSource
+    process.tauIsoDepositPFGammas.ExtractorPSet.tauSource = process.allLayer1Taus.tauSource
+    #process.pfAllPhotons.src = pfNoPileUpColl
     
     # MET
     switchToPFMET(process, cms.InputTag('pfMET'))
