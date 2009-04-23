@@ -56,18 +56,8 @@ addJetCollection(process,cms.InputTag('iterativeCone5PFJets'), 'PFr',
                         genJetCollection=cms.InputTag("iterativeCone5GenJets"))
 
 # Switch trigger matching off
-from PhysicsTools.PatAlgos.tools.trigTools import switchTriggerOff
-switchTriggerOff( process )
-## FIXME Trigger matches are screwed up
-##       maybe even more...; 
-process.allLayer1JetsPFr.addTrigMatch = False
-process.allLayer1JetsPFc.addTrigMatch = False
-process.allLayer1JetsSC5.addTrigMatch = False
-process.allLayer1JetsSC7.addTrigMatch = False
-process.allLayer1JetsKT4.addTrigMatch = False
-process.allLayer1JetsKT6.addTrigMatch = False
-process.layer1METsSC5.addTrigMatch    = False
-process.layer1METsKT4.addTrigMatch    = False
+from PhysicsTools.PatAlgos.tools.trigTools import switchOffTriggerMatchingOld
+switchOffTriggerMatchingOld( process )
 
 process.content = cms.EDAnalyzer("EventContentAnalyzer")
 process.p = cms.Path(

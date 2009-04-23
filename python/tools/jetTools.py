@@ -176,7 +176,7 @@ def switchJetCollection(process,jetCollection,doJTA=True,doBTagging=True,jetCorr
 
 def addJetCollection(process,jetCollection,postfixLabel,
                         doJTA=True,doBTagging=True,jetCorrLabel=None,doType1MET=True,doL1Counters=False,
-                        genJetCollection=cms.InputTag("iterativeCone5GenJets")):
+                        genJetCollection=cms.InputTag("iterativeCone5GenJets"),doTrigMatch=False):
     """Add a new collection of jets in PAT from the default value.
           postfixLabel: Postpone this label to the name of all modules that work with these jet collection.
                         it can't be an empty string
@@ -200,7 +200,7 @@ def addJetCollection(process,jetCollection,postfixLabel,
     def addClone(label,**replaceStatements):
         new      = getattr(process, label).clone(**replaceStatements)
         addAlso(label, new)
-    addClone('allLayer1Jets', jetSource = jetCollection)
+    addClone('allLayer1Jets', jetSource = jetCollection, addTrigMatch = doTrigMatch)
     l1Jets = getattr(process, 'allLayer1Jets'+postfixLabel)
     addClone('selectedLayer1Jets', src=cms.InputTag('allLayer1Jets'+postfixLabel))
     addClone('cleanLayer1Jets', src=cms.InputTag('selectedLayer1Jets'+postfixLabel))
@@ -210,17 +210,21 @@ def addJetCollection(process,jetCollection,postfixLabel,
     addClone('jetGenJetMatch',       src = jetCollection, matched = genJetCollection)
     addClone('jetPartonAssociation', jets = jetCollection)
     addClone('jetFlavourAssociation',srcByReference = cms.InputTag('jetPartonAssociation' + postfixLabel))
-    triggers = MassSearchParamVisitor('src', process.allLayer1Jets.jetSource)
-    process.patTrigMatch.visit(triggers)
-    for mod in triggers.modules():
-        newmod = mod.clone(src = jetCollection)
-        setattr( process, mod.label() + postfixLabel, newmod )
-        process.patTrigMatch.replace( mod, mod * newmod )
     def fixInputTag(x): x.setModuleLabel(x.moduleLabel+postfixLabel)
     def fixVInputTag(x): x[0].setModuleLabel(x[0].moduleLabel+postfixLabel)
     fixInputTag(l1Jets.JetPartonMapSource)
     fixInputTag(l1Jets.genJetMatch)
     fixInputTag(l1Jets.genPartonMatch)
+    triggers = MassSearchParamVisitor('src', process.allLayer1Jets.jetSource)
+    process.patTrigMatch.visit(triggers)
+    for mod in triggers.modules():
+        if doTrigMatch:
+            newmod = mod.clone(src = jetCollection)
+            setattr( process, mod.label() + postfixLabel, newmod )
+            process.patTrigMatch.replace( mod, mod * newmod )
+#         newmod = mod.clone(src = jetCollection)
+#         setattr( process, mod.label() + postfixLabel, newmod )
+#         process.patTrigMatch.replace( mod, mod * newmod )
     for it in l1Jets.trigPrimMatch.value(): fixInputTag(it)
     def vit(*args) : return cms.VInputTag( *[ cms.InputTag(x) for x in args ] )
     if doBTagging :
@@ -268,14 +272,18 @@ def addJetCollection(process,jetCollection,postfixLabel,
             addClone('corMetType1Icone5', inputUncorJetsLabel = jetCollection.value(),
                                           corrector = cms.string('L2L3JetCorrector%s%s' % jetCorrLabel))
             addClone('corMetType1Icone5Muons', uncorMETInputTag = cms.InputTag("corMetType1Icone5"+postfixLabel))
-            addClone('layer1METs',              metSource = cms.InputTag("corMetType1Icone5Muons"+postfixLabel))
+            addClone('layer1METs',              metSource = cms.InputTag("corMetType1Icone5Muons"+postfixLabel), addTrigMatch = doTrigMatch)
             l1MET = getattr(process, 'layer1METs'+postfixLabel)
             mettriggers = MassSearchParamVisitor('src', process.layer1METs.metSource)
             process.patTrigMatch.visit(mettriggers)
             for mod in mettriggers.modules():
-                newmod = mod.clone(src = l1MET.metSource)
-                setattr( process, mod.label() + postfixLabel, newmod )
-                process.patTrigMatch.replace( mod, mod * newmod )
+                if doTrigMatch:
+                    newmod = mod.clone(src = l1MET.metSource)
+                    setattr( process, mod.label() + postfixLabel, newmod )
+                    process.patTrigMatch.replace( mod, mod * newmod )
+#                 newmod = mod.clone(src = l1MET.metSource)
+#                 setattr( process, mod.label() + postfixLabel, newmod )
+#                 process.patTrigMatch.replace( mod, mod * newmod )
             for it in l1MET.trigPrimMatch.value(): fixInputTag(it)
             process.allLayer1Summary.candidates += [ cms.InputTag('layer1METs'+postfixLabel) ]
     else:
