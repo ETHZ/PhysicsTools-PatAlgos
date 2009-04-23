@@ -222,9 +222,6 @@ def addJetCollection(process,jetCollection,postfixLabel,
             newmod = mod.clone(src = jetCollection)
             setattr( process, mod.label() + postfixLabel, newmod )
             process.patTrigMatch.replace( mod, mod * newmod )
-#         newmod = mod.clone(src = jetCollection)
-#         setattr( process, mod.label() + postfixLabel, newmod )
-#         process.patTrigMatch.replace( mod, mod * newmod )
     for it in l1Jets.trigPrimMatch.value(): fixInputTag(it)
     def vit(*args) : return cms.VInputTag( *[ cms.InputTag(x) for x in args ] )
     if doBTagging :
@@ -281,9 +278,6 @@ def addJetCollection(process,jetCollection,postfixLabel,
                     newmod = mod.clone(src = l1MET.metSource)
                     setattr( process, mod.label() + postfixLabel, newmod )
                     process.patTrigMatch.replace( mod, mod * newmod )
-#                 newmod = mod.clone(src = l1MET.metSource)
-#                 setattr( process, mod.label() + postfixLabel, newmod )
-#                 process.patTrigMatch.replace( mod, mod * newmod )
             for it in l1MET.trigPrimMatch.value(): fixInputTag(it)
             process.allLayer1Summary.candidates += [ cms.InputTag('layer1METs'+postfixLabel) ]
     else:
