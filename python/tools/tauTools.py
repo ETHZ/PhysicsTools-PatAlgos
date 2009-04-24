@@ -6,11 +6,14 @@ def redoPFTauDiscriminators(process, oldPFTauLabel=cms.InputTag('pfRecoTauProduc
     process.patAODExtraReco += process.patPFTauDiscrimination
     massSearchReplaceParam(process.patPFTauDiscrimination, 'PFTauProducer', oldPFTauLabel, newPFTauLabel)
        
-def switchToCaloTau(process,pfTauLabel=cms.InputTag('pfRecoTauProducer'), caloTauLabel=cms.InputTag('caloRecoTauProducer')):
-    # swap the discriminators we compute # FIXME: remove if they're already on AOD
+def switchToCaloTau(process,
+                    pfTauLabel=cms.InputTag('pfRecoTauProducer'),
+                    caloTauLabel=cms.InputTag('caloRecoTauProducer')):
     switchMCAndTriggerMatch(process,pfTauLabel,caloTauLabel)
-    process.allLayer1Taus.tauSource      = caloTauLabel
-    process.allLayer1Taus.tauIDSources = cms.PSet(  # All these are already present in 2.2.X AODSIMs
+    process.allLayer1Taus.tauSource    = caloTauLabel
+    process.allLayer1Taus.isolation    = cms.PSet() # there is no path for calo tau isolation available at the moment
+    process.allLayer1Taus.isoDeposits  = cms.PSet() # there is no path for calo tau isolation available at the moment
+    process.allLayer1Taus.tauIDSources = cms.PSet(  # all these are already present in 2.2.X AODSIM
             leadingTrackFinding = cms.InputTag("caloRecoTauDiscriminationByLeadingTrackFinding"),
             leadingTrackPtCut   = cms.InputTag("caloRecoTauDiscriminationByLeadingTrackPtCut"),
             byIsolation         = cms.InputTag("caloRecoTauDiscriminationByIsolation"),
