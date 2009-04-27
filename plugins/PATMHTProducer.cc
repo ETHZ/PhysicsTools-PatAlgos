@@ -1,5 +1,5 @@
 //
-// $Id: PATMHTProducer.cc,v 1.30 2009/03/19 21:01:55 xs32 Exp $
+// $Id: PATMHTProducer.cc,v 1.34 2009/04/22 17:24:48 xs32 Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATMHTProducer.h"
@@ -74,7 +74,7 @@ pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
 
   double number_of_muons = getMuons(iEvent, iSetup);
 
-  if (verbose_ > 1.) {
+  if (verbose_ == 1.) {
     std::cout << ">>>---> Number of jets: "  <<  number_of_jets << std::endl;
     std::cout << ">>>---> Number of electrons: "  <<  number_of_jets << std::endl;
     std::cout << ">>>---> Number of muons: " <<  number_of_muons << std::endl;
@@ -86,37 +86,43 @@ pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
   double met_phi=0;
   double met_set=0;
   
-  // calculate the MHT significance
-
-  double significance = ASignificance(physobjvector_, met_et, met_phi, met_set);
-  met_x=met_et*cos(met_phi);
-  met_y=met_et*sin(met_phi);
-
-  if (verbose_ > 0.) {
-    std::cout << ">>>----> MHT Sgificance = " << significance << std::endl;
-  }
- 
+  
   std::auto_ptr<pat::MHTCollection>  themetsigcoll (new pat::MHTCollection);
-  pat::MHT themetsigobj(reco::Particle::LorentzVector(met_x,met_y,0,met_et),met_set,significance);
+
+  if(physobjvector_.size() >= 1) { // Only when the vector is not empty 
+
+    // calculate the MHT significance
+
+    double significance = ASignificance(physobjvector_, met_et, met_phi, met_set);
+    
+    met_x=met_et*cos(met_phi);
+    met_y=met_et*sin(met_phi);
+  
+    if (verbose_ == 1.) {
+      std::cout << ">>>----> MHT Sgificance = " << significance << std::endl;
+    }
+ 
+    pat::MHT themetsigobj(reco::Particle::LorentzVector(met_x,met_y,0,met_et),met_set,significance);
 
 
-  // Store the number of jets, electrons, muons
-  themetsigobj.setNumberOfJets(number_of_jets);
-  themetsigobj.setNumberOfElectrons(number_of_electrons);
-  themetsigobj.setNumberOfMuons(number_of_muons);
+    // Store the number of jets, electrons, muons
+    themetsigobj.setNumberOfJets(number_of_jets);
+    themetsigobj.setNumberOfElectrons(number_of_electrons);
+    themetsigobj.setNumberOfMuons(number_of_muons);
 
-  //  MET Significance 
-  getTowers(iEvent, iSetup); 
-  double metsgf = ASignificance(physobjvector_, met_et, met_phi, met_set);
-  themetsigobj.setMETsignificance(metsgf);
-  if (verbose_ > 0.) {
-    std::cout << ">>>----> MET Sgificance = " << metsgf << std::endl;
-  }
+    //  MET Significance 
+    getTowers(iEvent, iSetup); 
+    double metsgf = ASignificance(physobjvector_, met_et, met_phi, met_set);
+    themetsigobj.setMETsignificance(metsgf);
+    if (verbose_ == 1.) {
+      std::cout << ">>>----> MET Sgificance = " << metsgf << std::endl;
+    }
 
-  themetsigcoll->push_back(themetsigobj);
+    themetsigcoll->push_back(themetsigobj);
+
+  } // If the vector is empty, just put empty product. 
 
   iEvent.put( themetsigcoll);
-
 
   
 }  
@@ -146,7 +152,7 @@ pat::PATMHTProducer::getJets(edm::Event& iEvent, const edm::EventSetup & iSetup)
     double jet_et = jet_iter->et();
     double jet_phi = jet_iter->phi();
     
-    if (verbose_ > 1.) {
+    if (verbose_ == 1.) {
       std::cout << "jet pt : " << jet_iter->pt() << " eta : " << jet_iter->eta() 
 		<< " EMF: "  << jet_iter->emEnergyFraction() <<  std::endl;
     }
@@ -162,7 +168,7 @@ pat::PATMHTProducer::getJets(edm::Event& iEvent, const edm::EventSetup & iSetup)
       sigma_phi =  0.0 ; //jet_iter->resolutionPhi();
     }
 
-    if (verbose_ > 1.) {
+    if (verbose_ == 1.) {
       std::cout << "jet sigma_et : " << sigma_et << ", jet sigma_phi : " << sigma_phi <<  std::endl;
     }
 
@@ -180,6 +186,15 @@ pat::PATMHTProducer::getJets(edm::Event& iEvent, const edm::EventSetup & iSetup)
       //" , uncertainties for " << objectname <<" changed to (et, phi): " << sigma_et << "," << sigma_phi; 
     }
 
+
+    if (verbose_ == 101.) { // Study the Jets behavior
+
+      std::cout << "v101> " <<  number_of_jets_ << "  " 
+		<< jet_et   << "  "  <<  sigma_et << "  "
+		<< jet_phi  << "  "  <<  sigma_phi << std::endl;
+    }
+  
+
     metsig::SigInputObj tmp_jet(objectname,jet_et,jet_phi,sigma_et,sigma_phi);
     physobjvector_.push_back(tmp_jet);
     number_of_jets_ ++;
@@ -195,6 +210,10 @@ pat::PATMHTProducer::getJets(edm::Event& iEvent, const edm::EventSetup & iSetup)
 
   }
   
+  if (verbose_ == 101.) { // Study the Jets behavior - seperate events
+    std::cout << "v101> --------------------------------------------" << std::endl;
+  }
+ 
   return number_of_jets_;
 
 }
@@ -226,7 +245,7 @@ pat::PATMHTProducer::getElectrons(edm::Event& iEvent, const edm::EventSetup & iS
     if (electron_iter->et() < elePtMin_ || 
 	TMath::Abs(electron_iter->eta()) > eleEtaMax_  ) continue; 
 
-    if (verbose_ > 1.) {
+    if (verbose_ == 1.) {
       std::cout << "electron pt = " << electron_iter->pt()  << " eta : " << electron_iter->eta() 
 		<<  std::endl;
     }
@@ -245,7 +264,7 @@ pat::PATMHTProducer::getElectrons(edm::Event& iEvent, const edm::EventSetup & iS
       sigma_phi = 0.0; // electron_iter->resolutionPhi();
     }
 
-    if (verbose_ > 1.) {
+    if (verbose_ == 1.) {
       std::cout << "electron sigma_et : " << sigma_et << ", electron sigma_phi : " << sigma_phi
 		<<  std::endl;}
 
@@ -307,7 +326,7 @@ double pat::PATMHTProducer::getMuons(edm::Event& iEvent, const edm::EventSetup &
 
     if (muon_iter->pt() < muonPtMin_ || TMath::Abs(muon_iter->eta()) > muonEtaMax_  ) continue; 
 
-    if (verbose_ > 1.) {
+    if (verbose_ == 1.) {
       std::cout << "muon pt = " << muon_iter->pt() << " eta : " << muon_iter->eta() <<  std::endl;
     }
 
@@ -325,7 +344,7 @@ double pat::PATMHTProducer::getMuons(edm::Event& iEvent, const edm::EventSetup &
       sigma_phi = 0.0; // muon_iter->resolutionPhi();
     }
 
-    if (verbose_ > 1.) {
+    if (verbose_ == 1.) {
       std::cout << "muon sigma_et : " << sigma_et
 		<< ", muon sigma_phi : " << sigma_phi
 		<<  std::endl;}
@@ -424,7 +443,7 @@ void pat::PATMHTProducer::getTowers(edm::Event& iEvent, const edm::EventSetup & 
       if(calotower->et()<globalEtThreshold)
 	continue;
 
-      if (verbose_ > 1.) {
+      if (verbose_ == 1.) {
 	std::cout << ">>>---> calotower et : " << calotower->et() <<  std::endl;
       }
 
@@ -442,7 +461,7 @@ void pat::PATMHTProducer::getTowers(edm::Event& iEvent, const edm::EventSetup & 
 	{
 	  DetId id = calotower->constituent( cell );
 
-	  if (verbose_ > 1.) {
+	  if (verbose_ == 1.) {
 	    std::cout << ">>>---> DetId.det: " << id.det() <<  std::endl;
 	  }
 	  
@@ -485,7 +504,7 @@ void pat::PATMHTProducer::getTowers(edm::Event& iEvent, const edm::EventSetup & 
 	      metsig::SigInputObj temp(objectname, sign_tower_et, sign_tower_phi, sigma_et,sigma_phi);
               std::set<CaloTowerDetId>::iterator towerId = s_clusteredTowers.find(calotower->id());
 
-	      if (verbose_ > 1.) {
+	      if (verbose_ == 1.) {
 		std::cout << ">>>---> HCAL towerID: " << *towerId <<  std::endl;
 	      }
 
@@ -493,7 +512,7 @@ void pat::PATMHTProducer::getTowers(edm::Event& iEvent, const edm::EventSetup & 
 		if( towerId == s_clusteredTowers.end() ) { // => tower not in set
 		  physobjvector_.push_back(temp);
 
-		  if (verbose_ > 1.) {
+		  if (verbose_ == 1.) {
 		    std::cout << ">>>---> adding phy vector from HCAL... "  <<  std::endl;
 		  }
 		}
@@ -508,7 +527,7 @@ void pat::PATMHTProducer::getTowers(edm::Event& iEvent, const edm::EventSetup & 
 	    {
 	      EcalSubdetector subdet = EcalSubdetector( id.subdetId() );
 
-	      if (verbose_ > 1.) {
+	      if (verbose_ == 1.) {
 		std::cout << ">>>---> ECAL: id.det= " << id.det()
 			  << " subdetId = " << id.subdetId() <<  std::endl;
 	      }
