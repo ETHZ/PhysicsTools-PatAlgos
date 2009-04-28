@@ -1,5 +1,5 @@
 //
-// $Id: PATGenericParticleProducer.cc,v 1.7 2008/10/19 21:11:56 gpetrucc Exp $
+// $Id: PATGenericParticleProducer.cc,v 1.8 2008/11/04 15:42:03 gpetrucc Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATGenericParticleProducer.h"
@@ -10,7 +10,8 @@
 using namespace pat;
 
 PATGenericParticleProducer::PATGenericParticleProducer(const edm::ParameterSet & iConfig) :
-  isolator_(iConfig.exists("isolation") ? iConfig.getParameter<edm::ParameterSet>("isolation") : edm::ParameterSet(), false) 
+  isolator_(iConfig.exists("isolation") ? iConfig.getParameter<edm::ParameterSet>("isolation") : edm::ParameterSet(), false), 
+  userDataHelper_ ( iConfig.getParameter<edm::ParameterSet>("userData") )
 {
   // initialize the configurables
   src_ = iConfig.getParameter<edm::InputTag>( "src" );
@@ -69,6 +70,12 @@ PATGenericParticleProducer::PATGenericParticleProducer(const edm::ParameterSet &
 
   if (iConfig.exists("vertexing")) {
      vertexingHelper_ = pat::helper::VertexingHelper(iConfig.getParameter<edm::ParameterSet>("vertexing")); 
+  }
+
+  // Check to see if the user wants to add user data
+  useUserData_ = false;
+  if ( iConfig.exists("userData") ) {
+    useUserData_ = true;
   }
 }
 
@@ -169,6 +176,10 @@ void PATGenericParticleProducer::produce(edm::Event & iEvent, const edm::EventSe
 
     if (vertexingHelper_.enabled()) {
         aGenericParticle.setVertexAssociation( vertexingHelper_(candRef) );
+    }
+
+    if ( useUserData_ ) {
+        userDataHelper_.add( aGenericParticle, iEvent, iSetup );
     }
 
     // PATGenericParticles->push_back(aGenericParticle); // NOOOOO!!!!

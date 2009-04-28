@@ -38,6 +38,26 @@ allLayer1GenericParticles = cms.EDProducer("PATGenericParticleProducer",
     # Efficiencies
     addEfficiencies = cms.bool(False),
     efficiencies    = cms.PSet(),
+
+    # user data to add
+    userData = cms.PSet(
+      # add custom classes here
+      userClasses = cms.PSet(
+        src = cms.VInputTag('')
+      ),
+      # add doubles here
+      userFloats = cms.PSet(
+        src = cms.VInputTag('')
+      ),
+      # add ints here
+      userInts = cms.PSet(
+        src = cms.VInputTag('')
+      ),
+      # add "inline" functions here
+      userFunctions = cms.vstring(""),
+      userFunctionLabels = cms.vstring("")
+    ),
+ 
 )
 
 
