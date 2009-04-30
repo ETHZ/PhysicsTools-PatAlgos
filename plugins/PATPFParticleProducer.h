@@ -1,5 +1,5 @@
 //
-// $Id: PATPFParticleProducer.h,v 1.2 2008/09/01 14:47:38 gpetrucc Exp $
+// $Id: PATPFParticleProducer.h,v 1.2.4.1 2008/11/25 15:39:40 gpetrucc Exp $
 //
 
 #ifndef PhysicsTools_PatAlgos_PATPFParticleProducer_h
@@ -13,7 +13,7 @@
    a collection of objects of PFParticleType.
 
   \author   Steven Lowette, Roger Wolf
-  \version  $Id: PATPFParticleProducer.h,v 1.2 2008/09/01 14:47:38 gpetrucc Exp $
+  \version  $Id: PATPFParticleProducer.h,v 1.2.4.1 2008/11/25 15:39:40 gpetrucc Exp $
 */
 
 
@@ -29,6 +29,7 @@
 
 #include "PhysicsTools/PatAlgos/interface/MultiIsolator.h"
 #include "PhysicsTools/PatAlgos/interface/EfficiencyLoader.h"
+#include "PhysicsTools/PatAlgos/interface/KinResolutionsLoader.h"
 
 #include <string>
 
@@ -61,6 +62,11 @@ namespace pat {
       // tools
       GreaterByPt<PFParticle>      pTComparator_;
 
+      bool addEfficiencies_;
+      pat::helper::EfficiencyLoader efficiencyLoader_;
+      
+      bool addResolutions_;
+      pat::helper::KinResolutionsLoader resolutionLoader_;
 
  
   };

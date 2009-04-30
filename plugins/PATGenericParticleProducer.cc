@@ -1,5 +1,5 @@
 //
-// $Id: PATGenericParticleProducer.cc,v 1.8 2008/11/04 15:42:03 gpetrucc Exp $
+// $Id: PATGenericParticleProducer.cc,v 1.8.4.1 2009/04/28 14:29:39 gpetrucc Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATGenericParticleProducer.h"
@@ -68,6 +68,12 @@ PATGenericParticleProducer::PATGenericParticleProducer(const edm::ParameterSet &
      efficiencyLoader_ = pat::helper::EfficiencyLoader(iConfig.getParameter<edm::ParameterSet>("efficiencies"));
   }
 
+  // Resolution configurables
+  addResolutions_ = iConfig.getParameter<bool>("addResolutions");
+  if (addResolutions_) {
+     resolutionLoader_ = pat::helper::KinResolutionsLoader(iConfig.getParameter<edm::ParameterSet>("resolutions"));
+  }
+
   if (iConfig.exists("vertexing")) {
      vertexingHelper_ = pat::helper::VertexingHelper(iConfig.getParameter<edm::ParameterSet>("vertexing")); 
   }
@@ -91,6 +97,7 @@ void PATGenericParticleProducer::produce(edm::Event & iEvent, const edm::EventSe
   if (isolator_.enabled()) isolator_.beginEvent(iEvent,iSetup);
 
   if (efficiencyLoader_.enabled()) efficiencyLoader_.newEvent(iEvent);
+  if (resolutionLoader_.enabled()) resolutionLoader_.newEvent(iEvent, iSetup);
   if (vertexingHelper_.enabled())  vertexingHelper_.newEvent(iEvent,iSetup);
 
   // prepare IsoDeposits
@@ -172,6 +179,10 @@ void PATGenericParticleProducer::produce(edm::Event & iEvent, const edm::EventSe
 
     if (efficiencyLoader_.enabled()) {
         efficiencyLoader_.setEfficiencies( aGenericParticle, candRef );
+    }
+
+    if (resolutionLoader_.enabled()) {
+        resolutionLoader_.setResolutions(aGenericParticle);
     }
 
     if (vertexingHelper_.enabled()) {

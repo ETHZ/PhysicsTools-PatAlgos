@@ -1,5 +1,5 @@
 //
-// $Id: PATCompositeCandidateProducer.h,v 1.6 2008/09/01 14:35:48 gpetrucc Exp $
+// $Id: PATCompositeCandidateProducer.h,v 1.1 2008/12/02 03:36:03 srappocc Exp $
 //
 
 #ifndef PhysicsTools_PatAlgos_PATCompositeCandidateProducer_h
@@ -13,7 +13,7 @@
    any collection of Candidates
 
   \author   Salvatore Rappoccio
-  \version  $Id: PATCompositeCandidateProducer.h,v 1.6 2008/09/01 14:35:48 srappocc Exp $
+  \version  $Id: PATCompositeCandidateProducer.h,v 1.1 2008/12/02 03:36:03 srappocc Exp $
 */
 
 
@@ -33,6 +33,7 @@
 #include "PhysicsTools/PatAlgos/interface/PATUserDataHelper.h"
 #include "PhysicsTools/PatAlgos/interface/MultiIsolator.h"
 #include "PhysicsTools/PatAlgos/interface/EfficiencyLoader.h"
+#include "PhysicsTools/PatAlgos/interface/KinResolutionsLoader.h"
 #include "PhysicsTools/PatAlgos/interface/VertexingHelper.h"
 
 namespace pat {
@@ -54,6 +55,11 @@ namespace pat {
       bool useUserData_;
       pat::PATUserDataHelper<pat::CompositeCandidate> userDataHelper_;
 
+      bool addEfficiencies_;
+      pat::helper::EfficiencyLoader efficiencyLoader_;
+      
+      bool addResolutions_;
+      pat::helper::KinResolutionsLoader resolutionLoader_;
   };
 
 

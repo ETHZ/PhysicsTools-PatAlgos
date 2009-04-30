@@ -11,6 +11,14 @@ allLayer1PFParticles = cms.EDProducer("PATPFParticleProducer",
                                            ## type edm::Association<reco::GenParticleCollection>
     embedGenMatch = cms.bool(False),       ## embed gen match inside the object instead of storing the ref
 
+    # Efficiencies
+    addEfficiencies = cms.bool(False),
+    efficiencies    = cms.PSet(),
+    
+    # resolution configurables
+    addResolutions = cms.bool(False),
+    resolutions      = cms.PSet(),
+
 )
 
 

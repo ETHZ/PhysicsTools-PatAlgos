@@ -39,6 +39,10 @@ allLayer1GenericParticles = cms.EDProducer("PATGenericParticleProducer",
     addEfficiencies = cms.bool(False),
     efficiencies    = cms.PSet(),
 
+    # resolution configurables
+    addResolutions   = cms.bool(False),
+    resolutions      = cms.PSet(),
+
     # user data to add
     userData = cms.PSet(
       # add custom classes here
