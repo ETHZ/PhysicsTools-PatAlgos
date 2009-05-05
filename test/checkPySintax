@@ -5,5 +5,5 @@
 for py in $(find $CMSSW_BASE/src/PhysicsTools/PatAlgos -name '*.py' -type f); do
     pyn=$(echo $py | sed "s#$CMSSW_BASE/src/PhysicsTools/PatAlgos/##g")
     echo "Checking $pyn..."
-    python $py && echo -ne "\e[F\e[M";
+    python $py > /dev/null && echo -ne "\e[F\e[M";
     done
