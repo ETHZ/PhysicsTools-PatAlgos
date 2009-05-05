@@ -111,11 +111,41 @@ def usePF2PAT(process,runPF2PAT=True):
     process.aodSummary.candidates.append(process.allLayer1Jets.jetSource)
 
     # Taus
-    oldTaus = process.allLayer1Taus.tauSource
+    #oldTaus = process.allLayer1Taus.tauSource
+    oldTaus = cms.InputTag("pfRecoTauProducer")
     process.allLayer1Taus.tauSource = cms.InputTag("allLayer0Taus")
     switchMCAndTriggerMatch(process, oldTaus, process.allLayer1Taus.tauSource)
     redoPFTauDiscriminators(process, oldTaus, process.allLayer1Taus.tauSource)
     process.aodSummary.candidates.append(process.allLayer1Taus.tauSource)
+    print "Set corret names of tau-IDs"
+    process.allLayer1Taus.tauIDSources = cms.PSet(
+        leadingTrackFinding = cms.InputTag("pfRecoTauDiscriminationByLeadingTrackFinding"),
+        leadingTrackPtCut = cms.InputTag("pfRecoTauDiscriminationByLeadingTrackPtCut"),
+        trackIsolation = cms.InputTag("pfRecoTauDiscriminationByTrackIsolation"),
+        ecalIsolation = cms.InputTag("pfRecoTauDiscriminationByECALIsolation"),
+        byIsolation = cms.InputTag("pfRecoTauDiscriminationByIsolation"),
+        byIsolationPi = cms.InputTag("pfRecoTauDiscriminationByIsolationUsingLeadingPion"),
+        leadingPiPtCut = cms.InputTag("pfRecoTauDiscriminationByLeadingPionPtCut"),
+        trackIsolationPi = cms.InputTag("pfRecoTauDiscriminationByTrackIsolationUsingLeadingPion"),
+        ecalIsolationPi = cms.InputTag("pfRecoTauDiscriminationByECALIsolationUsingLeadingPion"),
+        againstElectron = cms.InputTag("pfRecoTauDiscriminationAgainstElectron"),
+        againstMuon = cms.InputTag("pfRecoTauDiscriminationAgainstMuon")
+    )
+    process.allLayer1Taus.decayModeSrc = cms.InputTag("pfTauDecayMode")
+    print "Change src in calculation of pf-isodep for taus"
+    #pfNoPileUpColl = cms.InputTag("pfNoPileUp","PFCandidates")
+    process.tauIsoDepositPFCandidates.src = process.allLayer1Taus.tauSource
+    process.tauIsoDepositPFCandidates.ExtractorPSet.tauSource = process.allLayer1Taus.tauSource
+    #process.tauIsoDepositPFCandidates.ExtractorPSet.candidateSource = pfNoPileUpColl
+    process.tauIsoDepositPFChargedHadrons.src = process.allLayer1Taus.tauSource
+    process.tauIsoDepositPFChargedHadrons.ExtractorPSet.tauSource = process.allLayer1Taus.tauSource
+    #process.pfAllChargedHadrons.src = pfNoPileUpColl
+    process.tauIsoDepositPFNeutralHadrons.src = process.allLayer1Taus.tauSource
+    process.tauIsoDepositPFNeutralHadrons.ExtractorPSet.tauSource = process.allLayer1Taus.tauSource
+    #process.pfAllNeutralHadrons.src = pfNoPileUpColl
+    process.tauIsoDepositPFGammas.src = process.allLayer1Taus.tauSource
+    process.tauIsoDepositPFGammas.ExtractorPSet.tauSource = process.allLayer1Taus.tauSource
+    #process.pfAllPhotons.src = pfNoPileUpColl
     
     # MET
     switchToPFMET(process, cms.InputTag('pfMET'))

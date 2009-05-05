@@ -1,5 +1,5 @@
 //
-// $Id: PATElectronProducer.cc,v 1.20.2.7 2009/02/07 00:06:57 pioppi Exp $
+// $Id: PATElectronProducer.cc,v 1.23 2009/03/26 05:34:29 hegner Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATElectronProducer.h"
@@ -27,7 +27,7 @@ using namespace pat;
 
 PATElectronProducer::PATElectronProducer(const edm::ParameterSet & iConfig) :
   isolator_(iConfig.exists("isolation") ? iConfig.getParameter<edm::ParameterSet>("isolation") : edm::ParameterSet(), false) ,
-  userDataHelper_ ( iConfig.getParameter<edm::ParameterSet>("userData") )
+  useUserData_(iConfig.exists("userData"))
 {
 
   // general configurables
@@ -119,9 +119,8 @@ PATElectronProducer::PATElectronProducer(const edm::ParameterSet & iConfig) :
   }
 
   // Check to see if the user wants to add user data
-  useUserData_ = false;
-  if ( iConfig.exists("userData") ) {
-    useUserData_ = true;
+  if ( useUserData_ ) {
+    userDataHelper_ = PATUserDataHelper<Electron>(iConfig.getParameter<edm::ParameterSet>("userData"));
   }
 
   // electron ID configurables
@@ -142,7 +141,7 @@ PATElectronProducer::~PATElectronProducer() {
 void PATElectronProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup) {
 
   // Get the collection of electrons from the event
-  edm::Handle<edm::View<ElectronType> > electrons;
+  edm::Handle<edm::View<reco::GsfElectron> > electrons;
   iEvent.getByLabel(electronSrc_, electrons);
 
   if (isolator_.enabled()) isolator_.beginEvent(iEvent,iSetup);
@@ -190,7 +189,6 @@ void PATElectronProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
 
   std::vector<Electron> * patElectrons = new std::vector<Electron>();
 
-
   if( useParticleFlow_ ) {
     edm::Handle< reco::PFCandidateCollection >  pfElectrons;
     iEvent.getByLabel(pfElecSrc_, pfElectrons);
@@ -206,12 +204,12 @@ void PATElectronProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
       reco::GsfTrackRef PfTk= i->gsfTrackRef(); 
 
       bool Matched=false;
-      for (edm::View<ElectronType>::const_iterator itElectron = electrons->begin(); itElectron != electrons->end(); ++itElectron) {
+      for (edm::View<reco::GsfElectron>::const_iterator itElectron = electrons->begin(); itElectron != electrons->end(); ++itElectron) {
 	unsigned int idx = itElectron - electrons->begin();
 	if (Matched) continue;
 	reco::GsfTrackRef EgTk= itElectron->gsfTrack();
 	if (itElectron->gsfTrack()==i->gsfTrackRef()){
-	  const ElectronBaseRef elecsRef = electrons->refAt(idx);
+	  const edm::RefToBase<reco::GsfElectron> elecsRef = electrons->refAt(idx);
 	  Electron anElectron(elecsRef);
 	  FillElectron(anElectron,elecsRef,pfBaseRef, genMatches, trigMatches);
 	  Matched=true;
@@ -254,14 +252,11 @@ void PATElectronProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
   }
 
   else{
-  for (edm::View<ElectronType>::const_iterator itElectron = electrons->begin(); itElectron != electrons->end(); ++itElectron) {
+    for (edm::View<reco::GsfElectron>::const_iterator itElectron = electrons->begin(); itElectron != electrons->end(); ++itElectron) {
     // construct the Electron from the ref -> save ref to original object
     unsigned int idx = itElectron - electrons->begin();
-
-    const ElectronBaseRef elecsRef = electrons->refAt(idx);
+    edm::RefToBase<reco::GsfElectron> elecsRef = electrons->refAt(idx);
     reco::CandidateBaseRef elecBaseRef(elecsRef);
-
-    //    const edm::Ptr<ElectronType> electronPtr = electrons->ptrAt(idx);
     Electron anElectron(elecsRef);
 
     FillElectron(anElectron,elecsRef,elecBaseRef, genMatches, trigMatches);
@@ -315,7 +310,7 @@ void PATElectronProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
 }
 
 void PATElectronProducer::FillElectron(Electron& anElectron,
-				       const ElectronBaseRef& elecsRef,
+				       const edm::RefToBase<reco::GsfElectron>& elecsRef,
 				       const reco::CandidateBaseRef& baseRef,
 				       const GenAssociations& genMatches,
 				       const TrigAssociations& trigMatches)const {
@@ -340,7 +335,7 @@ void PATElectronProducer::FillElectron(Electron& anElectron,
         }
       }
     }
-    
+
     if (efficiencyLoader_.enabled()) {
       efficiencyLoader_.setEfficiencies( anElectron, elecsRef );
     }

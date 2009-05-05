@@ -1,5 +1,5 @@
 //
-// $Id: PATMuonProducer.h,v 1.14.2.4 2009/03/19 18:57:58 lusito Exp $
+// $Id: PATMuonProducer.h,v 1.16 2009/03/26 05:02:42 hegner Exp $
 //
 
 #ifndef PhysicsTools_PatAlgos_PATMuonProducer_h
@@ -10,10 +10,10 @@
   \brief    Produces pat::Muon's
 
    The PATMuonProducer produces analysis-level pat::Muon's starting from
-   a collection of objects of MuonType.
+   a collection of objects of reco::Muon.
 
   \author   Steven Lowette, Roger Wolf
-  \version  $Id: PATMuonProducer.h,v 1.14.2.4 2009/03/19 18:57:58 lusito Exp $
+  \version  $Id: PATMuonProducer.h,v 1.16 2009/03/26 05:02:42 hegner Exp $
 */
 
 
@@ -23,7 +23,7 @@
 #include "FWCore/ParameterSet/interface/InputTag.h"
 #include "DataFormats/Common/interface/View.h"
 
-#include "PhysicsTools/Utilities/interface/PtComparator.h"
+#include "CommonTools/Utils/interface/PtComparator.h"
 
 #include "DataFormats/PatCandidates/interface/Muon.h"
 
@@ -51,7 +51,7 @@ namespace pat {
       ~PATMuonProducer();
 
       virtual void produce(edm::Event & iEvent, const edm::EventSetup & iSetup);
-      typedef edm::RefToBase<MuonType> MuonBaseRef;
+      typedef edm::RefToBase<reco::Muon> MuonBaseRef;
 
     private:
 
