@@ -17,8 +17,8 @@ process.load("PhysicsTools.PatAlgos.patSequences_cff")
 # source: 
 
 process.source = cms.Source("PoolSource", 
-                            #    fileNames = cms.untracked.vstring('file:/afs/cern.ch/cms/PRS/top/cmssw-data/relval200-for-pat-testing/FullSimTTBar-2_2_X_2008-11-03-STARTUP_V7-AODSIM.100.root')
-                            fileNames = cms.untracked.vstring('file:aod.root')
+                            fileNames = cms.untracked.vstring('file:/afs/cern.ch/cms/PRS/top/cmssw-data/relval200-for-pat-testing/FullSimTTBar-2_2_X_2008-11-03-STARTUP_V7-AODSIM.100.root')
+                            # fileNames = cms.untracked.vstring('file:aod.root')
 )
 
 # in case you are using fast sim input, please specify it!
@@ -26,18 +26,17 @@ process.source = cms.Source("PoolSource",
 # replaced if needed.
 fromFastSim = True
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1) )
-
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 # verbosity:
 
-process.pfTopProjection.verbose = True
+process.pfTopProjection.verbose = False
 
 
 # output:
 
 outputFile = 'patLayer1_fromAOD_PF2PAT.root'
-addPF2PATProducts = True
+addPF2PATProducts = False
 
 
 ##########################################################################
