@@ -67,12 +67,24 @@ def switchToPFTauFixedCone(process,
                            pfTauLabelOld = cms.InputTag('pfRecoTauProducer'),
                            pfTauLabelNew = cms.InputTag('fixedConePFTauProducer')):
     _switchToPFTau(process, pfTauLabelOld, pfTauLabelNew, 'fixedConePFTau')
+    #
+    # CV: PFTauDecayMode objects produced only for shrinking cone reco::PFTaus in
+    #     RecoTauTag/Configuration global_PFTau_22X_V00-02-01 and CMSSW_3_1_x tags,
+    #     so need to disable embedding of PFTauDecayMode information into pat::Tau for now...
+    #
+    process.allLayer1Taus.addDecayMode = cms.bool(False)
 
 # switch to PFTau collection produced for fixed dR = 0.15 signal cone size
 def switchToPFTauFixedConeHighEff(process,
                            pfTauLabelOld = cms.InputTag('pfRecoTauProducer'),
                            pfTauLabelNew = cms.InputTag('fixedConeHighEffPFTauProducer')):
     _switchToPFTau(process, pfTauLabelOld, pfTauLabelNew, 'fixedConeHighEffPFTau')
+    #
+    # CV: PFTauDecayMode objects produced only for shrinking cone reco::PFTaus in
+    #     RecoTauTag/Configuration global_PFTau_22X_V00-02-01 and CMSSW_3_1_x tags,
+    #     so need to disable embedding of PFTauDecayMode information into pat::Tau for now...
+    #
+    process.allLayer1Taus.addDecayMode = cms.bool(False)
 
 # switch to PFTau collection produced for shrinking signal cone of size dR = 5.0/Et(PFTau)
 def switchToPFTauShrinkingCone(process,
