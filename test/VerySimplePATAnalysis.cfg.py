@@ -14,7 +14,7 @@ process.verySimplePATAnalysis = cms.EDFilter("VerySimplePATAnalysis",
     muonTag     = cms.untracked.InputTag("selectedLayer1Muons"),
     jetTag      = cms.untracked.InputTag("selectedLayer1Jets"),
     photonTag   = cms.untracked.InputTag("selectedLayer1Photons"),
-    metTag      = cms.untracked.InputTag("selectedLayer1METs")
+    metTag      = cms.untracked.InputTag("layer1METs")
 )
 
 process.TFileService = cms.Service("TFileService", fileName = cms.string('histo.root') )
