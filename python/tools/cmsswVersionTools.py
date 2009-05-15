@@ -19,5 +19,7 @@ def run22XonSummer08AODSIM(process, layers=[0,1]) :
             byIsolation         = cms.InputTag("caloRecoTauDiscriminationByIsolation"),
            #againstElectron     = cms.InputTag("caloRecoTauDiscriminationAgainstElectron"),  # Not on AOD
     )
-
-
+    ## (MB): Remove PF-based isodeposit computation
+    process.patDefaultSequence.remove(process.patPFCandidateIsoDepositSelection)
+    process.patDefaultSequence.remove(process.patPFTauIsolation)
+    
