@@ -27,7 +27,15 @@ if ((!$filename) || ($filename eq "-h")) {
     exit(1);
 }
 
-my $st = stat($filename);
+my $allsize = 0;
+if ($filename =~ /^rfio:(.*)/) {
+    my $rfiosiz = qx(nsls -l $1);
+    my @cols = split(/\s+/,$rfiosiz);
+    $allsize = $cols[4]/1024.0;
+} else {
+    my $st = stat($filename);
+    $allsize = $st->size/1024.0;
+} 
 
 my ($MACRO, $macrofile) = tempfile( "macroXXXXX", SUFFIX=>'.c' , UNLINK => 1 );
 my ($macroname) = ($macrofile =~ m/(macro.....)\.c/);
@@ -100,7 +108,6 @@ foreach my $item (keys(%survey)) { $survey{$item}->{'num'} = $events if $survey{
 
 foreach (grep( /^PROVENANCE\s+(\S+)/, @lines)) { /^PROVENANCE\s+(\S+)/ and $provenance = $1/1024.0; }
 
-my $allsize = $st->size/1024.0;
 my $s_allsize = sprintf("%.3f Mb, \%d events, %.2f kb/event", $allsize/1024.0, $events, $allsize/$events);
 
 print <<_END_;
