@@ -12,10 +12,14 @@ from PhysicsTools.PatAlgos.recoLayer0.tauDiscriminators_cff import *
 from PhysicsTools.PatAlgos.recoLayer0.pfCandidateIsoDepositSelection_cff import *
 from PhysicsTools.PatAlgos.recoLayer0.tauIsolation_cff import *
 
-# Needed for the MET
-from TrackingTools.TransientTrack.TransientTrackBuilder_cfi import *  
+## Needed for the MET corrections and  tcMet
+from RecoMET.METProducers.TCMET_cfi import *
+from JetMETCorrections.Type1MET.MuonMETValueMapProducer_cff import *
+from JetMETCorrections.Type1MET.MuonTCMETValueMapProducer_cff import *
+
 # These duplicate removals are here because they're AOD bugfixes
 from PhysicsTools.PatAlgos.recoLayer0.duplicatedElectrons_cfi import *
+
 # Produce jpt corrected calo jets, which are not on AOD per default
 from JetMETCorrections.Configuration.ZSPJetCorrections219_cff import *
 from JetMETCorrections.Configuration.JetPlusTrackCorrections_cff import *
@@ -24,7 +28,10 @@ jptCaloJets = cms.Sequence( ZSPJetCorrections * JetPlusTrackCorrections )
 # Sequences needed to deliver besic input objects; you shouldn't
 # remove modules from here unless you *know* what you're doing
 patAODCoreReco = cms.Sequence(
-    jptCaloJets *
+    muonMETValueMapProducer *
+    muonTCMETValueMapProducer *
+    tcMet +        ## this may be changed to be done on request only
+    jptCaloJets +  ## this may be changed to be done on request only
     electronsNoDuplicates 
 )
 
