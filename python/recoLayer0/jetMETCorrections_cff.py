@@ -8,7 +8,7 @@ patJetCorrections = cms.Sequence(jetCorrFactors)
 
 ## MET corrections for JES
 from JetMETCorrections.Type1MET.MetType1Corrections_cff import *
-from JetMETCorrections.Configuration.L2L3Corrections_Summer08_cff import *
+from JetMETCorrections.Configuration.L2L3Corrections_Summer08Redigi_cff import *
 corMetType1Icone5.corrector = cms.string('L2L3JetCorrectorIC5Calo')
 
 ## MET corrections for muons:
