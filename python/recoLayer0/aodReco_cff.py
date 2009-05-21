@@ -12,14 +12,19 @@ from PhysicsTools.PatAlgos.recoLayer0.tauDiscriminators_cff import *
 from PhysicsTools.PatAlgos.recoLayer0.pfCandidateIsoDepositSelection_cff import *
 from PhysicsTools.PatAlgos.recoLayer0.tauIsolation_cff import *
 
-# These two duplicate removals are here because they're AOD bugfixes
+# Needed for the MET
+from TrackingTools.TransientTrack.TransientTrackBuilder_cfi import *  
+# These duplicate removals are here because they're AOD bugfixes
 from PhysicsTools.PatAlgos.recoLayer0.duplicatedElectrons_cfi import *
+# Produce jpt corrected calo jets, which are not on AOD per default
+from JetMETCorrections.Configuration.ZSPJetCorrections219_cff import *
+from JetMETCorrections.Configuration.JetPlusTrackCorrections_cff import *
+jptCaloJets = cms.Sequence( ZSPJetCorrections * JetPlusTrackCorrections )
 
-from TrackingTools.TransientTrack.TransientTrackBuilder_cfi import *  # needed for the MET
-
-# Sequences needed to deliver the objects
-# You shouldn't remove modules from here unless you *know* what you're doing
+# Sequences needed to deliver besic input objects; you shouldn't
+# remove modules from here unless you *know* what you're doing
 patAODCoreReco = cms.Sequence(
+    jptCaloJets *
     electronsNoDuplicates 
 )
 
@@ -50,6 +55,7 @@ aodSummary = cms.EDAnalyzer("CandidateSummaryTable",
         cms.InputTag("pfRecoTauProducer"),
         cms.InputTag("photons"),
         cms.InputTag("iterativeCone5CaloJets"),
+        cms.InputTag("JetPlusTrackZSPCorJetIcone5"),        
         cms.InputTag("met"),
     )
 )

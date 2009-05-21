@@ -2,11 +2,11 @@ import FWCore.ParameterSet.Config as cms
 
 # Build the Objects from AOD (Jets, Muons, Electrons, METs, Taus)
 from PhysicsTools.PatAlgos.producersLayer1.electronProducer_cfi import *
-from PhysicsTools.PatAlgos.producersLayer1.muonProducer_cfi import *
-from PhysicsTools.PatAlgos.producersLayer1.tauProducer_cfi import *
-from PhysicsTools.PatAlgos.producersLayer1.photonProducer_cfi import *
-from PhysicsTools.PatAlgos.producersLayer1.jetProducer_cfi import *
-from PhysicsTools.PatAlgos.producersLayer1.metProducer_cfi import *
+from PhysicsTools.PatAlgos.producersLayer1.muonProducer_cfi     import *
+from PhysicsTools.PatAlgos.producersLayer1.tauProducer_cfi      import *
+from PhysicsTools.PatAlgos.producersLayer1.photonProducer_cfi   import *
+from PhysicsTools.PatAlgos.producersLayer1.jetProducer_cfi      import *
+from PhysicsTools.PatAlgos.producersLayer1.metProducer_cfi      import *
 
 # One module to count objects
 allLayer1Summary = cms.EDAnalyzer("CandidateSummaryTable",
@@ -30,5 +30,3 @@ allLayer1Objects = cms.Sequence(
     allLayer1Summary
 )
 allLayer1Objects.doc = "Produce PAT objects, without any selection"
-
-

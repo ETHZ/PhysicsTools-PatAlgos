@@ -1,7 +1,8 @@
 import FWCore.ParameterSet.Config as cms
 
-## produce associated jet correction factors in a valuemap
+## produce associated jet correction factors for calo jets 
 from PhysicsTools.PatAlgos.recoLayer0.jetCorrFactors_cfi import *
+
 ## jet sequence
 patJetCorrections = cms.Sequence(jetCorrFactors)
 
