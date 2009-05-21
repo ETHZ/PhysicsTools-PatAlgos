@@ -27,6 +27,9 @@ process.load("Configuration.StandardSequences.MagneticField_cff")
 # PAT Layer 0+1
 process.load("PhysicsTools.PatAlgos.patSequences_cff")
 
+from PhysicsTools.PatAlgos.tools.metTools import *
+addTcMET(process, 'TC')
+
 from PhysicsTools.PatAlgos.tools.jetTools import *
 
 addJetCollection(process,cms.InputTag('JetPlusTrackZSPCorJetIcone5'),
@@ -34,7 +37,7 @@ addJetCollection(process,cms.InputTag('JetPlusTrackZSPCorJetIcone5'),
                  doJTA        = True,
                  doBTagging   = True,
                  jetCorrLabel = ('IC5','JPT'),
-                 doType1MET   = False,
+                 doType1MET   = True,
                  doL1Counters = True,
                  genJetCollection = cms.InputTag("iterativeCone5GenJets")
                  )
