@@ -38,7 +38,8 @@ addJetCollection(process,cms.InputTag('JetPlusTrackZSPCorJetIcone5'),
                  doBTagging   = True,
                  jetCorrLabel = ('IC5','JPT'),
                  doType1MET   = True,
-                 doL1Counters = True,
+                 doL1Cleaning = True,
+                 doL1Counters = True,                 
                  genJetCollection = cms.InputTag("iterativeCone5GenJets")
                  )
 
@@ -48,6 +49,7 @@ addJetCollection(process,cms.InputTag('sisCone5CaloJets'),
                  doBTagging   = True,
                  jetCorrLabel = ('SC5','Calo'),
                  doType1MET   = True,
+                 doL1Cleaning = True,                 
                  doL1Counters = False,
                  genJetCollection=cms.InputTag("sisCone5GenJets")
                  )
@@ -58,6 +60,7 @@ addJetCollection(process,cms.InputTag('sisCone7CaloJets'),
                  doBTagging   = False,
                  jetCorrLabel = None,
                  doType1MET   = True,
+                 doL1Cleaning = True,                 
                  doL1Counters = False,
                  genJetCollection=cms.InputTag("sisCone5GenJets")
                  )
@@ -68,6 +71,7 @@ addJetCollection(process,cms.InputTag('kt4CaloJets'),
                  doBTagging   = True,
                  jetCorrLabel = ('KT4','Calo'),
                  doType1MET   = True,
+                 doL1Cleaning = True,                 
                  doL1Counters = False,
                  genJetCollection=cms.InputTag("kt4GenJets")
                  )
@@ -78,6 +82,7 @@ addJetCollection(process,cms.InputTag('kt6CaloJets'),
                  doBTagging   = False,
                  jetCorrLabel = None,
                  doType1MET   = True,
+                 doL1Cleaning = True,                 
                  doL1Counters = False,
                  genJetCollection=cms.InputTag("kt6GenJets")
                  )
@@ -88,6 +93,7 @@ addJetCollection(process,cms.InputTag('iterativeCone5PFJets'),
                  doBTagging   = True,
                  jetCorrLabel = None,
                  doType1MET   = True,
+                 doL1Cleaning = True,                 
                  doL1Counters = False,
                  genJetCollection=cms.InputTag("iterativeCone5GenJets")
                  )
@@ -98,6 +104,7 @@ addJetCollection(process,cms.InputTag('iterativeCone5PFJets'),
                  doBTagging   = True,
                  jetCorrLabel = None,
                  doType1MET   = True,
+                 doL1Cleaning = True,                 
                  doL1Counters = False,
                  genJetCollection=cms.InputTag("iterativeCone5GenJets")
                  )

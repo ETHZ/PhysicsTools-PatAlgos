@@ -316,7 +316,8 @@ def addJetCollection(process,
                      doBTagging   = True,
                      jetCorrLabel = None,
                      doType1MET   = True,
-                     doL1Counters = False,
+                     doL1Cleaning = True,
+                     doL1Counters = False,                     
                      genJetCollection=cms.InputTag("iterativeCone5GenJets"),
                      doTrigMatch  = False
                      ):
@@ -338,8 +339,11 @@ def addJetCollection(process,
                        'Calo'), ('KT4','PF')
     doType1MET       : make also a new MET collection (not yet
                        implemented?)
+    doL1Cleaning     : copy also the producer modules for cleanLayer1
+                       will be set to 'True' automatically when
+                       doL1Counters is 'True'
     doL1Counters     : copy also the filter modules that accept/reject
-                       the event looking at the number of jets
+                       the event looking at the number of jets                       
     doTrigMatch      :
     genJetCollection : GenJet collection to match to
 
@@ -365,7 +369,8 @@ def addJetCollection(process,
     ## add a clone of selectedLayer1Jets    
     addClone('selectedLayer1Jets', src=cms.InputTag('allLayer1Jets'+postfixLabel))
     ## add a clone of cleanLayer1Jets    
-    addClone('cleanLayer1Jets', src=cms.InputTag('selectedLayer1Jets'+postfixLabel))
+    if (doL1Cleaning or doL1Counters):
+        addClone('cleanLayer1Jets', src=cms.InputTag('selectedLayer1Jets'+postfixLabel))
     ## add a clone of countLayer1Jets    
     if (doL1Counters):
         addClone('countLayer1Jets', src=cms.InputTag('cleanLayer1Jets'+postfixLabel))
@@ -421,7 +426,7 @@ def addJetCollection(process,
         ## switch general b tagging info switch off
         l1Jets.addBTagInfo = False
         
-    if doJTA or doBTagging:
+    if (doJTA or doBTagging):
         ## add clone of jet track association        
         if not doBTagging:
             ## in case b tagging is switched off do the 
