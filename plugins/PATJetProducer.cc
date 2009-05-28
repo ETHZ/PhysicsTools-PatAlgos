@@ -1,5 +1,5 @@
 //
-// $Id: PATJetProducer.cc,v 1.34 2009/04/01 10:38:44 vadler Exp $
+// $Id: PATJetProducer.cc,v 1.35 2009/04/20 19:49:14 vadler Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATJetProducer.h"
@@ -229,7 +229,7 @@ void PATJetProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
     }
 
     if (efficiencyLoader_.enabled()) {
-        efficiencyLoader_.setEfficiencies( ajet, jetRef );
+      efficiencyLoader_.setEfficiencies<edm::RefToBase<reco::Jet> >( ajet, jetRef );
     }
 
     // TO BE IMPLEMENTED FOR >=1_5_X: do the PartonJet matching

@@ -1,5 +1,5 @@
 //
-// $Id: PATMETProducer.cc,v 1.10 2009/04/01 10:38:44 vadler Exp $
+// $Id: PATMETProducer.cc,v 1.11 2009/04/20 19:49:14 vadler Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATMETProducer.h"
@@ -70,7 +70,7 @@ void PATMETProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
     if (addGenMET_) amet.setGenMET((*genMETs)[idx]);
 
     if (efficiencyLoader_.enabled()) {
-        efficiencyLoader_.setEfficiencies( amet, metsRef );
+      efficiencyLoader_.setEfficiencies<edm::RefToBase<reco::MET> >( amet, metsRef );
     }
 
 

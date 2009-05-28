@@ -1,5 +1,5 @@
 //
-// $Id: PATGenericParticleProducer.cc,v 1.8 2008/11/04 15:42:03 gpetrucc Exp $
+// $Id: PATGenericParticleProducer.cc,v 1.9 2009/04/20 19:49:14 vadler Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATGenericParticleProducer.h"
@@ -148,7 +148,7 @@ void PATGenericParticleProducer::produce(edm::Event & iEvent, const edm::EventSe
     }
 
     if (efficiencyLoader_.enabled()) {
-        efficiencyLoader_.setEfficiencies( aGenericParticle, candRef );
+      efficiencyLoader_.setEfficiencies<edm::RefToBase<reco::Candidate> >( aGenericParticle, candRef );
     }
 
     if (vertexingHelper_.enabled()) {

@@ -1,5 +1,5 @@
 //
-// $Id: PATMuonProducer.cc,v 1.23 2009/04/01 10:38:44 vadler Exp $
+// $Id: PATMuonProducer.cc,v 1.24 2009/04/20 19:49:14 vadler Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATMuonProducer.h"
@@ -240,7 +240,7 @@ edm::Handle<edm::View<reco::Muon> > muons;
 	typedef pat::helper::MultiIsolator::IsolationValuePairs IsolationValuePairs;
 	// better to loop backwards, so the vector is resized less times
 	for (IsolationValuePairs::const_reverse_iterator it = isolatorTmpStorage_.rbegin(), ed = isolatorTmpStorage_.rend(); it != ed; ++it) {
-	  aMuon.setIsolation(it->first, it->second);
+	  aMuon.Lepton::setIsolation(it->first, it->second);
 	}
       }
       
@@ -290,7 +290,7 @@ void PATMuonProducer::fillMuon( Muon& aMuon,
   }
   
   if (efficiencyLoader_.enabled()) {
-    efficiencyLoader_.setEfficiencies( aMuon, muonRef );
+    efficiencyLoader_.setEfficiencies<edm::RefToBase<reco::Muon> >( aMuon, muonRef );
   }
   
 

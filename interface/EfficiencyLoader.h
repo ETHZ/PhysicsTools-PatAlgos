@@ -27,8 +27,14 @@ class EfficiencyLoader {
         void newEvent(const edm::Event &event) const ;
 
         /// Sets the efficiencies for this object, using the reference to the original objects
-        template<typename T, typename R>
-        void setEfficiencies( pat::PATObject<T> &obj,  const R & originalRef ) const ;
+        template<typename R>
+	void setEfficiencies( pat::PATObject &obj,  const R & originalRef ) const 
+	  {
+	    for (size_t i = 0, n = names_.size(); i < n; ++i) {
+	      obj.setEfficiency(names_[i], (* handles_[i])[originalRef] );
+	    }
+	  }
+	
 
     private:
         std::vector<std::string>   names_;
@@ -36,14 +42,6 @@ class EfficiencyLoader {
         mutable std::vector<edm::Handle< edm::ValueMap<pat::LookupTableRecord> > > handles_;
 }; // class
 
-template<typename T, typename R>
-void
-EfficiencyLoader::setEfficiencies( pat::PATObject<T> &obj,  const R & originalRef ) const
-{
-    for (size_t i = 0, n = names_.size(); i < n; ++i) {
-        obj.setEfficiency(names_[i], (* handles_[i])[originalRef] );
-    }
-}
 
 } }
 

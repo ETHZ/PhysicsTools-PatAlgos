@@ -1,5 +1,5 @@
 //
-// $Id: PATPhotonProducer.cc,v 1.21 2009/04/01 10:38:44 vadler Exp $
+// $Id: PATPhotonProducer.cc,v 1.22 2009/04/20 19:49:14 vadler Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATPhotonProducer.h"
@@ -150,7 +150,7 @@ void PATPhotonProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSe
     }
 
     if (efficiencyLoader_.enabled()) {
-        efficiencyLoader_.setEfficiencies( aPhoton, photonRef );
+      efficiencyLoader_.setEfficiencies<edm::RefToBase<reco::Photon> >( aPhoton, photonRef );
     }
 
     // here comes the extra functionality

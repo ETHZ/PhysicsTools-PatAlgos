@@ -25,3 +25,5 @@ EfficiencyLoader::newEvent(const edm::Event &iEvent) const {
         iEvent.getByLabel(tags_[i], handles_[i]);
     }    
 }
+
+

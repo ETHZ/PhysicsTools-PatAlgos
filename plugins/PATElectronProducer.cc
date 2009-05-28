@@ -1,5 +1,5 @@
 //
-// $Id: PATElectronProducer.cc,v 1.24 2009/04/01 10:38:44 vadler Exp $
+// $Id: PATElectronProducer.cc,v 1.25 2009/04/20 19:49:14 vadler Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATElectronProducer.h"
@@ -314,7 +314,7 @@ void PATElectronProducer::FillElectron(Electron& anElectron,
   }
 
     if (efficiencyLoader_.enabled()) {
-      efficiencyLoader_.setEfficiencies( anElectron, elecsRef );
+      efficiencyLoader_.setEfficiencies<edm::RefToBase<reco::GsfElectron> >( anElectron, elecsRef );
     }
     //  add electron shapes info
     if (addElecShapes_) {

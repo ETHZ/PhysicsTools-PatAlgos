@@ -1,5 +1,5 @@
 //
-// $Id: PATTauProducer.cc,v 1.24 2009/04/09 14:51:58 veelken Exp $
+// $Id: PATTauProducer.cc,v 1.25 2009/04/20 19:49:14 vadler Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATTauProducer.h"
@@ -259,7 +259,7 @@ void PATTauProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
     }
 
     if (efficiencyLoader_.enabled()) {
-      efficiencyLoader_.setEfficiencies( aTau, tausRef );
+      efficiencyLoader_.setEfficiencies<edm::RefToBase<reco::BaseTau> >( aTau, tausRef );
     }
 
     if ( useUserData_ ) {
