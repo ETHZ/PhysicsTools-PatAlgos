@@ -7,6 +7,7 @@ from PhysicsTools.PatAlgos.producersLayer1.tauProducer_cfi      import *
 from PhysicsTools.PatAlgos.producersLayer1.photonProducer_cfi   import *
 from PhysicsTools.PatAlgos.producersLayer1.jetProducer_cfi      import *
 from PhysicsTools.PatAlgos.producersLayer1.metProducer_cfi      import *
+from PhysicsTools.PatAlgos.producersLayer1.mhtProducer_cfi      import *
 
 # One module to count objects
 allLayer1Summary = cms.EDAnalyzer("CandidateSummaryTable",
@@ -27,6 +28,7 @@ allLayer1Objects = cms.Sequence(
     allLayer1Photons +
     allLayer1Jets +
     layer1METs +
+    allLayer1MHTs +
     allLayer1Summary
 )
 allLayer1Objects.doc = "Produce PAT objects, without any selection"
