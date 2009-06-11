@@ -1,5 +1,5 @@
 <export></export>
-<library name=PhysicsToolsPatAlgos_testAnalyzers file=private/*.cc,*.cc>
+<library name=PhysicsToolsPatAlgos_testAnalyzers file=private/*.cc>
     <use name=FWCore/Framework>
     <use name=FWCore/ParameterSet>
     <use name=DataFormats/BTauReco>
