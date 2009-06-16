@@ -31,6 +31,8 @@ def adaptPFPhotons(process,module):
     raise RuntimeError, "Photons are not supported yet"
 def adaptPFJets(process,module):
     module.embedCaloTowers   = False
+def adaptPFMHT(process,module):
+    raise RuntimeError, "MHT is not supported yet"
 
 def addPFCandidates(process,src,patLabel='PFParticles',cut=""):
     from PhysicsTools.PatAlgos.producersLayer1.pfParticleProducer_cfi import allLayer1PFParticles
@@ -110,6 +112,10 @@ def usePF2PAT(process,runPF2PAT=True):
     adaptPFJets(process, process.allLayer1Jets)
     process.aodSummary.candidates.append(process.allLayer1Jets.jetSource)
 
+    # MHT
+    print "Temporarily switching off MHT computation"
+    process.allLayer1Objects.remove(process.allLayer1MHTs)
+
     # Taus
     #oldTaus = process.allLayer1Taus.tauSource
     oldTaus = cms.InputTag("pfRecoTauProducer")
@@ -130,7 +136,7 @@ def usePF2PAT(process,runPF2PAT=True):
         ecalIsolationPi = cms.InputTag("pfRecoTauDiscriminationByECALIsolationUsingLeadingPion"),
         againstElectron = cms.InputTag("pfRecoTauDiscriminationAgainstElectron"),
         againstMuon = cms.InputTag("pfRecoTauDiscriminationAgainstMuon")
-    )
+    )    
     process.allLayer1Taus.decayModeSrc = cms.InputTag("pfTauDecayMode")
     print "Change src in calculation of pf-isodep for taus"
     #pfNoPileUpColl = cms.InputTag("pfNoPileUp","PFCandidates")
