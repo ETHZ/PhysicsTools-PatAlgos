@@ -1,5 +1,5 @@
 //
-// $Id: PATMHTProducer.cc,v 1.34.2.1 2009/06/15 20:09:42 xs32 Exp $
+// $Id: PATMHTProducer.cc,v 1.34.2.2 2009/06/16 14:21:21 xs32 Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATMHTProducer.h"
@@ -68,6 +68,9 @@ pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
     physobjvector_.erase(physobjvector_.begin(),physobjvector_.end());
   }
 
+  // Clean the clustered towers 
+  s_clusteredTowers.clear();
+
   double number_of_jets = getJets(iEvent, iSetup);
 
   double number_of_electrons = getElectrons(iEvent, iSetup);
@@ -110,14 +113,17 @@ pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
     themetsigobj.setNumberOfElectrons(number_of_electrons);
     themetsigobj.setNumberOfMuons(number_of_muons);
 
+
     // ---------------------------------------
     //  Uncorrected MET and its Significance
     // ---------------------------------------
 
     // Clear the intput object
     physobjvector_.erase(physobjvector_.begin(),physobjvector_.end());
+    s_clusteredTowers.clear();
 
     getTowers(iEvent, iSetup); 
+
     double uncor_metsgf = ASignificance(physobjvector_, met_et, met_phi, met_set);
     themetsigobj.setUncorMET(met_et);
     themetsigobj.setUncorMETsignificance(uncor_metsgf);
@@ -132,8 +138,12 @@ pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
     // -----------------------------------------------------
 
     physobjvector_.erase(physobjvector_.begin(),physobjvector_.end());
+    s_clusteredTowers.clear();
+
     getJets(iEvent, iSetup);
+
     getTowers(iEvent, iSetup); 
+
     double metsgf = ASignificance(physobjvector_, met_et, met_phi, met_set);
     themetsigobj.setMET(met_et);
     themetsigobj.setMETsignificance(metsgf);
@@ -143,7 +153,6 @@ pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
       std::cout << ">>>----> MET = " << met_et << std::endl;
       std::cout << ">>>----> MET Sgificance = " << metsgf << std::endl;
     }
-
 
 
     themetsigcoll->push_back(themetsigobj);
