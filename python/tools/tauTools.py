@@ -12,8 +12,8 @@ def redoPFTauDiscriminators(process,
         process.pfRecoTauDiscriminationByIsolationUsingLeadingPion +
         process.pfRecoTauDiscriminationByLeadingPionPtCut +
         process.pfRecoTauDiscriminationByTrackIsolationUsingLeadingPion +
-        process.pfRecoTauDiscriminationByECALIsolationUsingLeadingPion +
-        process.pfTauDecayMode)
+        process.pfRecoTauDiscriminationByECALIsolationUsingLeadingPion )#+
+        #process.pfTauDecayMode)
     massSearchReplaceParam(process.patPFTauDiscrimination, 'PFTauProducer', oldPFTauLabel, newPFTauLabel)
 
 # switch to CaloTau collection
