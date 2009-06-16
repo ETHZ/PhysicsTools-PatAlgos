@@ -64,3 +64,11 @@ allLayer1MHTs = cms.EDProducer(
 )
 
 
+# --------------------------------------------------
+#  Specify Calorimeter Geometry 
+# --------------------------------------------------
+
+from Geometry.CMSCommonData.cmsIdealGeometryXML_cfi import *
+CaloTowerConstituentsMapBuilder = cms.ESProducer( "CaloTowerConstituentsMapBuilder",
+  MapFile = cms.untracked.string( "Geometry/CaloTopology/data/CaloTowerEEGeometric.map.gz" )
+)

@@ -134,13 +134,14 @@ pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
     }
 
     // -----------------------------------------------------
-    //  MET and its Significance  with Jet correction
+    //  MET and its Significance  with Jets and Electron correction
     // -----------------------------------------------------
 
     physobjvector_.erase(physobjvector_.begin(),physobjvector_.end());
     s_clusteredTowers.clear();
 
     getJets(iEvent, iSetup);
+    getElectrons(iEvent, iSetup);
 
     getTowers(iEvent, iSetup); 
 
@@ -267,9 +268,9 @@ pat::PATMHTProducer::getElectrons(edm::Event& iEvent, const edm::EventSetup & iS
 
   double number_of_electrons_ = 0.0;
 
-//   edm::ESHandle<CaloTowerConstituentsMap> cttopo;
-//   iSetup.get<IdealGeometryRecord>().get(cttopo);
-//   const CaloTowerConstituentsMap* caloTowerMap = cttopo.product();
+  edm::ESHandle<CaloTowerConstituentsMap> cttopo;
+  iSetup.get<IdealGeometryRecord>().get(cttopo);
+  const CaloTowerConstituentsMap* caloTowerMap = cttopo.product();
 
   edm::Handle<edm::View<pat::Electron> > electronHandle;
   iEvent.getByLabel(eleLabel_,electronHandle);
@@ -321,23 +322,24 @@ pat::PATMHTProducer::getElectrons(edm::Event& iEvent, const edm::EventSetup & iS
     physobjvector_.push_back(tmp_electron);
     number_of_electrons_ ++; 
     
-//     //-- Store tower DetId's to be removed from Calo Tower sum later --//
-//     const reco::SuperCluster& eleSC = *( electron_iter->superCluster() );
+    //-- Store tower DetId's to be removed from Calo Tower sum later --//
+    const reco::SuperCluster& eleSC = *( electron_iter->superCluster() );
     
-//     std::vector<DetId> v_eleDetIds = eleSC.getHitsByDetId();
+    std::vector<DetId> v_eleDetIds = eleSC.getHitsByDetId();
     
-//     //-- Convert cells to calo towers and add to set --//
-//     for( std::vector<DetId>::iterator cellId = v_eleDetIds.begin();
-//          cellId != v_eleDetIds.end();
-//          cellId++) {
+    //-- Convert cells to calo towers and add to set --//
+    for( std::vector<DetId>::iterator cellId = v_eleDetIds.begin();
+         cellId != v_eleDetIds.end();
+         cellId++) {
 
-//       CaloTowerDetId towerId = caloTowerMap->towerOf(*cellId);
-//       if (towerId != nullDetId) {
-// 	std::pair<std::_Rb_tree_const_iterator<CaloTowerDetId>,bool> p1 = s_clusteredTowers.insert(towerId);
-//       }
-//       else
-// 	std::cerr<<"No matching tower found for electron cell!\n";
-//     }
+      CaloTowerDetId towerId = caloTowerMap->towerOf(*cellId);
+      if (towerId != nullDetId) {
+	//std::cout << ">>> electron towerId: " << towerId << std::endl;
+	std::pair<std::_Rb_tree_const_iterator<CaloTowerDetId>,bool> p1 = s_clusteredTowers.insert(towerId);
+      }
+      else
+	std::cerr<<"No matching tower found for electron cell!\n";
+    }
 
 
   }
