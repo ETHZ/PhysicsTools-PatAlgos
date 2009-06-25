@@ -33,9 +33,12 @@ process.load("PhysicsTools.PatAlgos.mcMatchLayer0.mcMatchSequences_cff")
 process.load("PhysicsTools.PatAlgos.producersLayer1.electronProducer_cfi")
 #process.content = cms.EDAnalyzer("EventContentAnalyzer")
 
+process.allLayer1Electrons.addElectronShapes = False
+process.allLayer1Electrons.addElectronID     = False
+
 process.p = cms.Path(
     process.electronsNoDuplicates *
-    process.patElectronId *        
+    process.patElectronId *
     process.patElectronIsolation * 
     process.electronMatch *        
     process.allLayer1Electrons     

@@ -29,8 +29,9 @@ process.load("Configuration.StandardSequences.MagneticField_cff")
 process.load("PhysicsTools.PatAlgos.patSequences_cff")
 process.content = cms.EDAnalyzer("EventContentAnalyzer")
 
-# replacements currently needed to make the taus work
-# process.allLayer1Taus.addTauID = False
+# replacements currently needed to make the electrons work
+process.allLayer1Electrons.addElectronShapes = False
+process.allLayer1Electrons.addElectronID     = False
 
 process.p = cms.Path(
     process.patDefaultSequence  
