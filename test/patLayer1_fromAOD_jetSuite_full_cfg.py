@@ -14,7 +14,7 @@ process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 
 # source
 process.source = cms.Source("PoolSource", 
-     fileNames = cms.untracked.vstring('file:/afs/cern.ch/cms/PRS/top/cmssw-data/relval200-for-pat-testing/FullSimTTBar-2_2_X_2008-11-03-STARTUP_V7-AODSIM.100.root')
+     fileNames = cms.untracked.vstring('/store/relval/CMSSW_3_1_0_pre6/RelValTTbar/GEN-SIM-RECO/IDEAL_31X_v1/0002/50D4BADB-FA32-DE11-BA01-000423D98DC4.root')
 )
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
 
@@ -22,10 +22,13 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
 # PAT Layer 0+1
 process.load("PhysicsTools.PatAlgos.patSequences_cff")
 
+process.allLayer1Electrons.addElectronShapes = False
+process.allLayer1Electrons.addElectronID     = False
+
 ## Load additional RECO config
 process.load("Configuration.StandardSequences.Geometry_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
-process.GlobalTag.globaltag = cms.string('STARTUP_V7::All')
+process.GlobalTag.globaltag = cms.string('IDEAL_31X::All')
 process.load("Configuration.StandardSequences.MagneticField_cff")
 
 from PhysicsTools.PatAlgos.tools.jetTools import *
@@ -39,23 +42,23 @@ from PhysicsTools.PatAlgos.tools.jetTools import *
 addJetCollection(process,cms.InputTag('sisCone5CaloJets'),'SC5',
                         doJTA=True,doBTagging=True,jetCorrLabel=('SC5','Calo'),doType1MET=True,doL1Counters=False,
                         genJetCollection=cms.InputTag("sisCone5GenJets"))
-addJetCollection(process,cms.InputTag('sisCone7CaloJets'),'SC7',
-                        doJTA=True,doBTagging=False,jetCorrLabel=None,doType1MET=True,doL1Counters=False,
-                        genJetCollection=cms.InputTag("sisCone5GenJets"))
-addJetCollection(process,cms.InputTag('kt4CaloJets'),'KT4',
-                        doJTA=True,doBTagging=True,jetCorrLabel=('KT4','Calo'),doType1MET=True,doL1Counters=False,
-                        genJetCollection=cms.InputTag("kt4GenJets"))
-addJetCollection(process,cms.InputTag('kt6CaloJets'),'KT6',
-                        doJTA=True,doBTagging=False,jetCorrLabel=None,doType1MET=True,doL1Counters=False,
-                        genJetCollection=cms.InputTag("kt6GenJets"))
+##addJetCollection(process,cms.InputTag('sisCone7CaloJets'),'SC7',
+##                        doJTA=True,doBTagging=False,jetCorrLabel=None,doType1MET=True,doL1Counters=False,
+##                        genJetCollection=cms.InputTag("sisCone5GenJets"))
+##addJetCollection(process,cms.InputTag('kt4CaloJets'),'KT4',
+##                        doJTA=True,doBTagging=True,jetCorrLabel=('KT4','Calo'),doType1MET=True,doL1Counters=False,
+##                        genJetCollection=cms.InputTag("kt4GenJets"))
+##addJetCollection(process,cms.InputTag('kt6CaloJets'),'KT6',
+##                        doJTA=True,doBTagging=False,jetCorrLabel=None,doType1MET=True,doL1Counters=False,
+##                        genJetCollection=cms.InputTag("kt6GenJets"))
 ## FIXME addJetCollection(process,cms.InputTag('iterativeCone5BasicJets'), 'BJ5',
 ## FIXME                        doJTA=True,doBTagging=True,jetCorrLabel=('MC5','Calo'),doType1MET=True,doL1Counters=False)
-addJetCollection(process,cms.InputTag('iterativeCone5PFJets'), 'PFc',
-                        doJTA=True,doBTagging=True,jetCorrLabel=None,doType1MET=True,doL1Counters=False,
-                        genJetCollection=cms.InputTag("iterativeCone5GenJets"))
-addJetCollection(process,cms.InputTag('iterativeCone5PFJets'), 'PFr',
-                        doJTA=True,doBTagging=True,jetCorrLabel=None,doType1MET=True,doL1Counters=False,
-                        genJetCollection=cms.InputTag("iterativeCone5GenJets"))
+##addJetCollection(process,cms.InputTag('iterativeCone5PFJets'), 'PFc',
+##                        doJTA=True,doBTagging=True,jetCorrLabel=None,doType1MET=True,doL1Counters=False,
+##                        genJetCollection=cms.InputTag("iterativeCone5GenJets"))
+##addJetCollection(process,cms.InputTag('iterativeCone5PFJets'), 'PFr',
+##                        doJTA=True,doBTagging=True,jetCorrLabel=None,doType1MET=True,doL1Counters=False,
+##                        genJetCollection=cms.InputTag("iterativeCone5GenJets"))
 
 process.content = cms.EDAnalyzer("EventContentAnalyzer")
 process.p = cms.Path(
