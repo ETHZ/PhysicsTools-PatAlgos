@@ -1,14 +1,8 @@
 import FWCore.ParameterSet.Config as cms
 
-from PhysicsTools.PFCandProducer.ParticleSelectors.sortByType_cff import *
-from PhysicsTools.PFCandProducer.pfNoPileUp_cff import *
+from PhysicsTools.PFCandProducer.pfAllChargedHadrons_cfi import *
+from PhysicsTools.PFCandProducer.pfAllNeutralHadrons_cfi import *
+from PhysicsTools.PFCandProducer.pfAllPhotons_cfi import *
 
-
-patPFCandidateIsoDepositSelection = cms.Sequence(
-    pfNoPileUpSequence +
-    sortByTypeSequence
-    )
-
-
-
+patPFCandidateIsoDepositSelection = cms.Sequence(pfAllChargedHadrons * pfAllNeutralHadrons * pfAllPhotons)
 
