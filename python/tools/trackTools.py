@@ -28,6 +28,10 @@ def makePATTrackCandidates(process,
         triggerAs=[]):                          # Replicate trigger match as all the ones used by PAT on these AOD collections (None = no trig.)
     from PhysicsTools.PatAlgos.producersLayer1.genericParticleProducer_cfi import allLayer1GenericParticles
     from PhysicsTools.PatAlgos.cleaningLayer1.genericTrackCleaner_cfi     import cleanLayer1Tracks
+    if isolation or isodeposits:
+        process.load("TrackPropagation.SteppingHelixPropagator.SteppingHelixPropagatorAlong_cfi")
+        process.load("TrackPropagation.SteppingHelixPropagator.SteppingHelixPropagatorOpposite_cfi")
+        process.load("TrackPropagation.SteppingHelixPropagator.SteppingHelixPropagatorAny_cfi")
     # Define Modules
     #   producer
     setattr(process, 'allLayer1' + label, allLayer1GenericParticles.clone(src = input))
