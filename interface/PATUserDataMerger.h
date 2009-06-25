@@ -1,5 +1,5 @@
 //
-// $Id: PATUserDataMerger.h,v 1.4.4.1 2009/02/03 09:09:20 gpetrucc Exp $
+// $Id: PATUserDataMerger.h,v 1.4.4.2 2009/04/28 14:29:39 gpetrucc Exp $
 //
 
 #ifndef PhysicsTools_PatAlgos_PATUserDataMerger_h
@@ -18,7 +18,7 @@
 		cases. 
 
   \author   Salvatore Rappoccio
-  \version  $Id: PATUserDataMerger.h,v 1.4.4.1 2009/02/03 09:09:20 gpetrucc Exp $
+  \version  $Id: PATUserDataMerger.h,v 1.4.4.2 2009/04/28 14:29:39 gpetrucc Exp $
 */
 
 #include "FWCore/Framework/interface/EDProducer.h"
@@ -28,6 +28,7 @@
 #include "DataFormats/Common/interface/View.h"
 #include "DataFormats/Common/interface/Ptr.h"
 #include "DataFormats/Common/interface/Association.h"
+#include "DataFormats/Candidate/interface/CandidateFwd.h"
 #include "DataFormats/Candidate/interface/Candidate.h"
 #include "DataFormats/PatCandidates/interface/PATObject.h"
 
@@ -56,6 +57,13 @@ namespace pat {
               if (val.isNonnull()) obj.addUserDataFromPtr(key, val);
         }
     };
+    struct AddUserCand {
+        typedef reco::CandidatePtr        value_type;
+        typedef edm::ValueMap<value_type> product_type;
+        template<typename ObjectType>
+        void addData(ObjectType &obj, const std::string & key, const value_type &val) { obj.addUserCand(key, val); }
+    };
+
   }
 
   template<typename ObjectType, typename Operation>

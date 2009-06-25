@@ -1,5 +1,5 @@
 //
-// $Id: PATUserDataHelper.h,v 1.3 2008/10/06 14:21:14 gpetrucc Exp $
+// $Id: PATUserDataHelper.h,v 1.4 2008/10/07 17:44:16 gpetrucc Exp $
 //
 
 #ifndef PhysicsTools_PatAlgos_PATUserDataHelper_h
@@ -15,14 +15,15 @@
 
 	    * ValueMap<double>
 	    * ValueMap<int>
-	    * ValueMap<UserData>
+	    * ValueMap<Ptr<UserData> >
+	    * ValueMap<CandidatePtr>
 
 	    This is accomplished by using PATUserDataMergers. 
 
 	    This also can add "in situ" string-parser-based methods directly. 
 
   \author   Salvatore Rappoccio
-  \version  $Id: PATUserDataHelper.h,v 1.3 2008/10/06 14:21:14 gpetrucc Exp $
+  \version  $Id: PATUserDataHelper.h,v 1.4 2008/10/07 17:44:16 gpetrucc Exp $
 */
 
 
@@ -36,6 +37,7 @@
 #include "DataFormats/PatCandidates/interface/PATObject.h"
 
 #include "DataFormats/PatCandidates/interface/UserData.h"
+#include "DataFormats/Candidate/interface/CandidateFwd.h"
 #include "DataFormats/Candidate/interface/Candidate.h"
 #include "PhysicsTools/PatAlgos/interface/PATUserDataMerger.h"
 #include "PhysicsTools/Utilities/interface/StringObjectFunction.h"
@@ -72,6 +74,8 @@ namespace pat {
     pat::PATUserDataMerger<ObjectType, pat::helper::AddUserFloat>    userFloatMerger_;
     // User ints
     pat::PATUserDataMerger<ObjectType, pat::helper::AddUserInt>      userIntMerger_;
+    // User candidate ptrs
+    pat::PATUserDataMerger<ObjectType, pat::helper::AddUserCand>     userCandMerger_;
     
     // Inline functions that operate on ObjectType
     std::vector<std::string>                                          functionNames_;
@@ -86,6 +90,7 @@ PATUserDataHelper<ObjectType>::PATUserDataHelper(const edm::ParameterSet & iConf
   userDataMerger_   (iConfig.getParameter<edm::ParameterSet>("userClasses")),
   userFloatMerger_  (iConfig.getParameter<edm::ParameterSet>("userFloats")),
   userIntMerger_    (iConfig.getParameter<edm::ParameterSet>("userInts")),
+  userCandMerger_   (iConfig.getParameter<edm::ParameterSet>("userCands")),
   functionNames_    (iConfig.getParameter<std::vector<std::string> >("userFunctions")),
   functionLabels_   (iConfig.getParameter<std::vector<std::string> >("userFunctionLabels"))
 {
@@ -126,6 +131,7 @@ void PATUserDataHelper<ObjectType>::add(ObjectType & patObject,
   userDataMerger_.add(   patObject, iEvent, iSetup );
   userFloatMerger_.add(  patObject, iEvent, iSetup );
   userIntMerger_.add(    patObject, iEvent, iSetup );
+  userCandMerger_.add(   patObject, iEvent, iSetup );
 
   // Add "inline" user-selected functions to the PAT object
   typename std::vector<function_type>::const_iterator funcBegin = functions_.begin(),
