@@ -20,14 +20,14 @@ process.maxEvents = cms.untracked.PSet(
 
 process.load( "Configuration.StandardSequences.Geometry_cff" )
 process.load( "Configuration.StandardSequences.FrontierConditions_GlobalTag_cff" )
-process.GlobalTag.globaltag = cms.string( 'IDEAL_31X::All' )
+process.GlobalTag.globaltag = cms.string( 'MC_31X_V1::All' )
 process.load( "Configuration.StandardSequences.MagneticField_cff" )
 
 # PAT Layer 0 & 1
 process.load( "PhysicsTools.PatAlgos.patSequences_cff" )
-# replacements currently needed to make the jets work
-process.allLayer1Jets.addDiscriminators    = False
-process.allLayer1Jets.discriminatorSources = []
+# replacements currently needed to make the electrons work
+process.allLayer1Electrons.addElectronShapes = False
+process.allLayer1Electrons.addElectronID     = False
 
 process.p = cms.Path(
     process.patDefaultSequence
