@@ -9,14 +9,14 @@ process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 # source
 process.source = cms.Source("PoolSource", 
     fileNames = cms.untracked.vstring(
-        '/store/relval/CMSSW_3_1_0_pre10/RelValTTbar/GEN-SIM-RECO/IDEAL_31X_v1/0008/CC80B73A-CA57-DE11-BC2F-000423D99896.root'
+        '/store/relval/CMSSW_3_1_0/RelValTTbar/GEN-SIM-RECO/STARTUP31X_V1-v1/0001/D48CD6F6-8F66-DE11-B835-001D09F2983F.root'
     )
 )
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
 
 process.load("Configuration.StandardSequences.Geometry_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
-process.GlobalTag.globaltag = cms.string('IDEAL_31X::All')
+process.GlobalTag.globaltag = cms.string('STARTUP31X_V1::All')
 process.load("Configuration.StandardSequences.MagneticField_cff")
 
 # extraction of electron sequences
@@ -25,10 +25,7 @@ process.load("PhysicsTools.PatAlgos.recoLayer0.electronIsolation_cff")
 process.load("PhysicsTools.PatAlgos.recoLayer0.duplicatedElectrons_cfi")
 process.load("PhysicsTools.PatAlgos.mcMatchLayer0.mcMatchSequences_cff")
 process.load("PhysicsTools.PatAlgos.producersLayer1.electronProducer_cfi")
-#process.content = cms.EDAnalyzer("EventContentAnalyzer")
-
-process.allLayer1Electrons.addElectronShapes = False
-process.allLayer1Electrons.addElectronID     = False
+process.content = cms.EDAnalyzer("EventContentAnalyzer")
 
 process.p = cms.Path(
     process.electronsNoDuplicates *
