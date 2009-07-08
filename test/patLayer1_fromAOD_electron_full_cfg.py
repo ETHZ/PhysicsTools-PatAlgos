@@ -28,7 +28,6 @@ process.load("PhysicsTools.PatAlgos.producersLayer1.electronProducer_cfi")
 process.content = cms.EDAnalyzer("EventContentAnalyzer")
 
 process.p = cms.Path(
-    process.electronsNoDuplicates *
     process.patElectronId *
     process.patElectronIsolation * 
     process.electronMatch *        
