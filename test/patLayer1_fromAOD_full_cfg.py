@@ -1,40 +1,21 @@
-import FWCore.ParameterSet.Config as cms
+# This is an example PAT configuration showing the usage of PAT on full sim samples
 
-process = cms.Process("PAT")
+# Starting with a skeleton process which gets imported with the following line
+from PhysicsTools.PatAlgos.patTemplate_cfg import *
 
-# initialize MessageLogger and output report
-process.load("FWCore.MessageLogger.MessageLogger_cfi")
-process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
-
-# source
-process.source = cms.Source("PoolSource", 
-    fileNames = cms.untracked.vstring(
-        '/store/relval/CMSSW_3_1_0/RelValTTbar/GEN-SIM-RECO/STARTUP31X_V1-v1/0001/D48CD6F6-8F66-DE11-B835-001D09F2983F.root'
-    )
-)
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
-
-process.load("Configuration.StandardSequences.Geometry_cff")
-process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
-process.GlobalTag.globaltag = cms.string('STARTUP31X_V1::All')
-process.load("Configuration.StandardSequences.MagneticField_cff")
-
-# PAT Layer 0+1
+# load the standard PAT config
 process.load("PhysicsTools.PatAlgos.patSequences_cff")
-process.content = cms.EDAnalyzer("EventContentAnalyzer")
 
+# let it run
 process.p = cms.Path(
-    process.patDefaultSequence  
+    process.patDefaultSequence
 )
 
-# Output module configuration
-from PhysicsTools.PatAlgos.patEventContent_cff import patEventContent
-process.out = cms.OutputModule("PoolOutputModule",
-    fileName = cms.untracked.string('PATLayer1_Output.fromAOD_full.root'),
-    # save only events passing the full path
-    SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring('p') ),
-    # save PAT Layer 1 output
-    outputCommands = cms.untracked.vstring('drop *', *patEventContent ) # you need a '*' to unpack the list of commands 'patEventContent'
-)
-process.outpath = cms.EndPath(process.out)
-
+# In addition you usually want to change the following parameters:
+#
+#   process.GlobalTag.globaltag =  ...      (according to https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideFrontierConditions)
+#   process.source.fileNames = [ ... ]      (e.g. 'file:AOD.root')
+#   process.maxEvents.input = ...           (e.g. -1 to run on all events)
+#   process.out.outputCommands = [ ... ]    (e.g. taken from PhysicsTools/PatAlgos/python/patEventContent_cff.py)
+#   process.out.fileName = ...              (e.g. 'myTuple.root')
+#   process.options.wantSummary = False     (to suppress the long output at the end of the job)    
