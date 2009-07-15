@@ -2,22 +2,14 @@
 from PhysicsTools.PatAlgos.patTemplate_cfg import *
 
 # extraction of tau sequences
-process.load("PhysicsTools.JetMCAlgos.TauGenJets_cfi")
-process.load("PhysicsTools.PatAlgos.mcMatchLayer0.tauMatch_cfi")
-process.load("PhysicsTools.PatAlgos.recoLayer0.pfCandidateIsoDepositSelection_cff")
-process.load("PhysicsTools.PatAlgos.recoLayer0.tauIsolation_cff")
-process.load("PhysicsTools.PatAlgos.recoLayer0.tauDiscriminators_cff")  ##missing modules and inputs
-process.load("PhysicsTools.PatAlgos.producersLayer1.tauProducer_cfi")
-process.content = cms.EDAnalyzer("EventContentAnalyzer")
+
+process.load("PhysicsTools.PatAlgos.producersLayer1.tauProducer_cff")
+process.load("PhysicsTools.PatAlgos.selectionLayer1.tauSelector_cfi")
 
 # run it
 process.p = cms.Path(
-    process.patPFCandidateIsoDepositSelection +
-    process.patPFTauIsolation +
-    process.tauMatch +
-    process.tauGenJets +
-    process.tauGenJetMatch +
-    process.allLayer1Taus 
+    process.makeAllLayer1Taus *
+    process.selectedLayer1Taus
 )
 
 # In addition you usually want to change the following parameters:

@@ -2,15 +2,12 @@
 from PhysicsTools.PatAlgos.patTemplate_cfg import *
 
 # extraction of photon sequences
-process.load("PhysicsTools.PatAlgos.recoLayer0.photonId_cff")
-process.load("PhysicsTools.PatAlgos.recoLayer0.photonIsolation_cff")
-process.load("PhysicsTools.PatAlgos.mcMatchLayer0.mcMatchSequences_cff")
-process.load("PhysicsTools.PatAlgos.producersLayer1.photonProducer_cfi")
+process.load("PhysicsTools.PatAlgos.producersLayer1.photonProducer_cff")
+process.load("PhysicsTools.PatAlgos.selectionLayer1.photonSelector_cfi")
 
 process.p = cms.Path(
-    process.patPhotonIsolation * 
-    process.photonMatch *        
-    process.allLayer1Photons     
+    process.makeAllLayer1Photons *
+    process.selectedLayer1Photons    
 )
 
 # In addition you usually want to change the following parameters:

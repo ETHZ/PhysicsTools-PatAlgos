@@ -4,19 +4,12 @@
 from PhysicsTools.PatAlgos.patTemplate_cfg import *
 
 # extraction of jet sequences
-process.load("PhysicsTools.PatAlgos.recoLayer0.bTagging_cff")         ## empty
-process.load("PhysicsTools.PatAlgos.recoLayer0.jetTracksCharge_cff")
-process.load("PhysicsTools.PatAlgos.recoLayer0.jetMETCorrections_cff")
-process.load("PhysicsTools.PatAlgos.mcMatchLayer0.mcMatchSequences_cff")
-process.load("PhysicsTools.PatAlgos.producersLayer1.jetProducer_cfi")
+process.load("PhysicsTools.PatAlgos.producersLayer1.jetProducer_cff")
+process.load("PhysicsTools.PatAlgos.selectionLayer1.jetSelector_cfi")
 
 process.p = cms.Path(
-     process.patJetCharge *  
-     process.patJetCorrections *
-     process.jetPartonMatch *
-     process.jetGenJetMatch *
-     process.jetFlavourId *  
-     process.allLayer1Jets
+     process.makeAllLayer1Jets *
+     process.selectedLayer1Jets
 )
 
 # In addition you usually want to change the following parameters:

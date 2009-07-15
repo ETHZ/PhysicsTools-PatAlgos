@@ -2,13 +2,12 @@
 from PhysicsTools.PatAlgos.patTemplate_cfg import *
 
 # extraction of muon sequences
-process.load("PhysicsTools.PatAlgos.recoLayer0.muonIsolation_cff")
-process.load("PhysicsTools.PatAlgos.producersLayer1.muonProducer_cfi")
-process.load("PhysicsTools.PatAlgos.mcMatchLayer0.mcMatchSequences_cff")
+process.load("PhysicsTools.PatAlgos.producersLayer1.muonProducer_cff")
+process.load("PhysicsTools.PatAlgos.selectionLayer1.muonSelector_cfi")
 
 process.p = cms.Path(
-    process.muonMatch *
-    process.allLayer1Muons
+    process.makeAllLayer1Muons *
+    process.selectedLayer1Muons
 )
 
 # In addition you usually want to change the following parameters:

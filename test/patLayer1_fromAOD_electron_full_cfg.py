@@ -4,18 +4,13 @@
 from PhysicsTools.PatAlgos.patTemplate_cfg import *
 
 # extract the electron sequences
-process.load("PhysicsTools.PatAlgos.recoLayer0.electronId_cff")
-process.load("PhysicsTools.PatAlgos.recoLayer0.electronIsolation_cff")
-process.load("PhysicsTools.PatAlgos.recoLayer0.duplicatedElectrons_cfi")
-process.load("PhysicsTools.PatAlgos.mcMatchLayer0.mcMatchSequences_cff")
-process.load("PhysicsTools.PatAlgos.producersLayer1.electronProducer_cfi")
+process.load("PhysicsTools.PatAlgos.producersLayer1.electronProducer_cff")
+process.load("PhysicsTools.PatAlgos.selectionLayer1.electronSelector_cfi")
 
 # let it run
 process.p = cms.Path(
-    process.patElectronId *
-    process.patElectronIsolation *
-    process.electronMatch *
-    process.allLayer1Electrons
+    process.makeAllLayer1Electrons *
+    process.selectedLayer1Electrons
 )
 
 # In addition you usually want to change the following parameters:

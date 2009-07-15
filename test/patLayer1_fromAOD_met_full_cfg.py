@@ -4,13 +4,11 @@
 from PhysicsTools.PatAlgos.patTemplate_cfg import *
 
 # extraction of met sequences
-process.load("PhysicsTools.PatAlgos.recoLayer0.jetMETCorrections_cff")
-process.load("PhysicsTools.PatAlgos.producersLayer1.metProducer_cfi")
+process.load("PhysicsTools.PatAlgos.producersLayer1.metProducer_cff")
 
 # let it run
 process.p = cms.Path(
-     process.patMETCorrections *
-     process.layer1METs
+     process.makeLayer1METs
 )
 
 # In addition you usually want to change the following parameters:
