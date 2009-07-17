@@ -17,7 +17,7 @@ process.load("PhysicsTools.PatAlgos.patSequences_cff")
 
 ## Load additional RECO config
 # Magnetic field now needs to be in the high-level py
-process.load("Configuration.StandardSequences.MagneticField_cff")
+# process.load("Configuration.StandardSequences.MagneticField_cff")
 
 #process.content = cms.EDAnalyzer("EventContentAnalyzer")
 process.p = cms.Path(
