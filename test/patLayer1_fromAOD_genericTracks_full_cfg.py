@@ -8,18 +8,17 @@ process.load("PhysicsTools.PatAlgos.patSequences_cff")
 
 # add the track candidates to the configuration 
 from PhysicsTools.PatAlgos.tools.trackTools import *
+
 makeTrackCandidates(process,
-    label='TrackCands',                   # output collection will be 'allLayer0TrackCands', 'allLayer1TrackCands', 'selectedLayer1TrackCands'
-    tracks=cms.InputTag('generalTracks'), # input track collection
-    particleType="pi+",                   # particle type (for assigning a mass)
-    preselection='pt > 10',               # preselection cut on candidates. Only methods of 'reco::Candidate' are available
-    selection='pt > 10',                  # Selection on PAT Layer 1 objects ('selectedLayer1TrackCands')
-    isolation={'tracker':0.3,             # Isolations to use ('source':deltaR; set to {} for None)
-               'ecalTowers':0.3,          # 'tracker' => as muon track iso
-               'hcalTowers':0.3},         # 'ecalTowers', 'hcalTowers' => as muon iso from calo towers.
-    isodeposits=[],                       # examples: 'tracker','ecalTowers','hcalTowers'; [] = empty list = none
-    mcAs=cms.InputTag("muons")            # Replicate MC match as the one used by PAT on this AOD collection (None = no mc match)
-)                                         #  you can specify more than one collection for this
+    label        = 'TrackCands',                  
+    tracks       = cms.InputTag('generalTracks'), 
+    particleType = 'pi+',                         
+    preselection = 'pt > 10',                     
+    selection    = 'pt > 10',                     
+    isolation    = {'tracker':0.3, 'ecalTowers':0.3, 'hcalTowers':0.3},                            
+    isoDeposits  = [],                            
+    mcAs         = 'muon'           
+)                                   
 
 # let it run
 process.p = cms.Path(
@@ -31,9 +30,9 @@ process.out.outputCommands.append('keep *_selectedLayer1TrackCands_*_*')
 
 # In addition you usually want to change the following parameters:
 #
-#   process.GlobalTag.globaltag =  ...      (according to https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideFrontierConditions)
-#   process.source.fileNames = [ ... ]      (e.g. 'file:AOD.root')
-#   process.maxEvents.input = ...           (e.g. -1 to run on all events)
-#   process.out.outputCommands = [ ... ]    (e.g. taken from PhysicsTools/PatAlgos/python/patEventContent_cff.py)
-#   process.out.fileName = ...              (e.g. 'myTuple.root')
-#   process.options.wantSummary = False     (to suppress the long output at the end of the job)
+#   process.GlobalTag.globaltag =  ...     ## (according to https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideFrontierConditions)
+#   process.source.fileNames = [ ... ]     ## (e.g. 'file:AOD.root')
+#   process.maxEvents.input = ...          ## (e.g. -1 to run on all events)
+#   process.out.outputCommands = [ ... ]   ## (e.g. taken from PhysicsTools/PatAlgos/python/patEventContent_cff.py)
+#   process.out.fileName = ...             ## (e.g. 'myTuple.root')
+#   process.options.wantSummary = False    ## (to suppress the long output at the end of the job)
