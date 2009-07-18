@@ -8,6 +8,7 @@ process.load("PhysicsTools.PatAlgos.patSequences_cff")
 # uncomment the following line to add tcMET to the event content
 from PhysicsTools.PatAlgos.tools.metTools import *
 addTcMET(process, 'TC')
+addPfMET(process, 'PF')
 
 # uncomment the following line to add different jet collections
 # to the event content
