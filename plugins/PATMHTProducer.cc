@@ -1,5 +1,5 @@
 //
-// $Id: PATMHTProducer.cc,v 1.34.2.2 2009/06/16 14:21:21 xs32 Exp $
+// $Id: PATMHTProducer.cc,v 1.4.4.5 2009/06/16 21:19:47 xshi Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATMHTProducer.h"
@@ -41,6 +41,15 @@ pat::PATMHTProducer::PATMHTProducer(const edm::ParameterSet & iConfig){
 
   CaloTowerTag_  = iConfig.getParameter<edm::InputTag>("CaloTowerTag");
   noHF_ = iConfig.getParameter<bool>( "noHF"); 
+  
+  //  muonCalo_ = iConfig.getParameter<bool>("muonCalo");
+  towerEtThreshold_ = iConfig.getParameter<double>( "towerEtThreshold") ; 
+  useHO_ = iConfig.getParameter<bool>("useHO");
+
+  edm::ParameterSet trackAssociatorParams = 
+    iConfig.getParameter<edm::ParameterSet>("TrackAssociatorParameters");
+  trackAssociatorParameters_.loadParameters(trackAssociatorParams);  
+  trackAssociator_.useDefaultPropagator() ;
 
   produces<pat::MHTCollection>();
 
@@ -134,7 +143,9 @@ pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
     }
 
     // -----------------------------------------------------
-    //  MET and its Significance  with Jets and Electron correction
+    //  MET and its Significance 
+    //  with Jets and Electron correction 
+    //  with Muon correction 
     // -----------------------------------------------------
 
     physobjvector_.erase(physobjvector_.begin(),physobjvector_.end());
@@ -142,7 +153,7 @@ pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
 
     getJets(iEvent, iSetup);
     getElectrons(iEvent, iSetup);
-
+    getMuons(iEvent, iSetup);
     getTowers(iEvent, iSetup); 
 
     double metsgf = ASignificance(physobjvector_, met_et, met_phi, met_set);
@@ -360,6 +371,12 @@ double pat::PATMHTProducer::getMuons(edm::Event& iEvent, const edm::EventSetup &
   iEvent.getByLabel(muoLabel_,muonHandle);
   edm::View<pat::Muon> muons = *muonHandle;
 
+  if ( !muonHandle.isValid() ) {
+    std::cout << ">>> PATMHTSelector not valid muon Handle!" << std::endl;
+    return 0.0;
+  }
+
+
   double number_of_muons_ = 0.0;
 
   for(edm::View<pat::Muon>::const_iterator muon_iter = muons.begin(); muon_iter!=muons.end(); ++muon_iter){
@@ -393,20 +410,17 @@ double pat::PATMHTProducer::getMuons(edm::Event& iEvent, const edm::EventSetup &
       edm::LogWarning("PATMHTProducer") << 
 	" uncertainties for "  << objectname << " are (et, phi): " << sigma_et << "," <<
 	sigma_phi << " (pt,phi): " << muon_pt << "," << muon_phi;
-    // try to read out the muon resolution from the root file at PatUtils
-    //-- Store muon for Significance Calculation --//
 
     if (uncertaintyScaleFactor_ != 1.0){
       sigma_et  = sigma_et  * uncertaintyScaleFactor_;
       sigma_phi = sigma_phi * uncertaintyScaleFactor_;
-      //edm::LogWarning("PATMHTProducer") << " using uncertainty scale factor: " << uncertaintyScaleFactor_ <<
-      //" , uncertainties for " << objectname <<" changed to (et, phi): " << sigma_et << "," << sigma_phi; 
     }
 
     metsig::SigInputObj tmp_muon(objectname,muon_pt,muon_phi,sigma_et,sigma_phi);
     physobjvector_.push_back(tmp_muon);
     number_of_muons_ ++;
-  }
+
+  }// end Muon loop
 
   return number_of_muons_;
 }
@@ -605,7 +619,81 @@ void pat::PATMHTProducer::getTowers(edm::Event& iEvent, const edm::EventSetup & 
 	std::cerr << "found non-assigned cell, " << std::endl;
       
     }// End Loop over all calotowers 
+
+
+  // Muon CaloTower Correction
+
+  edm::Handle<edm::View<pat::Muon> > muonHandle;
+  iEvent.getByLabel(muoLabel_,muonHandle);
+  edm::View<pat::Muon> muons = *muonHandle;
   
+  if ( !muonHandle.isValid() ) {
+    std::cout << ">>> PATMHTSelector not valid muon Handle!" << std::endl;
+    return ;
+  }
+  
+  for(edm::View<pat::Muon>::const_iterator muon_iter = muons.begin(); 
+      muon_iter!=muons.end(); ++muon_iter){
+    
+    if (muon_iter->pt() < muonPtMin_ || TMath::Abs(muon_iter->eta()) > muonEtaMax_  ) continue; 
+    
+    // Determin the Muon Isolation
+    
+    bool useAverage = false; 
+    //decide whether or not we want to correct on average based 
+    //on isolation information from the muon
+    double sumPt   = muon_iter->isIsolationValid()? muon_iter->isolationR03().sumPt       : 0.0;
+    double sumEtEcal = muon_iter->isIsolationValid() ? muon_iter->isolationR03().emEt     : 0.0;
+    double sumEtHcal    = muon_iter->isIsolationValid() ? muon_iter->isolationR03().hadEt : 0.0;
+    
+    if(sumPt > 3 || sumEtEcal + sumEtHcal > 5) useAverage = true;
+
+    // Get Tower Energy for Muons
+    reco::TrackRef gmuRef = muon_iter->globalTrack();
+    if (gmuRef.isNull()) continue;
+    
+    TrackDetMatchInfo info = 
+      trackAssociator_.associate(iEvent, iSetup,
+    				 trackAssociator_.getFreeTrajectoryState(iSetup, *gmuRef),
+    				 trackAssociatorParameters_);
+
+    double ecalTheta = info.trkGlobPosAtEcal.Theta();
+    double ecalPhi = info.trkGlobPosAtEcal.Phi();
+    double hcalTheta = info.trkGlobPosAtHcal.Theta();
+    double hcalPhi = info.trkGlobPosAtHcal.Phi();
+    double hoTheta = info.trkGlobPosAtHO.Theta();
+    double hoPhi = info.trkGlobPosAtHO.Phi();
+    
+    double ecalE = 0.0;
+    double hcalE = 0.0;
+    double hoE = 0.0;
+
+    std::vector<const CaloTower*> towers = info.crossedTowers;
+    for(std::vector<const CaloTower*>::const_iterator it = towers.begin();
+	it != towers.end(); it++) {
+      if( (*it)->et() <  towerEtThreshold_) continue;
+      ecalE += (*it)->emEnergy();
+      hcalE  += (*it)->hadEnergy();
+      if(useHO_) hoE += (*it)->outerEnergy();
+    }// end calotower loop
+
+    // Correction for isolated muons
+    if (!useAverage) {
+      double muonCaloEtDepX =  ecalE*sin(ecalTheta)*cos(ecalPhi)
+	+ hcalE*sin(hcalTheta)*cos(hcalPhi)
+	+ hoE*sin(hoTheta)*cos(hoPhi);
+      double muonCaloEtDepY =  ecalE*sin(ecalTheta)*sin(ecalPhi)
+	+ hcalE*sin(hcalTheta)*sin(hcalPhi)
+	+ hoE*sin(hoTheta)*sin(hoPhi);
+
+      double sigma_et  = 0.0; 
+      double sigma_phi = 0.0; 
+      objectname="muonCorr";
+      metsig::SigInputObj tmp_muonCorr(objectname,muonCaloEtDepX,muonCaloEtDepY,sigma_et,sigma_phi);
+      physobjvector_.push_back(tmp_muonCorr);
+    }
+  }// end Muon loop  
+
 }  // End getTowers()
 
 

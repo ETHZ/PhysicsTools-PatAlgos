@@ -23,5 +23,8 @@
   <use name=SimDataFormats/Vertex>
   <use name=SimGeneral/HepPDTRecord>
   <use name=RecoMET/METAlgorithms>
+  <use name=TrackingTools/TrackAssociator>
+  <use name=RecoMuon/DetLayers>
+  <use name=RecoMuon/Records>
   <use name=root>
 </library>

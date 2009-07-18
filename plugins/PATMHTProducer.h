@@ -13,7 +13,7 @@
 //
 // Original Author:  Xin Shi & Freya Blekman, Cornell University
 //         Created:  Fri Sep 12 17:58:29 CEST 2008
-// $Id: PATMHTProducer.h,v 1.22 2009/03/23 19:06:14 xs32 Exp $
+// $Id: PATMHTProducer.h,v 1.2.4.1 2009/03/23 21:19:58 xshi Exp $
 //
 //
 
@@ -64,6 +64,11 @@
 #include "FWCore/Framework/interface/ESHandle.h"
 #include "Geometry/CaloTopology/interface/CaloTowerConstituentsMap.h"
 #include "Geometry/Records/interface/IdealGeometryRecord.h"
+
+
+//--- For Muons  ---------------------//
+#include "TrackingTools/TrackAssociator/interface/TrackDetMatchInfo.h"
+#include "TrackingTools/TrackAssociator/interface/TrackDetectorAssociator.h"
 
 //
 // class declaration
@@ -176,6 +181,14 @@ namespace pat {
     edm::InputTag CaloTowerTag_;
     std::string metCollectionLabel_;
     std::string significanceLabel_;
+
+    //--- For Muon Calo Deposits ---//
+    TrackDetectorAssociator   trackAssociator_; 
+    TrackAssociatorParameters trackAssociatorParameters_;
+
+    double towerEtThreshold_ ; 
+    bool useHO_ ; 
+
 
   };
   //define this as a plug-in

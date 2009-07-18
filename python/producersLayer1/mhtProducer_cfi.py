@@ -1,7 +1,19 @@
 import FWCore.ParameterSet.Config as cms
 
+from Geometry.CMSCommonData.cmsIdealGeometryXML_cfi import *
+CaloTowerConstituentsMapBuilder = cms.ESProducer(
+    "CaloTowerConstituentsMapBuilder",
+    MapFile = cms.untracked.string( "Geometry/CaloTopology/data/CaloTowerEEGeometric.map.gz" )
+    )
+
+
+from TrackingTools.TrackAssociator.default_cfi import *
+#from TrackingTools.TrackAssociator.DetIdAssociatorESProducer_cff import *
+from RecoMuon.MuonIsolationProducers.trackAssociatorBlocks_cff import *
+
 allLayer1MHTs = cms.EDProducer(
-    "PATMHTProducer",
+    "PATMHTProducer", 
+    TrackAssociatorParameterBlock,   
     # General configurables
     verbose = cms.double(0.),
 
@@ -61,14 +73,13 @@ allLayer1MHTs = cms.EDProducer(
     #CaloTowerTag    = cms.InputTag("caloTowers"),
     CaloTowerTag    = cms.InputTag("towerMaker"),
     noHF            = cms.bool(False),
+    # only include towers whose Et > 0.5 since 
+    # by default the MET only includes towers with Et > 0.5
+    # from http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/CMSSW/JetMETCorrections/Type1MET/src/MuonMETAlgo.cc?revision=1.6&view=markup&pathrev=CMSSW_2_2_9
+    towerEtThreshold  = cms.double(0.5),   	
+    useHO  = cms.bool(False),
+
 )
 
+allLayer1MHTs.TrackAssociatorParameters.useCalo = True
 
-# --------------------------------------------------
-#  Specify Calorimeter Geometry 
-# --------------------------------------------------
-
-from Geometry.CMSCommonData.cmsIdealGeometryXML_cfi import *
-CaloTowerConstituentsMapBuilder = cms.ESProducer( "CaloTowerConstituentsMapBuilder",
-  MapFile = cms.untracked.string( "Geometry/CaloTopology/data/CaloTowerEEGeometric.map.gz" )
-)
