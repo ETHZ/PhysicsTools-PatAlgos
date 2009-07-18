@@ -1,4 +1,3 @@
-
 # This is an example PAT configuration showing the usage of PF2PAT
 
 # Starting with a skeleton process which gets imported with the following line
