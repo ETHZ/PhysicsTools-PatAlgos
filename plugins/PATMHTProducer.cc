@@ -1,5 +1,5 @@
 //
-// $Id: PATMHTProducer.cc,v 1.34 2009/04/22 17:24:48 xs32 Exp $
+// $Id: PATMHTProducer.cc,v 1.4.2.1 2009/06/02 18:56:05 xshi Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATMHTProducer.h"
@@ -41,6 +41,15 @@ pat::PATMHTProducer::PATMHTProducer(const edm::ParameterSet & iConfig){
 
   CaloTowerTag_  = iConfig.getParameter<edm::InputTag>("CaloTowerTag");
   noHF_ = iConfig.getParameter<bool>( "noHF"); 
+  
+  //  muonCalo_ = iConfig.getParameter<bool>("muonCalo");
+  towerEtThreshold_ = iConfig.getParameter<double>( "towerEtThreshold") ; 
+  useHO_ = iConfig.getParameter<bool>("useHO");
+
+  edm::ParameterSet trackAssociatorParams = 
+    iConfig.getParameter<edm::ParameterSet>("TrackAssociatorParameters");
+  trackAssociatorParameters_.loadParameters(trackAssociatorParams);  
+  trackAssociator_.useDefaultPropagator() ;
 
   produces<pat::MHTCollection>();
 
@@ -67,6 +76,9 @@ pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
   while(physobjvector_.size()>0){
     physobjvector_.erase(physobjvector_.begin(),physobjvector_.end());
   }
+
+  // Clean the clustered towers 
+  s_clusteredTowers.clear();
 
   double number_of_jets = getJets(iEvent, iSetup);
 
@@ -110,17 +122,55 @@ pat::PATMHTProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
     themetsigobj.setNumberOfElectrons(number_of_electrons);
     themetsigobj.setNumberOfMuons(number_of_muons);
 
-    //  MET Significance 
+
+    // ---------------------------------------
+    //  Uncorrected MET and its Significance
+    // ---------------------------------------
+
+    // Clear the intput object
+    physobjvector_.erase(physobjvector_.begin(),physobjvector_.end());
+    s_clusteredTowers.clear();
+
     getTowers(iEvent, iSetup); 
-    double metsgf = ASignificance(physobjvector_, met_et, met_phi, met_set);
-    themetsigobj.setMETsignificance(metsgf);
+
+    double uncor_metsgf = ASignificance(physobjvector_, met_et, met_phi, met_set);
+    themetsigobj.setUncorMET(met_et);
+    themetsigobj.setUncorMETsignificance(uncor_metsgf);
+
     if (verbose_ == 1.) {
+      std::cout << ">>>----> Uncor MET = " << met_et << std::endl;
+      std::cout << ">>>----> Uncor MET Sgificance = " << uncor_metsgf << std::endl;
+    }
+
+    // -----------------------------------------------------
+    //  MET and its Significance 
+    //  with Jets and Electron correction 
+    //  with Muon correction 
+    // -----------------------------------------------------
+
+    physobjvector_.erase(physobjvector_.begin(),physobjvector_.end());
+    s_clusteredTowers.clear();
+
+    getJets(iEvent, iSetup);
+    getElectrons(iEvent, iSetup);
+    getMuons(iEvent, iSetup);
+    getTowers(iEvent, iSetup); 
+
+    double metsgf = ASignificance(physobjvector_, met_et, met_phi, met_set);
+    themetsigobj.setMET(met_et);
+    themetsigobj.setMETsignificance(metsgf);
+
+
+    if (verbose_ == 1.) {
+      std::cout << ">>>----> MET = " << met_et << std::endl;
       std::cout << ">>>----> MET Sgificance = " << metsgf << std::endl;
     }
+
 
     themetsigcoll->push_back(themetsigobj);
 
   } // If the vector is empty, just put empty product. 
+
 
   iEvent.put( themetsigcoll);
 
@@ -152,7 +202,7 @@ pat::PATMHTProducer::getJets(edm::Event& iEvent, const edm::EventSetup & iSetup)
     double jet_et = jet_iter->et();
     double jet_phi = jet_iter->phi();
     
-    if (verbose_ == 1.) {
+    if (verbose_ == 3.) {
       std::cout << "jet pt : " << jet_iter->pt() << " eta : " << jet_iter->eta() 
 		<< " EMF: "  << jet_iter->emEnergyFraction() <<  std::endl;
     }
@@ -168,7 +218,7 @@ pat::PATMHTProducer::getJets(edm::Event& iEvent, const edm::EventSetup & iSetup)
       sigma_phi =  0.0 ; //jet_iter->resolutionPhi();
     }
 
-    if (verbose_ == 1.) {
+    if (verbose_ == 3.) {
       std::cout << "jet sigma_et : " << sigma_et << ", jet sigma_phi : " << sigma_phi <<  std::endl;
     }
 
@@ -229,9 +279,9 @@ pat::PATMHTProducer::getElectrons(edm::Event& iEvent, const edm::EventSetup & iS
 
   double number_of_electrons_ = 0.0;
 
-//   edm::ESHandle<CaloTowerConstituentsMap> cttopo;
-//   iSetup.get<IdealGeometryRecord>().get(cttopo);
-//   const CaloTowerConstituentsMap* caloTowerMap = cttopo.product();
+  edm::ESHandle<CaloTowerConstituentsMap> cttopo;
+  iSetup.get<IdealGeometryRecord>().get(cttopo);
+  const CaloTowerConstituentsMap* caloTowerMap = cttopo.product();
 
   edm::Handle<edm::View<pat::Electron> > electronHandle;
   iEvent.getByLabel(eleLabel_,electronHandle);
@@ -245,7 +295,7 @@ pat::PATMHTProducer::getElectrons(edm::Event& iEvent, const edm::EventSetup & iS
     if (electron_iter->et() < elePtMin_ || 
 	TMath::Abs(electron_iter->eta()) > eleEtaMax_  ) continue; 
 
-    if (verbose_ == 1.) {
+    if (verbose_ == 3.) {
       std::cout << "electron pt = " << electron_iter->pt()  << " eta : " << electron_iter->eta() 
 		<<  std::endl;
     }
@@ -264,7 +314,7 @@ pat::PATMHTProducer::getElectrons(edm::Event& iEvent, const edm::EventSetup & iS
       sigma_phi = 0.0; // electron_iter->resolutionPhi();
     }
 
-    if (verbose_ == 1.) {
+    if (verbose_ == 3.) {
       std::cout << "electron sigma_et : " << sigma_et << ", electron sigma_phi : " << sigma_phi
 		<<  std::endl;}
 
@@ -283,23 +333,24 @@ pat::PATMHTProducer::getElectrons(edm::Event& iEvent, const edm::EventSetup & iS
     physobjvector_.push_back(tmp_electron);
     number_of_electrons_ ++; 
     
-//     //-- Store tower DetId's to be removed from Calo Tower sum later --//
-//     const reco::SuperCluster& eleSC = *( electron_iter->superCluster() );
+    //-- Store tower DetId's to be removed from Calo Tower sum later --//
+    const reco::SuperCluster& eleSC = *( electron_iter->superCluster() );
     
-//     std::vector<DetId> v_eleDetIds = eleSC.getHitsByDetId();
+    std::vector<DetId> v_eleDetIds = eleSC.getHitsByDetId();
     
-//     //-- Convert cells to calo towers and add to set --//
-//     for( std::vector<DetId>::iterator cellId = v_eleDetIds.begin();
-//          cellId != v_eleDetIds.end();
-//          cellId++) {
+    //-- Convert cells to calo towers and add to set --//
+    for( std::vector<DetId>::iterator cellId = v_eleDetIds.begin();
+         cellId != v_eleDetIds.end();
+         cellId++) {
 
-//       CaloTowerDetId towerId = caloTowerMap->towerOf(*cellId);
-//       if (towerId != nullDetId) {
-// 	std::pair<std::_Rb_tree_const_iterator<CaloTowerDetId>,bool> p1 = s_clusteredTowers.insert(towerId);
-//       }
-//       else
-// 	std::cerr<<"No matching tower found for electron cell!\n";
-//     }
+      CaloTowerDetId towerId = caloTowerMap->towerOf(*cellId);
+      if (towerId != nullDetId) {
+	//std::cout << ">>> electron towerId: " << towerId << std::endl;
+	std::pair<std::_Rb_tree_const_iterator<CaloTowerDetId>,bool> p1 = s_clusteredTowers.insert(towerId);
+      }
+      else
+	std::cerr<<"No matching tower found for electron cell!\n";
+    }
 
 
   }
@@ -320,13 +371,19 @@ double pat::PATMHTProducer::getMuons(edm::Event& iEvent, const edm::EventSetup &
   iEvent.getByLabel(muoLabel_,muonHandle);
   edm::View<pat::Muon> muons = *muonHandle;
 
+  if ( !muonHandle.isValid() ) {
+    std::cout << ">>> PATMHTSelector not valid muon Handle!" << std::endl;
+    return 0.0;
+  }
+
+
   double number_of_muons_ = 0.0;
 
   for(edm::View<pat::Muon>::const_iterator muon_iter = muons.begin(); muon_iter!=muons.end(); ++muon_iter){
 
     if (muon_iter->pt() < muonPtMin_ || TMath::Abs(muon_iter->eta()) > muonEtaMax_  ) continue; 
 
-    if (verbose_ == 1.) {
+    if (verbose_ == 3.) {
       std::cout << "muon pt = " << muon_iter->pt() << " eta : " << muon_iter->eta() <<  std::endl;
     }
 
@@ -344,7 +401,7 @@ double pat::PATMHTProducer::getMuons(edm::Event& iEvent, const edm::EventSetup &
       sigma_phi = 0.0; // muon_iter->resolutionPhi();
     }
 
-    if (verbose_ == 1.) {
+    if (verbose_ == 3.) {
       std::cout << "muon sigma_et : " << sigma_et
 		<< ", muon sigma_phi : " << sigma_phi
 		<<  std::endl;}
@@ -353,20 +410,17 @@ double pat::PATMHTProducer::getMuons(edm::Event& iEvent, const edm::EventSetup &
       edm::LogWarning("PATMHTProducer") << 
 	" uncertainties for "  << objectname << " are (et, phi): " << sigma_et << "," <<
 	sigma_phi << " (pt,phi): " << muon_pt << "," << muon_phi;
-    // try to read out the muon resolution from the root file at PatUtils
-    //-- Store muon for Significance Calculation --//
 
     if (uncertaintyScaleFactor_ != 1.0){
       sigma_et  = sigma_et  * uncertaintyScaleFactor_;
       sigma_phi = sigma_phi * uncertaintyScaleFactor_;
-      //edm::LogWarning("PATMHTProducer") << " using uncertainty scale factor: " << uncertaintyScaleFactor_ <<
-      //" , uncertainties for " << objectname <<" changed to (et, phi): " << sigma_et << "," << sigma_phi; 
     }
 
     metsig::SigInputObj tmp_muon(objectname,muon_pt,muon_phi,sigma_et,sigma_phi);
     physobjvector_.push_back(tmp_muon);
     number_of_muons_ ++;
-  }
+
+  }// end Muon loop
 
   return number_of_muons_;
 }
@@ -443,7 +497,7 @@ void pat::PATMHTProducer::getTowers(edm::Event& iEvent, const edm::EventSetup & 
       if(calotower->et()<globalEtThreshold)
 	continue;
 
-      if (verbose_ == 1.) {
+      if (verbose_ == 3.) {
 	std::cout << ">>>---> calotower et : " << calotower->et() <<  std::endl;
       }
 
@@ -461,7 +515,7 @@ void pat::PATMHTProducer::getTowers(edm::Event& iEvent, const edm::EventSetup & 
 	{
 	  DetId id = calotower->constituent( cell );
 
-	  if (verbose_ == 1.) {
+	  if (verbose_ == 3.) {
 	    std::cout << ">>>---> DetId.det: " << id.det() <<  std::endl;
 	  }
 	  
@@ -504,7 +558,7 @@ void pat::PATMHTProducer::getTowers(edm::Event& iEvent, const edm::EventSetup & 
 	      metsig::SigInputObj temp(objectname, sign_tower_et, sign_tower_phi, sigma_et,sigma_phi);
               std::set<CaloTowerDetId>::iterator towerId = s_clusteredTowers.find(calotower->id());
 
-	      if (verbose_ == 1.) {
+	      if (verbose_ == 3.) {
 		std::cout << ">>>---> HCAL towerID: " << *towerId <<  std::endl;
 	      }
 
@@ -512,7 +566,7 @@ void pat::PATMHTProducer::getTowers(edm::Event& iEvent, const edm::EventSetup & 
 		if( towerId == s_clusteredTowers.end() ) { // => tower not in set
 		  physobjvector_.push_back(temp);
 
-		  if (verbose_ == 1.) {
+		  if (verbose_ == 3.) {
 		    std::cout << ">>>---> adding phy vector from HCAL... "  <<  std::endl;
 		  }
 		}
@@ -527,7 +581,7 @@ void pat::PATMHTProducer::getTowers(edm::Event& iEvent, const edm::EventSetup & 
 	    {
 	      EcalSubdetector subdet = EcalSubdetector( id.subdetId() );
 
-	      if (verbose_ == 1.) {
+	      if (verbose_ == 3.) {
 		std::cout << ">>>---> ECAL: id.det= " << id.det()
 			  << " subdetId = " << id.subdetId() <<  std::endl;
 	      }
@@ -565,7 +619,81 @@ void pat::PATMHTProducer::getTowers(edm::Event& iEvent, const edm::EventSetup & 
 	std::cerr << "found non-assigned cell, " << std::endl;
       
     }// End Loop over all calotowers 
+
+
+  // Muon CaloTower Correction
+
+  edm::Handle<edm::View<pat::Muon> > muonHandle;
+  iEvent.getByLabel(muoLabel_,muonHandle);
+  edm::View<pat::Muon> muons = *muonHandle;
   
+  if ( !muonHandle.isValid() ) {
+    std::cout << ">>> PATMHTSelector not valid muon Handle!" << std::endl;
+    return ;
+  }
+  
+  for(edm::View<pat::Muon>::const_iterator muon_iter = muons.begin(); 
+      muon_iter!=muons.end(); ++muon_iter){
+    
+    if (muon_iter->pt() < muonPtMin_ || TMath::Abs(muon_iter->eta()) > muonEtaMax_  ) continue; 
+    
+    // Determin the Muon Isolation
+    
+    bool useAverage = false; 
+    //decide whether or not we want to correct on average based 
+    //on isolation information from the muon
+    double sumPt   = muon_iter->isIsolationValid()? muon_iter->isolationR03().sumPt       : 0.0;
+    double sumEtEcal = muon_iter->isIsolationValid() ? muon_iter->isolationR03().emEt     : 0.0;
+    double sumEtHcal    = muon_iter->isIsolationValid() ? muon_iter->isolationR03().hadEt : 0.0;
+    
+    if(sumPt > 3 || sumEtEcal + sumEtHcal > 5) useAverage = true;
+
+    // Get Tower Energy for Muons
+    reco::TrackRef gmuRef = muon_iter->globalTrack();
+    if (gmuRef.isNull()) continue;
+    
+    TrackDetMatchInfo info = 
+      trackAssociator_.associate(iEvent, iSetup,
+    				 trackAssociator_.getFreeTrajectoryState(iSetup, *gmuRef),
+    				 trackAssociatorParameters_);
+
+    double ecalTheta = info.trkGlobPosAtEcal.Theta();
+    double ecalPhi = info.trkGlobPosAtEcal.Phi();
+    double hcalTheta = info.trkGlobPosAtHcal.Theta();
+    double hcalPhi = info.trkGlobPosAtHcal.Phi();
+    double hoTheta = info.trkGlobPosAtHO.Theta();
+    double hoPhi = info.trkGlobPosAtHO.Phi();
+    
+    double ecalE = 0.0;
+    double hcalE = 0.0;
+    double hoE = 0.0;
+
+    std::vector<const CaloTower*> towers = info.crossedTowers;
+    for(std::vector<const CaloTower*>::const_iterator it = towers.begin();
+	it != towers.end(); it++) {
+      if( (*it)->et() <  towerEtThreshold_) continue;
+      ecalE += (*it)->emEnergy();
+      hcalE  += (*it)->hadEnergy();
+      if(useHO_) hoE += (*it)->outerEnergy();
+    }// end calotower loop
+
+    // Correction for isolated muons
+    if (!useAverage) {
+      double muonCaloEtDepX =  ecalE*sin(ecalTheta)*cos(ecalPhi)
+	+ hcalE*sin(hcalTheta)*cos(hcalPhi)
+	+ hoE*sin(hoTheta)*cos(hoPhi);
+      double muonCaloEtDepY =  ecalE*sin(ecalTheta)*sin(ecalPhi)
+	+ hcalE*sin(hcalTheta)*sin(hcalPhi)
+	+ hoE*sin(hoTheta)*sin(hoPhi);
+
+      double sigma_et  = 0.0; 
+      double sigma_phi = 0.0; 
+      objectname="muonCorr";
+      metsig::SigInputObj tmp_muonCorr(objectname,muonCaloEtDepX,muonCaloEtDepY,sigma_et,sigma_phi);
+      physobjvector_.push_back(tmp_muonCorr);
+    }
+  }// end Muon loop  
+
 }  // End getTowers()
 
 
