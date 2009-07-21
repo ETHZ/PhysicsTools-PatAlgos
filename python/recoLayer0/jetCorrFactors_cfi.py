@@ -15,7 +15,7 @@ jetCorrFactors = cms.EDProducer("JetCorrFactorsProducer",
      L5Flavor  = cms.string('L5Flavor_IC5'),
      L6UE      = cms.string('none'),                           
      L7Parton  = cms.string('L7Parton_IC5'),
-     ## choose sample type for flavor dependend corrections:
+     ## choose sample type for flavor dependent corrections:
      sampleType = cms.string('dijet')  ##  'dijet': from dijet sample
                                        ##  'ttbar': from ttbar sample
 )

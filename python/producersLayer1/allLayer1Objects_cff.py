@@ -28,7 +28,7 @@ allLayer1Objects = cms.Sequence(
     allLayer1Photons +
     allLayer1Jets +
     layer1METs +
-    allLayer1MHTs +
+#   allLayer1MHTs +
     allLayer1Summary
 )
 allLayer1Objects.doc = "Produce PAT objects, without any selection"
