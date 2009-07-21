@@ -13,17 +13,7 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 # PAT Layer 0+1
 process.load("PhysicsTools.PatAlgos.patSequences_cff")
 
-# Configure PAT to use PF2PAT instead of AOD sources
-from PhysicsTools.PatAlgos.tools.pfTools import *
-
-usePF2PAT(process, runPF2PAT=False)
-
-
-process.p = cms.Path(
-    process.patDefaultSequence  
-)
-
-# Output module configuration
+# Define output module (needs to be done before using the PAT tools)
 from PhysicsTools.PatAlgos.patEventContent_cff import patEventContentNoLayer1Cleaning
 from PhysicsTools.PatAlgos.patEventContent_cff import patExtraAodEventContent
 process.out = cms.OutputModule("PoolOutputModule",
@@ -35,6 +25,17 @@ process.out = cms.OutputModule("PoolOutputModule",
                                            *(patEventContentNoLayer1Cleaning+patExtraAodEventContent) )
                                # you need a '*' to unpack the list of commands 'patEventContentNoLayer1Cleaning'
 )
+
+# Configure PAT to use PF2PAT instead of AOD sources
+from PhysicsTools.PatAlgos.tools.pfTools import *
+
+usePF2PAT(process, runPF2PAT=False)
+
+
+process.p = cms.Path(
+    process.patDefaultSequence  
+)
+
 process.outpath = cms.EndPath(process.out)
 
 

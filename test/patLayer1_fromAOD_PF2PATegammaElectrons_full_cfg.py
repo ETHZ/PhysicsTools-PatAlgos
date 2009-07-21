@@ -26,6 +26,16 @@ process.load("PhysicsTools.PFCandProducer.PF2PAT_cff")
 # PAT Layer 0+1
 process.load("PhysicsTools.PatAlgos.patSequences_cff")
 
+# Define output module (needs to be done before using the PAT tools)
+from PhysicsTools.PatAlgos.patEventContent_cff import patEventContentNoLayer1Cleaning
+process.out = cms.OutputModule("PoolOutputModule",
+    fileName = cms.untracked.string('patLayer1_fromAOD_PF2PATegammaElectrons_full.root'),
+    # save only events passing the full path
+    SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring('p') ),
+    # save PAT Layer 1 output
+    outputCommands = cms.untracked.vstring('drop *', *patEventContentNoLayer1Cleaning ) # you need a '*' to unpack the list of commands 'patEventContentNoLayer1Cleaning'
+)
+
 # Configure PAT to use PF2PAT instead of AOD sources
 from PhysicsTools.PatAlgos.tools.pfTools import *
 
@@ -41,16 +51,6 @@ process.p = cms.Path(
 )
 
 # Output module configuration
-
-from PhysicsTools.PatAlgos.patEventContent_cff import patEventContentNoLayer1Cleaning
-process.out = cms.OutputModule("PoolOutputModule",
-    fileName = cms.untracked.string('patLayer1_fromAOD_PF2PATegammaElectrons_full.root'),
-    # save only events passing the full path
-    SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring('p') ),
-    # save PAT Layer 1 output
-    outputCommands = cms.untracked.vstring('drop *', *patEventContentNoLayer1Cleaning ) # you need a '*' to unpack the list of commands 'patEventContentNoLayer1Cleaning'
-)
-# save PAT Layer 1 output after cleaning
 from PhysicsTools.PatAlgos.patEventContent_cff import patEventContent
 process.out.outputCommands += cms.untracked.vstring( *patEventContent )
 
