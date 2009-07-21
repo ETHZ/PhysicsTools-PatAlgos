@@ -3,6 +3,13 @@
 # Starting with a skeleton process which gets imported with the following line
 from PhysicsTools.PatAlgos.patTemplate_cfg import *
 
+# overriding source and various other things
+process.load("PhysicsTools.PFCandProducer.Sources.source_ZtoTaus_DBS_cfi")
+process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(False))
+
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
+process.out.fileName = cms.untracked.string('patLayer1_fromAOD_PF2PAT_full.root')
+
 # load the standard PAT config
 process.load("PhysicsTools.PatAlgos.patSequences_cff")
 
@@ -19,9 +26,10 @@ process.p = cms.Path(
 )
 
 # Add PF2PAT output to the created file
+from PhysicsTools.PatAlgos.patEventContent_cff import patEventContentNoLayer1Cleaning
 process.load("PhysicsTools.PFCandProducer.PF2PAT_EventContent_cff")
+process.out.outputCommands =  cms.untracked.vstring('drop *', *patEventContentNoLayer1Cleaning )
 process.out.outputCommands.extend( process.PF2PATEventContent.outputCommands)
-process.out.outputCommands.extend( process.PF2PATStudiesEventContent.outputCommands)
 
 
 # In addition you usually want to change the following parameters:
