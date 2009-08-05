@@ -4,10 +4,10 @@
 from PhysicsTools.PatAlgos.patTemplate_cfg import *
 
 # overriding source and various other things
-process.load("PhysicsTools.PFCandProducer.Sources.source_ZtoTaus_DBS_cfi")
+process.load("PhysicsTools.PFCandProducer.Sources.source_ZtoMus_DBS_cfi")
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(False))
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(2000) )
 process.out.fileName = cms.untracked.string('patLayer1_fromAOD_PF2PAT_full.root')
 
 # load the standard PAT config
@@ -41,3 +41,4 @@ process.out.outputCommands.extend( process.PF2PATEventContent.outputCommands)
 #   process.out.fileName = ...              (e.g. 'myTuple.root')
 #   process.options.wantSummary = False     (to suppress the long output at the end of the job)
 
+process.MessageLogger.cerr.FwkReport.reportEvery = 10
