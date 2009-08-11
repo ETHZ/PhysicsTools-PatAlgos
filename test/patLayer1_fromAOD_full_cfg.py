@@ -13,7 +13,8 @@ process.load("PhysicsTools.PatAlgos.patSequences_cff")
 from PhysicsTools.PatAlgos.tools.coreTools import *
 #removeMCMatching(process, 'Muons')
 #removeAllPATObjectsBut(process, ['Muons'])
-#removeSpecificPATObjects(process, ['Photons', 'Electrons', 'Muons', 'Taus'])
+removeSpecificPATObjects(process, ['Taus'])
+useAODInputFor(process, ['All'])
 
 # let it run
 process.p = cms.Path(

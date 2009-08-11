@@ -7,6 +7,14 @@ from PhysicsTools.PatAlgos.patTemplate_cfg import *
 process.load("PhysicsTools.PatAlgos.producersLayer1.electronProducer_cff")
 process.load("PhysicsTools.PatAlgos.selectionLayer1.electronSelector_cfi")
 
+# note that you can use a bunch of core tools of PAT 
+# to taylor your PAT configuration; for a few examples
+# uncomment the following lines
+
+from PhysicsTools.PatAlgos.tools.coreTools import *
+useAODInputFor(process, ['Electrons'])
+
+
 # let it run
 process.p = cms.Path(
     process.makeAllLayer1Electrons *
