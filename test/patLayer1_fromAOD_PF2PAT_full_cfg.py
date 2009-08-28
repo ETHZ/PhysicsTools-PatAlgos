@@ -22,7 +22,7 @@ process.load("PhysicsTools.PFCandProducer.PF2PAT_cff")
 
 # Configure PAT to use PF2PAT instead of AOD sources
 from PhysicsTools.PatAlgos.tools.pfTools import *
-usePF2PAT(process,runPF2PAT=True, addElectrons=True)  # or you can leave this to the default, False, and run PF2PAT before patDefaultSequence
+usePF2PAT(process,runPF2PAT=True)  # or you can leave this to the default, False, and run PF2PAT before patDefaultSequence
 
 # Let it run
 process.p = cms.Path(
