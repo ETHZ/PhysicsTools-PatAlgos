@@ -9,7 +9,7 @@ process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 # source
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
-        '/store/relval/CMSSW_3_1_0/RelValTTbar/GEN-SIM-RECO/STARTUP31X_V1-v1/0001/D48CD6F6-8F66-DE11-B835-001D09F2983F.root'
+        '/pnfs/cms/WAX/11/store/relval/CMSSW_3_1_2/RelValTTbar/GEN-SIM-RECO/STARTUP31X_V2-v1/0006/0CC00E3B-5A78-DE11-A2AB-000423D94A04.root'
     )
 )
 
