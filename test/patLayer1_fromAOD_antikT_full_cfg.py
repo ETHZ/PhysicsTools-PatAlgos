@@ -3,11 +3,6 @@ from PhysicsTools.PatAlgos.patTemplate_cfg import *
 # load the standard PAT config 
 process.load("PhysicsTools.PatAlgos.patSequences_cff")
 
-# load the anti-kt algorithm
-process.load("RecoJets.Configuration.RecoJets_cff")
-process.load("RecoJets.Configuration.RecoGenJets_cff")
-process.load("RecoJets.Configuration.GenJetParticles_cff")
-
 from PhysicsTools.PatAlgos.tools.jetTools import *
 
 # uncomment the following lines to switch the standard jet collection
@@ -22,9 +17,6 @@ switchJetCollection(process,
                     ) 
 
 process.p = cms.Path(
-                process.genParticlesForJets *
-                process.ak5GenJets *
-                process.ak5CaloJets *
                 process.patDefaultSequence  
             )
 
