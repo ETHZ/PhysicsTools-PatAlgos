@@ -1,9 +1,6 @@
 # import skeleton process
 from PhysicsTools.PatAlgos.patTemplate_cfg import *
 
-# PAT Layer 0+1
-process.load("PhysicsTools.PatAlgos.patSequences_cff")
-
 from PhysicsTools.PatAlgos.tools.coreTools import removeCleaning
 removeCleaning(process)
 

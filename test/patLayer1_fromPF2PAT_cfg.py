@@ -9,10 +9,6 @@ process.source = cms.Source("PoolSource",
 )
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
-
-# PAT Layer 0+1
-process.load("PhysicsTools.PatAlgos.patSequences_cff")
-
 # Define output module (needs to be done before using the PAT tools)
 from PhysicsTools.PatAlgos.patEventContent_cff import patEventContentNoLayer1Cleaning
 from PhysicsTools.PatAlgos.patEventContent_cff import patExtraAodEventContent

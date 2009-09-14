@@ -2,7 +2,6 @@
 from PhysicsTools.PatAlgos.patTemplate_cfg import *
 
 # PAT Layer 0+1
-process.load("PhysicsTools.PatAlgos.patSequences_cff")
 process.load("SimGeneral.HepPDTESSource.pythiapdt_cfi")
 process.inFlightMuons = cms.EDProducer("PATGenCandsFromSimTracksProducer",
         src           = cms.InputTag("g4SimHits"), # use "famosSimHits" for FAMOS

@@ -3,9 +3,6 @@
 # Starting with a skeleton process which gets imported with the following line
 from PhysicsTools.PatAlgos.patTemplate_cfg import *
 
-# load the standard PAT config
-process.load("PhysicsTools.PatAlgos.patSequences_cff")
-
 # switch to CaloTau (outputs will be allLayer0CaloTaus, allLayer1Taus, selectedLayer1Taus)
 from PhysicsTools.PatAlgos.tools.tauTools import switchToCaloTau
 switchToCaloTau(process)

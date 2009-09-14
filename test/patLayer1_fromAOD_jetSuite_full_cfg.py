@@ -1,10 +1,6 @@
 # import skeleton process
 from PhysicsTools.PatAlgos.patTemplate_cfg import *
 
-
-# load the standard PAT config 
-process.load("PhysicsTools.PatAlgos.patSequences_cff")
-
 # uncomment the following line to add tcMET to the event content
 from PhysicsTools.PatAlgos.tools.metTools import *
 addTcMET(process, 'TC')
@@ -19,6 +15,19 @@ process.load("PhysicsTools.PatAlgos.recoLayer0.jetPlusTrack_cff")
 process.jpt = cms.Path(
     process.jptCaloJets
 )
+
+
+# uncomment the following lines to add ak7Calo jets to your PAT output
+addJetCollection(process,cms.InputTag('ak7CaloJets'),
+                 'AK7',
+                 doJTA        = True,
+                 doBTagging   = False,
+                 jetCorrLabel = None,
+                 doType1MET   = True,
+                 doL1Cleaning = True,                 
+                 doL1Counters = False,
+                 genJetCollection=cms.InputTag("ak7GenJets")
+                 )
 
 # uncomment the following lines to add iterativeCone5JPT jets to
 # your PAT output

@@ -3,9 +3,6 @@
 # Starting with a skeleton process which gets imported with the following line
 from PhysicsTools.PatAlgos.patTemplate_cfg import *
 
-# load the standard PAT config
-process.load("PhysicsTools.PatAlgos.patSequences_cff")
-
 # note that you can use a bunch of core tools of PAT 
 # to taylor your PAT configuration; for a few examples
 # uncomment the following lines
@@ -29,4 +26,4 @@ process.p = cms.Path(
 #   process.maxEvents.input = ...         ##  (e.g. -1 to run on all events)
 #   process.out.outputCommands = [ ... ]  ##  (e.g. taken from PhysicsTools/PatAlgos/python/patEventContent_cff.py)
 #   process.out.fileName = ...            ##  (e.g. 'myTuple.root')
-process.options.wantSummary = False       ##  (to suppress the long output at the end of the job)    
+process.options.wantSummary = True        ##  (to suppress the long output at the end of the job)    

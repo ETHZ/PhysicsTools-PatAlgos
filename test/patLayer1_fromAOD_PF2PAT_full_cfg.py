@@ -14,9 +14,6 @@ process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(False))
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 process.out.fileName = cms.untracked.string('patLayer1_fromAOD_PF2PAT_full.root')
 
-# load the standard PAT config
-process.load("PhysicsTools.PatAlgos.patSequences_cff")
-
 # load the PF to PAT config
 process.load("PhysicsTools.PFCandProducer.PF2PAT_cff")
 

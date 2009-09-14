@@ -12,9 +12,6 @@ process.load("FastSimulation.Configuration.ttbar_cfi")
 process.load("PhysicsTools.PatAlgos.famos.boostrapWithFamos_cff")
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
 
-# PAT Layer 0+1
-process.load("PhysicsTools.PatAlgos.patSequences_cff")
-
 ## Load additional RECO config
 # Magnetic field now needs to be in the high-level py
 # process.load("Configuration.StandardSequences.MagneticField_cff")
