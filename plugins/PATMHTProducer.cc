@@ -1,5 +1,5 @@
 //
-// $Id: PATMHTProducer.cc,v 1.4.2.1 2009/06/02 18:56:05 xshi Exp $
+// $Id: PATMHTProducer.cc,v 1.4.2.2 2009/07/20 19:37:41 xshi Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATMHTProducer.h"
@@ -631,6 +631,9 @@ void pat::PATMHTProducer::getTowers(edm::Event& iEvent, const edm::EventSetup & 
     std::cout << ">>> PATMHTSelector not valid muon Handle!" << std::endl;
     return ;
   }
+
+  // Adapted code from 
+  // http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/CMSSW/JetMETCorrections/Type1MET/src/MuonMETAlgo.cc?revision=1.6&view=markup&pathrev=CMSSW_2_2_13
   
   for(edm::View<pat::Muon>::const_iterator muon_iter = muons.begin(); 
       muon_iter!=muons.end(); ++muon_iter){
@@ -677,21 +680,95 @@ void pat::PATMHTProducer::getTowers(edm::Event& iEvent, const edm::EventSetup & 
       if(useHO_) hoE += (*it)->outerEnergy();
     }// end calotower loop
 
+
+    //The tracker has better resolution for pt < 200 GeV
+    math::XYZTLorentzVector mup4;
+    if(muon_iter->globalTrack()->pt() < 200) {
+      mup4 = math::XYZTLorentzVector(muon_iter->innerTrack()->px(), muon_iter->innerTrack()->py(),
+			   muon_iter->innerTrack()->pz(), muon_iter->innerTrack()->p());
+    } else {
+      mup4 = math::XYZTLorentzVector(muon_iter->globalTrack()->px(), muon_iter->globalTrack()->py(),
+			   muon_iter->globalTrack()->pz(), muon_iter->globalTrack()->p());
+    }	
+
+    double mu_p     = mup4.P();
+    // double mu_pt    = mup4.Pt();
+    // double mu_phi   = mup4.Phi();
+    double mu_eta   = mup4.Eta();
+    // double mu_vz    = muon_iter->vertex().z()/100.;
+    // double mu_pz    = mup4.Pz();
+
+
     // Correction for isolated muons
+    double muonCaloEtDepX = 0.0;
+    double muonCaloEtDepY = 0.0;
+    double sigma_et  = 0.0; 
+    double sigma_phi = 0.0; 
+    objectname="muonCorr";
+
     if (!useAverage) {
-      double muonCaloEtDepX =  ecalE*sin(ecalTheta)*cos(ecalPhi)
+      muonCaloEtDepX =  ecalE*sin(ecalTheta)*cos(ecalPhi)
 	+ hcalE*sin(hcalTheta)*cos(hcalPhi)
 	+ hoE*sin(hoTheta)*cos(hoPhi);
-      double muonCaloEtDepY =  ecalE*sin(ecalTheta)*sin(ecalPhi)
+      muonCaloEtDepY =  ecalE*sin(ecalTheta)*sin(ecalPhi)
 	+ hcalE*sin(hcalTheta)*sin(hcalPhi)
 	+ hoE*sin(hoTheta)*sin(hoPhi);
 
-      double sigma_et  = 0.0; 
-      double sigma_phi = 0.0; 
-      objectname="muonCorr";
-      metsig::SigInputObj tmp_muonCorr(objectname,muonCaloEtDepX,muonCaloEtDepY,sigma_et,sigma_phi);
-      physobjvector_.push_back(tmp_muonCorr);
+      // std::cout << "Isolated: muonCaloEtDepX = " << muonCaloEtDepX 
+      // 		<< " , muonCaloEtDepY = " << muonCaloEtDepY  << std::endl;
+
     }
+
+    else { //non-isolated muons - derive the correction
+    
+      //dE/dx in matter for iron:
+      //-(11.4 + 0.96*fabs(log(p0*2.8)) + 0.033*p0*(1.0 - pow(p0, -0.33)) )*1e-3
+      //from http://cmslxr.fnal.gov/lxr/source/TrackPropagation/SteppingHelixPropagator/src/SteppingHelixPropagator.ccyes,
+      //line ~1100
+      //normalisation is at 50 GeV
+      double dEdx_normalization = -(11.4 + 0.96*fabs(log(50*2.8)) + 0.033*50*(1.0 - pow(50, -0.33)) )*1e-3;
+      double dEdx_numerator     = -(11.4 + 0.96*fabs(log(mu_p*2.8)) + 0.033*mu_p*(1.0 - pow(mu_p, -0.33)) )*1e-3;
+      
+      double temp = 0.0;
+    
+      if(useHO_) {
+	//for the Towers, with HO
+	if(fabs(mu_eta) < 0.2)
+	  temp = 2.75*(1-0.00003*mu_p);
+	if(fabs(mu_eta) > 0.2 && fabs(mu_eta) < 1.0)
+	  temp = (2.38+0.0144*fabs(mu_eta))*(1-0.0003*mu_p);
+	if(fabs(mu_eta) > 1.0 && fabs(mu_eta) < 1.3)
+	  temp = 7.413-5.12*fabs(mu_eta);
+	if(fabs(mu_eta) > 1.3)
+	  temp = 2.084-0.743*fabs(mu_eta);
+      } else {
+	if(fabs(mu_eta) < 1.0)
+	  temp = 2.33*(1-0.0004*mu_p);
+	if(fabs(mu_eta) > 1.0 && fabs(mu_eta) < 1.3)
+	  temp = (7.413-5.12*fabs(mu_eta))*(1-0.0003*mu_p);
+	if(fabs(mu_eta) > 1.3)
+	  temp = 2.084-0.743*fabs(mu_eta);
+      }
+
+      double dep = temp*dEdx_normalization/dEdx_numerator;
+      if(dep < 0.5) dep = 0;
+      //use the average phi of the 3 subdetectors
+      if(fabs(mu_eta) < 1.3) {
+	muonCaloEtDepX =  dep*cos((ecalPhi+hcalPhi+hoPhi)/3);
+	muonCaloEtDepY =  dep*sin((ecalPhi+hcalPhi+hoPhi)/3);
+      } else {
+	muonCaloEtDepX =  dep*cos( (ecalPhi+hcalPhi)/2);
+	muonCaloEtDepY =  dep*cos( (ecalPhi+hcalPhi)/2);
+      }
+
+      // std::cout << "Non-isolated: muonCaloEtDepX = " << muonCaloEtDepX 
+      // 		<< " , muonCaloEtDepY = " << muonCaloEtDepY << std::endl;
+    }
+    
+    // Save physobjvector for this muon 
+    metsig::SigInputObj tmp_muonCorr(objectname,muonCaloEtDepX,muonCaloEtDepY,sigma_et,sigma_phi);
+    physobjvector_.push_back(tmp_muonCorr);
+    
   }// end Muon loop  
 
 }  // End getTowers()
