@@ -9,8 +9,10 @@ switchJetCollection(process,
                     doJTA            = True,            
                     doBTagging       = True,            
                     jetCorrLabel     = ('AK5','Calo'),  
-                    doType1MET       = True,            
-                    genJetCollection = cms.InputTag("ak5GenJets")
+                    doType1MET       = True,
+                    genJetCollection = cms.InputTag("ak5GenJets"),
+                    doJetID          = True,
+                    jetIdLabel       = "ak5"
                     ) 
 
 process.p = cms.Path(

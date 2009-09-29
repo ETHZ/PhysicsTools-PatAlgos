@@ -26,7 +26,9 @@ addJetCollection(process,cms.InputTag('ak7CaloJets'),
                  doType1MET   = True,
                  doL1Cleaning = True,                 
                  doL1Counters = False,
-                 genJetCollection=cms.InputTag("ak7GenJets")
+                 genJetCollection=cms.InputTag("ak7GenJets"),
+                 doJetID          = True,
+                 jetIdLabel       = "ak7"
                  )
 
 # uncomment the following lines to add iterativeCone5JPT jets to
@@ -40,7 +42,8 @@ addJetCollection(process,cms.InputTag('JetPlusTrackZSPCorJetIcone5'),
                  doType1MET   = False,
                  doL1Cleaning = True,
                  doL1Counters = True,                 
-                 genJetCollection = cms.InputTag("iterativeCone5GenJets")
+                 genJetCollection = cms.InputTag("iterativeCone5GenJets"),
+                 doJetID          = False
                  )
 
 # uncomment the following lines to add sisCone5Calo jets to your PAT output
@@ -52,7 +55,9 @@ addJetCollection(process,cms.InputTag('sisCone5CaloJets'),
                  doType1MET   = True,
                  doL1Cleaning = True,                 
                  doL1Counters = False,
-                 genJetCollection=cms.InputTag("sisCone5GenJets")
+                 genJetCollection=cms.InputTag("sisCone5GenJets"),
+                 doJetID          = True,
+                 jetIdLabel       = "sc5"
                  )
 
 # uncomment the following lines to add sisCone7Calo jets to your PAT output
@@ -64,7 +69,9 @@ addJetCollection(process,cms.InputTag('sisCone7CaloJets'),
                  doType1MET   = True,
                  doL1Cleaning = True,                 
                  doL1Counters = False,
-                 genJetCollection=cms.InputTag("sisCone5GenJets")
+                 genJetCollection=cms.InputTag("sisCone5GenJets"),
+                 doJetID          = True,
+                 jetIdLabel       = "sc7"
                  )
 
 # uncomment the following lines to add kt4Calo jets to your PAT output
@@ -76,7 +83,9 @@ addJetCollection(process,cms.InputTag('kt4CaloJets'),
                  doType1MET   = True,
                  doL1Cleaning = True,                 
                  doL1Counters = False,
-                 genJetCollection=cms.InputTag("kt4GenJets")
+                 genJetCollection=cms.InputTag("kt4GenJets"),
+                 doJetID          = True,
+                 jetIdLabel       = "kt4"
                  )
 
 # uncomment the following lines to add kt6Calo jets to your PAT output
@@ -88,7 +97,9 @@ addJetCollection(process,cms.InputTag('kt6CaloJets'),
                  doType1MET   = True,
                  doL1Cleaning = True,                 
                  doL1Counters = False,
-                 genJetCollection=cms.InputTag("kt6GenJets")
+                 genJetCollection=cms.InputTag("kt6GenJets"),
+                 doJetID          = True,
+                 jetIdLabel       = "kt6"
                  )
 
 # uncomment the following lines to add iterativeCone5Pflow jets to your PAT output
@@ -100,7 +111,8 @@ addJetCollection(process,cms.InputTag('iterativeCone5PFJets'),
                  doType1MET   = True,
                  doL1Cleaning = True,                 
                  doL1Counters = False,
-                 genJetCollection=cms.InputTag("iterativeCone5GenJets")
+                 genJetCollection=cms.InputTag("iterativeCone5GenJets"),
+                 doJetID          = False
                  )
 
 process.p = cms.Path(
@@ -120,7 +132,7 @@ process.out.outputCommands += ["keep *_cleanLayer1Jets*_*_*",
 process.maxEvents.input = 10             ## (e.g. -1 to run on all events)
 #   process.out.outputCommands = [ ... ] ## (e.g. taken from PhysicsTools/PatAlgos/python/patEventContent_cff.py)
 #   process.out.fileName = ...           ## (e.g. 'myTuple.root')
-process.options.wantSummary = False      ## (to suppress the long output at the end of the job)    
+process.options.wantSummary = True       ## (to suppress the long output at the end of the job)    
 
 
 
