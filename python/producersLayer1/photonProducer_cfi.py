@@ -51,13 +51,9 @@ allLayer1Photons = cms.EDProducer("PATPhotonProducer",
     ),
 
     # photon ID
-    addPhotonID = cms.bool(True),
-    photonIDSources = cms.PSet(
-             PhotonCutBasedIDLoose = cms.InputTag('PhotonIDProd',
-                                                  'PhotonCutBasedIDLoose'),
-             PhotonCutBasedIDTight = cms.InputTag('PhotonIDProd',
-                                                  'PhotonCutBasedIDTight')
-           ),
+    addPhotonID = cms.bool(False),
+    photonIDSource = cms.InputTag("PhotonIDProd","PhotonAssociatedID"), ## ValueMap<reco::PhotonID> keyed to photonSource
+
     # mc matching
     addGenMatch = cms.bool(True),
     embedGenMatch = cms.bool(True),
