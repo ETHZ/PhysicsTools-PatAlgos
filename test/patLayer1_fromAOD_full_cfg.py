@@ -12,18 +12,6 @@ from PhysicsTools.PatAlgos.tools.coreTools import *
 #removeAllPATObjectsBut(process, ['Muons'])
 #removeSpecificPATObjects(process, ['Electrons', 'Muons', 'Taus'])
 
-run33xOn31xMC = False
-
-if run33xOn31xMC :
-    switchJetCollection(process, 
-                    cms.InputTag('antikt5CaloJets'),   
-                    doJTA            = True,            
-                    doBTagging       = True,            
-                    jetCorrLabel     = ('AK5','Calo'),  
-                    doType1MET       = True,            
-                    genJetCollection = cms.InputTag("antikt5GenJets")
-                    )
-
 # let it run
 process.p = cms.Path(
     process.patDefaultSequence
