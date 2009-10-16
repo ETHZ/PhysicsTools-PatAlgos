@@ -27,8 +27,8 @@ addJetCollection(process,cms.InputTag('ak7CaloJets'),
                  doL1Cleaning = True,                 
                  doL1Counters = False,
                  genJetCollection=cms.InputTag("ak7GenJets"),
-                 doJetID          = True,
-                 jetIdLabel       = "ak7"
+                 doJetID      = True,
+                 jetIdLabel   = "ak7"
                  )
 
 # uncomment the following lines to add iterativeCone5JPT jets to
@@ -43,7 +43,7 @@ addJetCollection(process,cms.InputTag('JetPlusTrackZSPCorJetIcone5'),
                  doL1Cleaning = True,
                  doL1Counters = True,                 
                  genJetCollection = cms.InputTag("iterativeCone5GenJets"),
-                 doJetID          = False
+                 doJetID      = False
                  )
 
 # uncomment the following lines to add sisCone5Calo jets to your PAT output
@@ -56,8 +56,8 @@ addJetCollection(process,cms.InputTag('sisCone5CaloJets'),
                  doL1Cleaning = True,                 
                  doL1Counters = False,
                  genJetCollection=cms.InputTag("sisCone5GenJets"),
-                 doJetID          = True,
-                 jetIdLabel       = "sc5"
+                 doJetID      = True,
+                 jetIdLabel   = "sc5"
                  )
 
 # uncomment the following lines to add sisCone7Calo jets to your PAT output
@@ -70,8 +70,8 @@ addJetCollection(process,cms.InputTag('sisCone7CaloJets'),
                  doL1Cleaning = True,                 
                  doL1Counters = False,
                  genJetCollection=cms.InputTag("sisCone5GenJets"),
-                 doJetID          = True,
-                 jetIdLabel       = "sc7"
+                 doJetID      = True,
+                 jetIdLabel   = "sc7"
                  )
 
 # uncomment the following lines to add kt4Calo jets to your PAT output
@@ -84,8 +84,8 @@ addJetCollection(process,cms.InputTag('kt4CaloJets'),
                  doL1Cleaning = True,                 
                  doL1Counters = False,
                  genJetCollection=cms.InputTag("kt4GenJets"),
-                 doJetID          = True,
-                 jetIdLabel       = "kt4"
+                 doJetID      = True,
+                 jetIdLabel   = "kt4"
                  )
 
 # uncomment the following lines to add kt6Calo jets to your PAT output
@@ -98,8 +98,8 @@ addJetCollection(process,cms.InputTag('kt6CaloJets'),
                  doL1Cleaning = True,                 
                  doL1Counters = False,
                  genJetCollection=cms.InputTag("kt6GenJets"),
-                 doJetID          = True,
-                 jetIdLabel       = "kt6"
+                 doJetID      = True,
+                 jetIdLabel   = "kt6"
                  )
 
 # uncomment the following lines to add iterativeCone5Pflow jets to your PAT output
@@ -112,7 +112,7 @@ addJetCollection(process,cms.InputTag('iterativeCone5PFJets'),
                  doL1Cleaning = True,                 
                  doL1Counters = False,
                  genJetCollection=cms.InputTag("iterativeCone5GenJets"),
-                 doJetID          = False
+                 doJetID      = False
                  )
 
 process.p = cms.Path(

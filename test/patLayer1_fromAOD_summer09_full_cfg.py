@@ -12,6 +12,27 @@ run33xOn31xMC( process,
                jetIdTag = "antikt5"
                )
 
+from PhysicsTools.PatAlgos.tools.coreTools import *
+#restrictInputToAOD(process)
+#removeMCMatching(process, 'Muons')
+#removeAllPATObjectsBut(process, ['Muons'])
+#removeSpecificPATObjects(process, ['Electrons', 'Muons', 'Taus'])
+
+#addJetID( process, "sisCone5CaloJets", "sc5")
+#from PhysicsTools.PatAlgos.tools.jetTools import *
+#addJetCollection(process,cms.InputTag('sisCone5CaloJets'),
+#                 'SC5',
+#                 doJTA        = True,
+#                 doBTagging   = True,
+#                 jetCorrLabel = ('SC5','Calo'),
+#                 doType1MET   = True,
+#                 doL1Cleaning = True,                 
+#                 doL1Counters = False,
+#                 genJetCollection=cms.InputTag("sisCone5GenJets"),
+#                 doJetID      = True,
+#                 jetIdLabel   = "sc5"
+#                 )
+
 process.p = cms.Path(
                 process.patDefaultSequence  
             )
@@ -25,9 +46,6 @@ process.p = cms.Path(
 process.options.wantSummary = True        ## (to suppress the long output at the end of the job)
 
 process.source.fileNames = [
-    '/store/mc/Summer09/TTbar/GEN-SIM-RECO/MC_31X_V3-v1/0025/48AC6C31-AA88-DE11-B02C-0030487C6F54.root',
-    '/store/mc/Summer09/TTbar/GEN-SIM-RECO/MC_31X_V3-v1/0025/9E80A46A-AA88-DE11-94BD-001E682F882A.root',
-    '/store/mc/Summer09/TTbar/GEN-SIM-RECO/MC_31X_V3-v1/0025/6004FF4C-AA88-DE11-B0BF-001E68A9941C.root',
-    '/store/mc/Summer09/TTbar/GEN-SIM-RECO/MC_31X_V3-v1/0025/129A0B85-AA88-DE11-B08A-001E6837DFEA.root'
+    '/store/relval/CMSSW_3_1_4/RelValTTbar/GEN-SIM-RECO/MC_31X_V3-v1/0005/901ABD8A-E5B0-DE11-8AE6-000423D98DD4.root'
     ]
 process.maxEvents.input = 50         ##  (e.g. -1 to run on all events)
