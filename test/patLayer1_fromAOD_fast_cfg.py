@@ -9,6 +9,11 @@ process.load("PhysicsTools.PatAlgos.patSequences_cff")
 # use a fastsim file as input
 process.source.filenames = fileNames = cms.untracked.vstring('/store/relval/CMSSW_3_1_0_pre10/RelValQCD_FlatPt_15_3000/GEN-SIM-DIGI-RECO/IDEAL_31X_FastSim_v1/0008/D65E768E-CF57-DE11-B64F-001D09F23D1D.root')
 
+# let it run
+process.p = cms.Path(
+        process.patDefaultSequence
+    )
+
 
 # In addition you usually want to change the following parameters:
 #
