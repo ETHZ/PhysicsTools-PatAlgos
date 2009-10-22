@@ -12,6 +12,26 @@ process.load("FastSimulation.Configuration.ttbar_cfi")
 process.load("PhysicsTools.PatAlgos.famos.boostrapWithFamos_cff")
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
 
+## Standard PAT Configuration File
+process.load("PhysicsTools.PatAlgos.patSequences_cff")
+
+from PhysicsTools.PatAlgos.tools.jetTools import *
+print "*********************************************************************"
+print "Switching all processes to use the anti-kT algorithm by default."
+print "Switch the jet collection to your desired algorithm if this is not"
+print "what you want to use. Note that L7Parton correction are taken from"
+print "SC5 instead of AK5. This is an intermediate solution for the time "
+print "being."
+print "*********************************************************************"
+switchJetCollection(process, 
+                    cms.InputTag('ak5CaloJets'),   
+                    doJTA            = True,            
+                    doBTagging       = True,            
+                    jetCorrLabel     = ('AK5','Calo'),  
+                    doType1MET       = True,            
+                    genJetCollection = cms.InputTag("ak5GenJets")
+                    ) 
+
 ## Load additional RECO config
 # Magnetic field now needs to be in the high-level py
 # process.load("Configuration.StandardSequences.MagneticField_cff")
