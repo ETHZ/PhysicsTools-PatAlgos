@@ -196,8 +196,8 @@ def usePF2PAT(process,runPF2PAT=True):
     switchToPFJets( process, cms.InputTag('pfNoTau') )
     
     # Taus
-    adaptPFTaus( process ) #default (i.e. shrinkingConePFTau)
-    #adaptPFTaus( process, tauType='fixedConePFTau' )
+    #adaptPFTaus( process ) #default (i.e. shrinkingConePFTau)
+    adaptPFTaus( process, tauType='fixedConePFTau' )
     
     # MET
     switchToPFMET(process, cms.InputTag('pfMET'))
