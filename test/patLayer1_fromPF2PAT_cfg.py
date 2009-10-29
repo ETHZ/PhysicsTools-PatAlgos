@@ -1,46 +1,49 @@
-import FWCore.ParameterSet.Config as cms
+# This is an example PAT configuration showing the usage of PAT with PF2PAT on its input
 
-process = cms.Process("PAT")
+# Starting with a skeleton process which gets imported with the following line
+from PhysicsTools.PatAlgos.patTemplate_cfg import *
+
+# the source is already defined in patTemplate_cfg.
+# overriding source and various other things
+process.source.fileNames = cms.untracked.vstring('file:PF2PAT.root')
+
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
 
 
-# source
-process.source = cms.Source("PoolSource", 
-    fileNames = cms.untracked.vstring('file:PF2PAT.root')
-)
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+process.out.fileName = cms.untracked.string('patLayer1_fromPF2PAT.root')
 
-# Define output module (needs to be done before using the PAT tools)
-from PhysicsTools.PatAlgos.patEventContent_cff import patEventContentNoLayer1Cleaning
-from PhysicsTools.PatAlgos.patEventContent_cff import patExtraAodEventContent
-process.out = cms.OutputModule("PoolOutputModule",
-    fileName = cms.untracked.string('patLayer1_fromPF2PAT.root'),
-    # save only events passing the full path
-    SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring('p') ),
-    # save PAT Layer 1 output
-    outputCommands = cms.untracked.vstring('drop *',
-                                           *(patEventContentNoLayer1Cleaning+patExtraAodEventContent) )
-                               # you need a '*' to unpack the list of commands 'patEventContentNoLayer1Cleaning'
-)
+# load the PAT config
+process.load("PhysicsTools.PatAlgos.patSequences_cff")
 
 # Configure PAT to use PF2PAT instead of AOD sources
+# this function will modify the PAT sequences. It is currently 
+# not possible to run PF2PAT+PAT and standart PAT at the same time
 from PhysicsTools.PatAlgos.tools.pfTools import *
+tauTypeInPF2PAT(process,"fixedConePFTau")# which tau type is used by PF2PAT (impossible to deduce from configuration)
+usePF2PAT(process,runPF2PAT=False)
 
-usePF2PAT(process, runPF2PAT=False)
-
-
+# Let it run
 process.p = cms.Path(
     process.patDefaultSequence  
 )
 
-process.outpath = cms.EndPath(process.out)
+process.allLayer1Electrons.embedGenMatch = True
+process.allLayer1Muons.embedGenMatch = True
+
+# Add PF2PAT output to the created file
+from PhysicsTools.PatAlgos.patEventContent_cff import patEventContentNoLayer1Cleaning
+process.load("PhysicsTools.PFCandProducer.PF2PAT_EventContent_cff")
+process.out.outputCommands =  cms.untracked.vstring('drop *')
+process.out.outputCommands.extend( process.PATEventContent.outputCommands)
 
 
-# initialize MessageLogger and output report
-process.load("FWCore.MessageLogger.MessageLogger_cfi")
-process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(False) )
+# In addition you usually want to change the following parameters:
+#
+#   process.GlobalTag.globaltag =  ...      (according to https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideFrontierConditions)
+#   process.source.fileNames = [ ... ]      (e.g. 'file:AOD.root')
+#   process.maxEvents.input = ...           (e.g. -1 to run on all events)
+#   process.out.outputCommands = [ ... ]    (e.g. taken from PhysicsTools/PatAlgos/python/patEventContent_cff.py)
+#   process.out.fileName = ...              (e.g. 'myTuple.root')
+#   process.options.wantSummary = False     (to suppress the long output at the end of the job)
+
 process.MessageLogger.cerr.FwkReport.reportEvery = 10
-
-process.load("Configuration.StandardSequences.Geometry_cff")
-process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
-process.GlobalTag.globaltag = cms.string('MC_31X_V1::All')
-process.load("Configuration.StandardSequences.MagneticField_cff")
