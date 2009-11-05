@@ -155,7 +155,7 @@ def switchToPFJets(process,input=cms.InputTag('pfNoTau')):
                         input,
                         doJTA=True,
                         doBTagging=True,
-                        jetCorrLabel=None, 
+                        jetCorrLabel=('IC5','PF'), 
                         doType1MET=False)  
     adaptPFJets(process, process.allLayer1Jets)
 
