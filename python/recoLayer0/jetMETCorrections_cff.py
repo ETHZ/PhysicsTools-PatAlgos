@@ -17,3 +17,4 @@ patMETCorrections = cms.Sequence(metJESCorIC5CaloJet * metJESCorIC5CaloJetMuons)
 
 # default PAT sequence for JetMET corrections before cleaners
 patJetMETCorrections = cms.Sequence(patJetCorrections + patMETCorrections)
+
