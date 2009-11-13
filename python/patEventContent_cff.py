@@ -17,6 +17,7 @@ patEventContent = [
     'keep *_cleanLayer1Taus_*_*', 
     'keep *_cleanLayer1Jets_*_*', 
     'keep *_layer1METs_*_*',
+    'keep *_layer1MHTs_*_*',
     'keep *_cleanLayer1Hemispheres_*_*',
     'keep *_cleanLayer1PFParticles_*_*'
 ]
