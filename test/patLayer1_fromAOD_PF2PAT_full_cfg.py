@@ -24,7 +24,8 @@ process.load("PhysicsTools.PatAlgos.patSequences_cff")
 # this function will modify the PAT sequences. It is currently 
 # not possible to run PF2PAT+PAT and standart PAT at the same time
 from PhysicsTools.PatAlgos.tools.pfTools import *
-usePF2PAT(process,runPF2PAT=True, jetAlgo='IC5')  # or you can leave this to the default, False, and run PF2PAT before patDefaultSequence
+
+usePF2PAT(process,runPF2PAT=True, jetAlgo='IC5') 
 
 # Let it run
 process.p = cms.Path(
