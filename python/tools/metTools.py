@@ -1,8 +1,7 @@
-import FWCore.ParameterSet.Config as cms
+#from PhysicsTools.PatAlgos.tools.ConfigToolBase import *
+from FWCore.GuiBrowsers.ConfigToolBase import *
 
-
-def addTcMET(process,
-             postfixLabel = 'TC'):
+class AddTcMET(ConfigToolBase):
     """
     ------------------------------------------------------------------
     add track corrected MET collection to patEventContent:
@@ -10,26 +9,64 @@ def addTcMET(process,
     process : process
     ------------------------------------------------------------------
     """
-    ## add module as process to the default sequence
-    def addAlso (label,value):
-        existing = getattr(process, label)
-        setattr( process, label+postfixLabel, value)
-        process.patDefaultSequence.replace( existing, existing*value )        
+    _label='AddTcMET'
+    
+    _defaultParameters={}
 
-    ## clone and add a module as process to the
-    ## default sequence
-    def addClone(label,**replaceStatements):
-        new = getattr(process, label).clone(**replaceStatements)
-        addAlso(label, new)
+    def __init__(self):
+        ConfigToolBase.__init__(self)
+        self.addParameter(self._defaultParameters,'postfixLabel','TC', '')
+        self._parameters=copy.deepcopy(self._defaultParameters)
+        self._comment = ''
+    def getDefaultParameters(self):
+        return self._defaultParameters
+    def dumpPython(self):
+        dumpPythonImport = "\nfrom PhysicsTools.PatAlgos.tools.metTools import *\n"
+        dumpPython=''
+        if self._comment!="":
+            dumpPython = '#'+self._comment
+        dumpPython += "\naddTcMET(process, "
+        dumpPython += '"'+str(self.getvalue('postfixLabel'))+'"'+')'+'\n'
+        return (dumpPythonImport,dumpPython)
 
-    ## addClone('corMetType1Icone5Muons', uncorMETInputTag = cms.InputTag("tcMet"))
-    addClone('layer1METs', metSource = cms.InputTag("tcMet"))
+    def __call__(self,process,postfixLabel=None) :
+        if  postfixLabel is None:
+            postfixLabel=self._defaultParameters['postfixLabel'].value 
+        self.setParameter('postfixLabel',postfixLabel)
+        self.apply(process) 
+        
+    def apply(self, process):
+                
+        postfixLabel=self._parameters['postfixLabel'].value
+        if hasattr(process, "addAction"):
+            process.disableRecording()
 
-    ## add new met collections output to the pat summary
-    process.allLayer1Summary.candidates += [ cms.InputTag('layer1METs'+postfixLabel) ]
+        ## add module as process to the default sequence
+        def addAlso (label,value):
+            existing = getattr(process, label)
+            setattr( process, label+postfixLabel, value)
+            process.patDefaultSequence.replace( existing, existing*value )        
 
-def addPfMET(process,
-             postfixLabel = 'PF'):
+        ## clone and add a module as process to the
+        ## default sequence
+        def addClone(label,**replaceStatements):
+            new = getattr(process, label).clone(**replaceStatements)
+            addAlso(label, new)
+
+        ## addClone('corMetType1Icone5Muons', uncorMETInputTag = cms.InputTag("tcMet"))
+        addClone('layer1METs', metSource = cms.InputTag("tcMet"))
+
+        ## add new met collections output to the pat summary
+        process.allLayer1Summary.candidates += [ cms.InputTag('layer1METs'+postfixLabel) ]
+
+        if hasattr(process, "addAction"):
+            process.enableRecording()
+            action=self.__copy__()
+            process.addAction(action)
+
+addTcMET=AddTcMET()
+
+class AddPfMET(ConfigToolBase):
     """
     ------------------------------------------------------------------
     add pflow MET collection to patEventContent:
@@ -37,20 +74,58 @@ def addPfMET(process,
     process : process
     ------------------------------------------------------------------
     """
-    ## add module as process to the default sequence
-    def addAlso (label,value):
-        existing = getattr(process, label)
-        setattr( process, label+postfixLabel, value)
-        process.patDefaultSequence.replace( existing, existing*value )        
+    _label='AddPfMET'
+    
+    _defaultParameters={}
+    def __init__(self):
+        ConfigToolBase.__init__(self)
+        self.addParameter(self._defaultParameters,'postfixLabel','PF', '')
+        self._parameters=copy.deepcopy(self._defaultParameters)
+        self._comment = ''
+    def getDefaultParameters(self):
+        return self._defaultParameters
 
-    ## clone and add a module as process to the
-    ## default sequence
-    def addClone(label,**replaceStatements):
-        new = getattr(process, label).clone(**replaceStatements)
-        addAlso(label, new)
+    def dumpPython(self):
+        dumpPythonImport = "\nfrom PhysicsTools.PatAlgos.tools.metTools import *\n"
+        dumpPython=''
+        if self._comment!="":
+            dumpPython = '#'+self._comment
+        dumpPython += "\naddPfMET(process, "
+        dumpPython +='"'+ str(self.getvalue('postfixLabel'))+'"'+')'+'\n'
+        return (dumpPythonImport,dumpPython)
+    
+    def __call__(self,process,postfixLabel=None):
+        if  postfixLabel is None:
+            postfixLabel=self._defaultParameters['postfixLabel'].value 
+        self.setParameter('postfixLabel',postfixLabel)
+        self.apply(process) 
 
-    ## addClone('corMetType1Icone5Muons', uncorMETInputTag = cms.InputTag("tcMet"))
-    addClone('layer1METs', metSource = cms.InputTag("pfMet"), addMuonCorrections = False)
+    def apply(self, process): 
+        postfixLabel=self._parameters['postfixLabel'].value
+        if hasattr(process, "addAction"):
+            process.disableRecording()
+        
+        ## add module as process to the default sequence
+        def addAlso (label,value):
+            existing = getattr(process, label)
+            setattr( process, label+postfixLabel, value)
+            process.patDefaultSequence.replace( existing, existing*value )        
+            
+        ## clone and add a module as process to the
+        ## default sequence
+        def addClone(label,**replaceStatements):
+            new = getattr(process, label).clone(**replaceStatements)
+            addAlso(label, new)
 
-    ## add new met collections output to the pat summary
-    process.allLayer1Summary.candidates += [ cms.InputTag('layer1METs'+postfixLabel) ]
+        ## addClone('corMetType1Icone5Muons', uncorMETInputTag = cms.InputTag("tcMet"))
+        addClone('layer1METs', metSource = cms.InputTag("pfMet"), addMuonCorrections = False)
+
+        ## add new met collections output to the pat summary
+        process.allLayer1Summary.candidates += [ cms.InputTag('layer1METs'+postfixLabel) ]
+
+        if hasattr(process, "addAction"):
+            process.enableRecording()
+            action=self.__copy__()
+            process.addAction(action)
+
+addPfMET=AddPfMET()
