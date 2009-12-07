@@ -77,7 +77,7 @@ process.p = cms.Path(
     )
 
 # rename output file
-process.out.fileName = cms.untracked.string('/uscms_data/d2/rappocc/data/BeamCommissioning09/reco_123575_123596_pat.root')
+process.out.fileName = cms.untracked.string('reco_123575_123596_pat.root')
 
 # reduce verbosity
 process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(1000)
