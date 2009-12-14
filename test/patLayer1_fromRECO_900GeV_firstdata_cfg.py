@@ -5,6 +5,8 @@ from PhysicsTools.PatAlgos.patTemplate_cfg import *
 
 from PhysicsTools.PatAlgos.tools.coreTools import *
 
+## global tag for data
+process.GlobalTag.globaltag = cms.string('GR09_P_V7::All')
 
 #switch off new tau features introduced in 33X to restore 31X defaults
 # new feaures: - shrinkingConeTaus instead of fixedCone ones
