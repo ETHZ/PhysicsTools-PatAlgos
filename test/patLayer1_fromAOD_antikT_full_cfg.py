@@ -4,16 +4,20 @@ from PhysicsTools.PatAlgos.tools.jetTools import *
 
 # uncomment the following lines to switch the standard jet collection
 # in PAT (iterativeCone5) to ak5 (anti-kt cone = 0.5)
-switchJetCollection(process, 
-                    cms.InputTag('ak5CaloJets'),   
-                    doJTA            = True,            
-                    doBTagging       = True,            
-                    jetCorrLabel     = ('AK5','Calo'),  
-                    doType1MET       = True,
-                    genJetCollection = cms.InputTag("ak5GenJets"),
-                    doJetID          = True,
-                    jetIdLabel       = "ak5"
-                    ) 
+addJetCollection(process, 
+                 cms.InputTag('sisCone5CaloJets'),
+                 'SC5',
+                 'Calo',
+                 doJTA            = True,            
+                 doBTagging       = True,            
+                 jetCorrLabel     = ('SC5','Calo'),  
+                 doType1MET       = True,
+                 doL1Cleaning = True,                     
+                 doL1Counters = False,                 
+                 genJetCollection = cms.InputTag("sisCone5GenJets"),
+                 doJetID          = True,
+                 jetIdLabel       = "sc5"
+                 ) 
 
 process.p = cms.Path(
                 process.patDefaultSequence  
