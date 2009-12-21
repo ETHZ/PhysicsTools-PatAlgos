@@ -23,7 +23,7 @@ process.p = cms.Path(
 )
 
 # add generic tracks to the output file
-process.out.outputCommands.append('keep *_selectedLayer1TrackCands_*_*')
+process.out.outputCommands.append('keep *_selectedPatTrackCands_*_*')
 
 # In addition you usually want to change the following parameters:
 #
