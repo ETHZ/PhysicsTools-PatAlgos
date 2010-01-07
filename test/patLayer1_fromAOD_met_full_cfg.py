@@ -8,7 +8,7 @@ process.load("PhysicsTools.PatAlgos.producersLayer1.metProducer_cff")
 
 # let it run
 process.p = cms.Path(
-     process.makeLayer1METs
+     process.makePatMETs
 )
 
 # In addition you usually want to change the following parameters:

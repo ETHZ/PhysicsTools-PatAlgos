@@ -7,8 +7,8 @@ process.load("PhysicsTools.PatAlgos.selectionLayer1.muonSelector_cfi")
 
 # let it run
 process.p = cms.Path(
-    process.makeAllLayer1Muons *
-    process.selectedLayer1Muons
+    process.makePatMuons *
+    process.selectedPatMuons
 )
 
 # In addition you usually want to change the following parameters:

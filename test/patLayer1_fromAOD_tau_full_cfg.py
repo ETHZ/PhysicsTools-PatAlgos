@@ -8,8 +8,8 @@ process.load("PhysicsTools.PatAlgos.selectionLayer1.tauSelector_cfi")
 
 # run it
 process.p = cms.Path(
-    process.makeAllLayer1Taus *
-    process.selectedLayer1Taus
+    process.makePatTaus *
+    process.selectedPatTaus
 )
 
 # In addition you usually want to change the following parameters:

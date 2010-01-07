@@ -9,8 +9,8 @@ process.load("PhysicsTools.PatAlgos.selectionLayer1.electronSelector_cfi")
 
 # let it run
 process.p = cms.Path(
-    process.makeAllLayer1Electrons *
-    process.selectedLayer1Electrons
+    process.makePatElectrons *
+    process.selectedPatElectrons
 )
 
 # In addition you usually want to change the following parameters:

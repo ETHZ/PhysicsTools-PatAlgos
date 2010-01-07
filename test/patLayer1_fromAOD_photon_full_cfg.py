@@ -6,8 +6,8 @@ process.load("PhysicsTools.PatAlgos.producersLayer1.photonProducer_cff")
 process.load("PhysicsTools.PatAlgos.selectionLayer1.photonSelector_cfi")
 
 process.p = cms.Path(
-    process.makeAllLayer1Photons *
-    process.selectedLayer1Photons    
+    process.makePatPhotons *
+    process.selectedPatPhotons    
 )
 
 # In addition you usually want to change the following parameters:

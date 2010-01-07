@@ -8,8 +8,8 @@ process.load("PhysicsTools.PatAlgos.producersLayer1.jetProducer_cff")
 process.load("PhysicsTools.PatAlgos.selectionLayer1.jetSelector_cfi")
 
 process.p = cms.Path(
-     process.makeAllLayer1Jets *
-     process.selectedLayer1Jets
+     process.makePatJets *
+     process.selectedPatAK5CaloJets
 )
 
 # In addition you usually want to change the following parameters:

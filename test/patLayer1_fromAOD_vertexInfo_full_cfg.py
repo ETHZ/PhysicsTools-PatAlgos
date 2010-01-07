@@ -50,7 +50,7 @@ process.patDefaultSequence.replace(process.patAODTrackCands,
                                    )
 
 # add it to the GenericParticles (FIXME: add to muons and electrons, too)
-process.allLayer1TrackCands.vertexing = cms.PSet(
+process.patTrackCands.vertexing = cms.PSet(
     vertexAssociations = cms.InputTag("patTrackVertexInfo"),
 )
 

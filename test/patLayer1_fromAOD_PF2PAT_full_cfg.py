@@ -26,6 +26,7 @@ process.load("PhysicsTools.PatAlgos.patSequences_cff")
 from PhysicsTools.PatAlgos.tools.pfTools import *
 
 usePF2PAT(process,runPF2PAT=True, jetAlgo='IC5') 
+print process.patDefaultSequence
 
 # Let it run
 process.p = cms.Path(
