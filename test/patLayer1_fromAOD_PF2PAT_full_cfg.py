@@ -7,7 +7,7 @@ from PhysicsTools.PatAlgos.patTemplate_cfg import *
 # overriding source and various other things
 #process.load("PhysicsTools.PFCandProducer.Sources.source_ZtoEles_DBS_312_cfi")
 #process.source = cms.Source("PoolSource", 
-#     fileNames = cms.untracked.vstring('file:aod.root')
+#     fileNames = cms.untracked.vstring('file:myAOD.root')
 #)
 
 
@@ -25,15 +25,20 @@ process.load("PhysicsTools.PatAlgos.patSequences_cff")
 # not possible to run PF2PAT+PAT and standart PAT at the same time
 from PhysicsTools.PatAlgos.tools.pfTools import *
 
-usePF2PAT(process,runPF2PAT=True, jetAlgo='IC5') 
+usePF2PAT(process,runPF2PAT=True, jetAlgo='AK5') 
+
+# to run on data one has to remove all MC matching:
+# important: turning off MC matching only works for Anti-Kt5 (AK5) jets.  For IC5 jets is this not supported currently
+#removeMCDependencedorPF(process)
+
+# turn to false when running on data
+process.patElectrons.embedGenMatch = True
+process.patMuons.embedGenMatch = True
 
 # Let it run
 process.p = cms.Path(
     process.patDefaultSequence  
 )
-
-process.patElectrons.embedGenMatch = True
-process.patMuons.embedGenMatch = True
 
 # Add PF2PAT output to the created file
 from PhysicsTools.PatAlgos.patEventContent_cff import patEventContentNoCleaning
