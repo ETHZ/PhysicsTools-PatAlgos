@@ -102,14 +102,14 @@ addJetCollection(process,cms.InputTag('kt6CaloJets'),
                  )
 
 # uncomment the following lines to add iterativeCone5Pflow jets to your PAT output
-addJetCollection(process,cms.InputTag('iterativeCone5PFJets'),
+switchJetCollection(process,cms.InputTag('iterativeCone5PFJets'),
                  'IC5', 'PFlow',
                  doJTA        = True,
                  doBTagging   = True,
                  jetCorrLabel = None,
                  doType1MET   = True,
                  doL1Cleaning = True,                 
-                 doL1Counters = False,
+                 doL1Counters = True,
                  genJetCollection=cms.InputTag("iterativeCone5GenJets"),
                  doJetID      = False
                  )
