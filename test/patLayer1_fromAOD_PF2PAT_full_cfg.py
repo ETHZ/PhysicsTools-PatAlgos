@@ -3,12 +3,15 @@
 # Starting with a skeleton process which gets imported with the following line
 from PhysicsTools.PatAlgos.patTemplate_cfg import *
 
+
+realData = False
+runStdPatAsWell = True 
+
+
 # the source is already defined in patTemplate_cfg.
 # overriding source and various other things
-#process.load("PhysicsTools.PFCandProducer.Sources.source_ZtoEles_DBS_312_cfi")
-#process.source = cms.Source("PoolSource", 
-#     fileNames = cms.untracked.vstring('file:aod.root')
-#)
+if realData:
+    process.load("PhysicsTools.PFCandProducer.Sources/Data/source_124120_cfi")
 
 
 # process.load("PhysicsTools.PFCandProducer.Sources.source_ZtoMus_DBS_cfi")
@@ -16,6 +19,8 @@ process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(False))
 
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
 process.out.fileName = cms.untracked.string('patLayer1_fromAOD_PF2PAT_full.root')
+
+from PhysicsTools.PatAlgos.cloneSequence import *
 
 # load the PAT config
 process.load("PhysicsTools.PatAlgos.patSequences_cff")
@@ -25,12 +30,30 @@ process.load("PhysicsTools.PatAlgos.patSequences_cff")
 # not possible to run PF2PAT+PAT and standart PAT at the same time
 from PhysicsTools.PatAlgos.tools.pfTools import *
 
+if realData:
+    removeMCMatching(process, 'All') 
+    
+
+cloneProcessingSnippet(process, process.patDefaultSequence, "Std")
+
 usePF2PAT(process,runPF2PAT=True, jetAlgo='IC5') 
 
-# Let it run
+# generator tools
+process.load("PhysicsTools.PFCandProducer.genForPF2PAT_cff")
+
 process.p = cms.Path(
-    process.patDefaultSequence  
+    process.genForPF2PATSequence + 
+    process.patDefaultSequence +
+    process.patDefaultSequenceStd
 )
+
+if realData:
+    # do not run Monte-Carlo sequence.
+    process.p = cms.Path(
+        process.patDefaultSequence  +
+        process.patDefaultSequenceStd
+        )
+
 
 process.allLayer1Electrons.embedGenMatch = True
 process.allLayer1Muons.embedGenMatch = True
@@ -52,3 +75,4 @@ process.out.outputCommands.extend( process.PATEventContent.outputCommands)
 #   process.options.wantSummary = False     (to suppress the long output at the end of the job)
 
 process.MessageLogger.cerr.FwkReport.reportEvery = 10
+
