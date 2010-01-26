@@ -11,6 +11,8 @@ process.p = cms.Path(
      process.makePatMETs
 )
 
+process.out.outputCommands = ['keep *_patMETs*_*_*',]
+
 # In addition you usually want to change the following parameters:
 #
 #   process.GlobalTag.globaltag =  ...      (according to https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideFrontierConditions)

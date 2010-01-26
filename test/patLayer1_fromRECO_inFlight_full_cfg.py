@@ -12,12 +12,11 @@ process.inFlightMuons = cms.EDProducer("PATGenCandsFromSimTracksProducer",
         writeAncestors = cms.bool(True), # save also the intermediate GEANT ancestors of the muons
         genParticles   = cms.InputTag("genParticles"),
 )
-process.muMatch3 = process.muonMatch.clone(mcStatus = cms.vint32(3))
-process.muMatch1 = process.muonMatch.clone(mcStatus = cms.vint32(1))
-process.muMatchF = process.muonMatch.clone(mcStatus = cms.vint32(-1),
-                                           matched  = cms.InputTag("inFlightMuons"))
+process.muMatch3 = process.muonMatch.clone(mcStatus = cms.vint32( 3))
+process.muMatch1 = process.muonMatch.clone(mcStatus = cms.vint32( 1))
+process.muMatchF = process.muonMatch.clone(mcStatus = cms.vint32(-1),matched  = cms.InputTag("inFlightMuons"))
 process.patDefaultSequence.replace(process.muonMatch, process.muMatch1+process.muMatch3+process.muMatchF)
-process.allLayer1Muons.genParticleMatch = cms.VInputTag(
+process.patMuons.genParticleMatch = cms.VInputTag(
     cms.InputTag("muMatch3"),
     cms.InputTag("muMatch1"), 
     cms.InputTag("muMatchF"),

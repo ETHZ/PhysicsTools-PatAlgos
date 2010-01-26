@@ -10,6 +10,8 @@ process.p = cms.Path(
     process.selectedPatPhotons    
 )
 
+process.out.outputCommands = ['keep *_selectedPat*_*_*',]
+
 # In addition you usually want to change the following parameters:
 #
 #   process.GlobalTag.globaltag =  ...      (according to https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideFrontierConditions)

@@ -9,8 +9,10 @@ process.load("PhysicsTools.PatAlgos.selectionLayer1.jetSelector_cfi")
 
 process.p = cms.Path(
      process.makePatJets *
-     process.selectedPatAK5CaloJets
+     process.selectedPatJets
 )
+
+process.out.outputCommands = ['keep *_selectedPat*_*_*',]
 
 # In addition you usually want to change the following parameters:
 #
