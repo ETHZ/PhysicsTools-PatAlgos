@@ -11,6 +11,8 @@ process.p = cms.Path(
      process.makeLayer1METs
 )
 
+process.out.outputCommands = ['keep *_layer1METs*_*_*',]
+
 # In addition you usually want to change the following parameters:
 #
 #   process.GlobalTag.globaltag =  ...      (according to https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideFrontierConditions)

@@ -12,6 +12,8 @@ process.p = cms.Path(
      process.selectedLayer1Jets
 )
 
+process.out.outputCommands = ['keep *_selectedLayer1*_*_*',]
+
 # In addition you usually want to change the following parameters:
 #
 #   process.GlobalTag.globaltag =  ...      (according to https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideFrontierConditions)

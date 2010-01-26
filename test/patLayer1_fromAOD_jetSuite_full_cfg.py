@@ -119,12 +119,6 @@ process.p = cms.Path(
     process.patDefaultSequence
 )
 
-
-process.out.outputCommands += ["keep *_cleanLayer1Jets*_*_*",
-                               "keep *_selectedLayer1Jets*_*_*",
-                               "keep *_layer1METs*_*_*"
-                               ]
-
 # In addition you usually want to change the following parameters:
 #
 #   process.GlobalTag.globaltag =  ...   ## (according to https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideFrontierConditions)
