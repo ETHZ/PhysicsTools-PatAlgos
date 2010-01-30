@@ -2,7 +2,7 @@ import FWCore.ParameterSet.Config as cms
 
 from PhysicsTools.PatAlgos.patEventContent_cff import *
     
-def switchOnTrigger( process ):
+def switchOnTrigger( process, step = "clean" ):
     """ Enables trigger information in PAT  """
     ## add trigger modules to path
     process.load("PhysicsTools.PatAlgos.triggerLayer1.triggerProducer_cff")
@@ -11,6 +11,12 @@ def switchOnTrigger( process ):
     ## configure pat trigger
     process.patTrigger.onlyStandAlone = False
 
+    ## one might want to run the trigger not on clean, but on selected PAT objects
+    inputs = ['Layer1Electrons','Layer1Jets','Layer1Taus','Layer1Muons','Layer1Photons']
+    from PhysicsTools.PatAlgos.tools.helpers import massSearchReplaceAnyInputTag
+    for input in inputs:
+        massSearchReplaceAnyInputTag(process.patTriggerSequence, 'clean'+input, step+input)
+        
     ## add trigger specific event content to PAT event content
     process.out.outputCommands += patTriggerEventContent
     for matchLabel in process.patTriggerEvent.patTriggerMatches:
