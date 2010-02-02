@@ -35,7 +35,7 @@ def restrictInputToAOD(process,
     
 
 def removeMCMatching(process,
-                     name
+                     names
                      ):
     """
     ------------------------------------------------------------------
@@ -47,42 +47,43 @@ def removeMCMatching(process,
               'Muons', 'Taus', 'Jets', 'METs', 'All'
     ------------------------------------------------------------------    
     """
-    if( name == 'Photons'   or name == 'All' ):
-        _removeMCMatchingForPATObject(process, 'photonMatch', 'allLayer1Photons') 
-    if( name == 'Electrons' or name == 'All' ):
-        _removeMCMatchingForPATObject(process, 'electronMatch', 'allLayer1Electrons') 
-    if( name == 'Muons'     or name == 'All' ):
-        _removeMCMatchingForPATObject(process, 'muonMatch', 'allLayer1Muons') 
-    if( name == 'Taus'      or name == 'All' ):
-        _removeMCMatchingForPATObject(process, 'tauMatch', 'allLayer1Taus')
-        ## remove mc extra modules for taus
-        process.patDefaultSequence.remove(process.tauGenJets)
-        process.patDefaultSequence.remove(process.tauGenJetMatch)
-        ## remove mc extra configs for taus
-        tauProducer = getattr(process, 'allLayer1Taus')
-        tauProducer.addGenJetMatch      = False
-        tauProducer.embedGenJetMatch    = False
-        tauProducer.genJetMatch         = ''         
-    if( name == 'Jets'      or name == 'All' ):
-        ## remove mc extra modules for jets
-        process.patDefaultSequence.remove(process.jetPartonMatch)
-        process.patDefaultSequence.remove(process.jetGenJetMatch)
-        process.patDefaultSequence.remove(process.jetFlavourId)
-        ## remove mc extra configs for jets
-        jetProducer = getattr(process, 'allLayer1Jets')
-        jetProducer.addGenPartonMatch   = False
-        jetProducer.embedGenPartonMatch = False
-        jetProducer.genPartonMatch      = ''
-        jetProducer.addGenJetMatch      = False
-        jetProducer.genJetMatch         = ''
-        jetProducer.getJetMCFlavour     = False
-        jetProducer.JetPartonMapSource  = ''       
-    if( name == 'METs'      or name == 'All' ):
-        ## remove mc extra configs for jets
-        metProducer = getattr(process, 'layer1METs')        
-        metProducer.addGenMET           = False
-        metProducer.genMETSource        = ''       
-
+    for obj in range(len(names)):
+        if( names[obj] == 'Photons'   or names[obj] == 'All' ):
+            _removeMCMatchingForPATObject(process, 'photonMatch', 'allLayer1Photons') 
+        if( names[obj] == 'Electrons' or names[obj] == 'All' ):
+            _removeMCMatchingForPATObject(process, 'electronMatch', 'allLayer1Electrons') 
+        if( names[obj] == 'Muons'     or names[obj] == 'All' ):
+            _removeMCMatchingForPATObject(process, 'muonMatch', 'allLayer1Muons') 
+        if( names[obj] == 'Taus'      or names[obj] == 'All' ):
+            _removeMCMatchingForPATObject(process, 'tauMatch', 'allLayer1Taus')
+            ## remove mc extra modules for taus
+            process.patDefaultSequence.remove(process.tauGenJets)
+            process.patDefaultSequence.remove(process.tauGenJetMatch)
+            ## remove mc extra configs for taus
+            tauProducer = getattr(process, 'allLayer1Taus')
+            tauProducer.addGenJetMatch      = False
+            tauProducer.embedGenJetMatch    = False
+            tauProducer.genJetMatch         = ''         
+        if( names[obj] == 'Jets'      or names[obj] == 'All' ):
+            ## remove mc extra modules for jets
+            process.patDefaultSequence.remove(process.jetPartonMatch)
+            process.patDefaultSequence.remove(process.jetGenJetMatch)
+            process.patDefaultSequence.remove(process.jetFlavourId)
+            ## remove mc extra configs for jets
+            jetProducer = getattr(process, 'allLayer1Jets')
+            jetProducer.addGenPartonMatch   = False
+            jetProducer.embedGenPartonMatch = False
+            jetProducer.genPartonMatch      = ''
+            jetProducer.addGenJetMatch      = False
+            jetProducer.genJetMatch         = ''
+            jetProducer.getJetMCFlavour     = False
+            jetProducer.JetPartonMapSource  = ''       
+        if( names[obj] == 'METs'      or names[obj] == 'All' ):
+            ## remove mc extra configs for jets
+            metProducer = getattr(process, 'layer1METs')        
+            metProducer.addGenMET           = False
+            metProducer.genMETSource        = ''       
+            
 def _removeMCMatchingForPATObject(process, matcherName, producerName):
     ## remove mcMatcher from the default sequence
     objectMatcher = getattr(process, matcherName)
