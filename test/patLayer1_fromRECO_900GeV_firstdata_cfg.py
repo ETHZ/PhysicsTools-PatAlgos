@@ -9,7 +9,7 @@ from PhysicsTools.PatAlgos.tools.coreTools import *
 process.GlobalTag.globaltag = cms.string('GR09_P_V8_34X::All')
 
 # turn off MC matching for the process
-removeMCMatching(process, 'All')
+removeMCMatching(process, ['All'])
 
 # get the 900 GeV jet corrections
 from PhysicsTools.PatAlgos.tools.jetTools import *
