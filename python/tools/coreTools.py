@@ -88,7 +88,7 @@ def _removeMCMatchingForPATObject(process, matcherName, producerName):
     ## remove mcMatcher from the default sequence
     objectMatcher = getattr(process, matcherName)
     process.patDefaultSequence.remove(objectMatcher)
-    ## straighten photonProducer
+    ## straighten objectProducer
     objectProducer = getattr(process, producerName)
     objectProducer.addGenMatch      = False
     objectProducer.embedGenMatch    = False
