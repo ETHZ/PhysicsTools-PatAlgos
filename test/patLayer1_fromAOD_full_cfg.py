@@ -9,7 +9,7 @@ from PhysicsTools.PatAlgos.patTemplate_cfg import *
 
 from PhysicsTools.PatAlgos.tools.coreTools import *
 #restrictInputToAOD(process)
-#removeMCMatching(process, 'Muons')
+#removeMCMatching(process, ['Muons'])
 #removeAllPATObjectsBut(process, ['Muons'])
 #removeSpecificPATObjects(process, ['Electrons', 'Muons', 'Taus'])
 
@@ -18,7 +18,7 @@ from PhysicsTools.PatAlgos.tools.coreTools import *
 #              - TaNC discriminants attached for shrinkingConeTaus
 #              - default preselection on cleaningLayer1
 from PhysicsTools.PatAlgos.tools.tauTools import *
-switchTo31Xdefaults(process, process.allLayer1Taus)
+switchTo31Xdefaults(process)
 
 # let it run
 process.p = cms.Path(
