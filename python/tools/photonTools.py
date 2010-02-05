@@ -1,7 +1,7 @@
 import FWCore.ParameterSet.Config as cms
 
 
-def addUserIsolation(process,
+def addPhotonUserIsolation(process,
              isolationTypes = ['All']):
     """
     ------------------------------------------------------------------
