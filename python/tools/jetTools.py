@@ -6,6 +6,9 @@ from PhysicsTools.PatAlgos.tools.helpers import *
 def patchJetCorrFactors_(jetCorrFactors, newAlgo):
     """
     ------------------------------------------------------------------
+    >>>>>>> not needed anymore with CondFormats/JetMETObjetcs <<<<<<<
+    >>>>>>> V01-08-13-09                                      <<<<<<
+
     Patch to be called from:
        * switchJECSet_
        * switchJECParameters
@@ -83,8 +86,8 @@ def switchJECParameters(jetCorrFactors,
     corrLevels.L7Parton   = setCorrLevel(corrLevels.L7Parton  )
     ##
     ## patch the jetCorrFactors untill the L7Parton corrections are not available yet
-    ##
-    patchJetCorrFactors_(jetCorrFactors, newAlgo)    
+    ## not needed anymore see comments in function
+    ## patchJetCorrFactors_(jetCorrFactors, newAlgo)    
 
 
 def runBTagging(process,
