@@ -40,12 +40,13 @@ process.p = cms.Path(
     process.patDefaultSequence  
 )
 
+
 # Add PF2PAT output to the created file
 from PhysicsTools.PatAlgos.patEventContent_cff import patEventContentNoCleaning
-process.load("PhysicsTools.PFCandProducer.PF2PAT_EventContent_cff")
-process.out.outputCommands =  cms.untracked.vstring('drop *')
-process.out.outputCommands.extend( process.PATEventContent.outputCommands)
-
+#process.load("PhysicsTools.PFCandProducer.PF2PAT_EventContent_cff")
+#process.out.outputCommands =  cms.untracked.vstring('drop *')
+process.out.outputCommands = cms.untracked.vstring('drop *',
+                                                   *patEventContentNoCleaning ) 
 
 # In addition you usually want to change the following parameters:
 #
