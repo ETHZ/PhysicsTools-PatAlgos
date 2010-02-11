@@ -34,7 +34,7 @@ from PhysicsTools.PatAlgos.tools.pfTools import *
 usePF2PAT(process,runPF2PAT=True, jetAlgo='IC5') 
 # turn off MC matching for the process
 process.PF2PAT.remove(process.genForPF2PATSequence)
-removeMCMatching(process, 'All' )
+removeMCMatching(process, ['All'] )
 
 # get the 900 GeV jet corrections
 from PhysicsTools.PatAlgos.tools.jetTools import *
