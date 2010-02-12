@@ -13,13 +13,6 @@ from PhysicsTools.PatAlgos.tools.coreTools import *
 #removeAllPATObjectsBut(process, ['Muons'])
 #removeSpecificPATObjects(process, ['Electrons', 'Muons', 'Taus'])
 
-#switch off new tau features introduced in 33X to restore 31X defaults
-# new feaures: - shrinkingConeTaus instead of fixedCone ones
-#              - TaNC discriminants attached for shrinkingConeTaus
-#              - default preselection on cleaningLayer1
-from PhysicsTools.PatAlgos.tools.tauTools import *
-#switchTo31Xdefaults(process, process.patTaus)
-
 # let it run
 process.p = cms.Path(
     process.patDefaultSequence
