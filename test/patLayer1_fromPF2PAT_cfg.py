@@ -27,11 +27,11 @@ process.p = cms.Path(
     process.patDefaultSequence  
 )
 
-process.allLayer1Electrons.embedGenMatch = True
-process.allLayer1Muons.embedGenMatch = True
+process.patElectrons.embedGenMatch = True
+process.patMuons.embedGenMatch = True
 
 # Add PF2PAT output to the created file
-from PhysicsTools.PatAlgos.patEventContent_cff import patEventContentNoLayer1Cleaning
+from PhysicsTools.PatAlgos.patEventContent_cff import patEventContentNoCleaning
 process.load("PhysicsTools.PFCandProducer.PF2PAT_EventContent_cff")
 process.out.outputCommands =  cms.untracked.vstring('drop *')
 process.out.outputCommands.extend( process.PATEventContent.outputCommands)
