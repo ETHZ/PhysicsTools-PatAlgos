@@ -33,7 +33,7 @@ patMETs = cms.EDProducer("PATMETProducer",
 
     # mc matching configurables
     addGenMET    = cms.bool(True),
-    genMETSource = cms.InputTag("genMetTrue"),
+    genMETSource = cms.InputTag("genMetCalo"),
 
     # efficiencies
     addEfficiencies = cms.bool(False),
