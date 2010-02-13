@@ -24,7 +24,7 @@ process.source.fileNames = readFiles
 
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(False))
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
 process.out.fileName = cms.untracked.string('patLayer1_fromAOD_PF2PAT_2360GeV_firstdata.root')
 
 # load the PAT config
