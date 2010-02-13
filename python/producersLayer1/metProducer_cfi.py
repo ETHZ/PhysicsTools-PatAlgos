@@ -33,7 +33,7 @@ layer1METs = cms.EDProducer("PATMETProducer",
 
     # mc matching configurables
     addGenMET    = cms.bool(True),
-    genMETSource = cms.InputTag("genMetCalo"),
+    genMETSource = cms.InputTag("genMetTrue"),
 
     # efficiencies
     addEfficiencies = cms.bool(False),
