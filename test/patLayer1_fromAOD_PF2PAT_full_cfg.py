@@ -25,11 +25,7 @@ process.load("PhysicsTools.PatAlgos.patSequences_cff")
 # not possible to run PF2PAT+PAT and standart PAT at the same time
 from PhysicsTools.PatAlgos.tools.pfTools import *
 
-usePF2PAT(process,runPF2PAT=True, jetAlgo='AK5') 
-
-# to run on data one has to remove all MC matching:
-# important: turning off MC matching only works for Anti-Kt5 (AK5) jets.  For IC5 jets is this not supported currently
-#removeMCDependencedorPF(process)
+usePF2PAT(process,runPF2PAT=True, jetAlgo='AK5', runOnMC=True) 
 
 # turn to false when running on data
 process.patElectrons.embedGenMatch = True

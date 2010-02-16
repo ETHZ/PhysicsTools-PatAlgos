@@ -229,7 +229,14 @@ def switchToPFJets(process, input=cms.InputTag('pfNoTau'), algo='IC5'):
     process.patJets.embedCaloTowers   = False
     process.patJets.embedPFCandidates   = True
 
-def usePF2PAT(process,runPF2PAT=True, jetAlgo='IC5'):
+#-- Remove MC dependence ------------------------------------------------------
+def removeMCMatchingPF2PAT( process ):
+    from PhysicsTools.PatAlgos.tools.coreTools import removeMCMatching
+    process.patDefaultSequence.remove(process.genForPF2PATSequence)
+    removeMCMatching(process, ['All'])
+
+
+def usePF2PAT(process, runPF2PAT=True, jetAlgo='IC5', runOnMC=True):
 
     # PLEASE DO NOT CLOBBER THIS FUNCTION WITH CODE SPECIFIC TO A GIVEN PHYSICS OBJECT.
     # CREATE ADDITIONAL FUNCTIONS IF NEEDED. 
@@ -243,6 +250,7 @@ def usePF2PAT(process,runPF2PAT=True, jetAlgo='IC5'):
        #process.dump = cms.EDAnalyzer("EventContentAnalyzer")
         process.patDefaultSequence.replace(process.patCandidates, process.PF2PAT+process.patCandidates)
 
+        
     removeCleaning(process)
     
     # -------- OBJECTS ------------
@@ -271,14 +279,12 @@ def usePF2PAT(process,runPF2PAT=True, jetAlgo='IC5'):
     # Unmasked PFCandidates
     addPFCandidates(process,cms.InputTag('pfNoJet'),patLabel='PFParticles',cut="")
 
+    if runOnMC:
+        process.load("PhysicsTools.PFCandProducer.genForPF2PAT_cff")
+        process.patDefaultSequence.replace(process.patCandidates,
+                                           process.genForPF2PATSequence+
+                                           process.patCandidates)
+    else:
+        removeMCMatchingPF2PAT( process )
 
-def removeMCDependencedorPF( process ):
-    #-- Remove MC dependence ------------------------------------------------------
-    from PhysicsTools.PatAlgos.tools.coreTools import removeMCMatching
-    process.patDefaultSequence.remove(process.genParticlesForMETAllVisible)
-    process.patDefaultSequence.remove(process.genMetTrue)
-    process.patDefaultSequence.remove(process.genParticlesForJets)
-    process.patDefaultSequence.remove(process.ak5GenJetsNoNu)
-    process.patDefaultSequence.remove(process.iterativeCone5GenJetsNoNu)
-    removeMCMatching(process, ['PFAll'])
     
