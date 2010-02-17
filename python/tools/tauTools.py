@@ -22,8 +22,7 @@ def redoPFTauDiscriminators(process,
         tauDiscriminationSequence = process.patCaloTauDiscrimination
         tauSrc = 'CaloTauProducer'
 
-    process.patDefaultSequence.replace(process.patCandidates, tauDiscriminationSequence + process.patCandidates)
-    process.patDefaultSequence.replace(process.patTaus, process.patTaus+tauDiscriminationSequence)
+    process.makePatTaus.replace(process.patTaus, tauDiscriminationSequence*process.patTaus)
 
     massSearchReplaceParam(tauDiscriminationSequence, tauSrc, oldPFTauLabel, newPFTauLabel)
 
