@@ -56,18 +56,32 @@ foreach (split(/\n/, $IN)) {
         #print STDERR "Got item $item, obj $obj\n";
         die "Product $1 not found" unless defined($survey{$1});
   }
-  if ((m/\|\s+\w+\[\S+/) && ($survey{$item}->{'type'} ne 'edmTriggerResults')) { $arrays{$item} = 1;  }
-  next unless defined $obj;
-  if (m/Entries\s+:\s*(\d+)\s+:\s+Total\s+Size=\s+(\d+)\s+bytes\s+File\s+Size\s+=\s+(\d+)/) {
-        die "Mismatching number of events ($events, $1) " unless (($events == 0) || ($events == $1));
-        $events = $1;
-        $survey{$item}->{'items'}->{$obj} = { 'siz'=>$3/1024.0, 'ok'=>1 };
-        $survey{$item}->{'tot'} += $survey{$item}->{'items'}->{$obj}->{'siz'};
-  } elsif (m/Entries\s+:\s*(\d+)\s+:\s+Total\s+Size=\s+(\d+)\s+bytes\s+One basket in memory/) {
-        die "Mismatching number of events ($events, $1) " unless (($events == 0) || ($events == $1));
-        $events = $1;
-        $survey{$item}->{'items'}->{$obj} = { 'siz'=>$2/1024.0, 'ok'=>0 };
-        $survey{$item}->{'tot'} += $survey{$item}->{'items'}->{$obj}->{'siz'};
+  if ((m/\|\s+\w+\[\S+/) && ($survey{$item}->{'type'} ne 'edmTriggerResults')) { 
+      $arrays{$item} = 1;  
+  }
+  if(m/\*Br\s+\d+\s+:((\w+)_(\w+)_(\w*)_(\w+))\.obj\s/){
+      $arrays{$item} = 1; 
+  }
+ #next unless defined $obj;
+  if( defined $obj ) {
+      if (m/Entries\s+:\s*(\d+)\s+:\s+Total\s+Size=\s+(\d+)\s+bytes\s+File\s+Size\s+=\s+(\d+)/) {
+	  die "Mismatching number of events ($events, $1) " unless (($events == 0) || ($events == $1));
+	  $events = $1;
+	  $survey{$item}->{'items'}->{$obj} = { 'siz'=>$3/1024.0, 'ok'=>1 };
+	  $survey{$item}->{'tot'} += $survey{$item}->{'items'}->{$obj}->{'siz'};
+      } elsif (m/Entries\s+:\s*(\d+)\s+:\s+Total\s+Size=\s+(\d+)\s+bytes\s+One basket in memory/) {
+	  die "Mismatching number of events ($events, $1) " unless (($events == 0) || ($events == $1));
+	  $events = $1;
+	  $survey{$item}->{'items'}->{$obj} = { 'siz'=>$2/1024.0, 'ok'=>0 };
+	  $survey{$item}->{'tot'} += $survey{$item}->{'items'}->{$obj}->{'siz'};
+      }
+  }
+  else {
+      if (m/Entries\s+:\s*(\d+)\s+:\s+Total\s+Size=\s+(\d+)\s+bytes\s+File\s+Size\s+=\s+(\d+)/) {
+	  die "Mismatching number of events ($events, $1) " unless (($events == 0) || ($events == $1));
+	  $events = $1;
+	  $survey{$item}->{'tot'} = $3/1024.0
+      }
   }
 }
 
@@ -93,7 +107,6 @@ print $MACRO "}\n";
 close $MACRO;
 
 print STDERR "Getting items in the collections (it can take a while) ...\n";
-
 my $root = qx(root.exe -b -l "$filename" -q $macrofile  2> /dev/null);
 my @lines = split('\n', $root);
 foreach (grep( /^SIZE\s+\S+\s+\S+/, @lines)) {
