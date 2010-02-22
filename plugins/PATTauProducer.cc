@@ -1,5 +1,5 @@
 //
-// $Id: PATTauProducer.cc,v 1.32 2009/10/15 17:17:26 rwolf Exp $
+// $Id: PATTauProducer.cc,v 1.32.16.1 2010/02/22 10:37:18 mbluj Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATTauProducer.h"
@@ -191,23 +191,74 @@ void PATTauProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
     Tau aTau(tausRef);
     if (embedLeadTrack_)       aTau.embedLeadTrack();
     if (embedSignalTracks_)    aTau.embedSignalTracks();
-    if (embedIsolationTracks_) aTau.embedIsolationTracks();
-    if (aTau.isPFTau() ) {
-      if (embedLeadPFCand_) aTau.embedLeadPFCand();
-      if (embedLeadPFChargedHadrCand_) aTau.embedLeadPFChargedHadrCand();
-      if (embedLeadPFNeutralCand_) aTau.embedLeadPFNeutralCand();
-      if (embedSignalPFCands_) aTau.embedSignalPFCands();
-      if (embedSignalPFChargedHadrCands_) aTau.embedSignalPFChargedHadrCands();
-      if (embedSignalPFNeutralHadrCands_) aTau.embedSignalPFNeutralHadrCands();
-      if (embedSignalPFGammaCands_) aTau.embedSignalPFGammaCands();
-      if (embedIsolationPFCands_) aTau.embedIsolationPFCands();
-      if (embedIsolationPFChargedHadrCands_) aTau.embedIsolationPFChargedHadrCands();
-      if (embedIsolationPFNeutralHadrCands_) aTau.embedIsolationPFNeutralHadrCands();
-      if (embedIsolationPFGammaCands_) aTau.embedIsolationPFGammaCands();
+    if (embedIsolationTracks_) aTau.embedIsolationTracks();    
+    if (embedLeadPFCand_) {
+      if (aTau.isPFTau() )
+	aTau.embedLeadPFCand();
+      else 
+	edm::LogWarning("Type Error") << "Embedding a PFTau-specific information into a pat::Tau which wasn't made from a reco::PFTau is impossible.\n";
     }
-    else 
-      edm::LogWarning("Type Error") << "Embedding a PFTau-specific information into a pat::Tau which wasn't made from a reco::PFTau is impossible.\n";
-
+    if (embedLeadPFChargedHadrCand_) {
+      if (aTau.isPFTau() )
+	aTau.embedLeadPFChargedHadrCand();
+      else 
+	edm::LogWarning("Type Error") << "Embedding a PFTau-specific information into a pat::Tau which wasn't made from a reco::PFTau is impossible.\n";
+    }
+    if (embedLeadPFNeutralCand_) {
+      if (aTau.isPFTau() )
+	aTau.embedLeadPFNeutralCand();
+      else 
+	edm::LogWarning("Type Error") << "Embedding a PFTau-specific information into a pat::Tau which wasn't made from a reco::PFTau is impossible.\n";
+    }
+    if (embedSignalPFCands_) {
+      if (aTau.isPFTau() )
+	aTau.embedSignalPFCands();
+      else 
+	edm::LogWarning("Type Error") << "Embedding a PFTau-specific information into a pat::Tau which wasn't made from a reco::PFTau is impossible.\n";
+    }
+    if (embedSignalPFChargedHadrCands_) {
+      if (aTau.isPFTau() )
+	aTau.embedSignalPFChargedHadrCands();
+      else 
+	edm::LogWarning("Type Error") << "Embedding a PFTau-specific information into a pat::Tau which wasn't made from a reco::PFTau is impossible.\n";
+    }
+    if (embedSignalPFNeutralHadrCands_) {
+      if (aTau.isPFTau() )
+	aTau.embedSignalPFNeutralHadrCands();
+      else 
+	edm::LogWarning("Type Error") << "Embedding a PFTau-specific information into a pat::Tau which wasn't made from a reco::PFTau is impossible.\n";
+    }
+    if (embedSignalPFGammaCands_) {
+      if (aTau.isPFTau() )
+	aTau.embedSignalPFGammaCands();
+      else 
+	edm::LogWarning("Type Error") << "Embedding a PFTau-specific information into a pat::Tau which wasn't made from a reco::PFTau is impossible.\n";
+    }
+    if (embedIsolationPFCands_) {
+      if (aTau.isPFTau() )
+	aTau.embedIsolationPFCands();
+      else 
+	edm::LogWarning("Type Error") << "Embedding a PFTau-specific information into a pat::Tau which wasn't made from a reco::PFTau is impossible.\n";
+    }
+    if (embedIsolationPFChargedHadrCands_) {
+      if (aTau.isPFTau() )
+	aTau.embedIsolationPFChargedHadrCands();
+      else 
+	edm::LogWarning("Type Error") << "Embedding a PFTau-specific information into a pat::Tau which wasn't made from a reco::PFTau is impossible.\n";
+    }
+    if (embedIsolationPFNeutralHadrCands_) {
+      if (aTau.isPFTau() )
+	aTau.embedIsolationPFNeutralHadrCands();
+      else 
+	edm::LogWarning("Type Error") << "Embedding a PFTau-specific information into a pat::Tau which wasn't made from a reco::PFTau is impossible.\n";
+    }
+    if (embedIsolationPFGammaCands_) {
+      if (aTau.isPFTau() )
+	aTau.embedIsolationPFGammaCands();
+      else 
+	edm::LogWarning("Type Error") << "Embedding a PFTau-specific information into a pat::Tau which wasn't made from a reco::PFTau is impossible.\n";
+    }
+    
     // store the match to the generated final state muons
     if (addGenMatch_) {
       for(size_t i = 0, n = genMatches.size(); i < n; ++i) {
