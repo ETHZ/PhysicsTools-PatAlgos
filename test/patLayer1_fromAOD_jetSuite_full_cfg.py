@@ -30,20 +30,47 @@ addJetCollection(process,cms.InputTag('ak7CaloJets'),
                  jetIdLabel   = "ak7"
                  )
 
-# uncomment the following lines to add iterativeCone5JPT jets to
-# your PAT output
-addJetCollection(process,cms.InputTag('JetPlusTrackZSPCorJetIcone5'),
-                 'IC5', 'JPT',
-                 doJTA        = True,
-                 doBTagging   = True,
-#                jetCorrLabel = ('IC5','JPT'), ## this still needs completion of correction factors by JetMET
-                 jetCorrLabel = None,
-                 doType1MET   = False,
-                 doL1Cleaning = False,
-                 doL1Counters = True,                 
-                 genJetCollection = cms.InputTag("iterativeCone5GenJets"),
-                 doJetID      = False
-                 )
+# uncomment the following lines to add iterativeCone5 JPT jets to your PAT output
+addJetCollection(
+    process,cms.InputTag('JetPlusTrackZSPCorJetIcone5'),
+    'IC5','JPT',
+    doJTA        = True,
+    doBTagging   = True,
+    jetCorrLabel = None,
+    doType1MET   = False,
+    doL1Cleaning = True,
+    doL1Counters = False,                 
+    genJetCollection = cms.InputTag("iterativeCone5GenJets"),
+    doJetID      = False
+    )
+
+# uncomment the following lines to add sisCone5 JPT jets to your PAT output
+addJetCollection(
+    process,cms.InputTag('JetPlusTrackZSPCorJetSiscone5'),
+    'SC5', 'JPT',
+    doJTA        = True,
+    doBTagging   = True,
+    jetCorrLabel = None,
+    doType1MET   = False,
+    doL1Cleaning = True,
+    doL1Counters = False,                 
+    genJetCollection = cms.InputTag("sisCone5GenJets"),
+    doJetID      = False
+    )
+
+# uncomment the following lines to add antiKt5 JPT jets to your PAT output
+addJetCollection(
+    process,cms.InputTag('JetPlusTrackZSPCorJetAntiKt5'),
+    'AK5', 'JPT',
+    doJTA        = True,
+    doBTagging   = True,
+    jetCorrLabel = None,
+    doType1MET   = False,
+    doL1Cleaning = True,
+    doL1Counters = False,                 
+    genJetCollection = cms.InputTag("ak5GenJets"),
+    doJetID      = False
+    )
 
 # uncomment the following lines to add sisCone5PF jets to your PAT output
 addJetCollection(process,cms.InputTag('sisCone5PFJets'),
