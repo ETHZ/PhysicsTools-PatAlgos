@@ -18,7 +18,7 @@ from PhysicsTools.PatAlgos.tools.coreTools import *
 #              - TaNC discriminants attached for shrinkingConeTaus
 #              - default preselection on cleaningLayer1
 from PhysicsTools.PatAlgos.tools.tauTools import *
-#switchTo31Xdefaults(process, process.patTaus)
+#switchTo31Xdefaults(process)
 
 # let it run
 process.p = cms.Path(
