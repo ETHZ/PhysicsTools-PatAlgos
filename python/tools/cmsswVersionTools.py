@@ -2,7 +2,8 @@ import FWCore.ParameterSet.Config as cms
 from PhysicsTools.PatAlgos.tools.jetTools import *
 
 def run33xOnReRecoMC( process,
-                      genJets = "ak5GenJets"):
+                      genJets = "ak5GenJets",
+                      postfix=""):
     """
     ------------------------------------------------------------------
     running GenJets for ak5 and ak7
@@ -19,7 +20,7 @@ def run33xOnReRecoMC( process,
     print "*********************************************************************"
     process.load("RecoJets.Configuration.GenJetParticles_cff")
     process.load("RecoJets.JetProducers." + genJets +"_cfi")
-    process.makePatJets.replace( process.patJetCharge, process.genParticlesForJets+getattr(process,genJets)+process.patJetCharge)
+    process.patDefaultSequence.replace( getattr(process,"patCandidates"+postfix), process.genParticlesForJets+getattr(process,genJets)+getattr(process,"patCandidates"+postfix))
 
 def run33xOn31xMC(process,
                   jetSrc = cms.InputTag("antikt5CaloJets"),
