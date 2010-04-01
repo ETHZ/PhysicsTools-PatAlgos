@@ -14,7 +14,7 @@ from PhysicsTools.PatAlgos.patTemplate_cfg import *
 # process.load("PhysicsTools.PFCandProducer.Sources.source_ZtoMus_DBS_cfi")
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(False))
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
 process.out.fileName = cms.untracked.string('patLayer1_fromAOD_PF2PAT_full.root')
 
 # load the PAT config
@@ -25,17 +25,18 @@ process.load("PhysicsTools.PatAlgos.patSequences_cff")
 # not possible to run PF2PAT+PAT and standart PAT at the same time
 from PhysicsTools.PatAlgos.tools.pfTools import *
 
-usePF2PAT(process,runPF2PAT=True, jetAlgo='AK5', runOnMC=True) 
+postfix = "PFlow"
+usePF2PAT(process,runPF2PAT=True, jetAlgo='AK5', runOnMC=True, postfix=postfix) 
 
 # turn to false when running on data
-process.patElectrons.embedGenMatch = True
-process.patMuons.embedGenMatch = True
+getattr(process, "patElectrons"+postfix).embedGenMatch = True
+getattr(process, "patMuons"+postfix).embedGenMatch = True
 
 # Let it run
 process.p = cms.Path(
-    process.patDefaultSequence  
+    process.patDefaultSequence  +
+    getattr(process,"patPF2PATSequence"+postfix)
 )
-
 
 # Add PF2PAT output to the created file
 from PhysicsTools.PatAlgos.patEventContent_cff import patEventContentNoCleaning
