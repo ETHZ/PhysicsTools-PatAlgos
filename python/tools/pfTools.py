@@ -104,7 +104,7 @@ def reconfigurePF2PATTaus(process,
    # Get the prototype of tau producer to make, i.e. fixedConePFTauProducer
    producerName = producerFromType(tauType)
    # Set as the source for the pf2pat taus (pfTaus) selector
-   process.patTaus.tauSource = producerName
+   process.pfTaus.src = producerName
    # Start our pf2pat taus base sequence
    process.pfTausBaseSequence = cms.Sequence(getattr(process,
       producerName))
@@ -140,7 +140,7 @@ def reconfigurePF2PATTaus(process,
 
 
 def adaptPFTaus(process,tauType = 'shrinkingConePFTau'):
-    oldTaus = process.pfTaus.src
+    oldTaus = process.patTaus.tauSource
 
     # Set up the collection used as a preselection to use this tau type    
     reconfigurePF2PATTaus(process, tauType)
@@ -162,7 +162,7 @@ def adaptPFTaus(process,tauType = 'shrinkingConePFTau'):
 #helper function for PAT on PF2PAT sample
 def tauTypeInPF2PAT(process,tauType='shrinkingConePFTau'): 
     process.load("PhysicsTools.PFCandProducer.pfTaus_cff")
-    process.patTaus.src = cms.InputTag(tauType+'Producer')
+    process.pfTaus.src = cms.InputTag(tauType+'Producer')
             
 
 def addPFCandidates(process,src,patLabel='PFParticles',cut=""):
@@ -217,7 +217,7 @@ def switchToPFJets(process, input=cms.InputTag('pfNoTau'), algo='IC5'):
    
     switchJetCollection(process,
                         input,
-                        jetIdLabel = 'ak5',
+                        jetIdLabel = algo,
                         doJTA=True,
                         doBTagging=True,
                         jetCorrLabel=( algo, 'PF' ), 
