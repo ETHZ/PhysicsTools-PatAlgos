@@ -7,12 +7,15 @@ from PhysicsTools.PatAlgos.patTemplate_cfg import *
 process.load("PhysicsTools.PatAlgos.patSequences_cff")
 
 # use a fastsim file as input
-process.source.fileNames = cms.untracked.vstring('/store/relval/CMSSW_3_5_0_pre2/RelValQCD_FlatPt_15_3000/GEN-SIM-DIGI-RECO/MC_3XY_V14_FastSim-v1/0009/00A40245-8CED-DE11-9BA2-003048678C9A.root')
+process.source.fileNames = cms.untracked.vstring(
+   #'/store/relval/CMSSW_3_6_0_pre5/RelValTTbar/GEN-SIM-RECO/MC_36Y_V3-v1/0010/32F0646B-E43D-DF11-B235-003048D3FC94.root'
+   '/store/relval/CMSSW_3_6_0_pre6/RelValTTbar/GEN-SIM-RECO/MC_36Y_V4-v1/0011/060537EE-4E45-DF11-AE40-003048679012.root'
+)
 process.GlobalTag.globaltag = 'MC_3XY_V14::All'
 
 # need to add jetID here as it seems to be missing on the selected file???
-from PhysicsTools.PatAlgos.tools.jetTools import *
-addJetID(process, cms.InputTag('ak5CaloJets'), 'ak5')
+#from PhysicsTools.PatAlgos.tools.jetTools import *
+#addJetID(process, cms.InputTag('ak5CaloJets'), 'ak5')
 
 # let it run
 process.p = cms.Path(
