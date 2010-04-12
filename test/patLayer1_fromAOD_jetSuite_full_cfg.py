@@ -18,18 +18,18 @@ from PhysicsTools.PatAlgos.tools.jetTools import *
 
 # uncomment the following lines to add iterativeCone5JPT jets to
 # your PAT output
-##addJetCollection(process,cms.InputTag('JetPlusTrackZSPCorJetIcone5'),
-##                 'IC5', 'JPT',
-##                 doJTA        = True,
-##                 doBTagging   = True,
-###                jetCorrLabel = ('IC5','JPT'), ## this still needs completion of correction factors by JetMET
-##                 jetCorrLabel = None,
-##                 doType1MET   = False,
-##                 doL1Cleaning = False,
-##                 doL1Counters = True,                 
-##                 genJetCollection = cms.InputTag("iterativeCone5GenJets"),
-##                 doJetID      = False
-##                 )
+addJetCollection(process,cms.InputTag('JetPlusTrackZSPCorJetAntiKt5'),
+                 'AK5', 'JPT',
+                 doJTA        = True,
+                 doBTagging   = True,
+                 jetCorrLabel = ('AK5','JPT'), ## this still needs completion of correction factors by JetMET
+                #jetCorrLabel = None,
+                 doType1MET   = False,
+                 doL1Cleaning = False,
+                 doL1Counters = True,                 
+                 genJetCollection = cms.InputTag("ak5GenJets"),
+                 doJetID      = False
+                 )
 
 # uncomment the following lines to add ak7Calo jets to your PAT output
 addJetCollection(process,cms.InputTag('ak7CaloJets'),
@@ -43,34 +43,6 @@ addJetCollection(process,cms.InputTag('ak7CaloJets'),
                  genJetCollection=cms.InputTag("ak7GenJets"),
                  doJetID      = True,
                  jetIdLabel   = "ak7"
-                 )
-
-# uncomment the following lines to add sisCone5PF jets to your PAT output
-addJetCollection(process,cms.InputTag('sisCone5PFJets'),
-                 'SC5', 'PF',
-                 doJTA        = True,
-                 doBTagging   = True,
-                 jetCorrLabel = ('SC5','PF'),
-                 doType1MET   = True,
-                 doL1Cleaning = True,                 
-                 doL1Counters = False,
-                 genJetCollection=cms.InputTag("sisCone5GenJets"),
-                 doJetID      = True,
-                 jetIdLabel   = "sc5"
-                 )
-
-# uncomment the following lines to add sisCone7Calo jets to your PAT output
-addJetCollection(process,cms.InputTag('sisCone7CaloJets'),
-                 'SC7', 'Calo',
-                 doJTA        = True,
-                 doBTagging   = True,
-                 jetCorrLabel = None,
-                 doType1MET   = None,
-                 doL1Cleaning = True,                 
-                 doL1Counters = False,
-                 genJetCollection=cms.InputTag("sisCone5GenJets"),
-                 doJetID      = True,
-                 jetIdLabel   = "sc7"
                  )
 
 # uncomment the following lines to add kt4Calo jets to your PAT output
@@ -122,7 +94,7 @@ process.p = cms.Path(
 process.maxEvents.input = 10             ## (e.g. -1 to run on all events)
 #   process.out.outputCommands = [ ... ] ## (e.g. taken from PhysicsTools/PatAlgos/python/patEventContent_cff.py)
 #   process.out.fileName = ...           ## (e.g. 'myTuple.root')
-process.options.wantSummary = True       ## (to suppress the long output at the end of the job)    
+process.options.wantSummary = False       ## (to suppress the long output at the end of the job)    
 
 
 
