@@ -11,38 +11,38 @@ addPfMET(process, 'PF')
 from PhysicsTools.PatAlgos.tools.jetTools import *
 
 # produce jpt corrected calo jets, which are not on AOD per default
-process.load("PhysicsTools.PatAlgos.recoLayer0.jetPlusTrack_cff")
-process.jpt = cms.Path(
-    process.jptCaloJets
-)
+##process.load("PhysicsTools.PatAlgos.recoLayer0.jetPlusTrack_cff")
+##process.jpt = cms.Path(
+##    process.jptCaloJets
+##)
+
+# uncomment the following lines to add iterativeCone5JPT jets to
+# your PAT output
+##addJetCollection(process,cms.InputTag('JetPlusTrackZSPCorJetIcone5'),
+##                 'IC5', 'JPT',
+##                 doJTA        = True,
+##                 doBTagging   = True,
+###                jetCorrLabel = ('IC5','JPT'), ## this still needs completion of correction factors by JetMET
+##                 jetCorrLabel = None,
+##                 doType1MET   = False,
+##                 doL1Cleaning = False,
+##                 doL1Counters = True,                 
+##                 genJetCollection = cms.InputTag("iterativeCone5GenJets"),
+##                 doJetID      = False
+##                 )
 
 # uncomment the following lines to add ak7Calo jets to your PAT output
 addJetCollection(process,cms.InputTag('ak7CaloJets'),
                  'AK7', 'Calo',
                  doJTA        = True,
                  doBTagging   = False,
-                 jetCorrLabel = None,
+                 jetCorrLabel = ('AK7', 'Calo'),
                  doType1MET   = True,
                  doL1Cleaning = True,                 
                  doL1Counters = False,
                  genJetCollection=cms.InputTag("ak7GenJets"),
                  doJetID      = True,
                  jetIdLabel   = "ak7"
-                 )
-
-# uncomment the following lines to add iterativeCone5JPT jets to
-# your PAT output
-addJetCollection(process,cms.InputTag('JetPlusTrackZSPCorJetIcone5'),
-                 'IC5', 'JPT',
-                 doJTA        = True,
-                 doBTagging   = True,
-#                jetCorrLabel = ('IC5','JPT'), ## this still needs completion of correction factors by JetMET
-                 jetCorrLabel = None,
-                 doType1MET   = False,
-                 doL1Cleaning = False,
-                 doL1Counters = True,                 
-                 genJetCollection = cms.InputTag("iterativeCone5GenJets"),
-                 doJetID      = False
                  )
 
 # uncomment the following lines to add sisCone5PF jets to your PAT output
@@ -63,9 +63,9 @@ addJetCollection(process,cms.InputTag('sisCone5PFJets'),
 addJetCollection(process,cms.InputTag('sisCone7CaloJets'),
                  'SC7', 'Calo',
                  doJTA        = True,
-                 doBTagging   = False,
+                 doBTagging   = True,
                  jetCorrLabel = None,
-                 doType1MET   = True,
+                 doType1MET   = None,
                  doL1Cleaning = True,                 
                  doL1Counters = False,
                  genJetCollection=cms.InputTag("sisCone5GenJets"),
@@ -93,7 +93,7 @@ addJetCollection(process,cms.InputTag('kt6CaloJets'),
                  doJTA        = True,
                  doBTagging   = False,
                  jetCorrLabel = None,
-                 doType1MET   = True,
+                 doType1MET   = False,
                  doL1Cleaning = True,                 
                  doL1Counters = False,
                  genJetCollection=cms.InputTag("kt6GenJets"),
@@ -101,13 +101,13 @@ addJetCollection(process,cms.InputTag('kt6CaloJets'),
                  jetIdLabel   = "kt6"
                  )
 
-# uncomment the following lines to add iterativeCone5Pflow jets to your PAT output
-switchJetCollection(process,cms.InputTag('sisCone5PFJets'),
+### uncomment the following lines to add iterativeCone5Pflow jets to your PAT output
+switchJetCollection(process,cms.InputTag('ak5PFJets'),
                  doJTA        = True,
                  doBTagging   = True,
-                 jetCorrLabel = ('SC5','PF'),
+                 jetCorrLabel = None,
                  doType1MET   = True,
-                 genJetCollection=cms.InputTag("iterativeCone5GenJets"),
+                 genJetCollection=cms.InputTag("ak5GenJets"),
                  doJetID      = True
                  )
 
