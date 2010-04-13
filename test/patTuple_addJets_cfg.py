@@ -1,29 +1,21 @@
-# import skeleton process
+## import skeleton process
 from PhysicsTools.PatAlgos.patTemplate_cfg import *
 
-# uncomment the following line to add tcMET to the event content
+## uncomment the following line to add tcMET to the event content
 from PhysicsTools.PatAlgos.tools.metTools import *
 addTcMET(process, 'TC')
 addPfMET(process, 'PF')
 
-# uncomment the following line to add different jet collections
-# to the event content
+## uncomment the following line to add different jet collections
+## to the event content
 from PhysicsTools.PatAlgos.tools.jetTools import *
 
-# produce jpt corrected calo jets, which are not on AOD per default
-##process.load("PhysicsTools.PatAlgos.recoLayer0.jetPlusTrack_cff")
-##process.jpt = cms.Path(
-##    process.jptCaloJets
-##)
-
-# uncomment the following lines to add iterativeCone5JPT jets to
-# your PAT output
+## uncomment the following lines to add ak5JPTJets to your PAT output
 addJetCollection(process,cms.InputTag('JetPlusTrackZSPCorJetAntiKt5'),
                  'AK5', 'JPT',
                  doJTA        = True,
                  doBTagging   = True,
-                 jetCorrLabel = ('AK5','JPT'), ## this still needs completion of correction factors by JetMET
-                #jetCorrLabel = None,
+                 jetCorrLabel = ('AK5','JPT'),
                  doType1MET   = False,
                  doL1Cleaning = False,
                  doL1Counters = True,                 
@@ -31,7 +23,7 @@ addJetCollection(process,cms.InputTag('JetPlusTrackZSPCorJetAntiKt5'),
                  doJetID      = False
                  )
 
-# uncomment the following lines to add ak7Calo jets to your PAT output
+## uncomment the following lines to add ak7CaloJets to your PAT output
 addJetCollection(process,cms.InputTag('ak7CaloJets'),
                  'AK7', 'Calo',
                  doJTA        = True,
@@ -45,7 +37,7 @@ addJetCollection(process,cms.InputTag('ak7CaloJets'),
                  jetIdLabel   = "ak7"
                  )
 
-# uncomment the following lines to add kt4Calo jets to your PAT output
+## uncomment the following lines to add kt4CaloJets to your PAT output
 addJetCollection(process,cms.InputTag('kt4CaloJets'),
                  'KT4', 'Calo',
                  doJTA        = True,
@@ -59,7 +51,7 @@ addJetCollection(process,cms.InputTag('kt4CaloJets'),
                  jetIdLabel   = "kt4"
                  )
 
-# uncomment the following lines to add kt6Calo jets to your PAT output
+## uncomment the following lines to add kt6CaloJets to your PAT output
 addJetCollection(process,cms.InputTag('kt6CaloJets'),
                  'KT6', 'Calo',
                  doJTA        = True,
@@ -73,7 +65,7 @@ addJetCollection(process,cms.InputTag('kt6CaloJets'),
                  jetIdLabel   = "kt6"
                  )
 
-### uncomment the following lines to add iterativeCone5Pflow jets to your PAT output
+## uncomment the following lines to add ak55PFJets to your PAT output
 switchJetCollection(process,cms.InputTag('ak5PFJets'),
                  doJTA        = True,
                  doBTagging   = True,
@@ -83,36 +75,28 @@ switchJetCollection(process,cms.InputTag('ak5PFJets'),
                  doJetID      = True
                  )
 
+## let it run
 process.p = cms.Path(
     process.patDefaultSequence
 )
 
-# In addition you usually want to change the following parameters:
+
+
+## ------------------------------------------------------
+#  In addition you usually want to change the following
+#  parameters:
+## ------------------------------------------------------
 #
-#   process.GlobalTag.globaltag =  ...   ## (according to https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideFrontierConditions)
-#   process.source.fileNames = [ ... ]   ## (e.g. 'file:AOD.root')
-process.maxEvents.input = 10             ## (e.g. -1 to run on all events)
-#   process.out.outputCommands = [ ... ] ## (e.g. taken from PhysicsTools/PatAlgos/python/patEventContent_cff.py)
-#   process.out.fileName = ...           ## (e.g. 'myTuple.root')
-process.options.wantSummary = False       ## (to suppress the long output at the end of the job)    
-
-
-
-#### The following lines are meant for debigging only ####
-
-#
-#f = open("patLayer1_fromAOD_jetSuite_full.dump.py", "w")
-#f.write(process.dumpPython())
-#f.close()
-#
-
-#### GraphViz dumps of sequences and modules, useful for debugging.
-#### WARNING: it's not for the weak-hearted; the output plot is HUGE
-#### needs a version of 'dot' that works with png graphics. 
-#### in case, you can borrw mine with
-####   export LD_LIBRARY_PATH=/afs/cern.ch/user/g/gpetrucc/scratch0/graphviz/lib:${LD_LIBRARY_PATH}
-####   export PATH=/afs/cern.ch/user/g/gpetrucc/scratch0/graphviz/bin:${PATH}
-#
-# from PhysicsTools.PatAlgos.tools.circuitry import *
-# plotSequences(   process.p, 'patSequences.png')
-# plotModuleInputs(process.p, 'patModules.png'  ,printOuter=False,printLinkNames=True)  # no nodes for non-PAT modules
+#   process.GlobalTag.globaltag =  ...    ##  (according to https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideFrontierConditions)
+#                                         ##
+#   process.source.fileNames = [          ##
+#    '/store/relval/CMSSW_3_5_0_pre1/RelValTTbar/GEN-SIM-RECO/STARTUP3X_V14-v1/0006/14920B0A-0DE8-DE11-B138-002618943926.root'
+#   ]                                     ##  (e.g. 'file:AOD.root')
+#                                         ##
+process.maxEvents.input = 10              ##  (e.g. -1 to run on all events)
+#                                         ##
+#   process.out.outputCommands = [ ... ]  ##  (e.g. taken from PhysicsTools/PatAlgos/python/patEventContent_cff.py)
+#                                         ##
+#   process.out.fileName = ...            ##  (e.g. 'myTuple.root')
+#                                         ##
+process.options.wantSummary = False       ##  (to suppress the long output at the end of the job)    

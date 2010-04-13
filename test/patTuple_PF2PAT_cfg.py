@@ -1,6 +1,4 @@
-# This is an example PAT configuration showing the usage of PF2PAT+PAT
-
-# Starting with a skeleton process which gets imported with the following line
+## import skeleton process
 from PhysicsTools.PatAlgos.patTemplate_cfg import *
 
 # the source is already defined in patTemplate_cfg.
@@ -45,13 +43,24 @@ from PhysicsTools.PatAlgos.patEventContent_cff import patEventContentNoCleaning
 process.out.outputCommands = cms.untracked.vstring('drop *',
                                                    *patEventContentNoCleaning ) 
 
-# In addition you usually want to change the following parameters:
+
+## ------------------------------------------------------
+#  In addition you usually want to change the following
+#  parameters:
+## ------------------------------------------------------
 #
-#   process.GlobalTag.globaltag =  ...      (according to https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideFrontierConditions)
-#   process.source.fileNames = [ ... ]      (e.g. 'file:AOD.root')
-#   process.maxEvents.input = ...           (e.g. -1 to run on all events)
-#   process.out.outputCommands = [ ... ]    (e.g. taken from PhysicsTools/PatAlgos/python/patEventContent_cff.py)
-#   process.out.fileName = ...              (e.g. 'myTuple.root')
-#   process.options.wantSummary = False     (to suppress the long output at the end of the job)
+#   process.GlobalTag.globaltag =  ...    ##  (according to https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideFrontierConditions)
+#                                         ##
+#   process.source.fileNames = [          ##
+#    '/store/relval/CMSSW_3_5_0_pre1/RelValTTbar/GEN-SIM-RECO/STARTUP3X_V14-v1/0006/14920B0A-0DE8-DE11-B138-002618943926.root'
+#   ]                                     ##  (e.g. 'file:AOD.root')
+#                                         ##
+#   process.maxEvents.input = ...         ##  (e.g. -1 to run on all events)
+#                                         ##
+#   process.out.outputCommands = [ ... ]  ##  (e.g. taken from PhysicsTools/PatAlgos/python/patEventContent_cff.py)
+#                                         ##
+#   process.out.fileName = ...            ##  (e.g. 'myTuple.root')
+#                                         ##
+#   process.options.wantSummary = True    ##  (to suppress the long output at the end of the job)    
 
 process.MessageLogger.cerr.FwkReport.reportEvery = 10
