@@ -143,7 +143,12 @@ def adaptPFTaus(process,tauType = 'shrinkingConePFTau'):
     oldTaus = process.patTaus.tauSource
 
     # Set up the collection used as a preselection to use this tau type    
-    reconfigurePF2PATTaus(process, tauType)
+    if tauType != 'hpsPFTau' :
+        reconfigurePF2PATTaus(process, tauType)
+    else:
+        reconfigurePF2PATTaus(process, tauType,
+                              [],
+                              [])
     process.patTaus.tauSource = cms.InputTag("pfTaus")
     
     redoPFTauDiscriminators(process, 
@@ -272,6 +277,8 @@ def usePF2PAT(process, runPF2PAT=True, jetAlgo='IC5', runOnMC=True):
     # Taus
     #adaptPFTaus( process ) #default (i.e. shrinkingConePFTau)
     adaptPFTaus( process, tauType='shrinkingConePFTau' )
+    #adaptPFTaus( process, tauType='fixedConePFTau' )
+    #adaptPFTaus( process, tauType='hpsPFTau' )
     
     # MET
     switchToPFMET(process, cms.InputTag('pfMET'))
