@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 
 ## Tool to dig out information about the event size in PAT
-## 
+##
 ## Please run this giving as argument the root file, and redirecting the output on an HTML file
 ## Notes:
 ##    - you must have a correctly initialized environment, and FWLite auto-loading with ROOT
@@ -12,7 +12,7 @@
 ##      otherwise you will get an unreadable output file
 ##    - for small files, compression does not work (as you will read from the output html)
 ##    - per-event provenance is just the GetZipBytes of EventMetaData, EventHistory.
-##    -  
+##
 
 use strict; 
 use warnings;
@@ -47,16 +47,18 @@ foreach (split(/\n/, $IN)) {
   }
   if (m/\*Br\s+\d+\s+:((\w+)_(\w+)_(\w*)_(\w+))\.obj\s/) {
         $survey{$1} = { 'type'=>$2, 'label'=>$3, 'instance'=>$4, 'process'=>$5, 'tot'=>0, 'num'=> 0, 'items'=>{},  };
-        $obj = undef; $item = $1;
-        #print STDERR "Got item $item\n";
+        $obj = undef; $item = $1; #print STDERR "Got item $item\n";
   }
   next unless defined $item;
-  if (m/\*Br\s+\d+\s+:((\w+)_(\w+)_(\w*)_(\w+))\.obj\.(\S+) :/) {
+ #if (m/\*Br\s+\d+\s+:((\w+)_(\w+)_(\w*)_(\w+))\.obj\.(\S+) :/) {
+  if (m/\*Br\s+\d+\s+:((\w+)_(\w+)_(\w*)_(\w+))\.(\S+) :/) {
         $obj = $6; $item = $1;
         #print STDERR "Got item $item, obj $obj\n";
         die "Product $1 not found" unless defined($survey{$1});
   }
-  if ((m/\|\s+\w+\[\S+/) && ($survey{$item}->{'type'} ne 'edmTriggerResults')) { $arrays{$item} = 1;  }
+  if ((m/\|\s+\w+\[\S+/) && ($survey{$item}->{'type'} ne 'edmTriggerResults')) { 
+    $arrays{$item} = 1;  
+  }
   next unless defined $obj;
   if (m/Entries\s+:\s*(\d+)\s+:\s+Total\s+Size=\s+(\d+)\s+bytes\s+File\s+Size\s+=\s+(\d+)/) {
         die "Mismatching number of events ($events, $1) " unless (($events == 0) || ($events == $1));
