@@ -19,5 +19,6 @@
   <use name=SimDataFormats/Vertex>
   <use name=SimGeneral/HepPDTRecord>
   <use name=RecoMET/METAlgorithms>
+  <use name=TrackingTools/IPTools>
   <use name=root>
 </library>
