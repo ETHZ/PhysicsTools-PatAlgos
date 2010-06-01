@@ -1,5 +1,5 @@
 //
-// $Id: PATTriggerProducer.cc,v 1.13 2010/03/18 23:04:54 vadler Exp $
+// $Id: PATTriggerProducer.cc,v 1.29 2010/05/31 18:40:42 vadler Exp $
 //
 
 
@@ -30,8 +30,6 @@
 
 #include "FWCore/Framework/interface/ESHandle.h"
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
-
-#include "L1Trigger/GlobalTriggerAnalyzer/interface/L1GtUtils.h"
 
 
 using namespace pat;
@@ -139,35 +137,6 @@ void PATTriggerProducer::beginRun( Run & iRun, const EventSetup & iSetup )
         hltPrescaleTableRun_ = trigger::HLTPrescaleTable( handleHltPrescaleTable->set(), handleHltPrescaleTable->labels(), handleHltPrescaleTable->table() );
       }
     }
-    // Try parameter set, if no run product (products preferred, if configured explicitly)
-    if ( hltPrescaleTableRun_.size() == 0 ) {
-      std::string prescaleName( "" );
-      const std::string preS( "PrescaleService" ); // FIXME hard-coding
-      const std::string preT( "PrescaleTable" );   // FIXME hard-coding
-      if ( hltConfig_.processPSet().exists( preS ) ) {
-        prescaleName = preS;
-      } else if ( hltConfig_.processPSet().exists( preT ) ) {
-        prescaleName = preT;
-      }
-      if ( prescaleName.size() > 0 ) {
-        const ParameterSet parameterSet( hltConfig_.processPSet().getParameter< ParameterSet >( prescaleName ) );
-        const std::string hltPrescaleLabel( parameterSet.getUntrackedParameter< std::string >( "lvl1DefaultLabel", "" ) ); // FIXME Is the untracked parameter available?
-        const std::vector< std::string > prescaleLabels( parameterSet.getParameter< std::vector< std::string > >( "lvl1Labels" ) );
-        unsigned set( 0 );
-        for ( unsigned iLabel = 0; iLabel < prescaleLabels.size(); ++iLabel ) {
-          if ( prescaleLabels.at( iLabel ) == hltPrescaleLabel ) {
-            set = iLabel;
-            break;
-          }
-        }
-        std::map< std::string, std::vector< unsigned > > prescaleTable;
-        const std::vector< ParameterSet > prescaleParameters( parameterSet.getParameter< std::vector< ParameterSet > >( "prescaleTable" ) );
-        for ( std::vector< ParameterSet >::const_iterator iPSet = prescaleParameters.begin(); iPSet != prescaleParameters.end(); ++iPSet ) {
-          prescaleTable.insert( make_pair( iPSet->getParameter< std::string >( "pathName" ), iPSet->getParameter< std::vector< unsigned > >( "prescales" ) ) );
-        }
-        hltPrescaleTableRun_ = trigger::HLTPrescaleTable( set, prescaleLabels, prescaleTable );
-      }
-    }
   }
 
 }
@@ -212,11 +181,11 @@ void PATTriggerProducer::produce( Event& iEvent, const EventSetup& iSetup )
   if ( goodHlt ) {
     if( ! handleTriggerResults.isValid() ) {
       LogError( "errorTriggerResultsValid" ) << "TriggerResults product with InputTag " << tagTriggerResults_.encode() << " not in event" << std::endl
-                                                  << "No HLT information produced.";
+                                             << "No HLT information produced.";
       goodHlt = false;
     } else if ( ! handleTriggerEvent.isValid() ) {
       LogError( "errorTriggerEventValid" ) << "trigger::TriggerEvent product with InputTag " << tagTriggerEvent_.encode() << " not in event" << std::endl
-                                                << "No HLT information produced.";
+                                           << "No HLT information produced.";
       goodHlt = false;
     }
   }
@@ -245,22 +214,37 @@ void PATTriggerProducer::produce( Event& iEvent, const EventSetup& iSetup )
         hltPrescaleTable = trigger::HLTPrescaleTable( handleHltPrescaleTable->set(), handleHltPrescaleTable->labels(), handleHltPrescaleTable->table() );
       }
     }
-    unsigned set( 0 );
-    bool foundPrescaleLabel( false );
-    if ( hltPrescaleLabel_.size() > 0 ) {
-      const std::vector< std::string > prescaleLabels( hltPrescaleTable.labels() );
-      for ( unsigned iLabel = 0; iLabel <  prescaleLabels.size(); ++iLabel ) {
-        if ( prescaleLabels.at( iLabel ) == hltPrescaleLabel_ ) {
-          set   = iLabel;
-          foundPrescaleLabel = true;
-          break;
+    // Try event setup, if no product
+    if ( hltPrescaleTable.size() == 0 ) {
+      if ( ! labelHltPrescaleTable_.empty() ) {
+        LogWarning( "hltPrescaleInputTag" ) << "HLTPrescaleTable product with label '" << labelHltPrescaleTable_ << "' not found in process '" << nameProcess_ << "'; using default from event setup";
+      }
+      if ( hltConfig_.prescaleSize() > 0 ) {
+        if ( hltConfig_.prescaleSet( iEvent, iSetup ) != -1 ) {
+          hltPrescaleTable = trigger::HLTPrescaleTable( hltConfig_.prescaleSet( iEvent, iSetup ), hltConfig_.prescaleLabels(), hltConfig_.prescaleTable() );
+        } else {
+          LogWarning( "hltPrescaleSet" ) << "HLTPrescaleTable from event setup has error";
         }
       }
-      if ( ! foundPrescaleLabel ) {
-        LogWarning( "hltPrescaleLabel" ) << "HLT prescale label '" << hltPrescaleLabel_ << "' not in prescale table; using default";
-      }
     }
-    if ( ! foundPrescaleLabel ) set = hltPrescaleTable.set();
+    unsigned set( hltPrescaleTable.set() );
+    if ( hltPrescaleTable.size() > 0 ) {
+      if ( hltPrescaleLabel_.size() > 0 ) {
+        bool foundPrescaleLabel( false );
+        for ( unsigned iLabel = 0; iLabel <  hltPrescaleTable.labels().size(); ++iLabel ) {
+          if ( hltPrescaleTable.labels().at( iLabel ) == hltPrescaleLabel_ ) {
+            set                = iLabel;
+            foundPrescaleLabel = true;
+            break;
+          }
+        }
+        if ( ! foundPrescaleLabel ) {
+          LogWarning( "hltPrescaleLabel" ) << "HLT prescale label '" << hltPrescaleLabel_ << "' not in prescale table; using default";
+        }
+      }
+    } else {
+      LogWarning( "hltPrescaleTable" ) << "No HLT prescale table found; using default empty table with all prescales 1";
+    }
 
     for ( size_t iP = 0; iP < sizePaths; ++iP ) {
       const std::string namePath( hltConfig_.triggerName( iP ) );
@@ -527,8 +511,7 @@ void PATTriggerProducer::produce( Event& iEvent, const EventSetup& iSetup )
 
   // L1 algorithms
   if ( ! onlyStandAlone_ ) {
-    L1GtUtils l1GtUtils;
-    l1GtUtils.retrieveL1EventSetup( iSetup );
+    l1GtUtils_.retrieveL1EventSetup( iSetup );
     ESHandle< L1GtTriggerMenu > handleL1GtTriggerMenu;
     iSetup.get< L1GtTriggerMenuRcd >().get( handleL1GtTriggerMenu );
     const AlgorithmMap l1GtAlgorithms( handleL1GtTriggerMenu->gtAlgorithmMap() );
@@ -544,7 +527,7 @@ void PATTriggerProducer::produce( Event& iEvent, const EventSetup& iSetup )
       }
       int tech;
       int bit;
-      if ( ! l1GtUtils.l1AlgTechTrigBitNumber( iAlgo->second.algoName(), tech, bit ) ) {
+      if ( ! l1GtUtils_.l1AlgTechTrigBitNumber( iAlgo->second.algoName(), tech, bit ) ) {
         LogError( "errorL1AlgoName" ) << "L1 algorithm '" << iAlgo->second.algoName() << "' not found in the L1 menu; skipping";
         continue;
       }
@@ -552,7 +535,7 @@ void PATTriggerProducer::produce( Event& iEvent, const EventSetup& iSetup )
       bool decisionAfterMask;
       int  prescale;
       int  mask;
-      int  error( l1GtUtils.l1Results( iEvent, iAlgo->second.algoName(), decisionBeforeMask, decisionAfterMask, prescale, mask ) );
+      int  error( l1GtUtils_.l1Results( iEvent, iAlgo->second.algoName(), decisionBeforeMask, decisionAfterMask, prescale, mask ) );
       if ( error != 0 ) {
         LogError( "errorL1AlgoDecision" ) << "L1 algorithm '" << iAlgo->second.algoName() << "' decision has error code " << error << "; skipping";
         continue;
@@ -568,7 +551,7 @@ void PATTriggerProducer::produce( Event& iEvent, const EventSetup& iSetup )
       }
       int tech;
       int bit;
-      if ( ! l1GtUtils.l1AlgTechTrigBitNumber( iAlgo->second.algoName(), tech, bit ) ) {
+      if ( ! l1GtUtils_.l1AlgTechTrigBitNumber( iAlgo->second.algoName(), tech, bit ) ) {
         LogError( "errorL1AlgoName" ) << "L1 algorithm '" << iAlgo->second.algoName() << "' not found in the L1 menu; skipping";
         continue;
       }
@@ -576,7 +559,7 @@ void PATTriggerProducer::produce( Event& iEvent, const EventSetup& iSetup )
       bool decisionAfterMask;
       int  prescale;
       int  mask;
-      int  error( l1GtUtils.l1Results( iEvent, iAlgo->second.algoName(), decisionBeforeMask, decisionAfterMask, prescale, mask ) );
+      int  error( l1GtUtils_.l1Results( iEvent, iAlgo->second.algoName(), decisionBeforeMask, decisionAfterMask, prescale, mask ) );
       if ( error != 0 ) {
         LogError( "errorL1AlgoDecision" ) << "L1 algorithm '" << iAlgo->second.algoName() << "' decision has error code " << error << "; skipping";
         continue;
