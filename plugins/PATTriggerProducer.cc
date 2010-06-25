@@ -1,5 +1,5 @@
 //
-// $Id: PATTriggerProducer.cc,v 1.29 2010/05/31 18:40:42 vadler Exp $
+// $Id: PATTriggerProducer.cc,v 1.15.2.1 2010/06/01 20:37:22 vadler Exp $
 //
 
 
@@ -243,7 +243,7 @@ void PATTriggerProducer::produce( Event& iEvent, const EventSetup& iSetup )
         }
       }
     } else {
-      LogWarning( "hltPrescaleTable" ) << "No HLT prescale table found; using default empty table with all prescales 1";
+      if ( iEvent.isRealData() ) LogWarning( "hltPrescaleTable" ) << "No HLT prescale table found; using default empty table with all prescales 1";
     }
 
     for ( size_t iP = 0; iP < sizePaths; ++iP ) {
