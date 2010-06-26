@@ -7,7 +7,7 @@
 // Package:    PatAlgos
 // Class:      pat::PATTriggerProducer
 //
-// $Id: PATTriggerProducer.h,v 1.9 2010/04/20 20:03:36 vadler Exp $
+// $Id: PATTriggerProducer.h,v 1.11 2010/06/26 17:53:57 vadler Exp $
 //
 /**
   \class    pat::PATTriggerProducer PATTriggerProducer.h "PhysicsTools/PatAlgos/plugins/PATTriggerProducer.h"
@@ -16,7 +16,7 @@
    [...]
 
   \author   Volker Adler
-  \version  $Id: PATTriggerProducer.h,v 1.9 2010/04/20 20:03:36 vadler Exp $
+  \version  $Id: PATTriggerProducer.h,v 1.11 2010/06/26 17:53:57 vadler Exp $
 */
 
 
@@ -58,6 +58,7 @@ namespace pat {
       edm::InputTag tagL1ExtraTauJet_;  // configuration (optional)
       edm::InputTag tagL1ExtraETM_;     // configuration (optional)
       edm::InputTag tagL1ExtraHTM_;     // configuration (optional)
+      bool          saveL1Refs_;        // configuration (optional with default)
       // HLT
       HLTConfigProvider         hltConfig_;
       bool                      hltConfigInit_;
