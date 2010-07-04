@@ -7,7 +7,7 @@
 // Package:    PatAlgos
 // Class:      pat::PATTriggerProducer
 //
-// $Id: PATTriggerProducer.h,v 1.8 2010/03/18 23:04:54 vadler Exp $
+// $Id: PATTriggerProducer.h,v 1.10 2010/05/18 12:33:29 vadler Exp $
 //
 /**
   \class    pat::PATTriggerProducer PATTriggerProducer.h "PhysicsTools/PatAlgos/plugins/PATTriggerProducer.h"
@@ -16,7 +16,7 @@
    [...]
 
   \author   Volker Adler
-  \version  $Id: PATTriggerProducer.h,v 1.8 2010/03/18 23:04:54 vadler Exp $
+  \version  $Id: PATTriggerProducer.h,v 1.10 2010/05/18 12:33:29 vadler Exp $
 */
 
 
@@ -28,6 +28,7 @@
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/Utilities/interface/InputTag.h"
 
+#include "L1Trigger/GlobalTriggerAnalyzer/interface/L1GtUtils.h"
 #include "HLTrigger/HLTcore/interface/HLTConfigProvider.h"
 
 
@@ -48,6 +49,8 @@ namespace pat {
 
       bool onlyStandAlone_; // configuration
       // L1
+      L1GtUtils     l1GtUtils_;
+      bool          addL1Algos_;        // configuration (optional)
       edm::InputTag tagL1ExtraMu_;      // configuration (optional)
       edm::InputTag tagL1ExtraNoIsoEG_; // configuration (optional)
       edm::InputTag tagL1ExtraIsoEG_;   // configuration (optional)
