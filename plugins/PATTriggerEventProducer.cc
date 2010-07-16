@@ -1,12 +1,11 @@
 //
-// $Id: PATTriggerEventProducer.cc,v 1.15 2010/07/15 21:55:36 vadler Exp $
+// $Id: PATTriggerEventProducer.cc,v 1.11 2010/07/15 21:33:27 vadler Exp $
 //
 
 
 #include "PhysicsTools/PatAlgos/plugins/PATTriggerEventProducer.h"
 
 #include <cassert>
-#include <iostream> // DEBUG
 
 #include "DataFormats/Common/interface/TriggerResults.h"
 #include "DataFormats/L1GlobalTrigger/interface/L1GlobalTriggerReadoutRecord.h"
@@ -57,12 +56,6 @@ void PATTriggerEventProducer::beginRun( Run & iRun, const EventSetup & iSetup )
   if ( condRunBlock.isValid() ) {
     condRun_       = *condRunBlock;
     gtCondRunInit_ = true;
-    std::cout << "  PATTriggerEventProducer::beginRun(): beam mode        : " << condRun_.beamMode      << std::endl  // DEBUG
-              << "                                       beam momentum    : " << condRun_.beamMomentum  << std::endl  // DEBUG
-              << "                                       B current start  : " << condRun_.BStartCurrent << std::endl  // DEBUG
-              << "                                       B current stop   : " << condRun_.BStopCurrent  << std::endl  // DEBUG
-              << "                                       B current average: " << condRun_.BAvgCurrent   << std::endl  // DEBUG
-              << "                                       LHC fill         : " << condRun_.lhcFillNumber << std::endl; // DEBUG
   } else {
     LogError( "noConditionsInEdm" ) << "ConditionsInRunBlock product with InputTag " << tagCondGt_.encode() << " not in run";
   }
@@ -88,8 +81,6 @@ void PATTriggerEventProducer::beginLuminosityBlock( LuminosityBlock & iLumi, con
   if ( condLumiBlock.isValid() ) {
     condLumi_       = *condLumiBlock;
     gtCondLumiInit_ = true;
-    std::cout << "  PATTriggerEventProducer::beginLuminosityBlock(): beam 1: " << condLumi_.totalIntensityBeam1 << std::endl  // DEBUG
-              << "                                                   beam 2: " << condLumi_.totalIntensityBeam2 << std::endl; // DEBUG
   } else {
     LogError( "noConditionsInEdm" ) << "ConditionsInLumiBlock product with InputTag " << tagCondGt_.encode() << " not in lumi";
   }
@@ -180,8 +171,6 @@ void PATTriggerEventProducer::produce( Event& iEvent, const EventSetup& iSetup )
   if ( condEventBlock.isValid() ) {
     triggerEvent->setBstMasterStatus( condEventBlock->bstMasterStatus );
     triggerEvent->setTurnCount( condEventBlock->turnCountNumber );
-    std::cout << "  PATTriggerEventProducer::produce(): BST status: " << condEventBlock->bstMasterStatus  << std::endl  // DEBUG
-              << "                                      turn count: " << condEventBlock->turnCountNumber  << std::endl; // DEBUG
   } else {
     LogError( "noConditionsInEdm" ) << "ConditionsInEventBlock product with InputTag " << tagCondGt_.encode() << " not in event";
   }
