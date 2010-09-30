@@ -278,9 +278,9 @@ def switchToPFJets(process, input=cms.InputTag('pfNoTau'), algo='IC5', postfix =
         
     # changing the jet collection in PF2PAT:
     from PhysicsTools.PFCandProducer.Tools.jetTools import jetAlgo
-    inputCollection = getattr(process,"allPfJets"+postfix).src
-    setattr(process, "allPfJets"+postfix, jetAlgo( algo ) )
-    getattr(process,"allPfJets"+postfix).src = inputCollection
+    inputCollection = getattr(process,"pfJets"+postfix).src
+    setattr(process, "pfJets"+postfix, jetAlgo( algo ) )
+    getattr(process,"pfJets"+postfix).src = inputCollection
     switchJetCollection(process,
                         input,
                         jetIdLabel = algo,
@@ -296,6 +296,8 @@ def switchToPFJets(process, input=cms.InputTag('pfNoTau'), algo='IC5', postfix =
     
     applyPostfix(process, "patJets", postfix).embedCaloTowers   = False
     applyPostfix(process, "patJets", postfix).embedPFCandidates   = True
+    
+    
 
 #-- Remove MC dependence ------------------------------------------------------
 def removeMCMatchingPF2PAT( process, postfix="" ):
@@ -364,7 +366,7 @@ def usePF2PAT(process, runPF2PAT=True, jetAlgo='IC5', runOnMC=True, postfix = ""
     switchToPFMET(process, cms.InputTag('pfMET'+postfix), postfix=postfix)
     
     # Unmasked PFCandidates
-    addPFCandidates(process,cms.InputTag('pfNoJet'+postfix),patLabel='PFParticles',cut="",postfix=postfix)
+    addPFCandidates(process,cms.InputTag('pfNoJet'+postfix),patLabel='PFParticles'+postfix,cut="",postfix=postfix)
 
     if runOnMC:
         process.load("PhysicsTools.PFCandProducer.genForPF2PAT_cff")
