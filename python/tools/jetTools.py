@@ -759,6 +759,12 @@ class SwitchJetCollection(ConfigToolBase):
             applyPostfix(process, "patJets", postfix).addJetCorrFactors = False
             applyPostfix(process, "patJets", postfix).jetCorrFactorsSource=[]        
 
+        ## adjust output when switching to PFJets
+        if (jetCollection.__str__().find('PFJets' )>=0):
+            ## in this case we can omit caloTowers and should keep pfCandidates
+            process.out.outputCommands.append("keep *_selectedPatJets_pfCandidates_*")
+            process.out.outputCommands.append("drop *_selectedPatJets_caloTowers_*")
+
 switchJetCollection=SwitchJetCollection()
 
 

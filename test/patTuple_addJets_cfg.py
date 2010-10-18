@@ -1,6 +1,9 @@
 ## import skeleton process
 from PhysicsTools.PatAlgos.patTemplate_cfg import *
 
+##from PhysicsTools.PatAlgos.tools.coreTools import *
+##removeMCMatching(process, ['All'])
+
 ## uncomment the following line to add tcMET to the event content
 from PhysicsTools.PatAlgos.tools.metTools import *
 addTcMET(process, 'TC')
@@ -66,7 +69,7 @@ addJetCollection(process,cms.InputTag('kt6CaloJets'),
                  jetIdLabel   = "kt6"
                  )
 
-## uncomment the following lines to add ak55PFJets to your PAT output
+## uncomment the following lines to add ak5PFJets to your PAT output
 switchJetCollection(process,cms.InputTag('ak5PFJets'),
                  doJTA        = True,
                  doBTagging   = True,
