@@ -490,6 +490,8 @@ class AddJetCollection(ConfigToolBase):
         else:
             ## switch general b tagging info switch off
             l1Jets.addBTagInfo = False
+            ## adjust output
+            process.out.outputCommands.append("drop *_"+newLabel(oldLabel('selected'))+"_tagInfos_*")            
         
         if (doJetID):
             l1Jets.addJetID = cms.bool(True)
@@ -687,10 +689,11 @@ class SwitchJetCollection(ConfigToolBase):
             ## remove b tagging from the std sequence
             removeIfInSequence(process,  "secondaryVertexNegativeTagInfos",  "patDefaultSequence", postfix)
             removeIfInSequence(process,  "simpleSecondaryVertexNegativeBJetTags",  "patDefaultSequence", postfix)
-
             ## switch embedding of b tagging for pat
             ## jet production to 'False'
             applyPostfix(process, "patJets", postfix).addBTagInfo = False
+            ## adjust output
+            process.out.outputCommands.append("drop *_selectedPatJets_tagInfos_*")
 
         if (doJetID):
             jetIdLabelNew = jetIdLabel + 'JetID'
