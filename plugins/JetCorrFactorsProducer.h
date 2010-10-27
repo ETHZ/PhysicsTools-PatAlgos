@@ -34,6 +34,7 @@
 
 #include <map>
 #include <string>
+#include <boost/shared_ptr.hpp>
 
 #include "DataFormats/Common/interface/View.h"
 #include "DataFormats/JetReco/interface/Jet.h"
@@ -74,7 +75,7 @@ namespace pat {
     // result in an empty string as this correction level is not available
     std::vector<std::string> expand(const std::vector<std::string>& levels, const JetCorrFactors::Flavor& flavor);
     // evaluate jet correction factor up to a given level
-    float evaluate(edm::View<reco::Jet>::const_iterator& jet, FactorizedJetCorrector* corrector, int level);
+    float evaluate(edm::View<reco::Jet>::const_iterator& jet, boost::shared_ptr<FactorizedJetCorrector>& corrector, int level);
     
   private:
     // use electromagnetic fraction for jet energy corrections or not (will only have an effect for jets CaloJets)
