@@ -57,18 +57,17 @@ JetCorrFactorsProducer::expand(const std::vector<std::string>& levels, const Jet
 	  edm::LogWarning message( "L7Parton::GLUON not available" );
 	  message << "Jet energy corrections requested for level: L7Parton and type: 'T'. \n"
 		  << "For this combination there is no GLUON correction available. The    \n"
-		  << "correction for this flavor type will be filled set to -1.";
-	  expand.clear(); break;
+		  << "correction for this flavor type will be taken from 'J'.";
 	}
-	else{
-	  expand.push_back(std::string(*level).append("_").append("g").append(type_));	
-	}
+	expand.push_back(std::string(*level).append("_").append("g").append("J"));	
       }
       if(flavor==JetCorrFactors::UDS   ) expand.push_back(std::string(*level).append("_").append("q").append(type_));	
       if(flavor==JetCorrFactors::CHARM ) expand.push_back(std::string(*level).append("_").append("c").append(type_));	
       if(flavor==JetCorrFactors::BOTTOM) expand.push_back(std::string(*level).append("_").append("b").append(type_));
     }
-    expand.push_back(*level); 
+    else{
+      expand.push_back(*level); 
+    }
   }
   return expand;
 }
@@ -90,6 +89,7 @@ JetCorrFactorsProducer::evaluate(edm::View<reco::Jet>::const_iterator& jet, boos
   if( emf_ && dynamic_cast<const reco::CaloJet*>(&*jet)){ 
     corrector->setJetEMF(dynamic_cast<const reco::CaloJet*>(&*jet)->emEnergyFraction()); 
   }
+  
   return corrector->getSubCorrections()[level];
 }
 
@@ -110,9 +110,8 @@ JetCorrFactorsProducer::produce(edm::Event& event, const edm::EventSetup& setup)
   if(flavorDependent_){
     // there is at least one flavor dependent jet energy correction level
     // in levels_; When derived from the ttbar samples there is no GLUON 
-    // corrections for L7Parton ('L7Parton_gT' does not exist); at the 
-    // moment params is empty in this case. If the FactorizedJetCorrector
-    // can not catch this this has to be done here.
+    // corrections for L7Parton ('L7Parton_gT' does not exist); currently 
+    // these correction are taken from L7Parton_gJ
     corrector[JetCorrFactors::GLUON ] = boost::shared_ptr<FactorizedJetCorrector>( new FactorizedJetCorrector(params(*parameters, JetCorrFactors::GLUON )) );
     corrector[JetCorrFactors::UDS   ] = boost::shared_ptr<FactorizedJetCorrector>( new FactorizedJetCorrector(params(*parameters, JetCorrFactors::UDS   )) );
     corrector[JetCorrFactors::CHARM ] = boost::shared_ptr<FactorizedJetCorrector>( new FactorizedJetCorrector(params(*parameters, JetCorrFactors::CHARM )) );
@@ -130,7 +129,7 @@ JetCorrFactorsProducer::produce(edm::Event& event, const edm::EventSetup& setup)
     // the std::vector<float> corresponds to the potentially flavor dependent correction 
     // factors (with length 4 if flavor dependent and 1 else), std::string corresponds to
     // the label of the correction level (defined by JetMET). Per construction the jet 
-    // energy correction will be flavor independent up to the first flavor dependent 
+    // energy corrections will be flavor independent up to the first flavor dependent 
     // correction and flavor dependent afterwards.
     for(std::map<JetCorrFactors::Flavor, std::vector<std::string> >::const_iterator levels=levels_.begin(); levels!=levels_.end(); ++levels){
       bool flavorDependent=false;
@@ -139,6 +138,7 @@ JetCorrFactorsProducer::produce(edm::Event& event, const edm::EventSetup& setup)
 	// correction factors
 	std::vector<float> factors;
 	if(levels->second[idx].find("L5FLavor")!=std::string::npos || levels->second[idx].find("L7Parton")!=std::string::npos){
+	  // break the flavor loop
 	  flavorDependent=true;
 	}
 	if(flavorDependent){
@@ -148,9 +148,7 @@ JetCorrFactorsProducer::produce(edm::Event& event, const edm::EventSetup& setup)
 	  // either these jec factors are not flavor dependent at all; in this case use
 	  // the corrector for NONE, or these jec factors are flavor dependent, but the 
 	  // current correction level is not. In this case use just one of the flavor 
-	  // dependent correctors, as they will all give the same results. Don't use the 
-	  // corrector for GLUON though as it might be blank due the to non existing 
-	  // correction type L7Parton_gT 
+	  // dependent correctors, as they will all give the same results.
 	  if( corrector.find(JetCorrFactors::NONE)!=corrector.end() ){
 	    factors.push_back(evaluate(jet, corrector.find(JetCorrFactors::NONE)->second, idx));
 	  }
@@ -159,7 +157,7 @@ JetCorrFactorsProducer::produce(edm::Event& event, const edm::EventSetup& setup)
 	  }
 	}
 	// push back the set of JetCorrFactors: the first entry corresponds to the label 
-	// of the  correction level, the second parameter to the jec factors
+	// of the correction level, the second parameter to the set of jec factors
 	jec.push_back(std::make_pair<std::string, std::vector<float> >(levels->second[idx], factors));
       }
       if(!flavorDependent){break;}
