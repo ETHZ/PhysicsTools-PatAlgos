@@ -1,7 +1,3 @@
-//
-// $Id: JetCorrFactorsProducer.h,v 1.10 2010/02/20 21:00:17 wmtan Exp $
-//
-
 #ifndef PhysicsTools_PatAlgos_JetCorrFactorsProducer_h
 #define PhysicsTools_PatAlgos_JetCorrFactorsProducer_h
 
@@ -10,112 +6,113 @@
   \brief    Produces JetCorrFactors and a ValueMap to the originating
             reco jets
 
-   The JetCorrFactorsProducer produces a set of correction factors,
-   defined in the class pat::JetCorrFactors. The vector of these
-   factors is linked to the originating reco jets through a ValueMap. This
-   production of associated correction factors is to be done in the PAT Layer-0.
-   This ValueMap is then again collapsed inside the pat::Jet when it is
-   created in the PAT Layer-1.
+   The JetCorrFactorsProducer produces a set of correction factors, defined in the class pat::JetCorrFactors. The vector 
+   of these factors is linked to the originating reco jets through an edm::ValueMap. The initializing parameters of the 
+   module can be found in the recoLayer1/jetCorrFactors_cf.py of the PatAlgos package. In the standard PAT workflow the 
+   module has to be run before the creation of the pat::Jet. The edm::ValueMap will then be embedded into the pat::Jet. 
+   Jets corrected up to a given correction level can then be accessed via the pat::Jet member function correctedJet. For 
+   more details have a look into the class description of the pat::Jet.
 
-  \author   Steven Lowette
-  \version  $Id: JetCorrFactorsProducer.h,v 1.10 2010/02/20 21:00:17 wmtan Exp $
+   ATTENTION: available options for flavor corrections are 
+    * L5Flavor:gJ       L7Parton:gJ        gluon   from dijets
+    * L5Flavor:qJ/qT    L7Parton:qJ/qT     quark   from dijets/top
+    * L5Flavor:cJ/cT    L7Parton:cJ/cT     charm   from dijets/top
+    * L5Flavor:bJ/bT    L7Parton:bJ/bT     beauty  from dijets/top
+    *                   L7Parton:jJ/tT     mixture from dijets/top
+
+   where mixture refers to the flavor mixture as determined from the MC sample the flavor dependen corrections have been
+   derived from. 'J' and 'T' stand for a typical dijet (ttbar) sample. 
+
+   NOTE:
+
+    * the mixed mode (mc input mixture from dijets/ttbar) only exists for parton level corrections.
+
+    * jJ and tT are not covered in this implementation of the JetCorrFactorsProducer
+
+    * there are no gluon corrections available from the top sample neighter on the L7Parton level.
 */
 
-#include "FWCore/Framework/interface/Event.h"
-#include "FWCore/Framework/interface/EDProducer.h"
-#include "FWCore/Utilities/interface/InputTag.h"
-#include "FWCore/ParameterSet/interface/ParameterSet.h"
+#include <string>
 
 #include "DataFormats/Common/interface/View.h"
 #include "DataFormats/JetReco/interface/Jet.h"
 
+#include "FWCore/Framework/interface/Event.h"
+#include "FWCore/Utilities/interface/InputTag.h"
+#include "FWCore/Framework/interface/EDProducer.h"
+#include "FWCore/ParameterSet/interface/ParameterSet.h"
+
+#include "FWCore/Framework/interface/ESWatcher.h"
 #include "DataFormats/Common/interface/ValueMap.h"
 #include "DataFormats/PatCandidates/interface/JetCorrFactors.h"
+#include "JetMETCorrections/Objects/interface/JetCorrectionsRecord.h"
 #include "CondFormats/JetMETObjects/interface/FactorizedJetCorrector.h"
 #include "CondFormats/JetMETObjects/interface/JetCorrectionUncertainty.h"
-#include "JetMETCorrections/Objects/interface/JetCorrectionsRecord.h"
-#include "FWCore/Framework/interface/ESWatcher.h"
-
-
-#include <string>
 
 
 namespace pat {
 
-
   class JetCorrFactorsProducer : public edm::EDProducer {
-
-    /// sample type for flavor dependend correction
-    enum SampleType {kNone, kDijet, kTtbar};
-    /// correction type for flavor dependend corrections
-    enum CorrType   {kPlain, kFlavor, kParton, kCombined};
-    /// correction type for flavor dependend corrections
-    enum FlavorType {kMixed, kGluon, kQuark, kCharm, kBeauty};
-    /// typedef for jetCorrFactors map
+  public:
+    /// value map for JetCorrFactors (to be written into the event)
     typedef edm::ValueMap<pat::JetCorrFactors> JetCorrFactorsMap;
 
-    public:
-
-      explicit JetCorrFactorsProducer(const edm::ParameterSet & iConfig);
-      ~JetCorrFactorsProducer();
-      virtual void produce(edm::Event & iEvent, const edm::EventSetup & iSetup);
-      static void fillDescriptions(edm::ConfigurationDescriptions & descriptions);
-
-    private:
-
-      /// configure the constructor strings for the CombinedJetCorrector
-      void configure(std::string level, std::string tag);
-      /// evaluate the jet correction factor according to level and corrector type
-      double evaluate(edm::View<reco::Jet>::const_iterator& jet, FactorizedJetCorrector* corrector, int& idx);
-      // create strings for parton and flavor dependend corrections
-      std::string flavorTag(CorrType correction, SampleType sample, FlavorType flavor);
-
-    private:
-
-      /// configurables
-      bool useEMF_;
-      edm::InputTag jetsSrc_;
-      std::string jetCorrSet_;
-
-      /// constructor strings for 
-      /// the CombinedJetCorrector
-      std::string tags_;
-      std::string levels_;
-
-      /// module label name 
-      std::string moduleLabel_;      
-
-
-      /// CombinedJetCorrector: common
-      FactorizedJetCorrector* jetCorrector_;
-      /// CombinedJetCorrector: glu
-      FactorizedJetCorrector* jetCorrectorGlu_;
-      /// CombinedJetCorrector: uds
-      FactorizedJetCorrector* jetCorrectorUds_;
-      /// CombinedJetCorrector: c
-      FactorizedJetCorrector* jetCorrectorC_;
-      /// CombinedJetCorrector: b
-      FactorizedJetCorrector* jetCorrectorB_;
-      
-      /// JetCorrectionUncertainty: L1
-      JetCorrectionUncertainty * jtuncrtl1_;
-      /// JetCorrectionUncertainty: L1
-      JetCorrectionUncertainty * jtuncrtl2_;
-      /// JetCorrectionUncertainty: L1
-      JetCorrectionUncertainty * jtuncrtl3_;
-      /// JetCorrectionUncertainty: L1
-      JetCorrectionUncertainty * jtuncrtl4_;
-      /// JetCorrectionUncertainty: L1
-      JetCorrectionUncertainty * jtuncrtl5_;
-      /// JetCorrectionUncertainty: L1
-      JetCorrectionUncertainty * jtuncrtl6_;
-      /// JetCorrectionUncertainty: L1
-      JetCorrectionUncertainty * jtuncrtl7_;
-
-      /// Watcher for JetCorrections
-      edm::ESWatcher<JetCorrectionsRecord> watchJetCorrectionsRecord_;
-
+  public:
+    // default constructor
+    explicit JetCorrFactorsProducer(const edm::ParameterSet& cfg);
+    // default destructor
+    ~JetCorrFactorsProducer() {};
+    // everything that needs to be done per event
+    virtual void produce(edm::Event& event, const edm::EventSetup& setup);
+    // description of configuration file parameters
+    static void fillDescriptions(edm::ConfigurationDescriptions& descriptions);
+    
+  private:
+    // return the jec parameters as input to the FactorizedJetCorrector for different flavors
+    std::vector<JetCorrectorParameters> JetCorrFactorsProducer::params(const JetCorrectorParametersCollection& parameters, JetCorrFactors::Flavor flavor) const;
+    // return an expanded version of correction levels for different flavors; the result should
+    // be of type ['L2Relative', 'L3Absolute', 'L5FLavor_gJ', 'L7Parton_gJ']; L7Parton_gT will 
+    // result in an empty string as this correction level is not available
+    std::vector<std::string> JetCorrFactorsProducer::expand(const std::string& levels, const JetCorrFactors::Flavor& flavor)
+    // evaluate jet correction factor up to a given level
+    float evaluate(edm::View<reco::Jet>::const_iterator& jet, const FactorizedJetCorrector& corrector, int level);
+    
+  private:
+    // use electromagnetic fraction for jet energy corrections or not (will only have an effect for jets CaloJets)
+    bool emf_;
+    // era of JEC factors (e.g. Spring10, Summer09, ... this might become obsolete after the DB transition)
+    std::string era_;
+    // input jet collection
+    edm::InputTag src_;
+    // type of flavor dependent JEC factors (only 'J' and 'T' are allowed)
+    std::string type_;
+    // label of jec factors
+    std::string label_;
+    // contains flavor dependent corrections
+    bool flavorDependent_;
+    // jec levels
+    std::map<JetCorrFactors::Flavor, vector<std::string> levels_;
   };
+
+  inline float
+  JetCorrFactorsProducer::evaluate(edm::View<reco::Jet>::const_iterator& jet, const FactorizedJetCorrector& corrector, int level)
+  {
+    corrector.setJetEta(jet->eta()); corrector.setJetPt(jet->pt()); corrector.setJetE(jet->energy()); 
+    if( emf_ && dynamic_cast<const reco::CaloJet*>(&*jet)){ 
+      corrector.setJetEMF(dynamic_cast<const reco::CaloJet*>(&*jet)->emEnergyFraction()); 
+    }
+    return corrector->getSubCorrections()[level];
+  }
+
+  inline std::vector<JetCorrectorParameters>
+  JetCorrFactorsProducer::params(const JetCorrectorParametersCollection& parameters, JetCorrFactors::Flavor flavor) const 
+  {
+    std::vector<JetCorrectorParameters> params;
+    for(std::vector<std::string>::const_iterator level=levels_[flavor].begin(), level!=levels_[flavor].end(); ++level){
+      params.push_back(parameters[*level]);
+    }
+    return params;
+  }
 }
 
 #endif

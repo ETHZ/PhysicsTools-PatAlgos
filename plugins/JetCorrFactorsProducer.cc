@@ -1,324 +1,146 @@
-//
-// $Id: JetCorrFactorsProducer.cc,v 1.14 2010/03/20 22:47:33 hegner Exp $
-//
-
-#include "PhysicsTools/PatAlgos/plugins/JetCorrFactorsProducer.h"
-#include "FWCore/MessageLogger/interface/MessageLogger.h"
-
-#include "FWCore/ParameterSet/interface/ConfigurationDescriptions.h"
-#include "FWCore/ParameterSet/interface/ParameterSetDescription.h"
-#include "FWCore/ParameterSet/interface/ParameterDescription.h"
-#include "DataFormats/JetReco/interface/CaloJet.h"
-
-#include <vector>
 #include <memory>
-#include <iostream>
+#include <vector>
 #include <string>
+#include <iostream>
+
+#include "FWCore/MessageLogger/interface/MessageLogger.h"
+#include "PhysicsTools/PatAlgos/plugins/JetCorrFactorsProducer.h"
+
+#include "DataFormats/JetReco/interface/CaloJet.h"
+#include "FWCore/ParameterSet/interface/ParameterDescription.h"
+#include "FWCore/ParameterSet/interface/ParameterSetDescription.h"
+#include "FWCore/ParameterSet/interface/ConfigurationDescriptions.h"
 
 using namespace pat;
 
-
-JetCorrFactorsProducer::JetCorrFactorsProducer(const edm::ParameterSet& iConfig) :
-  useEMF_ (iConfig.getParameter<bool>( "useEMF" )), 
-  jetsSrc_(iConfig.getParameter<edm::InputTag>( "jetSource" )),
-  jetCorrSet_(iConfig.getParameter<std::string>( "corrSample" )),
-  moduleLabel_(iConfig.getParameter<std::string>( "@module_label" )),
-  jetCorrector_(0), jetCorrectorGlu_(0), jetCorrectorUds_(0), 
-  jetCorrectorC_(0), jetCorrectorB_(0) 
+JetCorrFactorsProducer::JetCorrFactorsProducer(const edm::ParameterSet& cfg):
+  emf_(cfg.getParameter<bool>( "emf" )), 
+  era_(cfg.getParameter<std::string>( "era" )),
+  src_(cfg.getParameter<edm::InputTag>( "src" )),
+  type_ (cfg.getParameter<std::string>("flavorType")),
+  label_(cfg.getParameter<std::string>( "@module_label" )),
 {
-  // configure constructor strings for CombinedJetCorrector
-  // if there is no corrector defined the string should be 
-  // 'none'
-  edm::ParameterSet corrLevels = iConfig.getParameter<edm::ParameterSet>( "corrLevels");
-  configure(std::string("L1Offset"), corrLevels.getParameter<std::string>( "L1Offset"   ) );
-  configure(std::string("L2Relative"), corrLevels.getParameter<std::string>( "L2Relative" ) );
-  configure(std::string("L3Absolute"), corrLevels.getParameter<std::string>( "L3Absolute" ) );
-  configure(std::string("L4EMF"), corrLevels.getParameter<std::string>( "L4EMF"      ) );
-  configure(std::string("L5Flavor"), corrLevels.getParameter<std::string>( "L5Flavor"   ) );
-  configure(std::string("L6SLB"), corrLevels.getParameter<std::string>( "L6UE"       ) );
-  configure(std::string("L7Parton"), corrLevels.getParameter<std::string>( "L7Parton"   ) );
-
-  CorrType corr=kPlain;
-  // determine correction type for the flavor dependend corrections
-  if(levels_.find("L5Flavor")!=std::string::npos && 
-     levels_.find("L7Parton")!=std::string::npos){
-    // flavor & partons conbined
-    corr=kCombined;
-  } 
-  else if(levels_.find("L5Flavor")!=std::string::npos){
-    // flavor only
-    corr=kFlavor;
-  }
-  else if(levels_.find("L7Parton")!=std::string::npos){
-    // parton only
-    corr=kParton;
-  }
-
-  SampleType type=kNone;
-  // determine sample type for the flavor dependend corrections
-  if     ( iConfig.getParameter<std::string>( "sampleType" ).compare("dijet")==0){
-    type = kDijet;
-  }
-  else if( iConfig.getParameter<std::string>( "sampleType" ).compare("ttbar")==0){
-    type = kTtbar;
+  std::vector levels = cfg.getParameter<std::vector<std::string> >("levels"); 
+  // fill the std::map for levels_, which might be flavor dependent or not; 
+  // flavor dependency is determined from the fact whether the std::string 
+  // L5Flavor or L7Parton can be found in levels; if flavor dependent four
+  // vectors of strings will be filled into the map corresponding to GLUON, 
+  // UDS, CHARM and BOTTOM (according to JetCorrFactors::Flavor), 'L5Flavor'
+  // and 'L7Parton' will be expanded accordingly; if not levels_ is filled 
+  // with only one vector of strings according to NONE. This vector will be 
+  // equivalent to the original vector of strings.
+  flavorDependent_= (std::find(levels.begin(), levels.end(), "L5FLavor")!=levels.end() || std::find(levels.begin(), levels.end(), "L7Parton")!=levels.end());
+  if(flavorDependent_){
+    levels_[JetCorrFactors::GLUON ] = expand(levels, JetCorrFactors::GLUON );
+    levels_[JetCorrFactors::UDS   ] = expand(levels, JetCorrFactors::UDS   );
+    levels_[JetCorrFactors::CHARM ] = expand(levels, JetCorrFactors::CHARM );
+    levels_[JetCorrFactors::BOTTOM] = expand(levels, JetCorrFactors::BOTTOM);
   }
   else{
-    throw cms::Exception("InvalidRequest") 
-      << "you ask for a sample type for jet energy corrections which does not exist \n";  
+    levels_[JetCorrFectors::NONE  ] = levels;
   }
-
-  if( corr==kPlain ){
-    // plain jet corrector w/o flavor dependend corrections
-    jetCorrector_ = new FactorizedJetCorrector(levels_, tags_);
-  }
-  else{
-    // special treatment in case of flavor dep. corrections
-    if( type==kTtbar ){
-      // ATTENTION: there is no gluon corrections from ttbar
-      //  * for kParton   the default will be set to kMixed 
-      //  * for kFlavor   the default will be set to kQuark
-      //  * for kCombined the default will be set to kQuark
-      //  * the gluon corrector remains uninitialized (after
-      //    all the gluon correction do not exist...)
-      if( corr==kParton ){
-        std::string tmp;
-        tmp  = flavorTag(corr, type, kMixed );
-        std::cout << tmp << std::endl;
-	jetCorrector_    = new FactorizedJetCorrector(levels_, tags_, tmp );
-      }
-      else{
-	jetCorrector_    = new FactorizedJetCorrector(levels_, tags_, flavorTag(corr, type, kQuark ));
-      }
-    }
-    if( type==kDijet ){
-      // ATTENTION: 
-      //  * for kParton   the default will be set to kMixed 
-      //  * for kFlavor   the default will be set to kGluon
-      //  * for kCombined the default will be set to lGluon
-      //  * the gluon corrector is initialized here
-      if( corr==kParton ){
-	jetCorrector_    = new FactorizedJetCorrector(levels_, tags_, flavorTag(corr, type, kMixed ));
-	jetCorrectorGlu_ = new FactorizedJetCorrector(levels_, tags_, flavorTag(corr, type, kGluon ));
-      }
-      else{
-	jetCorrector_    = new FactorizedJetCorrector(levels_, tags_, flavorTag(corr, type, kGluon ));
-	jetCorrectorGlu_ = new FactorizedJetCorrector(levels_, tags_, flavorTag(corr, type, kGluon ));
-      }
-    }
-    jetCorrectorUds_     = new FactorizedJetCorrector(levels_, tags_, flavorTag(corr, type, kQuark ));
-    jetCorrectorC_       = new FactorizedJetCorrector(levels_, tags_, flavorTag(corr, type, kCharm ));
-    jetCorrectorB_       = new FactorizedJetCorrector(levels_, tags_, flavorTag(corr, type, kBeauty));
-  }
-
-/*  
-  jtuncrtl1_ = new JetCorrectionUncertainty( moduleLabel_+"L1.txt" );
-  jtuncrtl2_ = new JetCorrectionUncertainty( moduleLabel_+"L2.txt" );
-  jtuncrtl3_ = new JetCorrectionUncertainty( moduleLabel_+"L3.txt" );
-  jtuncrtl4_ = new JetCorrectionUncertainty( moduleLabel_+"L4.txt" );
-  jtuncrtl5_ = new JetCorrectionUncertainty( moduleLabel_+"L5.txt" );
-  jtuncrtl6_ = new JetCorrectionUncertainty( moduleLabel_+"L6.txt" );
-  jtuncrtl7_ = new JetCorrectionUncertainty( moduleLabel_+"L7.txt" );
-*/  
-  // produces valuemap of jet correction factors
   produces<JetCorrFactorsMap>();
 }
 
-JetCorrFactorsProducer::~JetCorrFactorsProducer() 
+std::vector<std::string>
+JetCorrFactorsProducer::expand(const std::string& levels, const JetCorrFactors::Flavor& flavor)
 {
+  std::string expand; bool valid=true;
+  for(std::vector<std::string> >::const_iterator level=levels.begin(); level!=levels.end(); ++level){
+    if((*level)=="L5Flavor" || (*level)=="L7Parton"){
+      if(flavor==JetCorrFactors::GLUON ){
+	if(*level=="L7Parton" && type_=="T"){
+	  edm::LogWarning message( "L7Parton::GLUON not available" );
+	  message << "Jet energy corrections requested for level: L7Parton and type: 'T'. \n"
+		  << "For this combination there is no GLUON correction available. The    \n"
+		  << "correction for this flavor type will be filled set to -1.";
+	  valid=false; break;
+	}
+	else{
+	  expand.push_back(std::string(level->append("_").append("g").append(type)));	
+	}
+      }
+      if(flavor==JetCorrFactors::UDS   ) expand.push_back(std::string(level->append("_").append("q").append(type)));	
+      if(flavor==JetCorrFactors::CHARM ) expand.push_back(std::string(level->append("_").append("c").append(type)));	
+      if(flavor==JetCorrFactors::BOTTOM) expand.push_back(std::string(level->append("_").append("b").append(type)));
+    }
+    expand.push_back(std::string(*level)); 
+  }
+  return valid ? expand : std::string();
 }
 
 void 
-JetCorrFactorsProducer::configure(std::string level, std::string tag)
+JetCorrFactorsProducer::produce(edm::Event& event, const edm::EventSetup& setup) 
 {
-  if( !tag.compare("none")==0 ){
-    // add the correction set to the jet corrector tag, if necessary
-    // at the moment that's true for level=='L2' and level=='L3'
-    if(level=="L2Relative" || level=="L3Absolute"){
-      tag = jetCorrSet_+"_"+tag;
-    }
-    // take care to add the deliminator when the string is non-empty
-    if( !tags_  .empty() && !(tags_  .rfind(":")==tags_  .size()) ) tags_   += ":";
-    if( !levels_.empty() && !(levels_.rfind(":")==levels_.size()) ) levels_ += ":";
-
-    std::string fileName("CondFormats/JetMETObjects/data/");
-    fileName += tag + ".txt";
-    edm::FileInPath fip(fileName);  
-    
-    // add tag and level
-    tags_   += fip.fullPath();
-    levels_ += level;
-
-  }
-}
-
-double 
-JetCorrFactorsProducer::evaluate(edm::View<reco::Jet>::const_iterator& jet, FactorizedJetCorrector* corrector, int& idx)
-{
-  // get the jet energy correction factors depending on whether emf should be used or not;
-  corrector->setJetEta(jet->eta());
-  corrector->setJetPt(jet->pt());
-  corrector->setJetE(jet->energy()); 
-  if( useEMF_ ){
-    corrector->setJetEMF(dynamic_cast<const reco::CaloJet*>(&*jet)->emEnergyFraction());
-  }
-
-  return corrector->getSubCorrections()[idx];
-}
-
-std::string
-JetCorrFactorsProducer::flavorTag(CorrType correction, SampleType sample, FlavorType flavor)
-{
-  // ATTENTION: available options are
-  //  * Flavor:gJ    Parton:gJ     gluon   from dijets
-  //  * Flavor:qJ/qT Parton:qJ/qT  quark   from dijets/top
-  //  * Flavor:cJ/cT Parton:cJ/cT  charm   from dijets/top
-  //  * Flavor:bJ/bT Parton:bJ/bT  beauty  from dijets/top
-  //  *              Parton:jJ/tT  mixture from dijets/top
-  //
-  // NOTE:
-  //  * the mixed mode (mc input mixture from dijets/ttbar) 
-  //    only exists for parton level corrections
-  //  * there are no gluon corrections available from the 
-  //    top sample neighter on the level of flavor nor on 
-  //    the level of parton level corrections
-
-  std::string flavtag;
-  switch( flavor ){
-  case kGluon : flavtag += "g"; break;
-  case kQuark : flavtag += "q"; break;
-  case kCharm : flavtag += "c"; break;
-  case kBeauty: flavtag += "b"; break;
-  case kMixed : 
-    if( sample==kDijet ){
-      flavtag += "L7Parton:jJ";
-    }
-    if( sample==kTtbar ){
-      flavtag += "L7Parton:tT";
-    } 
-    // kMixed only makes sense for kParton;
-    // therefor other options are ignored
-    return flavtag;    
-  }
-  switch( sample ){
-  case kDijet: flavtag += "J"; break;
-  case kTtbar: flavtag += "T"; break;
-  case kNone :                 break;
-  }
-  std::string tag;
-  switch( correction ){
-  case kPlain :
-    break;
-  case kFlavor: 
-    tag  = "L5Flavor:"; 
-    tag += flavtag;
-    break;
-  case kParton: 
-    tag += "L7Parton:"; 
-    tag += flavtag;
-    break;
-  case kCombined:
-    tag  = "L5Flavor:"; 
-    tag += flavtag; 
-    tag += " & ";
-    tag += "L7Parton:"; 
-    tag += flavtag;
-    break;
-  }
-  return tag;
-}
-
-void 
-JetCorrFactorsProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup) 
-{
-  // check whether there are updated constants
-  //bool new_constants = watchJetCorrectionsRecord_.check(iSetup);
-  //if (new_constants){
-  //  updateCorrectors(iSetup);
-  // }
-
   // get jet collection from the event
   edm::Handle<edm::View<reco::Jet> > jets;
-  iEvent.getByLabel(jetsSrc_, jets);
+  event.getByLabel(src_, jets);
+
+  // retreive parameters from the DB this still need a proper configurable 
+  // payloadName like: JetCorrectorParametersCollection_Spring10_AK5Calo.
+  edm::ESHandle<JetCorrectorParametersCollection> parameters;
+  setup.get<JetCorrectionsRecord>().get("JetCorrectorParametersCollection_Spring10_AK5Calo", parameters); 
+
+  // initialize jet correctors
+  std::map<JetCorrFactors::Flavor, FactorizedJetCorrector*> corrector;
+  if(flavorDependent_){
+    // there is at least one flavor dependent jet energy correction level
+    // in levels_; When derived from the ttbar samples there is no GLUON 
+    // corrections for L7Parton ('L7Parton_gT' does not exist); at the 
+    // moment params is empty in this case. If the FactorizedJetCorrector
+    // can not catch this this has to be done here.
+    corrector[JetCorrFactors::GLUON ] = new FactorizedJetCorrector(params(*parameters, JetCorrFactors::GLUON ));
+    corrector[JetCorrFactors::UDS   ] = new FactorizedJetCorrector(params(*parameters, JetCorrFactors::UDS   ));
+    corrector[JetCorrFactors::CHARM ] = new FactorizedJetCorrector(params(*parameters, JetCorrFactors::CHARM ));
+    corrector[JetCorrFactors::BOTTOM] = new FactorizedJetCorrector(params(*parameters, JetCorrFactors::BOTTOM));
+  }
+  else{
+    corrector[JetCorrFactors::NONE  ] = new FactorizedJetCorrector(params(*parameters, JetCorrFactors::NONE  ));
+  }
 
   std::vector<JetCorrFactors> jetCorrs;
-  for (edm::View<reco::Jet>::const_iterator jet = jets->begin(); jet != jets->end(); jet++) {
-    // loop over jets and retrieve the correction factors
-    float l1=-1, l2=-1, l3=-1, l4=-1;
-    JetCorrFactors::FlavourCorrections l5, l6, l7;
-    // get jet correction factors
-    // from CombinedJetCorrectors 
-    int levelIdx = -1;
-    // --------------------------------------------
-    // floavor independend jet correctors
-    //
+  for(edm::View<reco::Jet>::const_iterator jet = jets->begin(); jet!=jets->end(); ++jet){
+    std::vector<JetCorrFactors::CorrectionFactor> jec;
 
-    // L1Offset
-    levels_.find("L1Offset")!=std::string::npos ? l1 = evaluate(jet, jetCorrector_, ++levelIdx) : l1= 1; 
-    // L2Relative
-    levels_.find("L2Relative")!=std::string::npos ? l2 = evaluate(jet, jetCorrector_, ++levelIdx) : l2=l1; 
-    // L3Absolute
-    levels_.find("L3Absolute")!=std::string::npos ? l3 = evaluate(jet, jetCorrector_, ++levelIdx) : l3=l2; 
-    // L4EMF
-    levels_.find("L4EMF")!=std::string::npos ? l4 = evaluate(jet, jetCorrector_, ++levelIdx) : l4=l3; 
-
-    // --------------------------------------------
-    // flavor dependend   jet correctors
-    //
-
-    // L5Flavor
-    if(levels_.find("L5Flavor")!=std::string::npos){
-      ++levelIdx;
-      // check whether the corrector is available or not; if not fall back by to
-      // the last available correction level 
-      l5.uds = jetCorrectorUds_ ? evaluate(jet, jetCorrectorUds_, levelIdx) : l4;
-      l5.g   = jetCorrectorGlu_ ? evaluate(jet, jetCorrectorGlu_, levelIdx) : l4;
-      l5.c   = jetCorrectorC_   ? evaluate(jet, jetCorrectorC_  , levelIdx) : l4;
-      l5.b   = jetCorrectorB_   ? evaluate(jet, jetCorrectorB_  , levelIdx) : l4;
+    // loop over all correction levels and create a JetCorrFactors instance for each jet. 
+    // This consists of a std::vector<std::pair<std::string>, std::vector<float> > where
+    // the std::vector<float> corresponds to the potentially flavor dependent correction 
+    // factors (with length 4 id flavor dependent and 1 else), std::string corresponds to
+    // the label of the correction level (defined by JetMET). Per construction the jet 
+    // energy correction will be flavor independent up to the first flavor dependent 
+    // correction and flavor dependent afterwards.
+    bool flavorDependent=false;
+    for(unsigned int idx=0; idx<levels_.size(); ++idx){
+      // correction factors
+      std::vector<float> factors;
+      if(levels_[idx].find("L5FLavor")!=std::string::npos || levels_[idx].find("L7Parton")!=std::string::npos){
+	flavorDependent=true;
+      }
+      if(flavorDependent){
+	factors.push_back(evaluate(jet, jetCorrectors_[JetCorrFactors::GLUON ], idx));
+	factors.push_back(evaluate(jet, jetCorrectors_[JetCorrFactors::UDS   ], idx));
+	factors.push_back(evaluate(jet, jetCorrectors_[JetCorrFactors::CHARM ], idx));
+	factors.push_back(evaluate(jet, jetCorrectors_[JetCorrFactors::BOTTOM], idx));
+      }
+      else{
+	// either these jec factors are not flavor dependent at all; in this case use
+	// the corrector for NONE, or these jec factors are flavor dependent, but the 
+	// current correction level are not. In this case use just one of the flavor 
+	// dependent correctors, as they will all give the same results. Don't use the 
+	// corrector for GLUON though as it might be blank due the to non existing 
+	// correction type L7Parton_gT 
+	if( jetCorrectors_.find(JetCorrFactors::NONE) ){
+	  factors.push_back(evaluate(jet, jetCorrectors_[JetCorrFactors::NONE  ], idx));
+	}
+	else{
+	  factors.push_back(evaluate(jet, jetCorrectors_[JetCorrFactors::UDS   ], idx));
+	}
+      }
+      jec.push_back(std::make_pair<std::string, std::vector<float> >(level[idx], factors));
     }
-    else{
-      l5.uds = l4;
-      l5.g   = l4;
-      l5.c   = l4;
-      l5.b   = l4;
-    }
-    // L6UE
-    if(levels_.find("L6SLB")!=std::string::npos){
-      ++levelIdx;
-      // check whether the corrector is available or not; if not fall back by to
-      // the last available correction level 
-      l6.uds = jetCorrectorUds_ ? evaluate(jet, jetCorrectorUds_, levelIdx) : l5.uds;
-      l6.g   = jetCorrectorGlu_ ? evaluate(jet, jetCorrectorGlu_, levelIdx) : l5.g;
-      l6.c   = jetCorrectorC_   ? evaluate(jet, jetCorrectorC_  , levelIdx) : l5.c;
-      l6.b   = jetCorrectorC_   ? evaluate(jet, jetCorrectorB_  , levelIdx) : l5.b;
-    }
-    else{
-      l6.uds = l5.uds;
-      l6.g   = l5.g;
-      l6.c   = l5.c;
-      l6.b   = l5.b;
-    }
-    // L7Parton
-    if(levels_.find("L7Parton")!=std::string::npos){
-      ++levelIdx;
-      // check whether the corrector is available or not; if not fall back by to
-      // the last available correction level 
-      l7.uds = jetCorrectorUds_ ? evaluate(jet, jetCorrectorUds_, levelIdx) : l6.uds;
-      l7.g   = jetCorrectorGlu_ ? evaluate(jet, jetCorrectorGlu_, levelIdx) : l6.g;
-      l7.c   = jetCorrectorC_   ? evaluate(jet, jetCorrectorC_,   levelIdx) : l6.c;
-      l7.b   = jetCorrectorB_   ? evaluate(jet, jetCorrectorB_,   levelIdx) : l6.b;
-    }
-    else{
-      l7.uds = l6.uds;
-      l7.g   = l6.g;
-      l7.c   = l6.c;
-      l7.b   = l6.b;
-    }
-    // jet correction uncertainties
-    std::vector<float> uncert(14);
-
-    // create the actual object with scalefactors we want the valuemap to refer to
-    JetCorrFactors aJetCorr( moduleLabel_, l1, l2, l3, l4, l5, l6, l7, uncert );
-    jetCorrs.push_back(aJetCorr);
+    // create the actual object with scale factors we want the valuemap to refer to
+    JetCorrFactors corrFactors(moduleLabel_, jec);
+    jetCorrs.push_back(corrFactors);
   }
 
   // build the value map
@@ -329,36 +151,26 @@ JetCorrFactorsProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSe
   filler.fill(); // do the actual filling
 
   // put our produced stuff in the event
-  iEvent.put(jetCorrsMap);
+  event.put(jetCorrsMap);
 }
-
-//void 
-//JetCorrFactorsProducer::updateCorrectors(const edm::EventSetup& iSetup)
-//{
-//}
-
 
 // ParameterSet description for module
 void
 JetCorrFactorsProducer::fillDescriptions(edm::ConfigurationDescriptions & descriptions)
 {
-  edm::ParameterSetDescription iDesc;
-  iDesc.add<bool>("useEMF", false);
-  iDesc.add<edm::InputTag>("jetSource", edm::InputTag("ak5CaloJets")); 
-  iDesc.add<std::string>("corrSample", "Summer09");
-  iDesc.add<std::string>("sampleType", "dijet");
+//   edm::ParameterSetDescription iDesc;
+//   iDesc.add<bool>("useEMF", false);
+//   iDesc.add<std::string>("sampleType", "dijet");
+//   iDesc.add<std::string>("corrSample", "Spring10");
+//   iDesc.add<edm::InputTag>("jetSource", edm::InputTag("ak5CaloJets")); 
 
-  edm::ParameterSetDescription corrLevels;
-  corrLevels.add<std::string>("L1Offset", "none");
-  corrLevels.add<std::string>("L2Relative", "L2Relative_IC5Calo");
-  corrLevels.add<std::string>("L3Absolute", "L2Relative_IC5Calo");
-  corrLevels.add<std::string>("L4EMF", "none");
-  corrLevels.add<std::string>("L5Flavor", "L5Flavor_IC5");
-  corrLevels.add<std::string>("L6UE", "none");
-  corrLevels.add<std::string>("L7Parton", "L7Parton_IC5");
-  iDesc.add("corrLevels", corrLevels);
+//   edm::ParameterSetDescription corrLevels;
+//   corrLevels.add<std::string>("label" , "none");
+//   corrLevels.add<std::string>("level" , "none");
+//   corrLevels.add<std::string>("sample", "dijet");
+//   iDesc.add("corrLevels", corrLevels);
 
-  descriptions.add("JetCorrFactorsProducer", iDesc);
+//   descriptions.add("JetCorrFactorsProducer", iDesc);
 }
 
 #include "FWCore/Framework/interface/MakerMacros.h"
