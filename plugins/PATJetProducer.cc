@@ -1,5 +1,5 @@
 //
-// $Id: PATJetProducer.cc,v 1.49 2010/08/09 19:03:20 srappocc Exp $
+// $Id: PATJetProducer.cc,v 1.50 2010/08/10 01:54:55 srappocc Exp $
 
 
 #include "PhysicsTools/PatAlgos/plugins/PATJetProducer.h"
@@ -259,27 +259,15 @@ void PATJetProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
       ajet.setPFCandidates( iparticlesRef );
     }
 
-
-    // Add Jet Energy Scale Corrections
     if (addJetCorrFactors_) {
-      // in case only one set of jet correction factors is used, clear the string
-      // that contains the name of the jcf-module, to save storage per jet:
-      if (jetCorrFactorsSrc_.size()<=1)
-        jetCorrs.front()[jetRef].clearLabel();
-      // the default jet correction is the first in the vector
-      const JetCorrFactors & jcf = jetCorrs.front()[jetRef];
-      // uncomment for debugging
-      // jcf.print();
-      //attach first (default) jet correction factors set to the jet
-      ajet.setCorrFactors(jcf);
-      // set current default which is JetCorrFactors::L3, change P4 of ajet 
-      ajet.setCorrStep(JetCorrFactors::L3);
-      
-      // add additional JetCorrs for syst. studies, if present
+      // add additional JetCorrs to the jet 
       for ( size_t i = 1; i < jetCorrFactorsSrc_.size(); ++i ) {
 	const JetCorrFactors & jcf = jetCorrs[i][jetRef];
-	ajet.addCorrFactors(jcf);
+	// uncomment for debugging
+	// jcf.print();
+	ajet.addJECFactors(jcf);
       }
+      ajet.initializeJEC(3);
     }
 
     // get the MC flavour information for this jet

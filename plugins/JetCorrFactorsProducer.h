@@ -32,6 +32,7 @@
     * there are no gluon corrections available from the top sample neighter on the L7Parton level.
 */
 
+#include <map>
 #include <string>
 
 #include "DataFormats/Common/interface/View.h"
@@ -42,12 +43,10 @@
 #include "FWCore/Framework/interface/EDProducer.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
-#include "FWCore/Framework/interface/ESWatcher.h"
 #include "DataFormats/Common/interface/ValueMap.h"
 #include "DataFormats/PatCandidates/interface/JetCorrFactors.h"
-#include "JetMETCorrections/Objects/interface/JetCorrectionsRecord.h"
 #include "CondFormats/JetMETObjects/interface/FactorizedJetCorrector.h"
-#include "CondFormats/JetMETObjects/interface/JetCorrectionUncertainty.h"
+#include "CondFormats/JetMETObjects/interface/JetCorrectorParameters.h"
 
 
 namespace pat {
@@ -69,13 +68,13 @@ namespace pat {
     
   private:
     // return the jec parameters as input to the FactorizedJetCorrector for different flavors
-    std::vector<JetCorrectorParameters> JetCorrFactorsProducer::params(const JetCorrectorParametersCollection& parameters, JetCorrFactors::Flavor flavor) const;
+    std::vector<JetCorrectorParameters> params(const JetCorrectorParametersCollection& parameters, const JetCorrFactors::Flavor& flavor) const;
     // return an expanded version of correction levels for different flavors; the result should
     // be of type ['L2Relative', 'L3Absolute', 'L5FLavor_gJ', 'L7Parton_gJ']; L7Parton_gT will 
     // result in an empty string as this correction level is not available
-    std::vector<std::string> JetCorrFactorsProducer::expand(const std::string& levels, const JetCorrFactors::Flavor& flavor)
+    std::vector<std::string> expand(const std::vector<std::string>& levels, const JetCorrFactors::Flavor& flavor);
     // evaluate jet correction factor up to a given level
-    float evaluate(edm::View<reco::Jet>::const_iterator& jet, const FactorizedJetCorrector& corrector, int level);
+    float evaluate(edm::View<reco::Jet>::const_iterator& jet, FactorizedJetCorrector* corrector, int level);
     
   private:
     // use electromagnetic fraction for jet energy corrections or not (will only have an effect for jets CaloJets)
@@ -91,28 +90,9 @@ namespace pat {
     // contains flavor dependent corrections
     bool flavorDependent_;
     // jec levels
-    std::map<JetCorrFactors::Flavor, vector<std::string> levels_;
+    std::map<JetCorrFactors::Flavor, std::vector<std::string> > levels_;
+
   };
-
-  inline float
-  JetCorrFactorsProducer::evaluate(edm::View<reco::Jet>::const_iterator& jet, const FactorizedJetCorrector& corrector, int level)
-  {
-    corrector.setJetEta(jet->eta()); corrector.setJetPt(jet->pt()); corrector.setJetE(jet->energy()); 
-    if( emf_ && dynamic_cast<const reco::CaloJet*>(&*jet)){ 
-      corrector.setJetEMF(dynamic_cast<const reco::CaloJet*>(&*jet)->emEnergyFraction()); 
-    }
-    return corrector->getSubCorrections()[level];
-  }
-
-  inline std::vector<JetCorrectorParameters>
-  JetCorrFactorsProducer::params(const JetCorrectorParametersCollection& parameters, JetCorrFactors::Flavor flavor) const 
-  {
-    std::vector<JetCorrectorParameters> params;
-    for(std::vector<std::string>::const_iterator level=levels_[flavor].begin(), level!=levels_[flavor].end(); ++level){
-      params.push_back(parameters[*level]);
-    }
-    return params;
-  }
 }
 
 #endif
