@@ -1,5 +1,5 @@
 //
-// $Id: PATJetProducer.cc,v 1.50 2010/08/10 01:54:55 srappocc Exp $
+// $Id: PATJetProducer.cc,v 1.50.2.1 2010/10/27 15:43:29 rwolf Exp $
 
 
 #include "PhysicsTools/PatAlgos/plugins/PATJetProducer.h"
@@ -209,7 +209,7 @@ void PATJetProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
 
   
 
-
+  bool first=true; // this is introduced to issue warnings only for the first jet
   for (edm::View<reco::Jet>::const_iterator itJet = jets->begin(); itJet != jets->end(); itJet++) {
 
     // construct the Jet from the ref -> save ref to original object
@@ -261,13 +261,23 @@ void PATJetProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
 
     if (addJetCorrFactors_) {
       // add additional JetCorrs to the jet 
-      for ( size_t i = 1; i < jetCorrFactorsSrc_.size(); ++i ) {
-	const JetCorrFactors & jcf = jetCorrs[i][jetRef];
+      for ( unsigned int i=0; i<jetCorrFactorsSrc_.size(); ++i ) {
+	const JetCorrFactors& jcf = jetCorrs[i][jetRef];
 	// uncomment for debugging
 	// jcf.print();
 	ajet.addJECFactors(jcf);
       }
-      ajet.initializeJEC(3);
+      if(jetCorrs[0][jetRef].correctionLabels().find("L3Absolute")!=std::string::npos){
+	ajet.initializeJEC(jetCorrs[0][jetRef].jecLevel("L3Absolute"));
+      }
+      else{
+	ajet.initializeJEC(jetCorrs[0][jetRef].jecLevel("Uncorrected"));
+	if(first){	  
+	  edm::LogWarning("L3Absolute not found") << "L3Absolute is not part of the correction applied jetCorrFactors \n"
+						  << "of module " <<  jetCorrs[0][jetRef].jecSet() << " jets will remain"
+						  << " uncorrected."; first=false;
+	}
+      }
     }
 
     // get the MC flavour information for this jet
