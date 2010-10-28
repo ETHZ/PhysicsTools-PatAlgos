@@ -1,8 +1,7 @@
 import FWCore.ParameterSet.Config as cms
 
 # module to produce jet correction factors associated in a valuemap
-patJetCorrFactors = cms.EDProducer(
-    "JetCorrFactorsProducer",
+patJetCorrFactors = cms.EDProducer("JetCorrFactorsProducer",
     ## the use of emf in the JEC is not yet implemented
     emf = cms.bool(False),
     ## input collection of jets
