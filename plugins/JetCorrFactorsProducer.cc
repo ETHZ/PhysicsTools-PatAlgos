@@ -35,9 +35,6 @@ JetCorrFactorsProducer::JetCorrFactorsProducer(const edm::ParameterSet& cfg):
   // equivalent to the original vector of strings.
   if(std::find(levels.begin(), levels.end(), "L5FLavor")!=levels.end() || std::find(levels.begin(), levels.end(), "L7Parton")!=levels.end()){
     levels_[JetCorrFactors::GLUON ] = expand(levels, JetCorrFactors::GLUON );
-    for(unsigned int idx=0; idx<levels_.find(JetCorrFactors::GLUON)->second.size(); ++idx){
-      std::cout << levels_.find(JetCorrFactors::GLUON)->second.at(idx) << std::endl;
-    }
     levels_[JetCorrFactors::UDS   ] = expand(levels, JetCorrFactors::UDS   );
     levels_[JetCorrFactors::CHARM ] = expand(levels, JetCorrFactors::CHARM );
     levels_[JetCorrFactors::BOTTOM] = expand(levels, JetCorrFactors::BOTTOM);
@@ -77,19 +74,8 @@ JetCorrFactorsProducer::expand(const std::vector<std::string>& levels, const Jet
 std::vector<JetCorrectorParameters>
 JetCorrFactorsProducer::params(const JetCorrectorParametersCollection& parameters, const std::vector<std::string>& levels) const 
 {
-  std::cout << "1a" << std::endl;
-
-  std::vector<std::string> keys;
-  parameters.validKeys(keys);
-  for(unsigned int idx=0; idx<keys.size(); ++idx){
-    std::cout << *keys << std::endl;
-  }
-
   std::vector<JetCorrectorParameters> params;
   for(std::vector<std::string>::const_iterator level=levels.begin(); level!=levels.end(); ++level){ 
-
-    std::cout << *level << std::endl;
-
     params.push_back(parameters[*level]); 
   } 
   return params;
@@ -102,7 +88,6 @@ JetCorrFactorsProducer::evaluate(edm::View<reco::Jet>::const_iterator& jet, boos
   if( emf_ && dynamic_cast<const reco::CaloJet*>(&*jet)){ 
     corrector->setJetEMF(dynamic_cast<const reco::CaloJet*>(&*jet)->emEnergyFraction()); 
   }
-  
   return corrector->getSubCorrections()[level];
 }
 
@@ -113,22 +98,16 @@ JetCorrFactorsProducer::produce(edm::Event& event, const edm::EventSetup& setup)
   edm::Handle<edm::View<reco::Jet> > jets;
   event.getByLabel(src_, jets);
 
-  std::cout << "0" << std::endl;
-
   // retreive parameters from the DB this still need a proper configurable 
   // payloadName like: JetCorrectorParametersCollection_Spring10_AK5Calo.
   edm::ESHandle<JetCorrectorParametersCollection> parameters;
   setup.get<JetCorrectionsRecord>().get(std::string("AK5Calo"), parameters); 
-
-  std::cout << "1" << std::endl;
 
   // initialize jet correctors
   std::map<JetCorrFactors::Flavor, boost::shared_ptr<FactorizedJetCorrector> > corrector;
   for(FlavorCorrLevelMap::const_iterator flavor=levels_.begin(); flavor!=levels_.end(); ++flavor){
     corrector[flavor->first] = boost::shared_ptr<FactorizedJetCorrector>( new FactorizedJetCorrector(params(*parameters, flavor->second)) );
   }
-
-  std::cout << "2" << std::endl;
 
   // fill the jetCorrFactors
   std::vector<JetCorrFactors> jcfs;
