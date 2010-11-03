@@ -1,5 +1,5 @@
 //
-// $Id: PATJetProducer.cc,v 1.50.2.1 2010/10/27 15:43:29 rwolf Exp $
+// $Id: PATJetProducer.cc,v 1.50.2.2 2010/10/28 18:56:10 rwolf Exp $
 
 
 #include "PhysicsTools/PatAlgos/plugins/PATJetProducer.h"
@@ -36,6 +36,7 @@
 
 #include <vector>
 #include <memory>
+#include <algorithm>
 
 
 using namespace pat;
@@ -267,7 +268,8 @@ void PATJetProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup
 	// jcf.print();
 	ajet.addJECFactors(jcf);
       }
-      if(jetCorrs[0][jetRef].correctionLabels().find("L3Absolute")!=std::string::npos){
+      std::vector<std::string> levels = jetCorrs[0][jetRef].correctionLabels();
+      if(std::find(levels.begin(), levels.end(), "L3Absolute")!=levels.end()){
 	ajet.initializeJEC(jetCorrs[0][jetRef].jecLevel("L3Absolute"));
       }
       else{
