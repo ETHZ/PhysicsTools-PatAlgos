@@ -19,11 +19,24 @@ using namespace pat;
 
 JetCorrFactorsProducer::JetCorrFactorsProducer(const edm::ParameterSet& cfg):
   emf_(cfg.getParameter<bool>( "emf" )), 
-  era_(cfg.getParameter<std::string>( "era" )),
   src_(cfg.getParameter<edm::InputTag>( "src" )),
   type_ (cfg.getParameter<std::string>("flavorType")),
   label_(cfg.getParameter<std::string>( "@module_label" ))
 {
+  // initialize payload map for jet algorithm payload association
+  payloads_["ak5CaloJets"]=std::string("AK5Calo");
+  payloads_["ak5JPTJets" ]=std::string("AK5JPT" );
+  payloads_["ak5PFJets"  ]=std::string("AK5PF"  );
+  payloads_["ak7CaloJets"]=std::string("AK7Calo");
+  payloads_["ak7JPTJets" ]=std::string("AK7JPT" );
+  payloads_["ak7PFJets"  ]=std::string("AK7PF"  );
+  payloads_["kt4CaloJets"]=std::string("KT4Calo");
+  payloads_["kt4JPTJets" ]=std::string("KT4JPT" );
+  payloads_["kt4PFJets"  ]=std::string("KT4PF"  );
+  payloads_["kt6CaloJets"]=std::string("KT6Calo");
+  payloads_["kt6JPTJets" ]=std::string("KT6JPT" );
+  payloads_["kt6PFJets"  ]=std::string("KT6PF"  );
+
   std::vector<std::string> levels = cfg.getParameter<std::vector<std::string> >("levels"); 
   // fill the std::map for levels_, which might be flavor dependent or not; 
   // flavor dependency is determined from the fact whether the std::string 
@@ -91,6 +104,16 @@ JetCorrFactorsProducer::evaluate(edm::View<reco::Jet>::const_iterator& jet, boos
   return corrector->getSubCorrections()[level];
 }
 
+std::string
+JetCorrFactorsProducer::payload()
+{
+  if(payloads_.find(src_.label())==payloads_.end()){
+    throw cms::Exception("No Payload") << "You request to create a jetCorrFactors object for a jet algorithm for which \n"
+				       << "there is no DB payload defined. Please contact JetMET and AT experts. \n";
+  }
+  return payloads_.find(src_.label())->second;
+}
+
 void 
 JetCorrFactorsProducer::produce(edm::Event& event, const edm::EventSetup& setup) 
 {
@@ -101,7 +124,7 @@ JetCorrFactorsProducer::produce(edm::Event& event, const edm::EventSetup& setup)
   // retreive parameters from the DB this still need a proper configurable 
   // payloadName like: JetCorrectorParametersCollection_Spring10_AK5Calo.
   edm::ESHandle<JetCorrectorParametersCollection> parameters;
-  setup.get<JetCorrectionsRecord>().get(std::string("AK5Calo"), parameters); 
+  setup.get<JetCorrectionsRecord>().get(payload(), parameters); 
 
   // initialize jet correctors
   std::map<JetCorrFactors::Flavor, boost::shared_ptr<FactorizedJetCorrector> > corrector;
@@ -174,7 +197,6 @@ JetCorrFactorsProducer::fillDescriptions(edm::ConfigurationDescriptions & descri
 {
   edm::ParameterSetDescription iDesc;
   iDesc.add<bool>("emf", false);
-  iDesc.add<std::string>("era", "Spring10");
   iDesc.add<std::string>("flavorType", "J");
   iDesc.add<edm::InputTag>("src", edm::InputTag("ak5CaloJets"));
 

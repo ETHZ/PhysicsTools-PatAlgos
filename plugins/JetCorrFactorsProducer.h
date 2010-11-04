@@ -77,18 +77,20 @@ namespace pat {
     std::vector<std::string> expand(const std::vector<std::string>& levels, const JetCorrFactors::Flavor& flavor);
     /// evaluate jet correction factor up to a given level
     float evaluate(edm::View<reco::Jet>::const_iterator& jet, boost::shared_ptr<FactorizedJetCorrector>& corrector, int level);
+    /// map jet algorithm to payload in DB
+    std::string payload();
     
   private:
     /// use electromagnetic fraction for jet energy corrections or not (will only have an effect for jets CaloJets)
     bool emf_;
-    /// era of JEC factors (e.g. Spring10, Summer09, ... this might become obsolete after the DB transition)
-    std::string era_;
     /// input jet collection
     edm::InputTag src_;
     /// type of flavor dependent JEC factors (only 'J' and 'T' are allowed)
     std::string type_;
     /// label of jec factors
     std::string label_;
+    /// map jet algorithm labels to payloads 
+    std::map<std::string, std::string> payloads_;
     /// jec levels for different flavors. In the default configuration 
     /// this map would look like this:
     /// GLUON  : 'L2Relative', 'L3Absolute', 'L5FLavor_jg', L7Parton_jg'

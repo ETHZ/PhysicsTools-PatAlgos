@@ -6,8 +6,6 @@ patJetCorrFactors = cms.EDProducer("JetCorrFactorsProducer",
     emf = cms.bool(False),
     ## input collection of jets
     src = cms.InputTag("ak5CaloJets"),
-    ## set of correction factors
-    era = cms.string("Spring10"),
     ## correction levels
     levels = cms.vstring(
         ## tags for the individual jet corrections; when
