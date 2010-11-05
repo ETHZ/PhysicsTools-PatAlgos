@@ -6,6 +6,8 @@ patJetCorrFactors = cms.EDProducer("JetCorrFactorsProducer",
     emf = cms.bool(False),
     ## input collection of jets
     src = cms.InputTag("ak5CaloJets"),
+    ## payload postfix for testing
+    payload = cms.string('AK5Calo'),
     ## correction levels
     levels = cms.vstring(
         ## tags for the individual jet corrections; when

@@ -89,8 +89,8 @@ namespace pat {
     std::string type_;
     /// label of jec factors
     std::string label_;
-    /// map jet algorithm labels to payloads 
-    std::map<std::string, std::string> payloads_;
+    /// payload label
+    std::string payload_;
     /// jec levels for different flavors. In the default configuration 
     /// this map would look like this:
     /// GLUON  : 'L2Relative', 'L3Absolute', 'L5FLavor_jg', L7Parton_jg'
