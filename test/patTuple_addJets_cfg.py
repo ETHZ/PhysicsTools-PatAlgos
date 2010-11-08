@@ -1,6 +1,9 @@
 ## import skeleton process
 from PhysicsTools.PatAlgos.patTemplate_cfg import *
 
+##from PhysicsTools.PatAlgos.tools.coreTools import *
+##removeMCMatching(process, ['All'])
+
 ## uncomment the following line to add tcMET to the event content
 from PhysicsTools.PatAlgos.tools.metTools import *
 addTcMET(process, 'TC')
@@ -17,7 +20,7 @@ addJetCollection(process,cms.InputTag('JetPlusTrackZSPCorJetAntiKt5'),
                  doBTagging   = True,
                  jetCorrLabel = ('AK5','JPT'),
                  doType1MET   = False,
-                 doL1Cleaning = False,
+                 doL1Cleaning = True,
                  doL1Counters = True,                 
                  genJetCollection = cms.InputTag("ak5GenJets"),
                  doJetID      = True,
@@ -28,11 +31,11 @@ addJetCollection(process,cms.InputTag('JetPlusTrackZSPCorJetAntiKt5'),
 addJetCollection(process,cms.InputTag('ak7CaloJets'),
                  'AK7', 'Calo',
                  doJTA        = True,
-                 doBTagging   = False,
+                 doBTagging   = True,
                  jetCorrLabel = ('AK7', 'Calo'),
                  doType1MET   = True,
                  doL1Cleaning = True,                 
-                 doL1Counters = False,
+                 doL1Counters = True,
                  genJetCollection=cms.InputTag("ak7GenJets"),
                  doJetID      = True,
                  jetIdLabel   = "ak7"
@@ -46,7 +49,7 @@ addJetCollection(process,cms.InputTag('kt4CaloJets'),
                  jetCorrLabel = ('KT4','Calo'),
                  doType1MET   = True,
                  doL1Cleaning = True,                 
-                 doL1Counters = False,
+                 doL1Counters = True,
                  genJetCollection=cms.InputTag("kt4GenJets"),
                  doJetID      = True,
                  jetIdLabel   = "kt4"
@@ -60,7 +63,7 @@ addJetCollection(process,cms.InputTag('kt6CaloJets'),
                  jetCorrLabel = None,
                  doType1MET   = False,
                  doL1Cleaning = True,                 
-                 doL1Counters = False,
+                 doL1Counters = True,
                  genJetCollection=cms.InputTag("kt6GenJets"),
                  doJetID      = True,
                  jetIdLabel   = "kt6"
@@ -69,7 +72,7 @@ addJetCollection(process,cms.InputTag('kt6CaloJets'),
 ## uncomment the following lines to add ak55PFJets to your PAT output
 switchJetCollection(process,cms.InputTag('ak5PFJets'),
                  doJTA        = True,
-                 doBTagging   = True,
+                 doBTagging   = False,
                  jetCorrLabel = ('AK5', 'PF'),
                  doType1MET   = True,
                  genJetCollection=cms.InputTag("ak5GenJets"),
@@ -100,4 +103,4 @@ process.maxEvents.input = 10              ##  (e.g. -1 to run on all events)
 #                                         ##
 #   process.out.fileName = ...            ##  (e.g. 'myTuple.root')
 #                                         ##
-process.options.wantSummary = False       ##  (to suppress the long output at the end of the job)    
+process.options.wantSummary = True       ##  (to suppress the long output at the end of the job)    
