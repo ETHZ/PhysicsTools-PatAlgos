@@ -407,41 +407,38 @@ class AddJetCollection(ConfigToolBase):
             getattr(process,newLabel('patJetCorrFactors')).levels = jetCorrLabel[1]
             getattr(process, newLabel('patJets')).jetCorrFactorsSource = cms.VInputTag(  cms.InputTag(newLabel('patJetCorrFactors')) )
         
-            ## switch type1MET corrections off for PFJets
-            if ( jetCollection.__str__().find('PFJets')>=0 ):
+            ## switch type1MET corrections off for PFJets or JPTJets
+            if ( jetCollection.getModuleLabel().find('CaloJets')<0 ):
                 print '================================================='
-                print 'Type1MET corrections are switched off for PFJets.'
-                print 'Users are recommened to use pfMET together with  '
-                print 'PFJets.'
-                print '================================================='            
+                print 'Type1MET corrections are switched off for other  '
+                print 'jet types but CaloJets. Users are recommened to  '
+                print 'use pfMET together with PFJets & tcMET together  '
+                print 'with JPT jets.                                   '
+                print '================================================='
                 doType1MET=False
 
             ## add a clone of the type1MET correction for the new jet collection
             if (doType1MET):
-                print '================================================='
-                print 'Type1MET corrections are temporarily switched off'
-                print '================================================='            
-                doType1MET=False                
-                ## ## in case there is no jet correction service in the paths add it
-                ## ## as L2L3 if possible, as combined from L2 and L3 otherwise
-                ## if not hasattr( process, '%s%sL2L3' % (jetCorrLabel[0].swapcase(), jetCorrLabel[1]) ):
-                ##     setattr( process, '%s%sL2L3' % (jetCorrLabel[0].swapcase(), jetCorrLabel[1]),
-                ##              cms.ESSource("JetCorrectionServiceChain",
-                ##                           correctors = cms.vstring('%s%sL2Relative' % (jetCorrLabel[0].swapcase(), jetCorrLabel[1]),
-                ##                                                    '%s%sL3Absolute' % (jetCorrLabel[0].swapcase(), jetCorrLabel[1])
-                ##                                                    )
-                ##                           )
-                ##              )
-                ## ## add a clone of the type1MET correction
-                ## ## and the following muonMET correction  
-                ## addClone('metJESCorAK5CaloJet', inputUncorJetsLabel = jetCollection.value(),
-                ##          corrector = cms.string('%s%sL2L3' % (jetCorrLabel[0].swapcase(), jetCorrLabel[1]))
-                ##          )
-                ## addClone('metJESCorAK5CaloJetMuons', uncorMETInputTag = cms.InputTag(newLabel('metJESCorAK5CaloJet')))
-                ## addClone('patMETs', metSource = cms.InputTag(newLabel('metJESCorAK5CaloJetMuons')))
-                ## l1MET = getattr(process, newLabel('patMETs'))
-                ## ## add new met collections output to the pat summary
-                ## process.patCandidateSummary.candidates += [ cms.InputTag(newLabel('patMETs')) ]
+                ## in case there is no jet correction service in the paths add it
+                ## as L2L3 if possible, as combined from L2 and L3 otherwise
+                if not hasattr( process, '%sL2L3' % (jetCollection.getModuleLabel().replace("Jets", "")) ):
+                    setattr( process, '%sL2L3' % (jetCollection.getModuleLabel().replace("Jets", "")),
+                             cms.ESSource("JetCorrectionServiceChain",
+                                          correctors = cms.vstring('%sL2Relative' % (jetCollection.getModuleLabel().replace("Jets", "")),
+                                                                   '%sL3Absolute' % (jetCollection.getModuleLabel().replace("Jets", ""))
+                                                                   )
+                                           )
+                             )
+                ## add a clone of the type1MET correction
+                ## and the following muonMET correction  
+                addClone('metJESCorAK5CaloJet', inputUncorJetsLabel = jetCollection.value(),
+                         corrector = cms.string('%sL2L3' % (jetCollection.getModuleLabel().replace("Jets", "")))
+                         )
+                addClone('metJESCorAK5CaloJetMuons', uncorMETInputTag = cms.InputTag(newLabel('metJESCorAK5CaloJet')))
+                addClone('patMETs', metSource = cms.InputTag(newLabel('metJESCorAK5CaloJetMuons')))
+                l1MET = getattr(process, newLabel('patMETs'))
+                ## add new met collections output to the pat summary
+                process.patCandidateSummary.candidates += [ cms.InputTag(newLabel('patMETs')) ]
         else:
             ## switch jetCorrFactors off
             l1Jets.addJetCorrFactors = False
@@ -613,36 +610,33 @@ class SwitchJetCollection(ConfigToolBase):
             getattr( process, "patJetCorrFactors" + postfix).levels = jetCorrLabel[1]
             getattr( process, "patJets" + postfix).jetCorrFactorsSource = cms.VInputTag( cms.InputTag("patJetCorrFactors" + postfix ) )
 
-            ## switch type1MET corrections off for PFJets
-            if( jetCollection.__str__().find('PFJets')>=0 ):
+            ## switch type1MET corrections off for PFJets or JPTJets
+            if ( jetCollection.getModuleLabel().find('CaloJets')<0 ):
                 print '================================================='
-                print 'Type1MET corrections are switched off for PFJets.'
-                print 'Users are recommened to use pfMET together with  '
-                print 'PFJets.'
-                print '================================================='                   
-                doType1MET=False
+                print 'Type1MET corrections are switched off for other  '
+                print 'jet types but CaloJets. Users are recommened to  '
+                print 'use pfMET together with PFJets & tcMET together  '
+                print 'with JPT jets.                                   '
+                print '================================================='
+                doType1MET=False            
 
             ## redo the type1MET correction for the new jet collection
             if (doType1MET):
-                print '================================================='
-                print 'Type1MET corrections are temporarily switched off'
-                print '================================================='            
-                doType1MET=False
-                ## ## in case there is no jet correction service in the paths add it
-                ## ## as L2L3 if possible, as combined from L2 and L3 otherwise
-                ## if not hasattr( process, '%s%sL2L3' % (jetCorrLabel[0].swapcase(), jetCorrLabel[1]) ):
-                ##     setattr( process, '%s%sL2L3' % (jetCorrLabel[0].swapcase(), jetCorrLabel[1]),
-                ##              cms.ESSource("JetCorrectionServiceChain",
-                ##                           correctors = cms.vstring('%s%sL2Relative' % (jetCorrLabel[0].swapcase(), jetCorrLabel[1]),
-                ##                                                    '%s%sL3Absolute' % (jetCorrLabel[0].swapcase(), jetCorrLabel[1])
-                ##                                                    )
-                ##                           )
-                ##              )
-                ## ## configure the type1MET correction the following muonMET
-                ## ## corrections have the metJESCorAK5CaloJet as input and 
-                ## ## are automatically correct  
-                ## applyPostfix(process, "metJESCorAK5CaloJet", postfix).inputUncorJetsLabel = jetCollection.value()
-                ## applyPostfix(process, "metJESCorAK5CaloJet", postfix).corrector = '%s%sL2L3' % (jetCorrLabel[0].swapcase(), jetCorrLabel[1])
+                ## in case there is no jet correction service in the paths add it
+                ## as L2L3 if possible, as combined from L2 and L3 otherwise
+                if not hasattr( process, '%sL2L3' % (jetCollection.getModuleLabel().replace("Jets", "")) ):
+                    setattr( process, '%sL2L3' % (jetCollection.getModuleLabel().replace("Jets", "")),
+                             cms.ESSource("JetCorrectionServiceChain",
+                                          correctors = cms.vstring('%sL2Relative' % (jetCollection.getModuleLabel().replace("Jets", "")),
+                                                                   '%sL3Absolute' % (jetCollection.getModuleLabel().replace("Jets", ""))
+                                                                   )
+                                          )
+                             )
+                ## configure the type1MET correction the following muonMET
+                ## corrections have the metJESCorAK5CaloJet as input and 
+                ## are automatically correct  
+                applyPostfix(process, "metJESCorAK5CaloJet", postfix).inputUncorJetsLabel = jetCollection.value()
+                applyPostfix(process, "metJESCorAK5CaloJet", postfix).corrector = '%sL2L3' % (jetCollection.getModuleLabel().replace("Jets", ""))
         else:
             ## remove the jetCorrFactors from the std sequence
             process.patJetMETCorrections.remove(process.patJetCorrFactors)
