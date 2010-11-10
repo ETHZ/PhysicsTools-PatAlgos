@@ -113,6 +113,11 @@ JetCorrFactorsProducer::produce(edm::Event& event, const edm::EventSetup& setup)
   // initialize jet correctors
   std::map<JetCorrFactors::Flavor, boost::shared_ptr<FactorizedJetCorrector> > corrector;
   for(FlavorCorrLevelMap::const_iterator flavor=levels_.begin(); flavor!=levels_.end(); ++flavor){
+
+    std::cout << " ini FactorizedJetCorrector: " << flavor->first << std::endl;
+    for(unsigned int idx=0; idx<flavor->second.size(); ++idx){
+      std::cout << " -- " << flavor->second[idx] << std::endl;
+    }
     corrector[flavor->first] = boost::shared_ptr<FactorizedJetCorrector>( new FactorizedJetCorrector(params(*parameters, flavor->second)) );
   }
 
@@ -130,8 +135,8 @@ JetCorrFactorsProducer::produce(edm::Event& event, const edm::EventSetup& setup)
 
     // pick the first element in the map (which could be the only one) and loop all jec 
     // levels listed for that element. If this is not the only element all jec levels, which 
-    // are flavor independent will give the same correction factors untill the first flavor
-    // dependent correctio level is reached. So the first element is still a good choice.
+    // are flavor independent will give the same correction factors until the first flavor
+    // dependent correction level is reached. So the first element is still a good choice.
     FlavorCorrLevelMap::const_iterator corrLevel=levels_.begin();
     if(corrLevel==levels_.end()){
       throw cms::Exception("No JECFactors") << "You request to create a jetCorrFactors object with no JEC Levels indicated. \n"
@@ -142,11 +147,14 @@ JetCorrFactorsProducer::produce(edm::Event& event, const edm::EventSetup& setup)
       bool flavorDependent=false;
       std::vector<float> factors;
       if(flavorDependent || 
-	 corrLevel->second[idx].find("L5FLavor")!=std::string::npos || 
+	 corrLevel->second[idx].find("L5Flavor")!=std::string::npos || 
 	 corrLevel->second[idx].find("L7Parton")!=std::string::npos){
 	flavorDependent=true;
 	// after the first encounter all subsequent correction levels are flavor dependent
-	for(FlavorCorrLevelMap::const_iterator flavor=corrLevel ; flavor!=levels_.end(); ++flavor){
+	for(FlavorCorrLevelMap::const_iterator flavor=corrLevel; flavor!=levels_.end(); ++flavor){
+	  
+	  std::cout << "JEC factor: " << flavor->first << " -- " << idx << " -- " << evaluate(jet, corrector.find(flavor->first)->second, idx) << std::endl;
+
 	  factors.push_back(evaluate(jet, corrector.find(flavor->first)->second, idx)); 
 	}
       }
