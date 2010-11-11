@@ -77,7 +77,9 @@ JetCorrFactorsProducer::params(const JetCorrectorParametersCollection& parameter
 {
   std::vector<JetCorrectorParameters> params;
   for(std::vector<std::string>::const_iterator level=levels.begin(); level!=levels.end(); ++level){ 
-    params.push_back(parameters[*level]); 
+    JetCorrectorParameters const & ip = parameters[*level];
+    ip.printScreen();
+    params.push_back(ip); 
   } 
   return params;
 }
