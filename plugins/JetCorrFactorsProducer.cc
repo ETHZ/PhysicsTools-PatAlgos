@@ -34,7 +34,7 @@ JetCorrFactorsProducer::JetCorrFactorsProducer(const edm::ParameterSet& cfg):
   // and 'L7Parton' will be expanded accordingly; if not levels_ is filled 
   // with only one vector of strings according to NONE. This vector will be 
   // equivalent to the original vector of strings.
-  if(std::find(levels.begin(), levels.end(), "L5FLavor")!=levels.end() || std::find(levels.begin(), levels.end(), "L7Parton")!=levels.end()){
+  if(std::find(levels.begin(), levels.end(), "L5Flavor")!=levels.end() || std::find(levels.begin(), levels.end(), "L7Parton")!=levels.end()){
     levels_[JetCorrFactors::GLUON ] = expand(levels, JetCorrFactors::GLUON );
     levels_[JetCorrFactors::UDS   ] = expand(levels, JetCorrFactors::UDS   );
     levels_[JetCorrFactors::CHARM ] = expand(levels, JetCorrFactors::CHARM );
@@ -77,8 +77,7 @@ JetCorrFactorsProducer::params(const JetCorrectorParametersCollection& parameter
 {
   std::vector<JetCorrectorParameters> params;
   for(std::vector<std::string>::const_iterator level=levels.begin(); level!=levels.end(); ++level){ 
-    JetCorrectorParameters const & ip = parameters[*level];
-    ip.printScreen();
+    const JetCorrectorParameters& ip = parameters[*level]; //ip.printScreen();
     params.push_back(ip); 
   } 
   return params;
@@ -115,11 +114,6 @@ JetCorrFactorsProducer::produce(edm::Event& event, const edm::EventSetup& setup)
   // initialize jet correctors
   std::map<JetCorrFactors::Flavor, boost::shared_ptr<FactorizedJetCorrector> > corrector;
   for(FlavorCorrLevelMap::const_iterator flavor=levels_.begin(); flavor!=levels_.end(); ++flavor){
-
-    std::cout << " ini FactorizedJetCorrector: " << flavor->first << std::endl;
-    for(unsigned int idx=0; idx<flavor->second.size(); ++idx){
-      std::cout << " -- " << flavor->second[idx] << std::endl;
-    }
     corrector[flavor->first] = boost::shared_ptr<FactorizedJetCorrector>( new FactorizedJetCorrector(params(*parameters, flavor->second)) );
   }
 
@@ -154,9 +148,6 @@ JetCorrFactorsProducer::produce(edm::Event& event, const edm::EventSetup& setup)
 	flavorDependent=true;
 	// after the first encounter all subsequent correction levels are flavor dependent
 	for(FlavorCorrLevelMap::const_iterator flavor=corrLevel; flavor!=levels_.end(); ++flavor){
-	  
-	  std::cout << "JEC factor: " << flavor->first << " -- " << idx << " -- " << evaluate(jet, corrector.find(flavor->first)->second, idx) << std::endl;
-
 	  factors.push_back(evaluate(jet, corrector.find(flavor->first)->second, idx)); 
 	}
       }

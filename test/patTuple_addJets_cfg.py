@@ -1,11 +1,9 @@
 ## import skeleton process
 from PhysicsTools.PatAlgos.patTemplate_cfg import *
+##process.load("PhysicsTools.PatAlgos.patTestJEC_cfi")
 
 ##from PhysicsTools.PatAlgos.tools.coreTools import *
 ##removeMCMatching(process, ['All'])
-
-
-process.load("PhysicsTools.PatAlgos.patTestJEC_cfi")
 
 ## uncomment the following line to add tcMET to the event content
 from PhysicsTools.PatAlgos.tools.metTools import *
@@ -35,7 +33,7 @@ addJetCollection(process,cms.InputTag('ak7CaloJets'),
                  'AK7', 'Calo',
                  doJTA        = True,
                  doBTagging   = False,
-                 jetCorrLabel = ('AK7Calo', cms.vstring(['L2Relative', 'L3Absolute'])),
+                 jetCorrLabel = ('AK7Calo', cms.vstring(['L2Relative', 'L3Absolute', 'L2L3Residual'])),
                  doType1MET   = True,
                  doL1Cleaning = True,                 
                  doL1Counters = False,
@@ -49,7 +47,7 @@ addJetCollection(process,cms.InputTag('kt4CaloJets'),
                  'KT4', 'Calo',
                  doJTA        = True,
                  doBTagging   = True,
-                 jetCorrLabel = ('KT4Calo', cms.vstring(['L2Relative', 'L3Absolute'])),
+                 jetCorrLabel = ('KT4Calo', cms.vstring(['L2Relative', 'L3Absolute', 'L2L3Residual'])),
                  doType1MET   = True,
                  doL1Cleaning = True,                 
                  doL1Counters = False,
@@ -63,7 +61,7 @@ addJetCollection(process,cms.InputTag('kt6CaloJets'),
                  'KT6', 'Calo',
                  doJTA        = True,
                  doBTagging   = False,
-                 jetCorrLabel = ('KT6Calo', cms.vstring(['L2Relative', 'L3Absolute'])),
+                 jetCorrLabel = ('KT6Calo', cms.vstring(['L2Relative', 'L3Absolute', 'L2L3Residual'])),
                  doType1MET   = False,
                  doL1Cleaning = True,                 
                  doL1Counters = False,
@@ -76,7 +74,7 @@ addJetCollection(process,cms.InputTag('kt6CaloJets'),
 switchJetCollection(process,cms.InputTag('ak5PFJets'),
                  doJTA        = True,
                  doBTagging   = True,
-                 jetCorrLabel = ('AK5PF', cms.vstring(['L2Relative', 'L3Absolute', 'L2L3Residual'])),
+                 jetCorrLabel = ('AK5PF', cms.vstring(['L2Relative', 'L3Absolute', 'L2L3Residual', 'L2L3Residual'])),
                  doType1MET   = True,
                  genJetCollection=cms.InputTag("ak5GenJets"),
                  doJetID      = True
@@ -97,7 +95,7 @@ process.p = cms.Path(
 #   process.GlobalTag.globaltag =  ...    ##  (according to https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideFrontierConditions)
 #                                         ##
 #   process.source.fileNames = [          ##
-#    '/store/relval/CMSSW_3_5_0_pre1/RelValTTbar/GEN-SIM-RECO/STARTUP3X_V14-v1/0006/14920B0A-0DE8-DE11-B138-002618943926.root'
+#    '/store/relval/CMSSW_3_8_6/RelValTTbar/GEN-SIM-RECO/START38_V13-v1/0065/F438C4C4-BCE7-DF11-BC6B-002618943885.root'
 #   ]                                     ##  (e.g. 'file:AOD.root')
 #                                         ##
 process.maxEvents.input = 10              ##  (e.g. -1 to run on all events)
@@ -107,6 +105,4 @@ process.maxEvents.input = 10              ##  (e.g. -1 to run on all events)
 #   process.out.fileName = ...            ##  (e.g. 'myTuple.root')
 #                                         ##
 process.options.wantSummary = False       ##  (to suppress the long output at the end of the job)    
-
-#open('junk.py','w').write(process.dumpPython())
 
