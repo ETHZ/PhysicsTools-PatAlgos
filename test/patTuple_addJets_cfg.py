@@ -1,6 +1,5 @@
 ## import skeleton process
 from PhysicsTools.PatAlgos.patTemplate_cfg import *
-##process.load("PhysicsTools.PatAlgos.patTestJEC_cfi")
 
 ##from PhysicsTools.PatAlgos.tools.coreTools import *
 ##removeMCMatching(process, ['All'])
@@ -33,7 +32,7 @@ addJetCollection(process,cms.InputTag('ak7CaloJets'),
                  'AK7', 'Calo',
                  doJTA        = True,
                  doBTagging   = False,
-                 jetCorrLabel = ('AK7Calo', cms.vstring(['L2Relative', 'L3Absolute', 'L2L3Residual'])),
+                 jetCorrLabel = ('AK7Calo', cms.vstring(['L2Relative', 'L3Absolute'])),
                  doType1MET   = True,
                  doL1Cleaning = True,                 
                  doL1Counters = False,
@@ -47,7 +46,7 @@ addJetCollection(process,cms.InputTag('kt4CaloJets'),
                  'KT4', 'Calo',
                  doJTA        = True,
                  doBTagging   = True,
-                 jetCorrLabel = ('KT4Calo', cms.vstring(['L2Relative', 'L3Absolute', 'L2L3Residual'])),
+                 jetCorrLabel = ('KT4Calo', cms.vstring(['L2Relative', 'L3Absolute'])),
                  doType1MET   = True,
                  doL1Cleaning = True,                 
                  doL1Counters = False,
@@ -61,7 +60,7 @@ addJetCollection(process,cms.InputTag('kt6CaloJets'),
                  'KT6', 'Calo',
                  doJTA        = True,
                  doBTagging   = False,
-                 jetCorrLabel = ('KT6Calo', cms.vstring(['L2Relative', 'L3Absolute', 'L2L3Residual'])),
+                 jetCorrLabel = ('KT6Calo', cms.vstring(['L2Relative', 'L3Absolute'])),
                  doType1MET   = False,
                  doL1Cleaning = True,                 
                  doL1Counters = False,
@@ -74,7 +73,7 @@ addJetCollection(process,cms.InputTag('kt6CaloJets'),
 switchJetCollection(process,cms.InputTag('ak5PFJets'),
                  doJTA        = True,
                  doBTagging   = True,
-                 jetCorrLabel = ('AK5PF', cms.vstring(['L2Relative', 'L3Absolute', 'L2L3Residual', 'L2L3Residual'])),
+                 jetCorrLabel = ('AK5PF', cms.vstring(['L2Relative', 'L3Absolute', 'L2L3Residual'])),
                  doType1MET   = True,
                  genJetCollection=cms.InputTag("ak5GenJets"),
                  doJetID      = True
