@@ -19,8 +19,8 @@ process.patJetCorrFactors.payload = 'AK5Calo'
 # For data:
 #process.patJetCorrFactors.levels = ['L2Relative', 'L3Absolute', 'L2L3Residual', 'L5Flavor', 'L7Parton']
 # For MC:
-process.patJetCorrFactors.levels = ['L2Relative', 'L3Absolute', 'L5Flavor', 'L7Parton']
-process.patJetCorrFactors.flavorType = "T"
+process.patJetCorrFactors.levels = ['L2Relative', 'L3Absolute']
+#process.patJetCorrFactors.flavorType = "T"
 
 process.patMuons.usePV = False
 
