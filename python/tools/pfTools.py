@@ -267,20 +267,23 @@ def switchToPFJets(process, input=cms.InputTag('pfNoTau'), algo='IC5', postfix =
 
     print "Switching to PFJets,  ", algo
     print "************************ "
-
+    print "input collection: ", input
+         
     if( algo == 'IC5' ):
         genJetCollection = cms.InputTag('iterativeCone5GenJetsNoNu')
     elif algo == 'AK5':
         genJetCollection = cms.InputTag('ak5GenJetsNoNu')
+    elif algo == 'AK7':
+        genJetCollection = cms.InputTag('ak7GenJetsNoNu')
     else:
         print 'bad jet algorithm:', algo, '! for now, only IC5 and AK5 are allowed. If you need other algorithms, please contact Colin'
         sys.exit(1)
         
     # changing the jet collection in PF2PAT:
     from PhysicsTools.PFCandProducer.Tools.jetTools import jetAlgo
-    inputCollection = getattr(process,"allPfJets"+postfix).src
-    setattr(process, "allPfJets"+postfix, jetAlgo( algo ) )
-    getattr(process,"allPfJets"+postfix).src = inputCollection
+    inputCollection = getattr(process,"pfJets"+postfix).src
+    setattr(process, "pfJets"+postfix, jetAlgo( algo ) )
+    getattr(process,"pfJets"+postfix).src = inputCollection
     switchJetCollection(process,
                         input,
                         jetIdLabel = algo,
@@ -296,7 +299,14 @@ def switchToPFJets(process, input=cms.InputTag('pfNoTau'), algo='IC5', postfix =
     
     applyPostfix(process, "patJets", postfix).embedCaloTowers   = False
     applyPostfix(process, "patJets", postfix).embedPFCandidates   = True
-
+    
+#-- Switch to jets cleaned from taus ------------------------------------------
+def useTauCleanedPFJets(process,jetAlgo,postfix):
+    switchToPFJets(process,
+                   input=cms.InputTag('pfNoTau'+postfix),
+                   algo=jetAlgo,
+                   postfix=postfix)
+    
 #-- Remove MC dependence ------------------------------------------------------
 def removeMCMatchingPF2PAT( process, postfix="" ):
     from PhysicsTools.PatAlgos.tools.coreTools import removeMCMatching
