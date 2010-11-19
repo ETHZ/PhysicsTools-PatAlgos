@@ -155,12 +155,14 @@ JetCorrFactorsProducer::produce(edm::Event& event, const edm::EventSetup& setup)
 	factors.push_back(evaluate(jet, corrector.find(corrLevel->first)->second, idx));
       }
       // push back the set of JetCorrFactors: the first entry corresponds to the label 
-      // of the correction level, which is taken from the first elment in levels_. The 
-      // second parameter corresponds to the set of jec factors, which might be flavor 
-      // dependent or not. In the default configuration the CorrectionFactor will look 
-      // like this: 'Uncorrected': 1 ; 'L2Relative': x ; 'L3Absolute': x ; 'L5Flavor': 
-      // v, x, y, z ; 'L7Parton': v, x, y, z 
-      jec.push_back(std::make_pair<std::string, std::vector<float> >(corrLevel->second[idx], factors));
+      // of the correction level, which is taken from the first element in levels_. For
+      // L5Flavor and L7Parton the part including the first '_' indicating the flavor
+      // of the first element in levels_ is chopped of from the label to avoid confusion 
+      // of the correction levels. The second parameter corresponds to the set of jec 
+      // factors, which might be flavor dependent or not. In the default configuration 
+      // the CorrectionFactor will look like this: 'Uncorrected': 1 ; 'L2Relative': x ; 
+      // 'L3Absolute': x ; 'L5Flavor': v, x, y, z ; 'L7Parton': v, x, y, z 
+      jec.push_back(std::make_pair<std::string, std::vector<float> >((corrLevel->second[idx]).substr(0, (corrLevel->second[idx]).find("_")), factors));
     }
     // create the actual object with the scale factors we want the valuemap to refer to
     // label_ corresponds to the label of the module instance
