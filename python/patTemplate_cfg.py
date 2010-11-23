@@ -20,12 +20,12 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
 ## Geometry and Detector Conditions (needed for a few patTuple production steps)
 process.load("Configuration.StandardSequences.Geometry_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
-process.GlobalTag.globaltag = cms.string('START38_V13::All')
+process.GlobalTag.globaltag = cms.string('START38_V14::All')
 process.load("Configuration.StandardSequences.MagneticField_cff")
 
-## Standard PAT Configuration File
+##Standard PAT Configuration File
 process.load("PhysicsTools.PatAlgos.patSequences_cff")
-#process.load("PhysicsTools.PatAlgos.patTestJEC_cfi")
+process.load("PhysicsTools.PatAlgos.patTestJEC_cfi")
 
 ## Output Module Configuration (expects a path 'p')
 from PhysicsTools.PatAlgos.patEventContent_cff import patEventContent
