@@ -127,14 +127,7 @@ def reconfigurePF2PATTaus(process,
    applyPostfix(process,"pfTaus", postfix).src = producerName+postfix
    # Start our pf2pat taus base sequence
    setattr(process,producerName+postfix,getattr(process,producerName).clone())
-   ## adapted to new structure in RecoTauProducers PLEASE CHECK!!! 
-   getattr(process,producerName+postfix).modifiers= [cms.PSet(
-       pfTauTagInfoSrc = cms.InputTag("pfRecoTauTagInfoProducer"+postfix),
-       name = cms.string('TTIworkaround'),
-       plugin = cms.string('RecoTauTagInfoWorkaroundModifer')
-     )
-   ]
-  #getattr(process,producerName+postfix).PFTauTagInfoProducer="pfRecoTauTagInfoProducer"+postfix
+   getattr(process,producerName+postfix).PFTauTagInfoProducer="pfRecoTauTagInfoProducer"+postfix
    setattr(process,"pfTausBaseSequence"+postfix, cms.Sequence(getattr(process,
       producerName+postfix)))
    baseSequence = getattr(process,"pfTausBaseSequence"+postfix)
@@ -199,6 +192,7 @@ def adaptPFTaus(process,tauType = 'shrinkingConePFTau', postfix = ""):
                             cms.InputTag(tauType+'Producer'),
                             applyPostfix(process,"patTaus", postfix).tauSource,
                             tauType, postfix=postfix)
+
 
     #switchToAnyPFTau(process, oldTaus, process.patTaus.tauSource, tauType)
     switchToPFTauByType(process, pfTauType=tauType,
@@ -322,10 +316,8 @@ def removeMCMatchingPF2PAT( process, postfix="" ):
 
 def usePF2PAT(process, runPF2PAT=True, jetAlgo='IC5', runOnMC=True, postfix = ""):
     # PLEASE DO NOT CLOBBER THIS FUNCTION WITH CODE SPECIFIC TO A GIVEN PHYSICS OBJECT.
-    # CREATE ADDITIONAL FUNCTIONS IF NEEDED.
+    # CREATE ADDITIONAL FUNCTIONS IF NEEDED. 
 
-    print "1"
-    print getattr(process, "pfRecoTauTagInfoProducer").PFCandidateProducer
 
     """Switch PAT to use PF2PAT instead of AOD sources. if 'runPF2PAT' is true, we'll also add PF2PAT in front of the PAT sequence"""
 
@@ -338,9 +330,7 @@ def usePF2PAT(process, runPF2PAT=True, jetAlgo='IC5', runOnMC=True, postfix = ""
     else:
         process.patPF2PATSequence = cms.Sequence( process.patDefaultSequence )
         
-    print "2"
-    print getattr(process, "pfRecoTauTagInfoProducer").PFCandidateProducer
-    
+
     if not postfix == "":
         from PhysicsTools.PatAlgos.tools.helpers import cloneProcessingSnippet
         cloneProcessingSnippet(process, process.patPF2PATSequence, postfix)
@@ -360,6 +350,7 @@ def usePF2PAT(process, runPF2PAT=True, jetAlgo='IC5', runOnMC=True, postfix = ""
                  applyPostfix(process,"patMuons",postfix),
                  postfix)
 
+    
     # Electrons
     adaptPFElectrons(process,
                      applyPostfix(process,"patElectrons",postfix),
@@ -375,7 +366,7 @@ def usePF2PAT(process, runPF2PAT=True, jetAlgo='IC5', runOnMC=True, postfix = ""
         switchToPFJets( process, cms.InputTag('pfNoTau'+postfix), jetAlgo, postfix=postfix, inputJetCorrLabel=('AK5PF', ['L2Relative','L3Absolute']) )
     else :
         switchToPFJets( process, cms.InputTag('pfNoTau'+postfix), jetAlgo, postfix=postfix, inputJetCorrLabel=('AK5PF', ['L2Relative','L3Absolute', 'L2L3Residual']) )
-
+    
     # Taus
     #adaptPFTaus( process ) #default (i.e. shrinkingConePFTau)
     adaptPFTaus( process, tauType='shrinkingConePFTau', postfix=postfix )
