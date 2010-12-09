@@ -9,48 +9,21 @@ from PhysicsTools.PatAlgos.patTemplate_cfg import *
 #from PhysicsTools.PatAlgos.tools.coreTools import *
 
 ## remove MC matching from the default sequence
-# removeMCMatching(process, ['Muons'])
+#removeMCMatching(process, ['All'])
 
 ## remove certain objects from the default sequence
 # removeAllPATObjectsBut(process, ['Muons'])
 # removeSpecificPATObjects(process, ['Electrons', 'Muons', 'Taus'])
 
 ## ------------------------------------------------------
-#  NOTE: you can still run PAT in the 36X version on
-#  input files produced within the 35X series. This
-#  implies some reconfigurations, example are given
-#  below.
+#  NOTE: to run PAT on CMSSW_3_8_X AOD please switch the 
+#  use and embedding of bTagInfos for patJets off. These 
+#  are not part of the AOD anymore. The bTagDosciminators 
+#  supported by the BTag POG are still available and will
+#  be embedded.
 ## ------------------------------------------------------
-#from PhysicsTools.PatAlgos.tools.cmsswVersionTools import *
-
-## uncomment this line to run on an 35X input sample
-#run36xOn35xInput(process)
-
-## uncomment the following lines to add jets from a
-## 35X input sample
-#addJetCollection35X(process,cms.InputTag('ak7CaloJets'),
-#                 'AK7', 'Calo',
-#                 doJTA        = True,
-#                 doBTagging   = False,
-#                 jetCorrLabel = ('AK7', 'Calo'),
-#                 doType1MET   = True,
-#                 doL1Cleaning = True,                 
-#                 doL1Counters = False,
-#                 genJetCollection=cms.InputTag("ak7GenJets"),
-#                 doJetID      = True,
-#                 jetIdLabel   = "ak7"
-#                 )
-
-## uncomment the following lines to switch the jet
-## collection from a 35X input sample
-#switchJetCollection35X(process,cms.InputTag('ak5PFJets'),
-#                 doJTA        = True,
-#                 doBTagging   = True,
-#                 jetCorrLabel = None,
-#                 doType1MET   = True,
-#                 genJetCollection=cms.InputTag("ak5GenJets"),
-#                 doJetID      = True
-#                 )
+#process.patJets.addBTagInfo = False
+#process.patJets.tagInfoSources = []
 
 
 ## let it run
@@ -64,10 +37,10 @@ process.p = cms.Path(
 #  parameters:
 ## ------------------------------------------------------
 #
-#   process.GlobalTag.globaltag =  ...    ##  (according to https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideFrontierConditions)
+#   process.GlobalTag.globaltag = 'GR_R_38X_V15::All' ##  (according to https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideFrontierConditions)
 #                                         ##
 #   process.source.fileNames = [          ##
-#    '/store/relval/CMSSW_3_8_6/RelValTTbar/GEN-SIM-RECO/START38_V13-v1/0065/F438C4C4-BCE7-DF11-BC6B-002618943885.root'
+#    '/store/data/Run2010B/Mu/AOD/Nov4ReReco_v1/0010/8E202869-33EC-DF11-AD37-485B39800B8A.root'
 #   ]                                     ##  (e.g. 'file:AOD.root')
 #                                         ##
 #   process.maxEvents.input = ...         ##  (e.g. -1 to run on all events)
