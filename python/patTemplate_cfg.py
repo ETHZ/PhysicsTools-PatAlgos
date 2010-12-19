@@ -20,7 +20,7 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
 ## Geometry and Detector Conditions (needed for a few patTuple production steps)
 process.load("Configuration.StandardSequences.Geometry_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
-process.GlobalTag.globaltag = cms.string('START38_V14::All')
+process.GlobalTag.globaltag = cms.string( 'START39_V7::All' )
 process.load("Configuration.StandardSequences.MagneticField_cff")
 
 ## Standard PAT Configuration File
@@ -34,7 +34,7 @@ process.out = cms.OutputModule("PoolOutputModule",
                                SelectEvents   = cms.untracked.PSet( SelectEvents = cms.vstring('p') ),
                                # save PAT Layer 1 output; you need a '*' to
                                # unpack the list of commands 'patEventContent'
-                               outputCommands = cms.untracked.vstring('drop *', *patEventContent ) 
+                               outputCommands = cms.untracked.vstring('drop *', *patEventContent )
                                )
 
 process.outpath = cms.EndPath(process.out)
