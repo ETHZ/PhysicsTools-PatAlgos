@@ -14,5 +14,13 @@ patJetCorrFactors = cms.EDProducer("JetCorrFactorsProducer",
         ## not available the string should be set to 'none'    
         'L2Relative', 'L3Absolute', 'L5Flavor', 'L7Parton'
     ), 
-    flavorType = cms.string('J') ## alternatively use 'T'
+    flavorType = cms.string('J'), ## alternatively use 'T'
+    ## in case that L1Offset corrections are part of the
+    ## parameter levels add the optional parameter
+    ## primaryVertices here to specify the primary vertex
+    ## collection, which was used to determine the L1Offset
+    ## correction from. This parameter will ONLY be read
+    ## out if the correction level L1Offset is found in
+    ## levels. 
+    ## primaryVertices = cms.string('offlinePrimaryVertices'),
 )

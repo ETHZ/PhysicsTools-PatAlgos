@@ -23,6 +23,9 @@
    where mixture refers to the flavor mixture as determined from the MC sample the flavor dependent corrections have been
    derived from. 'J' and 'T' stand for a typical dijet (ttbar) sample. 
 
+   L1Offset corrections require the collection of _offlinePrimaryVertices_, which are supposed to be added as an additional 
+   optional parameter _primaryVertices_ in the jetCorrFactors_cfi.py file._  
+
    NOTE:
     * the mixed mode (mc input mixture from dijets/ttbar) only exists for parton level corrections.
     * jJ and tT are not covered in this implementation of the JetCorrFactorsProducer
@@ -89,16 +92,18 @@ namespace pat {
     std::string type_;
     /// label of jec factors
     std::string label_;
-    /// payload label
+    /// label of payload
     std::string payload_;
+    /// label for primaryVertex collection
+    std::string primaryVertices_;
     /// jec levels for different flavors. In the default configuration 
     /// this map would look like this:
-    /// GLUON  : 'L2Relative', 'L3Absolute', 'L5FLavor_jg', L7Parton_jg'
-    /// UDS    : 'L2Relative', 'L3Absolute', 'L5FLavor_jq', L7Parton_jq'
-    /// CHARM  : 'L2Relative', 'L3Absolute', 'L5FLavor_jc', L7Parton_jc'
-    /// BOTTOM : 'L2Relative', 'L3Absolute', 'L5FLavor_jb', L7Parton_jb'
+    /// GLUON  : 'L1Offset', 'L2Relative', 'L3Absolute', 'L5FLavor_jg', L7Parton_jg'
+    /// UDS    : 'L1Offset', 'L2Relative', 'L3Absolute', 'L5FLavor_jq', L7Parton_jq'
+    /// CHARM  : 'L1Offset', 'L2Relative', 'L3Absolute', 'L5FLavor_jc', L7Parton_jc'
+    /// BOTTOM : 'L1Offset', 'L2Relative', 'L3Absolute', 'L5FLavor_jb', L7Parton_jb'
     /// or just like this:
-    /// NONE   : 'L2Relative', 'L3Absolute', 'L2L3Residual'
+    /// NONE   : 'L1Offset', 'L2Relative', 'L3Absolute', 'L2L3Residual'
     /// per definition the vectors for all elements in this map should
     /// have the same size 
     FlavorCorrLevelMap levels_;
