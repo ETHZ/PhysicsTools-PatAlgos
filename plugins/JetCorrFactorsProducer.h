@@ -80,6 +80,8 @@ namespace pat {
     std::vector<std::string> expand(const std::vector<std::string>& levels, const JetCorrFactors::Flavor& flavor);
     /// evaluate jet correction factor up to a given level
     float evaluate(edm::View<reco::Jet>::const_iterator& jet, boost::shared_ptr<FactorizedJetCorrector>& corrector, int level);
+    /// determines the number of valid primary vertices for the standard L1Offset correction of JetMET
+    int numberOf(const edm::Handle<std::vector<reco::Vertex> >& primaryVertices);
     /// map jet algorithm to payload in DB
     std::string payload();
     
@@ -108,6 +110,16 @@ namespace pat {
     /// have the same size 
     FlavorCorrLevelMap levels_;
   };
+
+  inline int 
+  JetCorrFactorsProducer::numberOf(const edm::Handle<std::vector<reco::Vertex> >& primaryVertices)
+  {
+    int npv=0;
+    for(std::vector<reco::Vertex>::const_iterator pv=primaryVertices->begin(); pv!=primaryVertices->end(); ++pv){
+      if(pv->ndof()>=4) ++npv;
+    }
+    return npv;
+  }
 }
 
 #endif

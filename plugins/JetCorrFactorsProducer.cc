@@ -166,6 +166,11 @@ JetCorrFactorsProducer::produce(edm::Event& event, const edm::EventSetup& setup)
 	flavorDependent=true;
 	// after the first encounter all subsequent correction levels are flavor dependent
 	for(FlavorCorrLevelMap::const_iterator flavor=corrLevel; flavor!=levels_.end(); ++flavor){
+	  if(!primaryVertices_.empty()){
+	    // if primaryVertices_ has a value the number of primary vertices needs to be 
+	    // specified
+	    corrector.find(flavor->first)->second->setNPV(numberOf(primaryVertices));
+	  }
 	  factors.push_back(evaluate(jet, corrector.find(flavor->first)->second, idx)); 
 	}
       }
@@ -173,8 +178,10 @@ JetCorrFactorsProducer::produce(edm::Event& event, const edm::EventSetup& setup)
 	// set the number of primary vertices for the L1Offset correction. This is a 
 	// special treatment for this correction level only! L1Offset corrections are
 	// flavor independent by definition.
-	if(corrLevel->second[idx]=="L1Offset"){
-	  corrector.find(corrLevel->first)->second->setNPV(primaryVertices->size());
+	if(!primaryVertices_.empty()){
+	  // if primaryVertices_ has a value the number of primary vertices needs to be 
+	  // specified
+	  corrector.find(corrLevel->first)->second->setNPV(numberOf(primaryVertices));
 	}
 	factors.push_back(evaluate(jet, corrector.find(corrLevel->first)->second, idx));
       }

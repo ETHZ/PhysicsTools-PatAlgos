@@ -12,7 +12,7 @@ patJetCorrFactors = cms.EDProducer("JetCorrFactorsProducer",
     levels = cms.vstring(
         ## tags for the individual jet corrections; when
         ## not available the string should be set to 'none'    
-        'L2Relative', 'L3Absolute', 'L5Flavor', 'L7Parton'
+        'L1Offset', 'L2Relative', 'L3Absolute', 'L5Flavor', 'L7Parton'
     ), 
     flavorType = cms.string('J'), ## alternatively use 'T'
     ## in case that L1Offset corrections are part of the
@@ -22,5 +22,5 @@ patJetCorrFactors = cms.EDProducer("JetCorrFactorsProducer",
     ## correction from. This parameter will ONLY be read
     ## out if the correction level L1Offset is found in
     ## levels. 
-    ## primaryVertices = cms.string('offlinePrimaryVertices'),
+    primaryVertices = cms.string('offlinePrimaryVertices'),
 )
