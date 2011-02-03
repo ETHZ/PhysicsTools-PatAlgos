@@ -24,7 +24,11 @@
    derived from. 'J' and 'T' stand for a typical dijet (ttbar) sample. 
 
    L1Offset corrections require the collection of _offlinePrimaryVertices_, which are supposed to be added as an additional 
-   optional parameter _primaryVertices_ in the jetCorrFactors_cfi.py file._  
+   optional parameter _primaryVertices_ in the jetCorrFactors_cfi.py file.  
+
+   L1FastJet corrections, which are an alternative to the standard L1Offset correction as recommended by the JetMET PAG the 
+   energy density parameter _rho_ is supposed to be added as an additional optional parameter _rho_ in the 
+   jetCorrFactors_cfi.py file.  
 
    NOTE:
     * the mixed mode (mc input mixture from dijets/ttbar) only exists for parton level corrections.
@@ -96,8 +100,10 @@ namespace pat {
     std::string label_;
     /// label of payload
     std::string payload_;
-    /// label for primaryVertex collection
-    std::string primaryVertices_;
+    /// label for L1Offset primaryVertex collection
+    edm::InputTag primaryVertices_;
+    // label for L1FastJet energy density parameter rho
+    edm::InputTag rho_;
     /// jec levels for different flavors. In the default configuration 
     /// this map would look like this:
     /// GLUON  : 'L1Offset', 'L2Relative', 'L3Absolute', 'L5FLavor_jg', L7Parton_jg'

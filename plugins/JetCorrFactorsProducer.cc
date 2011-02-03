@@ -23,7 +23,7 @@ JetCorrFactorsProducer::JetCorrFactorsProducer(const edm::ParameterSet& cfg):
   src_(cfg.getParameter<edm::InputTag>( "src" )),
   type_ (cfg.getParameter<std::string>("flavorType")),
   label_(cfg.getParameter<std::string>( "@module_label" )),
-  payload_( cfg.getParameter<std::string>("payload") ), primaryVertices_()
+  payload_( cfg.getParameter<std::string>("payload") ), primaryVertices_(), rho_()
 {
   std::vector<std::string> levels = cfg.getParameter<std::vector<std::string> >("levels"); 
   // fill the std::map for levels_, which might be flavor dependent or not; 
@@ -48,14 +48,31 @@ JetCorrFactorsProducer::JetCorrFactorsProducer(const edm::ParameterSet& cfg):
   // mary vertex collection. The size of this collection is needed for the 
   // L1Offset correction.
   if(std::find(levels.begin(), levels.end(), "L1Offset")!=levels.end()){
-    if(cfg.existsAs<std::string>("primaryVertices")){
-      primaryVertices_=cfg.getParameter<std::string>("primaryVertices");
+    if(cfg.existsAs<edm::InputTag>("primaryVertices")){
+      primaryVertices_=cfg.getParameter<edm::InputTag>("primaryVertices");
     }
     else{
       throw cms::Exception("No primaryVertices specified") 
 	<< "The configured correction levels contain an L1Offset correction, which re-. \n"
 	<< "quires the number of offlinePrimaryVertices. Please specify this collection \n"
 	<< "as additional optional parameter primaryVertices in the jetCorrFactors_cfi. \n";
+    }
+  }
+  // if the std::string L1FastJet can be found in levels an additional
+  // parameter rho is needed, which should pass on the energy density 
+  // parameter for the corresponding jet collection.
+  if(std::find(levels.begin(), levels.end(), "L1FastJet")!=levels.end()){
+    std::cout << "OK1" << std::endl;
+    if(cfg.existsAs<edm::InputTag>("rho")){
+      std::cout << "OK2" << std::endl;
+      rho_=cfg.getParameter<edm::InputTag>("rho");
+      std::cout << rho_.label() << std::endl;
+    }
+    else{
+      throw cms::Exception("No parameter rho specified") 
+	<< "The configured correction levels contain an L1FastJet correction, which re-. \n"
+	<< "quires the energy density parameter rho. Please specify this collection as   \n"
+	<< "additional optional parameter rho in the jetCorrFactors_cfi. \n";
     }
   }
   produces<JetCorrFactorsMap>();
@@ -121,9 +138,14 @@ JetCorrFactorsProducer::produce(edm::Event& event, const edm::EventSetup& setup)
   edm::Handle<edm::View<reco::Jet> > jets;
   event.getByLabel(src_, jets);
 
-  // get primary vertices if needed
+  // get primary vertices for L1Offset correction level if needed
   edm::Handle<std::vector<reco::Vertex> > primaryVertices;
-  if(!primaryVertices_.empty()) event.getByLabel(primaryVertices_, primaryVertices);
+  if(!primaryVertices_.label().empty()) event.getByLabel(primaryVertices_, primaryVertices);
+
+  // get parameter rho for L1FastJet correction level if needed
+  
+  edm::Handle<double> rho;
+  if(!rho_.label().empty()) event.getByLabel(rho_, rho);
 
   // retreive parameters from the DB 
   edm::ESHandle<JetCorrectorParametersCollection> parameters;
@@ -166,10 +188,16 @@ JetCorrFactorsProducer::produce(edm::Event& event, const edm::EventSetup& setup)
 	flavorDependent=true;
 	// after the first encounter all subsequent correction levels are flavor dependent
 	for(FlavorCorrLevelMap::const_iterator flavor=corrLevel; flavor!=levels_.end(); ++flavor){
-	  if(!primaryVertices_.empty()){
+	  if(!primaryVertices_.label().empty()){
 	    // if primaryVertices_ has a value the number of primary vertices needs to be 
 	    // specified
 	    corrector.find(flavor->first)->second->setNPV(numberOf(primaryVertices));
+	  }
+	  if(!rho_.label().empty()){
+	    // if rho_ has a value the energy density parameter rho and the jet area need
+	    //  to be specified
+	    corrector.find(flavor->first)->second->setRho(*rho);
+	    corrector.find(flavor->first)->second->setJetA(jet->jetArea());
 	  }
 	  factors.push_back(evaluate(jet, corrector.find(flavor->first)->second, idx)); 
 	}
@@ -178,10 +206,16 @@ JetCorrFactorsProducer::produce(edm::Event& event, const edm::EventSetup& setup)
 	// set the number of primary vertices for the L1Offset correction. This is a 
 	// special treatment for this correction level only! L1Offset corrections are
 	// flavor independent by definition.
-	if(!primaryVertices_.empty()){
+	if(!primaryVertices_.label().empty()){
 	  // if primaryVertices_ has a value the number of primary vertices needs to be 
 	  // specified
 	  corrector.find(corrLevel->first)->second->setNPV(numberOf(primaryVertices));
+	}
+	if(!rho_.label().empty()){
+	  // if rho_ has a value the energy density parameter rho and the jet area need
+	  //  to be specified
+	  corrector.find(corrLevel->first)->second->setRho(*rho);
+	  corrector.find(corrLevel->first)->second->setJetA(jet->jetArea());
 	}
 	factors.push_back(evaluate(jet, corrector.find(corrLevel->first)->second, idx));
       }
@@ -218,7 +252,8 @@ JetCorrFactorsProducer::fillDescriptions(edm::ConfigurationDescriptions & descri
   iDesc.add<std::string>("flavorType", "J");
   iDesc.add<edm::InputTag>("src", edm::InputTag("ak5CaloJets"));
   iDesc.add<std::string>("payload", "AK5Calo");
-  iDesc.add<std::string>("primaryVertices", "offlinePrimaryVertices");
+  iDesc.add<edm::InputTag>("primaryVertices", edm::InputTag("offlinePrimaryVertices"));
+  iDesc.add<edm::InputTag>("rho", edm::InputTag("ak5CaloJets", "rho"));
 
   std::vector<std::string> levels;
   levels.push_back(std::string("L2Relative")); 

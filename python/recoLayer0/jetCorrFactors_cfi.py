@@ -22,5 +22,10 @@ patJetCorrFactors = cms.EDProducer("JetCorrFactorsProducer",
     ## correction from. This parameter will ONLY be read
     ## out if the correction level L1Offset is found in
     ## levels. 
-    primaryVertices = cms.string('offlinePrimaryVertices'),
+    primaryVertices = cms.InputTag('offlinePrimaryVertices'),
+    ## in case that L1FastJet corrections are part of the
+    ## parameter levels add the optional parameter rho
+    ## here to specify the energy density parameter for
+    ## the corresponding jet collection.
+    ## rho = cms.InputTag('ak5CaloJets', 'rho'),
 )

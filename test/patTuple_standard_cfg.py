@@ -57,8 +57,6 @@ from PhysicsTools.PatAlgos.patTemplate_cfg import *
 #                 doJetID      = True
 #                 )
 
-
-
 ## let it run
 process.p = cms.Path(
     process.patDefaultSequence
