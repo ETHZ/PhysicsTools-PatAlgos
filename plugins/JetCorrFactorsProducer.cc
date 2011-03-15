@@ -63,11 +63,8 @@ JetCorrFactorsProducer::JetCorrFactorsProducer(const edm::ParameterSet& cfg):
   // parameter rho is needed, which should pass on the energy density 
   // parameter for the corresponding jet collection.
   if(std::find(levels.begin(), levels.end(), "L1FastJet")!=levels.end()){
-    std::cout << "OK1" << std::endl;
     if(cfg.existsAs<edm::InputTag>("rho")){
-      std::cout << "OK2" << std::endl;
       rho_=cfg.getParameter<edm::InputTag>("rho");
-      std::cout << rho_.label() << std::endl;
     }
     else{
       throw cms::Exception("No parameter rho specified") 
