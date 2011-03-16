@@ -9,9 +9,14 @@ process.load("FWCore.MessageLogger.MessageLogger_cfi")
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 
 ## Source
+from PhysicsTools.PatAlgos.tools.cmsswVersionTools import pickRelValInputFiles
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
-      '/store/relval/CMSSW_4_1_2/RelValTTbar/GEN-SIM-RECO/START311_V2-v1/0019/3C04479E-0345-E011-AB82-003048678E92.root'
+    pickRelValInputFiles( cmsswVersion  = 'CMSSW_4_1_2'
+                        , relVal        = 'RelValTTbar'
+                        , globalTag     = 'START311_V2'
+                        , numberOfFiles = 1
+                        )
     )
 )
 ## Maximal Number of Events
@@ -26,7 +31,6 @@ process.load("Configuration.StandardSequences.MagneticField_cff")
 
 ## Standard PAT Configuration File
 process.load("PhysicsTools.PatAlgos.patSequences_cff")
-##process.load("PhysicsTools.PatAlgos.patTestJEC_cfi")
 
 ## Output Module Configuration (expects a path 'p')
 from PhysicsTools.PatAlgos.patEventContent_cff import patEventContent
