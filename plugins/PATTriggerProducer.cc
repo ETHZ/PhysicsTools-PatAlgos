@@ -1,5 +1,5 @@
 //
-// $Id: PATTriggerProducer.cc,v 1.24 2010/11/27 15:16:20 vadler Exp $
+// $Id: PATTriggerProducer.cc,v 1.65 2011/03/15 18:05:27 vadler Exp $
 //
 
 
@@ -807,9 +807,9 @@ void PATTriggerProducer::produce( Event& iEvent, const EventSetup& iSetup )
         }
 //         if ( ( l1ObjectMap->algoGtlResult() != decisionBeforeMask ) && ( decisionBeforeMask == true || prescale == 1 ) ) {
         if ( ( l1ObjectMap->algoGtlResult() != decisionBeforeMask ) && ( decisionBeforeMask == true ) ) { // FIXME: understand the difference for un-prescaled algos 118, 119, 123
-          LogWarning( "l1ObjectMap" ) << "L1 physics algorithm '" << algoName << "' with different decisions in\n"
-                                      << "L1GlobalTriggerObjectMapRecord (GTL result)        : " << l1ObjectMap->algoGtlResult() << "\n"
-                                      << "L1GlobalTriggerReadoutRecord (decision before mask): " << decisionBeforeMask;
+          LogInfo( "l1ObjectMap" ) << "L1 physics algorithm '" << algoName << "' with different decisions in\n"
+                                   << "L1GlobalTriggerObjectMapRecord (GTL result)        : " << l1ObjectMap->algoGtlResult() << "\n"
+                                   << "L1GlobalTriggerReadoutRecord (decision before mask): " << decisionBeforeMask;
         }
         triggerAlgo.setGtlResult( l1ObjectMap->algoGtlResult() );
         // conditions in algorithm
