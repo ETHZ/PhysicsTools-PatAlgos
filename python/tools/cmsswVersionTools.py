@@ -789,6 +789,8 @@ class PickRelValInputFiles( ConfigToolBase ):
                      optional; default: 1
     - debug        : switch to enable enhanced messages in 'stdout'
                      optional; default: False
+    - command      : command to use
+                     optiona; default: nsls
     """
 
     _label             = 'pickRelValInputFiles'
@@ -808,6 +810,7 @@ class PickRelValInputFiles( ConfigToolBase ):
         self.addParameter( self._defaultParameters, 'maxVersions'  , 9                                                                   , '' )
         self.addParameter( self._defaultParameters, 'skipFiles'    , 0                                                                   , '' )
         self.addParameter( self._defaultParameters, 'numberOfFiles', 1                                                                   , '' )
+        self.addParameter( self._defaultParameters, 'command'      , 'nsls'                                                              , '' )
         self.addParameter( self._defaultParameters, 'debug'        , False                                                               , '' )
         self._parameters = copy.deepcopy( self._defaultParameters )
         self._comment = ""
@@ -822,6 +825,7 @@ class PickRelValInputFiles( ConfigToolBase ):
                 , maxVersions   = None
                 , skipFiles     = None
                 , numberOfFiles = None
+                , command       = None
                 , debug         = None
                 ):
         if cmsswVersion is None:
@@ -842,6 +846,8 @@ class PickRelValInputFiles( ConfigToolBase ):
             skipFiles = self.getDefaultParameters()[ 'skipFiles' ].value
         if numberOfFiles is None:
             numberOfFiles = self.getDefaultParameters()[ 'numberOfFiles' ].value
+        if command is None :
+            command = self.getDefaultParameters()['command'].value
         if debug is None:
             debug = self.getDefaultParameters()[ 'debug' ].value
         self.setParameter( 'cmsswVersion' , cmsswVersion )
@@ -853,6 +859,7 @@ class PickRelValInputFiles( ConfigToolBase ):
         self.setParameter( 'maxVersions'  , maxVersions )
         self.setParameter( 'skipFiles'    , skipFiles )
         self.setParameter( 'numberOfFiles', numberOfFiles )
+        self.setParameter( 'command'      , command )
         self.setParameter( 'debug'        , debug )
         return self.apply()
 
@@ -866,6 +873,7 @@ class PickRelValInputFiles( ConfigToolBase ):
         maxVersions   = self._parameters[ 'maxVersions'   ].value
         skipFiles     = self._parameters[ 'skipFiles'     ].value
         numberOfFiles = self._parameters[ 'numberOfFiles' ].value
+        command       = self._parameters[ 'command'       ].value        
         debug         = self._parameters[ 'debug'         ].value
         if debug:
             print 'DEBUG %s: Called with...'%( self._label )
@@ -877,7 +885,6 @@ class PickRelValInputFiles( ConfigToolBase ):
                else:
                    print
 
-        command      = 'nsls'
         rfdirPath    = '/store/relval/%s/%s/%s/%s-v'%( cmsswVersion, relVal, dataTier, globalTag )
         argument     = '%s%s'%( storage, rfdirPath )
         filePaths    = []
