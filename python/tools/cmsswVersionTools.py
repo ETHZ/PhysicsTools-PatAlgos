@@ -766,8 +766,8 @@ class PickRelValInputFiles( ConfigToolBase ):
     PickRelValInputFiles( cmsswVersion, relVal, dataTier, condition, globalTag, maxVersions, skipFiles, numberOfFiles, debug )
     - cmsswVersion : CMSSW release to pick up the RelVal files from
                      optional; default: the current release (determined automatically from environment)
-    - storage      : path of the rf system the RelVals are accessible from on the current site
-                     optional; default: '/castor/cern.ch/cms'
+    - site         : identifies site to run on, either 'CERN' or 'FNAL'
+                     optional; default: 'CERN'
     - relVal       : RelVal sample to be used
                      optional; default: 'RelValTTbar'
     - dataTier     : data tier to be used
@@ -802,7 +802,7 @@ class PickRelValInputFiles( ConfigToolBase ):
     def __init__( self ):
         ConfigToolBase.__init__( self )
         self.addParameter( self._defaultParameters, 'cmsswVersion' , os.getenv( "CMSSW_VERSION" )                                        , 'auto from environment' )
-        self.addParameter( self._defaultParameters, 'storage'      , '/castor/cern.ch/cms'                                               , '' )
+        self.addParameter( self._defaultParameters, 'site'         , 'CERN'                                                              , '' )
         self.addParameter( self._defaultParameters, 'relVal'       , 'RelValTTbar'                                                       , '' )
         self.addParameter( self._defaultParameters, 'dataTier'     , 'GEN-SIM-RECO'                                                      , '' )
         self.addParameter( self._defaultParameters, 'condition'    , 'startup'                                                           , '' )
@@ -810,14 +810,13 @@ class PickRelValInputFiles( ConfigToolBase ):
         self.addParameter( self._defaultParameters, 'maxVersions'  , 9                                                                   , '' )
         self.addParameter( self._defaultParameters, 'skipFiles'    , 0                                                                   , '' )
         self.addParameter( self._defaultParameters, 'numberOfFiles', 1                                                                   , '' )
-        self.addParameter( self._defaultParameters, 'command'      , 'nsls'                                                              , '' )
         self.addParameter( self._defaultParameters, 'debug'        , False                                                               , '' )
         self._parameters = copy.deepcopy( self._defaultParameters )
         self._comment = ""
 
     def __call__( self
                 , cmsswVersion  = None
-                , storage       = None
+                , site          = None
                 , relVal        = None
                 , dataTier      = None
                 , condition     = None
@@ -825,13 +824,12 @@ class PickRelValInputFiles( ConfigToolBase ):
                 , maxVersions   = None
                 , skipFiles     = None
                 , numberOfFiles = None
-                , command       = None
                 , debug         = None
                 ):
         if cmsswVersion is None:
             cmsswVersion = self.getDefaultParameters()[ 'cmsswVersion' ].value
-        if storage is None:
-            storage = self.getDefaultParameters()[ 'storage' ].value
+        if site is None:
+            site = self.getDefaultParameters()[ 'site' ].value
         if relVal is None:
             relVal = self.getDefaultParameters()[ 'relVal' ].value
         if dataTier is None:
@@ -846,12 +844,10 @@ class PickRelValInputFiles( ConfigToolBase ):
             skipFiles = self.getDefaultParameters()[ 'skipFiles' ].value
         if numberOfFiles is None:
             numberOfFiles = self.getDefaultParameters()[ 'numberOfFiles' ].value
-        if command is None :
-            command = self.getDefaultParameters()['command'].value
         if debug is None:
             debug = self.getDefaultParameters()[ 'debug' ].value
         self.setParameter( 'cmsswVersion' , cmsswVersion )
-        self.setParameter( 'storage'      , storage )
+        self.setParameter( 'site'         , site )
         self.setParameter( 'relVal'       , relVal )
         self.setParameter( 'dataTier'     , dataTier )
         self.setParameter( 'condition'    , condition )
@@ -859,13 +855,12 @@ class PickRelValInputFiles( ConfigToolBase ):
         self.setParameter( 'maxVersions'  , maxVersions )
         self.setParameter( 'skipFiles'    , skipFiles )
         self.setParameter( 'numberOfFiles', numberOfFiles )
-        self.setParameter( 'command'      , command )
         self.setParameter( 'debug'        , debug )
         return self.apply()
 
     def apply( self ):
         cmsswVersion  = self._parameters[ 'cmsswVersion'  ].value
-        storage       = self._parameters[ 'storage'       ].value
+        site          = self._parameters[ 'site'          ].value
         relVal        = self._parameters[ 'relVal'        ].value
         dataTier      = self._parameters[ 'dataTier'      ].value
         condition     = self._parameters[ 'condition'     ].value # only used for GT determination in initialization, if GT not explicitly given
@@ -873,7 +868,6 @@ class PickRelValInputFiles( ConfigToolBase ):
         maxVersions   = self._parameters[ 'maxVersions'   ].value
         skipFiles     = self._parameters[ 'skipFiles'     ].value
         numberOfFiles = self._parameters[ 'numberOfFiles' ].value
-        command       = self._parameters[ 'command'       ].value        
         debug         = self._parameters[ 'debug'         ].value
         if debug:
             print 'DEBUG %s: Called with...'%( self._label )
@@ -885,9 +879,26 @@ class PickRelValInputFiles( ConfigToolBase ):
                else:
                    print
 
+        command   = ''
+        storage   = ''
+        filePaths = []
+        if site is 'CERN':
+            command = 'nsls'
+            storage = '/castor/cern.ch/cms'
+        elif site is 'FNAL':
+            command = 'ls'
+            storage = '/pnfs/cms/WAX/11'
+        else:
+            print 'ERROR %s'%( self._label )
+            print '    Unknown site %s'%( site )
+            print '    Aborting...'
+            return filePaths
+        if debug:
+            print 'DEBUG %s: Running at %s'%( self._label, site )
+            print '    using command   \'%s\''%( command )
+            print '    on storage path %s'%( storage )
         rfdirPath    = '/store/relval/%s/%s/%s/%s-v'%( cmsswVersion, relVal, dataTier, globalTag )
         argument     = '%s%s'%( storage, rfdirPath )
-        filePaths    = []
         validVersion = 0
 
         for version in range( maxVersions, 0, -1 ):
@@ -920,13 +931,13 @@ class PickRelValInputFiles( ConfigToolBase ):
               break
 
         if validVersion == 0:
-            print 'ERROR pickRelValInputFiles()'
+            print 'ERROR %s'%( self._label )
             print '    No RelVal file(s) found at all in \'%s*\''%( argument )
         elif len( filePaths ) == 0:
-            print 'ERROR pickRelValInputFiles()'
+            print 'ERROR %s'%( self._label )
             print '    No RelVal file(s) picked up in \'%s%i\''%( argument, validVersion )
         elif len( filePaths ) < numberOfFiles:
-            print 'WARNING pickRelValInputFiles()'
+            print 'WARNING %s'%( self._label )
             print '    Only %i RelVal files picked up in \'%s%i\''%( len( filePaths ), argument, validVersion )
 
         if debug:
