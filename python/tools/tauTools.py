@@ -63,7 +63,7 @@ def redoPFTauDiscriminators(process,
     else:
         raise StandardError, "Unkown tauType: '%s'"%tauType
 
-    applyPostfix(process,"makePatTaus",postfix).replace(
+    applyPostfix(process,"patDefaultSequence",postfix).replace(
         applyPostfix(process,"patTaus",postfix),
         tauDiscriminationSequence*applyPostfix(process,"patTaus",postfix)
     )
@@ -167,12 +167,16 @@ tancTauIDSources = [
 
 # Hadron-plus-strip(s) (HPS) Tau Discriminators
 hpsTauIDSources = [
-    ("leadingTrackFinding", "DiscriminationByDecayModeFinding"),
+    ("decayModeFinding", "DiscriminationByDecayModeFinding"),
+    ("byVLooseIsolation", "DiscriminationByVLooseIsolation"),
     ("byLooseIsolation", "DiscriminationByLooseIsolation"),
     ("byMediumIsolation", "DiscriminationByMediumIsolation"),
     ("byTightIsolation", "DiscriminationByTightIsolation"),
-    ("againstElectron", "DiscriminationAgainstElectron"),
-    ("againstMuon", "DiscriminationAgainstMuon")]
+    ("againstElectronLoose", "DiscriminationByLooseElectronRejection"),
+    ("againstElectronMedium", "DiscriminationByMediumElectronRejection"),
+    ("againstElectronTight", "DiscriminationByTightElectronRejection"),
+    ("againstMuonLoose", "DiscriminationByLooseMuonRejection"),
+    ("againstMuonTight", "DiscriminationByTightMuonRejection") ]
 
 # Discriminators of new HPS + TaNC combined Tau id. algorithm
 hpsTancTauIDSources = [
@@ -185,14 +189,16 @@ hpsTancTauIDSources = [
     ("byTaNCloose", "DiscriminationByTancLoose"),
     ("byTaNCmedium", "DiscriminationByTancMedium"),
     ("byTaNCtight", "DiscriminationByTancTight"),
-    ("byDecayMode", "DiscriminationByDecayModeSelection"),
+    ("decayModeFinding", "DiscriminationByDecayModeSelection"),
     ("byHPSvloose", "DiscriminationByVLooseIsolation"),
     ("byHPSloose", "DiscriminationByLooseIsolation"),
     ("byHPSmedium", "DiscriminationByMediumIsolation"),
     ("byHPStight", "DiscriminationByTightIsolation"),
-    ("againstElectron", "DiscriminationAgainstElectron"),
-    ("againstMuon", "DiscriminationAgainstMuon"),
-    ("againstCaloMuon", "DiscriminationAgainstCaloMuon") ]
+    ("againstElectronLoose", "DiscriminationByLooseElectronRejection"),
+    ("againstElectronMedium", "DiscriminationByMediumElectronRejection"),
+    ("againstElectronTight", "DiscriminationByTightElectronRejection"),
+    ("againstMuonLoose", "DiscriminationByLooseMuonRejection"),
+    ("againstMuonTight", "DiscriminationByTightMuonRejection") ]
 
 # switch to PFTau collection produced for fixed dR = 0.07 signal cone size
 def switchToPFTauFixedCone(process,
@@ -231,8 +237,8 @@ def switchToPFTauHPS(process,
     
     ## adapt cleanPatTaus
     getattr(process, "cleanPatTaus" + patTauLabel).preselection = \
-      'pt > 15 & abs(eta) < 2.3 & tauID("leadingTrackFinding") > 0.5 & tauID("byLooseIsolation") > 0.5' \
-     + ' & tauID("againstMuon") > 0.5 & tauID("againstElectron") > 0.5'
+      'pt > 15 & abs(eta) < 2.3 & tauID("decayModeFinding") > 0.5 & tauID("byLooseIsolation") > 0.5' \
+     + ' & tauID("againstMuonTight") > 0.5 & tauID("againstElectronLoose") > 0.5'
 
 # switch to hadron-plus-strip(s) (HPS) PFTau collection
 def switchToPFTauHPSpTaNC(process, 
@@ -245,8 +251,8 @@ def switchToPFTauHPSpTaNC(process,
     
     ## adapt cleanPatTaus
     getattr(process, "cleanPatTaus" + patTauLabel).preselection = \
-      'pt > 15 & abs(eta) < 2.3 & tauID("leadingPionPtCut") > 0.5 & tauID("byHPSloose") > 0.5' \
-     + ' & tauID("againstMuon") > 0.5 & tauID("againstElectron") > 0.5'
+      'pt > 15 & abs(eta) < 2.3 & tauID("decayModeFinding") > 0.5 & tauID("byHPSloose") > 0.5' \
+     + ' & tauID("againstMuonTight") > 0.5 & tauID("againstElectronLoose") > 0.5'
 
 # Select switcher by string
 def switchToPFTauByType(process,
