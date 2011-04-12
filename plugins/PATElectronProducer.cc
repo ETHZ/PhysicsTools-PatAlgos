@@ -1,5 +1,5 @@
 //
-// $Id$
+// $Id: PATElectronProducer.cc,v 1.46.2.1 2011/04/08 10:45:05 bellan Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATElectronProducer.h"
@@ -535,7 +535,8 @@ void PATElectronProducer::fillElectron2( Electron& anElectron,
   //COLIN/Florian: use the PFCandidate 4-mom.
   anElectron.setEcalDrivenMomentum(anElectron.p4()) ;
   anElectron.setP4( anElectron.pfCandidateRef()->p4() );
-
+  // Safer to take the mva from the PFCandidate in case of ambiguosity
+  anElectron.setMva( anElectron.pfCandidateRef()->mva_e_pi() ); 
 
   // is the concrete elecRef needed for the efficiency loader? what is this loader?
   // how can we make it compatible with the particle flow electrons?
