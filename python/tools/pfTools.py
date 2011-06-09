@@ -153,7 +153,7 @@ def reconfigurePF2PATTaus(process,
    newTau.jetRegionSrc = oldTau.jetRegionSrc
    newTau.jetSrc = oldTau.jetSrc
 
-   # replace old tau producter by new one put it into baseSequence
+   # replace old tau producer by new one put it into baseSequence
    setattr(process,"pfTausBase"+postfix,newTau)
    baseSequence += getattr(process,"pfTausBase"+postfix)
    if tauType=='hpsPFTau':
@@ -174,16 +174,20 @@ def reconfigurePF2PATTaus(process,
       # Register in our process
       setattr(process, clonedName, clonedDisc)
       baseSequence += getattr(process, clonedName)
+
+      tauCollectionToSelect = None
       if tauType != 'hpsPFTau' :
-          clonedDisc.PFTauProducer = cms.InputTag(clonedDisc.PFTauProducer.value()+postfix)
+          tauCollectionToSelect = "pfTausBase"+postfix
+          #cms.InputTag(clonedDisc.PFTauProducer.value()+postfix)
       else:
-          clonedDisc.PFTauProducer = cms.InputTag("hpsPFTauProducer"+postfix)
+          tauCollectionToSelect = "hpsPFTauProducer"+postfix
       # Adapt this discriminator for the cloned prediscriminators
       adaptTauDiscriminator(clonedDisc, newTauProducer="pfTausBase",
                             oldTauTypeMapper=recoTauTypeMapperWithGroup,
                             newTauTypeMapper=producerIsTauTypeMapperWithPostfix,
                             preservePFTauProducer=True)
-      clonedDisc.PFTauProducer = cms.InputTag("pfTausBase"+postfix)
+      clonedDisc.PFTauProducer = tauCollectionToSelect
+
    # Reconfigure the pf2pat PFTau selector discrimination sources
    applyPostfix(process,"pfTaus", postfix).discriminators = cms.VPSet()
    for selection in pf2patSelection:
@@ -193,21 +197,33 @@ def reconfigurePF2PATTaus(process,
       clonedDisc = getattr(process, originalName).clone()
       # Register in our process
       setattr(process, clonedName, clonedDisc)
+
+      tauCollectionToSelect = None
+
       if tauType != 'hpsPFTau' :
-          clonedDisc.PFTauProducer = cms.InputTag(clonedDisc.PFTauProducer.value()+postfix)
+          tauCollectionToSelect = cms.InputTag("pfTausBase"+postfix)
+          #cms.InputTag(clonedDisc.PFTauProducer.value()+postfix)
       else:
-          clonedDisc.PFTauProducer = cms.InputTag("hpsPFTauProducer"+postfix)
-      # Adapt our cloned discriminator to the new prediscriminants
+          tauCollectionToSelect = cms.InputTag("hpsPFTauProducer"+postfix)
+      #Adapt our cloned discriminator to the new prediscriminants
       adaptTauDiscriminator(clonedDisc, newTauProducer="pfTausBase",
                             oldTauTypeMapper=recoTauTypeMapperWithGroup,
                             newTauTypeMapper=producerIsTauTypeMapperWithPostfix,
                             preservePFTauProducer=True)
-      clonedDisc.PFTauProducer = cms.InputTag("pfTausBase"+postfix)
+      clonedDisc.PFTauProducer = tauCollectionToSelect
       baseSequence += clonedDisc
       # Add this selection to our pfTau selectors
       applyPostfix(process,"pfTaus", postfix).discriminators.append(cms.PSet(
          discriminator=cms.InputTag(clonedName), selectionCut=cms.double(0.5)))
-      applyPostfix(process,"pfTaus", postfix).src = "pfTausBase"+postfix
+      # Set the input of the final selector.
+      if tauType != 'hpsPFTau':
+          applyPostfix(process,"pfTaus", postfix).src = "pfTausBase"+postfix
+      else:
+          # If we are using HPS taus, we need to take the output of the clenaed
+          # collection
+          applyPostfix(process,"pfTaus", postfix).src = "hpsPFTauProducer"+postfix
+
+
 
 def adaptPFTaus(process,tauType = 'shrinkingConePFTau', postfix = ""):
     # Set up the collection used as a preselection to use this tau type
@@ -215,7 +231,7 @@ def adaptPFTaus(process,tauType = 'shrinkingConePFTau', postfix = ""):
         reconfigurePF2PATTaus(process, tauType, postfix=postfix)
     else:
         reconfigurePF2PATTaus(process, tauType,
-                              ["DiscriminationByLooseIsolation"],
+                              ["DiscriminationByLooseChargedIsolation","DiscriminationByLooseIsolation"],
                               ["DiscriminationByDecayModeFinding"],
                               postfix=postfix)
     applyPostfix(process,"patTaus", postfix).tauSource = cms.InputTag("pfTaus"+postfix)
@@ -264,8 +280,9 @@ def addPFCandidates(process,src,patLabel='PFParticles',cut="",postfix=""):
         applyPostfix(process, "selectedPatCandidateSummary", postfix),
         filter+applyPostfix(process, "selectedPatCandidateSummary", postfix)
     )
-    index = len( applyPostfix( process, "patDefaultSequence", postfix ).moduleNames() )
-    applyPostfix( process, "patDefaultSequence", postfix ).insert( index, counter )
+
+    tmpCountPatCandidates = applyPostfix(process, "countPatCandidates", postfix)
+    tmpCountPatCandidates+=counter
     # summary tables
     applyPostfix(process, "patCandidateSummary", postfix).candidates.append(cms.InputTag('pat' + patLabel))
     applyPostfix(process, "selectedPatCandidateSummary", postfix).candidates.append(cms.InputTag('selectedPat' + patLabel))
