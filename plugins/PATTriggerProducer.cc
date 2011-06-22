@@ -1,5 +1,5 @@
 //
-// $Id: PATTriggerProducer.cc,v 1.25 2011/02/22 18:29:50 vadler Exp $
+// $Id: PATTriggerProducer.cc,v 1.26.4.1 2011/06/22 10:36:46 vadler Exp $
 //
 
 
@@ -352,14 +352,16 @@ void PATTriggerProducer::produce( Event& iEvent, const EventSetup& iSetup )
       const std::string namePath( hltConfig_.triggerName( iP ) );
       const unsigned indexPath( hltConfig_.triggerIndex( namePath ) );
       const unsigned sizeModulesPath( hltConfig_.size( namePath ) );
-      const unsigned indexLastFilterPath( handleTriggerResults->index( indexPath ) );
-      unsigned indexLastFilterPathModules( indexLastFilterPath + 1 );
+      unsigned indexLastFilterPathModules( handleTriggerResults->index( indexPath ) + 1 );
       unsigned indexLastFilterFilters( sizeFilters );
       while ( indexLastFilterPathModules > 0 ) {
         --indexLastFilterPathModules;
-        const std::string labelLastFilterModules( hltConfig_.moduleLabel( indexPath, indexLastFilterPathModules ) );
-        indexLastFilterFilters = handleTriggerEvent->filterIndex( InputTag( labelLastFilterModules, "", nameProcess_ ) );
-        if ( indexLastFilterFilters < sizeFilters ) break;
+        const std::string labelLastFilterPathModules( hltConfig_.moduleLabel( indexPath, indexLastFilterPathModules ) );
+        indexLastFilterFilters = handleTriggerEvent->filterIndex( InputTag( labelLastFilterPathModules, "", nameProcess_ ) );
+        if ( indexLastFilterFilters < sizeFilters ) {
+          if ( hltConfig_.moduleType( labelLastFilterPathModules ) == "HLTBool" ) continue;
+          break;
+        }
       }
       for ( size_t iM = 0; iM < sizeModulesPath; ++iM ) {
         const std::string nameFilter( hltConfig_.moduleLabel( indexPath, iM ) );
@@ -370,9 +372,9 @@ void PATTriggerProducer::produce( Event& iEvent, const EventSetup& iSetup )
         }
       }
       if ( ! onlyStandAlone_ ) {
-        TriggerPath triggerPath( namePath, indexPath, hltConfig_.prescaleValue( set, namePath ), handleTriggerResults->wasrun( indexPath ), handleTriggerResults->accept( indexPath ), handleTriggerResults->error( indexPath ), indexLastFilterPath );
+        TriggerPath triggerPath( namePath, indexPath, hltConfig_.prescaleValue( set, namePath ), handleTriggerResults->wasrun( indexPath ), handleTriggerResults->accept( indexPath ), handleTriggerResults->error( indexPath ), indexLastFilterPathModules );
         // add module names to path and states' map
-        assert( indexLastFilterPath < sizeModulesPath );
+        assert( indexLastFilterPathModules < sizeModulesPath );
         std::map< unsigned, std::string > indicesModules;
         for ( size_t iM = 0; iM < sizeModulesPath; ++iM ) {
           const std::string nameModule( hltConfig_.moduleLabel( indexPath, iM ) );
@@ -395,9 +397,9 @@ void PATTriggerProducer::produce( Event& iEvent, const EventSetup& iSetup )
         triggerPaths->push_back( triggerPath );
         // cache module states to be used for the filters
         for ( std::map< unsigned, std::string >::const_iterator iM = indicesModules.begin(); iM != indicesModules.end(); ++iM ) {
-          if ( iM->first < indexLastFilterPath ) {
+          if ( iM->first < indexLastFilterPathModules ) {
             moduleStates[ iM->second ] = 1;
-          } else if ( iM->first == indexLastFilterPath ) {
+          } else if ( iM->first == indexLastFilterPathModules ) {
             moduleStates[ iM->second ] = handleTriggerResults->accept( indexPath );
           } else if ( moduleStates.find( iM->second ) == moduleStates.end() ) {
             moduleStates[ iM->second ] = -1;
@@ -423,8 +425,8 @@ void PATTriggerProducer::produce( Event& iEvent, const EventSetup& iSetup )
       const trigger::Vids & types = handleTriggerEvent->filterIds( iF );
       assert( types.size() == keys.size() );
       for ( size_t iK = 0; iK < keys.size(); ++iK ) {
-        filterLabels.insert( std::pair< trigger::size_type, std::string >( keys[ iK ], nameFilter ) ); // only for objects used in last active filter
-        objectTypes.insert( std::pair< trigger::size_type, int >( keys[ iK ], types[ iK ] ) );             // only for objects used in last active filter
+        filterLabels.insert( std::pair< trigger::size_type, std::string >( keys[ iK ], nameFilter ) );
+        objectTypes.insert( std::pair< trigger::size_type, int >( keys[ iK ], types[ iK ] ) );
       }
     }
 
