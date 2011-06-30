@@ -58,7 +58,7 @@ JetCorrFactorsProducer::JetCorrFactorsProducer(const edm::ParameterSet& cfg):
       throw cms::Exception("No primaryVertices specified") 
 	<< "The configured correction levels contain an L1Offset or L1FastJet correction, \n"
 	<< "which requires the number of offlinePrimaryVertices. Please specify this col- \n"
-	<< "lection as additional optional parameter primaryVertices in the jetCorrFactors\n";
+	<< "lection as additional optional parameter primaryVertices in the jetCorrFactors\n"
 	<< "module. \n";
     }
   }

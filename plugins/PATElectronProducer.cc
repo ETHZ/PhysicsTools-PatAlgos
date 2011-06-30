@@ -1,5 +1,5 @@
 //
-// $Id: PATElectronProducer.cc,v 1.47 2011/03/31 09:52:39 namapane Exp $
+// $Id: PATElectronProducer.cc,v 1.47.2.1 2011/05/31 16:37:13 rwolf Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATElectronProducer.h"
@@ -54,9 +54,9 @@ PATElectronProducer::PATElectronProducer(const edm::ParameterSet & iConfig) :
   embedTrack_       = iConfig.getParameter<bool>         ( "embedTrack" );
 
   // pflow specific
-  pfElecSrc_           = iConfig.getParameter<edm::InputTag>( "pfElectronSource" );
-  useParticleFlow_        = iConfig.getParameter<bool>( "useParticleFlow" );
-  embedPFCandidate_   = iConfig.getParameter<bool>( "embedPFCandidate" );
+  pfElecSrc_        = iConfig.getParameter<edm::InputTag>( "pfElectronSource" );
+  useParticleFlow_  = iConfig.getParameter<bool>( "useParticleFlow" );
+  embedPFCandidate_ = iConfig.getParameter<bool>( "embedPFCandidate" );
 
 
   // MC matching configurables
@@ -246,7 +246,7 @@ void PATElectronProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
 
       beamPoint = reco::TrackBase::Point ( x0, y0, z0 );
     } else {
-      if ( pvHandle.isValid() ) {
+      if ( pvHandle.isValid() && !pvHandle->empty() ) {
 	primaryVertex = pvHandle->at(0);
 	primaryVertexIsValid = true;
       } else {
