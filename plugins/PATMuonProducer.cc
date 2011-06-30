@@ -1,5 +1,5 @@
 //
-// $Id: PATMuonProducer.cc,v 1.42 2011/03/15 22:21:49 gpetrucc Exp $
+// $Id: PATMuonProducer.cc,v 1.42.2.1 2011/06/30 16:02:36 rwolf Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATMuonProducer.h"
@@ -428,8 +428,12 @@ void PATMuonProducer::fillMuon( Muon& aMuon, const MuonBaseRef& muonRef, const r
 
   for (size_t j = 0, nd = deposits.size(); j < nd; ++j) {
     if(useParticleFlow_) {
-      reco::CandidatePtr source = aMuon.pfCandidateRef()->sourceCandidatePtr(0);      
-      aMuon.setIsoDeposit(isoDepositLabels_[j].first, (*deposits[j])[source]);
+      if (deposits[j]->contains(baseRef.id()))
+	aMuon.setIsoDeposit(isoDepositLabels_[j].first, (*deposits[j])[baseRef]);
+      else {
+	reco::CandidatePtr source = aMuon.pfCandidateRef()->sourceCandidatePtr(0);      
+	aMuon.setIsoDeposit(isoDepositLabels_[j].first, (*deposits[j])[source]);
+      }
     }
     else{
       aMuon.setIsoDeposit(isoDepositLabels_[j].first, (*deposits[j])[muonRef]);
@@ -438,8 +442,12 @@ void PATMuonProducer::fillMuon( Muon& aMuon, const MuonBaseRef& muonRef, const r
 
   for (size_t j = 0; j<isolationValues.size(); ++j) {
     if(useParticleFlow_) {
-      reco::CandidatePtr source = aMuon.pfCandidateRef()->sourceCandidatePtr(0);      
-      aMuon.setIsolation(isolationValueLabels_[j].first, (*isolationValues[j])[source]);
+      if (isolationValues[j]->contains(baseRef.id()))
+	aMuon.setIsolation(isolationValueLabels_[j].first, (*isolationValues[j])[baseRef]);
+      else {
+	reco::CandidatePtr source = aMuon.pfCandidateRef()->sourceCandidatePtr(0);      
+	aMuon.setIsolation(isolationValueLabels_[j].first, (*isolationValues[j])[source]);
+      }
     }
     else{
       aMuon.setIsolation(isolationValueLabels_[j].first, (*isolationValues[j])[muonRef]);
