@@ -47,7 +47,7 @@ def adaptPFMuons(process,module,postfix="" ):
         pfPhotons = cms.InputTag("isoValMuonWithPhotons" + postfix)
         )
     # matching the pfMuons, not the standard muons.
-    applyPostfix(process,"muonMatch",postfix).src = module.pfMuonSource
+    applyPostfix(process,"muonMatch",postfix).src.setValue(module.pfMuonSource.value())
 
     print " muon source:", module.pfMuonSource
     print " isolation  :",
@@ -314,7 +314,7 @@ def switchToPFJets(process, input=cms.InputTag('pfNoTau'), algo='AK5', postfix =
     from CommonTools.ParticleFlow.Tools.jetTools import jetAlgo
     inputCollection = getattr(process,"pfJets"+postfix).src
     setattr(process, "pfJets"+postfix, jetAlgo( algo ) ) # problem for cfgBrowser
-    getattr(process,"pfJets"+postfix).src = inputCollection
+    getattr(process,"pfJets"+postfix).src.setValue( inputCollection.value() )
     inputJetCorrLabel=jetCorrections
     switchJetCollection(process,
                         input,
