@@ -29,6 +29,6 @@ patJetCorrFactors = cms.EDProducer("JetCorrFactorsProducer",
     ## here to specify the energy density parameter for
     ## the corresponding jet collection (this variable is
     ## typically taken from kt6PFJets).
-    useRho = cms.bool(True),
+    useRho = cms.bool(False),
     rho = cms.InputTag('kt6PFJets', 'rho'),                                   
 )
