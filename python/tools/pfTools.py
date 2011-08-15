@@ -307,7 +307,7 @@ def switchToPFMET(process,input=cms.InputTag('pfMET'), type1=False, postfix=""):
             applyPostfix(process, "metJESCorAK5CaloJetMuons",postfix)
             )
 
-def switchToPFJets(process, input=cms.InputTag('pfNoTau'), algo='AK5', postfix = "", jetCorrections=('AK5PFchs', ['L1FastJet','L2Relative', 'L3Absolute']) ):
+def switchToPFJets(process, input=cms.InputTag('pfNoTau'), algo='AK5', postfix = "", jetCorrections=('AK5PFchs', ['L1FastJet','L2Relative', 'L3Absolute']), outputModules=['out']):
 
     print "Switching to PFJets,  ", algo
     print "************************ "
@@ -339,7 +339,8 @@ def switchToPFJets(process, input=cms.InputTag('pfNoTau'), algo='AK5', postfix =
                         doType1MET=True,
                         genJetCollection = genJetCollection,
                         doJetID = True,
-			postfix = postfix
+			postfix = postfix,
+                        outputModules = outputModules
                         )
     # check whether L1FastJet is in the list of correction levels or not
     applyPostfix(process, "patJetCorrFactors", postfix).useRho = False    
@@ -406,7 +407,7 @@ def usePF2PAT(process, runPF2PAT=True, jetAlgo='AK5', runOnMC=True, postfix="", 
     # Jets
     if runOnMC :
         switchToPFJets( process, cms.InputTag('pfNoTau'+postfix), jetAlgo, postfix=postfix,
-                        jetCorrections=jetCorrections )
+                        jetCorrections=jetCorrections, outputModules=outputModules )
         applyPostfix(process,"patDefaultSequence",postfix).replace(
             applyPostfix(process,"patJetGenJetMatch",postfix),
             getattr(process,"genForPF2PATSequence") *
@@ -419,7 +420,7 @@ def usePF2PAT(process, runPF2PAT=True, jetAlgo='AK5', runOnMC=True, postfix="", 
             print 'If this is okay with you, disregard this message.'
             print '#################################################'
         switchToPFJets( process, cms.InputTag('pfNoTau'+postfix), jetAlgo, postfix=postfix,
-                        jetCorrections=jetCorrections )
+                        jetCorrections=jetCorrections, outputModules=outputModules )
 
     # Taus
     adaptPFTaus( process, tauType='shrinkingConePFTau', postfix=postfix )
