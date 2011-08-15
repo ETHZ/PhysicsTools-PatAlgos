@@ -403,7 +403,7 @@ class AddJetCollection(ConfigToolBase):
             getattr(process, newLabel('patJets')).jetCorrFactorsSource = cms.VInputTag(  cms.InputTag(newLabel('patJetCorrFactors')) )
         
             ## switch type1MET corrections off for PFJets or JPTJets
-            if ( 'CaloJets' in  jetCollection.getModuleLabel() ):
+            if not ( 'CaloJets' in  jetCollection.getModuleLabel() ):
                 print '================================================='
                 print 'Type1MET corrections are switched off for other  '
                 print 'jet types but CaloJets. Users are recommened to  '
@@ -622,7 +622,7 @@ class SwitchJetCollection(ConfigToolBase):
             getattr( process, "patJets" + postfix).jetCorrFactorsSource = cms.VInputTag( cms.InputTag("patJetCorrFactors" + postfix ) )  
 
             ## switch type1MET corrections off for PFJets or JPTJets
-            if ( 'CaloJets' in jetCollection.getModuleLabel() ):
+            if not ( 'CaloJets' in jetCollection.getModuleLabel() ):
                 print '================================================='
                 print 'Type1MET corrections are switched off for other  '
                 print 'jet types but CaloJets. Users are recommened to  '
