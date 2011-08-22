@@ -96,8 +96,9 @@ class RunOnData(ConfigToolBase):
             if mod.startswith('patJetCorrFactors'):
                 prefix = getattr(process, mod).payload.pythonValue().replace("'","")
                 if 'L3Absolute' in getattr(process,mod).levels:
-                    getattr(process,mod).levels.insert(getattr(process,mod).levels.index('L3Absolute')+1, 'L2L3Residual') 
-                    print 'adding L2L3Residual JEC for:', getattr(process,mod).label_()
+                    if not 'L2L3Residual' in getattr(process,mod).levels:
+                        getattr(process,mod).levels.insert(getattr(process,mod).levels.index('L3Absolute')+1, 'L2L3Residual') 
+                        print 'adding L2L3Residual JEC for:', getattr(process,mod).label_()
 
 runOnData=RunOnData()
 
