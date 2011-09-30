@@ -57,6 +57,10 @@ process.out.outputCommands = cms.untracked.vstring('drop *',
                                                    *patEventContentNoCleaning ) 
 
 
+# from CommonTools.ParticleFlow.PF2PAT_EventContent_cff import *
+# process.out.outputCommands.extend( PF2PATStudiesEventContent.outputCommands ) 
+
+
 # top projections in PF2PAT:
 getattr(process,"pfNoPileUp"+postfix).enable = True 
 getattr(process,"pfNoMuon"+postfix).enable = True 
@@ -66,6 +70,10 @@ getattr(process,"pfNoJet"+postfix).enable = True
 
 # verbose flags for the PF2PAT modules
 getattr(process,"pfNoMuon"+postfix).verbose = False
+
+# enable delta beta correction for muon selection in PF2PAT? 
+getattr(process,"pfIsolatedMuons"+postfix).doDeltaBetaCorrection = False
+
 
 ## ------------------------------------------------------
 #  In addition you usually want to change the following
