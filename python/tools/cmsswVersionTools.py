@@ -8,17 +8,8 @@ from Configuration.AlCa.autoCond import autoCond
 import os
 import socket
 from subprocess import *
-
-# Needed for loading DAS module
-# FIXME: Obsolete as soon as DAS module available vie "normal" 'import' statement (hopefully)
-import imp
-import urllib2
-import sys
-import re
-import time
 import json
-import urllib
-# from das_client import *
+import das_client
 
 
 ## ------------------------------------------------------
@@ -893,6 +884,7 @@ class PickRelValInputFiles( ConfigToolBase ):
         hltPatchId = '_hltpatch' # HLT patch releases
         dqmPatchId = '_dqmpatch' # DQM patch releases
         slhcId     = '_SLHC'     # SLHC releases
+        rootId     = '_root'     # ROOT test releases
         ibId       = '_X_'       # IBs
         if patchId in cmsswVersion:
             cmsswVersion = cmsswVersion.split( patchId )[ 0 ]
@@ -900,6 +892,8 @@ class PickRelValInputFiles( ConfigToolBase ):
             cmsswVersion = cmsswVersion.split( hltPatchId )[ 0 ]
         elif dqmPatchId in cmsswVersion:
             cmsswVersion = cmsswVersion.split( dqmPatchId )[ 0 ]
+        elif rootId in cmsswVersion:
+            cmsswVersion = cmsswVersion.split( rootId )[ 0 ]
         elif slhcId in cmsswVersion:
             cmsswVersion = cmsswVersion.split( slhcId )[ 0 ]
         elif ibId in cmsswVersion or formerVersion:
@@ -919,11 +913,9 @@ class PickRelValInputFiles( ConfigToolBase ):
             for line in outputTuple[ 0 ].splitlines():
                 version = line.split()[ 1 ]
                 if cmsswVersion.split( ibId )[ 0 ] in version or cmsswVersion.rpartition( '_' )[ 0 ] in version:
-                    if not ( patchId in version or hltPatchId in version or dqmPatchId in version or slhcId in version or ibId in version ):
+                    if not ( patchId in version or hltPatchId in version or dqmPatchId in version or slhcId in version or ibId in version or rootId in version ):
                         versions[ 'lastToLast' ] = versions[ 'last' ]
                         versions[ 'last' ]       = version
-                        print 'MYDEBUG: last       \'%s\''%( versions[ 'last' ] )
-                        print '         lastToLast \'%s\''%( versions[ 'lastToLast' ] )
                         if version == cmsswVersion:
                             break
             # FIXME: ordering of output problematic ('XYZ_pre10' before 'XYZ_pre2', no "formerVersion" for 'XYZ_pre1')
@@ -994,12 +986,6 @@ class PickRelValInputFiles( ConfigToolBase ):
         if debug:
             print '%s DEBUG: Running at site \'%s.%s\''%( self._label, domain[ -2 ], domain[ -1 ] )
             print '%s DEBUG: Looking for SE \'%s\''%( self._label, domainSE )
-
-        # Load DAS module
-        # FIXME: Soon available vie "normal" 'import' statement
-        das_client = imp.new_module( 'das_client' )
-        exec urllib2.urlopen( 'http://cmsweb.cern.ch/das/cli' ).read() in globals(), das_client.__dict__
-        sys.modules[ 'das_client' ] = das_client
 
         # Find files
         dasLimit = numberOfFiles
