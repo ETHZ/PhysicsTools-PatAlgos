@@ -8,6 +8,8 @@ from PhysicsTools.PatAlgos.patTemplate_cfg import *
 #     fileNames = cms.untracked.vstring('file:myAOD.root')
 #)
 
+process.source.fileNames = ['/store/data/Run2011A/DoubleElectron/RAW-RECO/ZElectron-PromptSkim-v6/0000/FE65D2DC-67C5-E011-AF6C-002618943894.root']
+
 
 # process.load("CommonTools.ParticleFlow.Sources.source_ZtoMus_DBS_cfi")
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(False))
@@ -26,12 +28,13 @@ from PhysicsTools.PatAlgos.tools.pfTools import *
 
 postfix = "PFlow"
 jetAlgo="AK5"
-usePF2PAT(process,runPF2PAT=True, jetAlgo=jetAlgo, runOnMC=True, postfix=postfix) 
+runOnMC=False
+usePF2PAT(process,runPF2PAT=True, jetAlgo=jetAlgo, runOnMC=runOnMC, postfix=postfix) 
 # to run second PF2PAT+PAT with differnt postfix uncomment the following lines
 # and add it to path
 #postfix2 = "PFlow2"
 #jetAlgo2="AK7"
-#usePF2PAT(process,runPF2PAT=True, jetAlgo=jetAlgo2, runOnMC=True, postfix=postfix2) 
+#usePF2PAT(process,runPF2PAT=True, jetAlgo=jetAlgo2, runOnMC=runOnMC, postfix=postfix2) 
 
 # to use tau-cleaned jet collection uncomment the following:
 #getattr(process,"pfNoTau"+postfix).enable = True
