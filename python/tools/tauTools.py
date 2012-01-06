@@ -196,9 +196,7 @@ hpsTauIDSources = [
     ("againstElectronLoose", "DiscriminationByLooseElectronRejection"),
     ("againstElectronMedium", "DiscriminationByMediumElectronRejection"),
     ("againstElectronTight", "DiscriminationByTightElectronRejection"),
-    ("againstElectronMVA", "DiscriminationByMVAElectronRejection"),
     ("againstMuonLoose", "DiscriminationByLooseMuonRejection"),
-    ("againstMuonMedium", "DiscriminationByMediumMuonRejection"),
     ("againstMuonTight", "DiscriminationByTightMuonRejection") ]
 
 # Discriminators of new HPS + TaNC combined Tau id. algorithm
