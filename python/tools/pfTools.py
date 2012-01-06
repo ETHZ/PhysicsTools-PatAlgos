@@ -97,8 +97,15 @@ def adaptPFElectrons(process,module, postfix):
 
     removeIfInSequence(process,  "patElectronIsolation",  "patDefaultSequence", postfix)
 
-def adaptPFPhotons(process,module):
-    raise RuntimeError, "Photons are not supported yet"
+def adaptPFPhotons(process,module,postfix):
+    print "Adapting PF Photons "
+    print "********************* "
+    module.photonSource = cms.InputTag("pfPhotonTranslator:pfphot")
+    module.addPhotonID = cms.bool(False) 
+
+    print " PF photon source:", module.photonSource
+    # TJ: turned off adding photon ID for PF Photons for the moment - Jan, 06, 2012
+    #raise RuntimeError, "Photons are not supported yet"
 
 from RecoTauTag.RecoTau.TauDiscriminatorTools import adaptTauDiscriminator, producerIsTauTypeMapper
 
@@ -438,10 +445,14 @@ def usePF2PAT(process, runPF2PAT=True, jetAlgo='AK5', runOnMC=True, postfix="", 
                      postfix)
 
     # Photons
-    print "Temporarily switching off photons completely"
+    adaptPFPhotons(process,
+                   applyPostfix(process,"patPhotons",postfix),
+                   postfix)
+    print "Temporarily switching on photons without adding ID"
+    #print "Temporarily switching off photons completely"
 
-    removeSpecificPATObjects(process,names=['Photons'],outputModules=outputModules,postfix=postfix)
-    removeIfInSequence(process,"patPhotonIsolation","patDefaultSequence",postfix)
+    #removeSpecificPATObjects(process,names=['Photons'],outputModules=outputModules,postfix=postfix)
+    #removeIfInSequence(process,"patPhotonIsolation","patDefaultSequence",postfix)
 
     # Jets
     if runOnMC :
