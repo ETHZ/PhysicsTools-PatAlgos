@@ -38,12 +38,14 @@ def adaptPFMuons(process,module,postfix="" ):
     module.userIsolation   = cms.PSet()
     module.isoDeposits = cms.PSet(
         pfChargedHadrons = cms.InputTag("muPFIsoDepositCharged" + postfix),
+        pfChargedAll = cms.InputTag("muPFIsoDepositChargedAll" + postfix),
         pfPUChargedHadrons = cms.InputTag("muPFIsoDepositPU" + postfix),
         pfNeutralHadrons = cms.InputTag("muPFIsoDepositNeutral" + postfix),
         pfPhotons = cms.InputTag("muPFIsoDepositGamma" + postfix)
         )
     module.isolationValues = cms.PSet(
         pfChargedHadrons = cms.InputTag("muPFIsoValueCharged04"+ postfix),
+        pfChargedAll = cms.InputTag("muPFIsoValueChargedAll04"+ postfix),
         pfPUChargedHadrons = cms.InputTag("muPFIsoValuePU04" + postfix),
         pfNeutralHadrons = cms.InputTag("muPFIsoValueNeutral04" + postfix),
         pfPhotons = cms.InputTag("muPFIsoValueGamma04" + postfix)

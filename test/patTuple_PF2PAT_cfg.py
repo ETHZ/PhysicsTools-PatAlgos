@@ -8,13 +8,19 @@ from PhysicsTools.PatAlgos.patTemplate_cfg import *
 #     fileNames = cms.untracked.vstring('file:myAOD.root')
 #)
 
-process.source.fileNames = ['/store/data/Run2011A/DoubleElectron/RAW-RECO/ZElectron-PromptSkim-v6/0000/FE65D2DC-67C5-E011-AF6C-002618943894.root']
+# process.source.fileNames = ['/store/data/Run2011A/DoubleElectron/RAW-RECO/ZElectron-PromptSkim-v6/0000/FE65D2DC-67C5-E011-AF6C-002618943894.root']
+process.source.fileNames = [
+'/store/data/Run2011B/DoubleMu/RAW-RECO/ZMu-PromptSkim-v1/0000/FED7AE0A-9B01-E111-8E61-001A928116AE.root',
+'/store/data/Run2011B/DoubleMu/RAW-RECO/ZMu-PromptSkim-v1/0000/FEC4529D-78FB-E011-A41D-001A92810AC6.root',
+'/store/data/Run2011B/DoubleMu/RAW-RECO/ZMu-PromptSkim-v1/0000/FEC3831B-75F1-E011-85B0-002618943854.root',
+'/store/data/Run2011B/DoubleMu/RAW-RECO/ZMu-PromptSkim-v1/0000/FEBE4F89-0FFA-E011-9337-001A92971B68.root',
+]
 
 
 # process.load("CommonTools.ParticleFlow.Sources.source_ZtoMus_DBS_cfi")
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(False))
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 process.out.fileName = cms.untracked.string('patTuple_PF2PAT.root')
 
 # load the PAT config
