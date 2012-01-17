@@ -71,12 +71,14 @@ def adaptPFElectrons(process,module, postfix):
     module.userIsolation   = cms.PSet()
     module.isoDeposits = cms.PSet(
         pfChargedHadrons = cms.InputTag("elPFIsoDepositCharged" + postfix),
+        pfChargedAll = cms.InputTag("elPFIsoDepositChargedAll" + postfix),
         pfPUChargedHadrons = cms.InputTag("elPFIsoDepositPU" + postfix),
         pfNeutralHadrons = cms.InputTag("elPFIsoDepositNeutral" + postfix),
         pfPhotons = cms.InputTag("elPFIsoDepositGamma" + postfix)
         )
     module.isolationValues = cms.PSet(
         pfChargedHadrons = cms.InputTag("elPFIsoValueCharged04"+ postfix),
+        pfChargedAll = cms.InputTag("elPFIsoValueChargedAll04"+ postfix),
         pfPUChargedHadrons = cms.InputTag("elPFIsoValuePU04" + postfix),
         pfNeutralHadrons = cms.InputTag("elPFIsoValueNeutral04" + postfix),
         pfPhotons = cms.InputTag("elPFIsoValueGamma04" + postfix)
