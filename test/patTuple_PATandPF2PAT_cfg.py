@@ -5,10 +5,10 @@ runOnMC = True
 
 if runOnMC == False:
     # a jet data file at CERN:
-    process.source.fileNames = pickRelValInputFiles( cmsswVersion  = 'CMSSW_5_2_0_pre6'
+    process.source.fileNames = pickRelValInputFiles( cmsswVersion  = 'CMSSW_5_1_1'
                                                     , relVal       = 'SingleMu'
                                                     , dataTier     = 'RECO'
-                                                    , globalTag    = 'GR_R_52_V3_RelVal_mu2011B'
+                                                    , globalTag    = 'GR_R_50_V11_RelVal_mu2011B'
                                                     , maxVersions  = 3
                                                     )
     process.GlobalTag.globaltag = cms.string( autoCond[ 'com10' ] )
