@@ -3,9 +3,9 @@ from PhysicsTools.PatAlgos.patTemplate_cfg import *
 
 ## switch to RECO input
 process.source.fileNames = cms.untracked.vstring(
-    pickRelValInputFiles( cmsswVersion  = 'CMSSW_5_2_0_pre6'
+    pickRelValInputFiles( cmsswVersion  = 'CMSSW_5_0_0'
                           , relVal        = 'RelValProdTTbar'
-                          , globalTag     = 'START52_V2'
+                          , globalTag     = 'START50_V8'
                           , dataTier      = 'GEN-SIM-RECO'
                           , maxVersions   = 3
                           , numberOfFiles = 1
