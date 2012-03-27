@@ -1,5 +1,5 @@
 //
-// $Id: PATElectronProducer.cc,v 1.52 2011/11/01 08:13:20 tjkim Exp $
+// $Id: PATElectronProducer.cc,v 1.53 2012/01/19 02:50:19 tjkim Exp $
 //
 
 #include "PhysicsTools/PatAlgos/plugins/PATElectronProducer.h"
@@ -55,9 +55,9 @@ PATElectronProducer::PATElectronProducer(const edm::ParameterSet & iConfig) :
 
   // pflow specific
   pfElecSrc_           = iConfig.getParameter<edm::InputTag>( "pfElectronSource" );
+  pfCandidateMap_   = iConfig.getParameter<edm::InputTag>( "pfCandidateMap" );
   useParticleFlow_        = iConfig.getParameter<bool>( "useParticleFlow" );
   embedPFCandidate_   = iConfig.getParameter<bool>( "embedPFCandidate" );
-
 
   // MC matching configurables
   addGenMatch_      = iConfig.getParameter<bool>          ( "addGenMatch" );
@@ -131,6 +131,9 @@ PATElectronProducer::PATElectronProducer(const edm::ParameterSet & iConfig) :
   // read isolation value labels, for direct embedding
   readIsolationLabels(iConfig, "isolationValues", isolationValueLabels_);
 
+  // read isolation value labels for non PF identified electron, for direct embedding
+  readIsolationLabels(iConfig, "isolationValuesNoPFId", isolationValueLabelsNoPFId_);
+
   // Efficiency configurables
   addEfficiencies_ = iConfig.getParameter<bool>("addEfficiencies");
   if (addEfficiencies_) {
@@ -167,6 +170,11 @@ void PATElectronProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
   edm::Handle<edm::View<reco::GsfElectron> > electrons;
   iEvent.getByLabel(electronSrc_, electrons);
 
+  // PFCandidateMap
+  edm::Handle<edm::ValueMap<reco::PFCandidatePtr> >ValMapH;
+  iEvent.getByLabel(pfCandidateMap_,ValMapH);
+  const edm::ValueMap<reco::PFCandidatePtr> & myValMap(*ValMapH); 
+
   if (iEvent.isRealData()){
        addGenMatch_ = false;
        embedGenMatch_ = false;
@@ -189,6 +197,11 @@ void PATElectronProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
   IsolationValueMaps isolationValues(isolationValueLabels_.size());
   for (size_t j = 0; j<isolationValueLabels_.size(); ++j) {
     iEvent.getByLabel(isolationValueLabels_[j].second, isolationValues[j]);
+  }
+
+  IsolationValueMaps isolationValuesNoPFId(isolationValueLabelsNoPFId_.size());
+  for (size_t j = 0; j<isolationValueLabelsNoPFId_.size(); ++j) {
+    iEvent.getByLabel(isolationValueLabelsNoPFId_[j].second, isolationValuesNoPFId[j]);
   }
 
   // prepare the MC matching
@@ -383,6 +396,9 @@ void PATElectronProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
       reco::CandidateBaseRef elecBaseRef(elecsRef);
       Electron anElectron(elecsRef);
 
+      // Get the PFCandidate
+      const reco::PFCandidatePtr pfElePtr(myValMap[elecsRef]);
+      const bool pfId= pfElePtr.isNonnull();
       // add resolution info
 
       // Isolation
@@ -446,7 +462,7 @@ void PATElectronProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
 
       // add sel to selected
       fillElectron( anElectron, elecsRef,elecBaseRef,
-		    genMatches, deposits, isolationValues);
+		    genMatches, deposits, pfId, isolationValues, isolationValuesNoPFId);
       patElectrons->push_back(anElectron);
     }
   }
@@ -468,7 +484,9 @@ void PATElectronProducer::fillElectron(Electron& anElectron,
 				       const reco::CandidateBaseRef& baseRef,
 				       const GenAssociations& genMatches,
 				       const IsoDepositMaps& deposits,
-				       const IsolationValueMaps& isolationValues
+                                       const bool pfId,
+				       const IsolationValueMaps& isolationValues,
+				       const IsolationValueMaps& isolationValuesNoPFId
 				       ) const {
 
   //COLIN: might want to use the PFCandidate 4-mom. Which one is in use now?
@@ -537,11 +555,12 @@ void PATElectronProducer::fillElectron(Electron& anElectron,
 			 (*isolationValues[j])[source]);
     }
     else
-      anElectron.setIsolation(isolationValueLabels_[j].first,
-			 (*isolationValues[j])[elecRef]);
+      if(pfId){
+        anElectron.setIsolation(isolationValueLabels_[j].first,(*isolationValues[j])[elecRef]);
+      }else{
+        anElectron.setIsolation(isolationValueLabelsNoPFId_[j].first,(*isolationValuesNoPFId[j])[elecRef]);
+      }
   }
-
-
 
 }
 
@@ -629,6 +648,7 @@ void PATElectronProducer::fillDescriptions(edm::ConfigurationDescriptions & desc
   iDesc.setComment("PAT electron producer module");
 
   // input source
+  iDesc.add<edm::InputTag>("pfCandidateMap", edm::InputTag("no default"))->setComment("input collection");
   iDesc.add<edm::InputTag>("electronSource", edm::InputTag("no default"))->setComment("input collection");
 
   // embedding
@@ -686,6 +706,20 @@ void PATElectronProducer::fillDescriptions(edm::ConfigurationDescriptions & desc
   isolationValuesPSet.addOptional<edm::InputTag>("pfPhotons");
   isolationValuesPSet.addOptional<std::vector<edm::InputTag> >("user");
   iDesc.addOptional("isolationValues", isolationValuesPSet);
+
+  // isolation values configurables
+  edm::ParameterSetDescription isolationValuesNoPFIdPSet;
+  isolationValuesNoPFIdPSet.addOptional<edm::InputTag>("tracker");
+  isolationValuesNoPFIdPSet.addOptional<edm::InputTag>("ecal");
+  isolationValuesNoPFIdPSet.addOptional<edm::InputTag>("hcal");
+  isolationValuesNoPFIdPSet.addOptional<edm::InputTag>("pfAllParticles");
+  isolationValuesNoPFIdPSet.addOptional<edm::InputTag>("pfChargedHadrons");
+  isolationValuesNoPFIdPSet.addOptional<edm::InputTag>("pfChargedAll");
+  isolationValuesNoPFIdPSet.addOptional<edm::InputTag>("pfPUChargedHadrons");
+  isolationValuesNoPFIdPSet.addOptional<edm::InputTag>("pfNeutralHadrons");
+  isolationValuesNoPFIdPSet.addOptional<edm::InputTag>("pfPhotons");
+  isolationValuesNoPFIdPSet.addOptional<std::vector<edm::InputTag> >("user");
+  iDesc.addOptional("isolationValuesNoPFId", isolationValuesNoPFIdPSet);
 
   // Efficiency configurables
   edm::ParameterSetDescription efficienciesPSet;
