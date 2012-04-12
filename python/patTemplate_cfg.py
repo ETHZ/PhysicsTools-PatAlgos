@@ -12,14 +12,16 @@ process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 from PhysicsTools.PatAlgos.tools.cmsswVersionTools import pickRelValInputFiles
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
-    pickRelValInputFiles( cmsswVersion  = 'CMSSW_5_0_0'
-                        , relVal        = 'RelValProdTTbar'
-                        , globalTag     = 'START50_V8'
-                        , dataTier      = 'AODSIM'
-                        , maxVersions   = 3
-                        , numberOfFiles = 1
-                        )
-    )
+#     pickRelValInputFiles( cmsswVersion  = 'CMSSW_5_0_0'
+#                         , relVal        = 'RelValProdTTbar'
+#                         , globalTag     = 'START50_V8'
+#                         , dataTier      = 'AODSIM'
+#                         , maxVersions   = 3
+#                         , numberOfFiles = 1
+#                         )
+#     )
+       '/store/relval/CMSSW_5_0_0/RelValProdTTbar/AODSIM/START50_V8-v3/0082/38FB16A8-542B-E111-A9E6-003048FFCC1E.root',
+       '/store/relval/CMSSW_5_0_0/RelValProdTTbar/AODSIM/START50_V8-v3/0074/E871A010-DD2A-E111-83F5-001A928116CE.root'
 )
 ## Maximal Number of Events
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
