@@ -29,7 +29,7 @@ process.patMuons.usePV = False
 #-------------------------------------------------
 
 from HLTrigger.HLTfilters.hltHighLevel_cfi import *
-process.step1 = hltHighLevel.clone(TriggerResultsTag = "TriggerResults::HLT", HLTPaths = ["HLT_Mu15_eta2p1_v1"])
+process.step1 = hltHighLevel.clone(TriggerResultsTag = "TriggerResults::HLT", HLTPaths = ["HLT_Mu15_v14"])
 
 #-------------------------------------------------
 # selection step 2: vertex filter
@@ -171,7 +171,7 @@ process.out.outputCommands = cms.untracked.vstring('drop *', *patEventContentNoC
 #                                         ##
 #   process.source.fileNames =  ...       ##  (e.g. 'file:AOD.root')
 #                                         ##
-process.maxEvents.input = 1000
+process.maxEvents.input = 100
 #                                         ##
 #   process.out.outputCommands = [ ... ]  ##  (e.g. taken from PhysicsTools/PatAlgos/python/patEventContent_cff.py)
 #                                         ##

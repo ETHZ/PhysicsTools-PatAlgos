@@ -208,7 +208,7 @@ def reconfigurePF2PATTaus(process,
    elif tauType=='hpsPFTau':
        newTau = process.combinatoricRecoTaus.clone()
        newTau.piZeroSrc="pfJetsLegacyHPSPiZeros"+postfix
-       newTau.modifiers[3] = cms.PSet(
+       newTau.modifiers[2] = cms.PSet(
            pfTauTagInfoSrc = cms.InputTag("pfTauTagInfoProducer"+postfix),
            name = cms.string('pfTauTTIworkaround'+postfix),
            plugin = cms.string('RecoTauTagInfoWorkaroundModifer')
