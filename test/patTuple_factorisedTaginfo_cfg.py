@@ -4,7 +4,7 @@ from PhysicsTools.PatAlgos.patTemplate_cfg import *
 #from PhysicsTools.PatAlgos.tools.jetTools_taginfo_AddSwitch import *
 #from PhysicsTools.PatAlgos.tools.jetTools_taginfo import * 
 #from PhysicsTools.PatAlgos.tools.jetTools_factor import *
-from PhysicsTools.PatAlgos.tools.jetTools_default import *
+from PhysicsTools.PatAlgos.tools.jetTools import *
 
 
 
