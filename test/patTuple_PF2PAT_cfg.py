@@ -37,6 +37,8 @@ usePF2PAT(process,runPF2PAT=True, jetAlgo=jetAlgo, runOnMC=True, postfix=postfix
 # to switch default tau to HPS tau uncomment the following:
 #adaptPFTaus(process,"hpsPFTau",postfix=postfix)
 
+# to use GsfElectrons instead of PF electrons
+# useGsfElectrons(process,postfix)
 
 # Let it run
 process.p = cms.Path(
