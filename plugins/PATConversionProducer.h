@@ -1,5 +1,5 @@
 //
-// $Id: PATConversionProducer.h,v 1.1 2012/04/14 02:12:39 tjkim Exp $
+// $Id: PATConversionProducer.h,v 1.1.4.2 2012/05/09 22:30:25 tjkim Exp $
 //
 
 #ifndef PhysicsTools_PatAlgos_PATConversionProducer_h
@@ -12,6 +12,7 @@
 #include "DataFormats/Common/interface/View.h"
 #include "DataFormats/Common/interface/ValueMap.h"
 #include "DataFormats/Candidate/interface/CandAssociation.h"
+#include "DataFormats/EgammaCandidates/interface/Conversion.h"
 
 #include "CommonTools/Utils/interface/PtComparator.h"
 
