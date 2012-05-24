@@ -80,6 +80,3 @@ process.maxEvents.input = 100
 process.out.fileName = 'patTuple_PF2PAT.root'
 #                                         ##
 #   process.options.wantSummary = False   ##  (to suppress the long output at the end of the job)
-file = open('debugging_pf2pat_default.py','w')
-file.write(str(process.dumpPython()))
-file.close()

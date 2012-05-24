@@ -9,7 +9,7 @@ process.load("PhysicsTools.PatAlgos.patSequences_cff")
 # this function will modify the PAT sequences.
 from PhysicsTools.PatAlgos.tools.pfTools import *
 
-postfix = "PFlow"
+postfix = "PFTypeI"
 jetAlgo="AK5"
 usePF2PAT(process,runPF2PAT=True, jetAlgo=jetAlgo, runOnMC=True, postfix=postfix, typeIMetCorrections=True)
 
@@ -18,7 +18,7 @@ usePF2PAT(process,runPF2PAT=True, jetAlgo=jetAlgo, runOnMC=True, postfix=postfix
 ## a combination of the following instructions will allow you to get the type of MET that you desire in your
 ## analysis
 
-# to add type-0 corrections to your type-1 corrected MET uncomment the following:
+##to add type-0 corrections to your type-1 corrected MET uncomment the following:
 # getattr(process,'patType1CorrectedPFMet'+postfix).srcType1Corrections = cms.VInputTag(
 #     cms.InputTag("patPFJetMETtype1p2Corr"+postfix,"type1"),
 #     cms.InputTag("patPFMETtype0Corr"+postfix),
@@ -27,7 +27,6 @@ usePF2PAT(process,runPF2PAT=True, jetAlgo=jetAlgo, runOnMC=True, postfix=postfix
 #     cms.InputTag("patPFJetMETtype1p2Corr"+postfix,"type1"),
 #     cms.InputTag("patPFMETtype0Corr"+postfix),
 #     )
-
 ## to add type-2 corrections to your type-1 or type-0+1 corrected MET uncomment the following:
 # getattr(process,'patMETs'+postfix).metSource = 'patType1p2CorrectedPFMet'+postfix
 
@@ -92,9 +91,6 @@ process.maxEvents.input = 100
 #                                         ##
 #   process.out.outputCommands = [ ... ]  ##  (e.g. taken from PhysicsTools/PatAlgos/python/patEventContent_cff.py)
 #                                         ##
-process.out.fileName = 'patTuple_PF2PAT.root'
+process.out.fileName = 'patTuple_PF2PATTypeI.root'
 #                                         ##
 #   process.options.wantSummary = False   ##  (to suppress the long output at the end of the job)
-file = open('debugging_pf2pat_default.py','w')
-file.write(str(process.dumpPython()))
-file.close()
