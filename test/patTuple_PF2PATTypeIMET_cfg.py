@@ -11,16 +11,31 @@ from PhysicsTools.PatAlgos.tools.pfTools import *
 
 postfix = "PFlow"
 jetAlgo="AK5"
-usePF2PAT(process,runPF2PAT=True, jetAlgo=jetAlgo, runOnMC=True, postfix=postfix)
+usePF2PAT(process,runPF2PAT=True, jetAlgo=jetAlgo, runOnMC=True, postfix=postfix, typeIMetCorrections=True)
 
-# to turn on type-1 MET corrections, use the following call
-#usePF2PAT(process,runPF2PAT=True, jetAlgo=jetAlgo, runOnMC=True, postfix=postfix, typeIMetCorrections=True)
+## There are 3 corrections one can apply to the MET object, type-0, type-1 and type-2
+## your final MET object can be type-1, type-0+1, type-1+2, or type-0+1+2
+## a combination of the following instructions will allow you to get the type of MET that you desire in your
+## analysis
+
+# to add type-0 corrections to your type-1 corrected MET uncomment the following:
+# getattr(process,'patType1CorrectedPFMet'+postfix).srcType1Corrections = cms.VInputTag(
+#     cms.InputTag("patPFJetMETtype1p2Corr"+postfix,"type1"),
+#     cms.InputTag("patPFMETtype0Corr"+postfix),
+#     )
+# getattr(process,'patType1p2CorrectedPFMet'+postfix).srcType1Corrections = cms.VInputTag(
+#     cms.InputTag("patPFJetMETtype1p2Corr"+postfix,"type1"),
+#     cms.InputTag("patPFMETtype0Corr"+postfix),
+#     )
+
+## to add type-2 corrections to your type-1 or type-0+1 corrected MET uncomment the following:
+# getattr(process,'patMETs'+postfix).metSource = 'patType1p2CorrectedPFMet'+postfix
 
 # to run second PF2PAT+PAT with different postfix uncomment the following lines
 # and add the corresponding sequence to the path
 #postfix2 = "PFlow2"
 #jetAlgo2="AK7"
-#usePF2PAT(process,runPF2PAT=True, jetAlgo=jetAlgo2, runOnMC=True, postfix=postfix2)
+#usePF2PAT(process,runPF2PAT=True, jetAlgo=jetAlgo2, runOnMC=True, postfix=postfix2, typeIMetCorrections=True)
 
 # to use tau-cleaned jet collection uncomment the following:
 #getattr(process,"pfNoTau"+postfix).enable = True
