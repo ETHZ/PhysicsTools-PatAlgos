@@ -1094,32 +1094,14 @@ class SwitchJetCorrLevels(ConfigToolBase):
                         jetType=''
                         ## find out which jetType is used (PF or Calo)
                         if jetCorrLabel[0].count('PF') > 0:
-                            ## only add module if it is not already part of the process
-                            ## ATTENTION: this assumes that new jet collection are always added after existing ones !!!
-                            if not hasattr(process,'kt6PFJets'+postfix):
-                                from RecoJets.JetProducers.kt4PFJets_cfi import kt4PFJets
-                                setattr(process,'kt6PFJets'+postfix, kt4PFJets.clone(doAreaFastjet=True, doRhoFastjet=True, rParam=0.6))
                             jetType='PF'
                         elif jetCorrLabel[0].count('Calo') > 0:
-                            ## only add module if it is not already part of the process
-                            ## ATTENTION: this assumes that new jet collection are always added after existing ones !!!
-                            if not hasattr(process,'kt6CaloJets'+postfix):
-                                from RecoJets.JetProducers.kt4CaloJets_cfi import kt4CaloJets
-                                setattr(process,'kt6CaloJets'+postfix, kt4CaloJets.clone(doAreaFastjet=True, doRhoFastjet=True, rParam=0.6))
                             jetType='Calo'
                         else:
                             raise TypeError, "L1FastJet corrections are currently only supported for PF and Calo jets in PAT"
-                        ## check if a modified patDefaultSequence exists and add kt6Jets there (needed for example for usePF2PAT)
-                        if hasattr(process,'patDefaultSequence'+postfix):
-                            if not contains(getattr(process,'patDefaultSequence'+postfix), 'kt6'+jetType+'Jets'+postfix):
-                                getattr(process,'patDefaultSequence'+postfix).replace(jetCorrFactorsModule, getattr(process,'kt6'+jetType+'Jets'+postfix)*jetCorrFactorsModule)
-                        ## if no modified patDefaultSequence exists add kt6Jets to ordinary sequence (needed for example for addJetCollection)
-                        else:
-                            if not contains(getattr(process,'patDefaultSequence'), 'kt6'+jetType+'Jets'+postfix):
-                                getattr(process,'patDefaultSequence').replace(jetCorrFactorsModule, getattr(process,'kt6'+jetType+'Jets'+postfix)*jetCorrFactorsModule)
                         ## configure module
                         jetCorrFactorsModule.useRho = True
-                        jetCorrFactorsModule.rho = cms.InputTag('kt6'+jetType+'Jets'+postfix, 'rho')
+                        jetCorrFactorsModule.rho = cms.InputTag('kt6'+jetType+'Jets', 'rho')
                         ## we set this to True now as a L1 correction type should appear only once
                         ## otherwise levels is miss configured
                         error = True
