@@ -49,41 +49,41 @@ def useGsfElectrons(process, postfix, dR = "04"):
 def adaptPFIsoElectrons(process,module, postfix = "PFIso", dR = "04"):
     #FIXME: adaptPFElectrons can use this function.
     module.isoDeposits = cms.PSet(
-        pfChargedHadRons = cms.InputTag("elPFIsoDepositCharged" + postfix),
+        pfChargedHadrons = cms.InputTag("elPFIsoDepositCharged" + postfix),
         pfChargedAll = cms.InputTag("elPFIsoDepositChargedAll" + postfix),
-        pfPUChargedHadRons = cms.InputTag("elPFIsoDepositPU" + postfix),
-        pfNeutralHadRons = cms.InputTag("elPFIsoDepositNeutral" + postfix),
+        pfPUChargedHadrons = cms.InputTag("elPFIsoDepositPU" + postfix),
+        pfNeutralHadrons = cms.InputTag("elPFIsoDepositNeutral" + postfix),
         pfPhotons = cms.InputTag("elPFIsoDepositGamma" + postfix)
         )
     module.isolationValues = cms.PSet(
-        pfChargedHadRons = cms.InputTag("elPFIsoValueCharged"+dR+"PFId"+ postfix),
+        pfChargedHadrons = cms.InputTag("elPFIsoValueCharged"+dR+"PFId"+ postfix),
         pfChargedAll = cms.InputTag("elPFIsoValueChargedAll"+dR+"PFId"+ postfix),
-        pfPUChargedHadRons = cms.InputTag("elPFIsoValuePU"+dR+"PFId" + postfix),
-        pfNeutralHadRons = cms.InputTag("elPFIsoValueNeutral"+dR+"PFId" + postfix),
+        pfPUChargedHadrons = cms.InputTag("elPFIsoValuePU"+dR+"PFId" + postfix),
+        pfNeutralHadrons = cms.InputTag("elPFIsoValueNeutral"+dR+"PFId" + postfix),
         pfPhotons = cms.InputTag("elPFIsoValueGamma"+dR+"PFId" + postfix)
         )
     module.isolationValuesNoPFId = cms.PSet(
-        pfChargedHadRons = cms.InputTag("elPFIsoValueCharged"+dR+"NoPFId"+ postfix),
+        pfChargedHadrons = cms.InputTag("elPFIsoValueCharged"+dR+"NoPFId"+ postfix),
         pfChargedAll = cms.InputTag("elPFIsoValueChargedAll"+dR+"NoPFId"+ postfix),
-        pfPUChargedHadRons = cms.InputTag("elPFIsoValuePU"+dR+"NoPFId" + postfix),
-        pfNeutralHadRons = cms.InputTag("elPFIsoValueNeutral"+dR+"NoPFId" + postfix),
+        pfPUChargedHadrons = cms.InputTag("elPFIsoValuePU"+dR+"NoPFId" + postfix),
+        pfNeutralHadrons = cms.InputTag("elPFIsoValueNeutral"+dR+"NoPFId" + postfix),
         pfPhotons = cms.InputTag("elPFIsoValueGamma"+dR+"NoPFId" + postfix)
         )
 
 def adaptPFIsoMuons(process,module, postfix = "PFIso", dR = "04"):
     #FIXME: adaptPFMuons can use this function.
     module.isoDeposits = cms.PSet(
-        pfChargedHadRons = cms.InputTag("muPFIsoDepositCharged" + postfix),
+        pfChargedHadrons = cms.InputTag("muPFIsoDepositCharged" + postfix),
         pfChargedAll = cms.InputTag("muPFIsoDepositChargedAll" + postfix),
-        pfPUChargedHadRons = cms.InputTag("muPFIsoDepositPU" + postfix),
-        pfNeutralHadRons = cms.InputTag("muPFIsoDepositNeutral" + postfix),
+        pfPUChargedHadrons = cms.InputTag("muPFIsoDepositPU" + postfix),
+        pfNeutralHadrons = cms.InputTag("muPFIsoDepositNeutral" + postfix),
         pfPhotons = cms.InputTag("muPFIsoDepositGamma" + postfix)
         )
     module.isolationValues = cms.PSet(
-        pfChargedHadRons = cms.InputTag("muPFIsoValueCharged" + dR + postfix),
+        pfChargedHadrons = cms.InputTag("muPFIsoValueCharged" + dR + postfix),
         pfChargedAll = cms.InputTag("muPFIsoValueChargedAll" + dR + postfix),
-        pfPUChargedHadRons = cms.InputTag("muPFIsoValuePU" + dR + postfix),
-        pfNeutralHadRons = cms.InputTag("muPFIsoValueNeutral" + dR + postfix),
+        pfPUChargedHadrons = cms.InputTag("muPFIsoValuePU" + dR + postfix),
+        pfNeutralHadrons = cms.InputTag("muPFIsoValueNeutral" + dR + postfix),
         pfPhotons = cms.InputTag("muPFIsoValueGamma" + dR + postfix)
         )
 
