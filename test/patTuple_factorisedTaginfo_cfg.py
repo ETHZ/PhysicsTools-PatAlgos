@@ -1,12 +1,7 @@
 ## import skeleton process
 from PhysicsTools.PatAlgos.patTemplate_cfg import *
 
-#from PhysicsTools.PatAlgos.tools.jetTools_taginfo_AddSwitch import *
-#from PhysicsTools.PatAlgos.tools.jetTools_taginfo import * 
-#from PhysicsTools.PatAlgos.tools.jetTools_factor import *
 from PhysicsTools.PatAlgos.tools.jetTools import *
-
-
 
 addJetCollection(process,cms.InputTag('ak7CaloJets'),
                  'AK7', 'Calo',
@@ -30,12 +25,12 @@ addJetCollection(process,cms.InputTag('ak7CaloJets'),
 #######		  ,btagInfo = ['impactParameterTagInfos']
 #                 ,btagInfo = ['softMuonTagInfos']
 #                 ,btagInfo = ['impactParameterTagInfos','secondaryVertexTagInfos']
-#   		 ,btagInfo = ['impactParameterTagInfos','secondaryVertexTagInfos','secondaryVertexNegativeTagInfos']                               
+#   		 ,btagInfo = ['impactParameterTagInfos','secondaryVertexTagInfos','secondaryVertexNegativeTagInfos']
 
 
-#		 ,btagdiscriminators=['jetBProbabilityBJetTags', 'jetProbabilityBJetTags', 'trackCountingHighPurBJetTags','trackCountingHighEffBJetTags', 
+#		 ,btagdiscriminators=['jetBProbabilityBJetTags', 'jetProbabilityBJetTags', 'trackCountingHighPurBJetTags','trackCountingHighEffBJetTags',
 #	'simpleSecondaryVertexHighEffBJetTags','simpleSecondaryVertexHighPurBJetTags','combinedSecondaryVertexBJetTags','combinedSecondaryVertexMVABJetTags','softMuonBJetTags','softMuonByPtBJetTags','softMuonByIP3dBJetTags']
-               
+
 #		,btagdiscriminators=['softMuonBJetTags','softMuonByPtBJetTags','jetBProbabilityBJetTags', 'jetProbabilityBJetTags', 'trackCountingHighPurBJetTags','trackCountingHighEffBJetTags']
 
 
@@ -48,19 +43,6 @@ addJetCollection(process,cms.InputTag('ak7CaloJets'),
 
 
 	)
-
-## uncomment the following lines to switch the jet
-## collection from a 35X input sample
-#switchJetCollection35X(process,cms.InputTag('ak5PFJets'),
-#                 doJTA        = True,
-#                 doBTagging   = True,
-#                 jetCorrLabel = None,
-#                 doType1MET   = True,
-#                 genJetCollection=cms.InputTag("ak5GenJets"),
-#                 doJetID      = True
-#                 )
-
-##from PhysicsTools.PatAlgos.tools.jetTools import *
 
 switchJetCollection(process,cms.InputTag('ak5PFJets'),
                  doJTA        = True,
@@ -91,12 +73,10 @@ switchJetCollection(process,cms.InputTag('ak5PFJets'),
 #                ,btagdiscriminators=['combinedSecondaryVertexBJetTags','combinedSecondaryVertexMVABJetTags']
 #                ,btagdiscriminators=['simpleSecondaryVertexHighEffBJetTags','simpleSecondaryVertexHighPurBJetTags']
 #                ,btagdiscriminators=['simpleSecondaryVertexNegativeHighEffBJetTags','simpleSecondaryVertexNegativeHighPurBJetTags','negativeTrackCountingHighEffJetTags','negativeTrackCountingHighPurJetTags']
-#                ,btagdiscriminators=['negativeTrackCountingHighEffJetTags','negativeTrackCountingHighPurJetTags']                
+#                ,btagdiscriminators=['negativeTrackCountingHighEffJetTags','negativeTrackCountingHighPurJetTags']
 #
 
                  )
-
-
 
 #process.patJetsAK7Calo.addTagInfos = True
 #process.patJets.addTagInfos = False
@@ -105,10 +85,22 @@ process.p = cms.Path(
     process.patDefaultSequence
     )
 
-#process.source.fileNames = ['file:/afs/cern.ch/cms/Tutorials/TWIKI_DATA/CMSDataAnaSch//CMSDataAnaSch_RelValZMM428.root']
-process.source.fileNames = ['/store/relval/CMSSW_5_2_0_pre6/RelValProdTTbar/AODSIM/START52_V2-v3/0112/DE997D18-B360-E111-A5C5-003048678B12.root']
-process.out.fileName = 'patTuple_TESTFACTORISATION.root'            ##  (e.g. 'patTuple_disc.root')
-process.options.wantSummary = True        ##  (to suppress the long output at the end of the job)
+## ------------------------------------------------------
+#  In addition you usually want to change the following
+#  parameters:
+## ------------------------------------------------------
+#
+#   process.GlobalTag.globaltag =  ...    ##  (according to https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideFrontierConditions)
+#                                         ##
+#   process.source.fileNames =  ...       ##  (e.g. 'file:AOD.root')
+#                                         ##
+process.maxEvents.input = 100
+#                                         ##
+#   process.out.outputCommands = [ ... ]  ##  (e.g. taken from PhysicsTools/PatAlgos/python/patEventContent_cff.py)
+#                                         ##
+process.out.fileName = 'patTuple_factorisedTagInfo.root'
+#                                         ##
+#   process.options.wantSummary = False   ##  (to suppress the long output at the end of the job)
 
 
 
