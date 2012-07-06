@@ -31,7 +31,7 @@ def warningIsolation():
 
 from CommonTools.ParticleFlow.Tools.pfIsolation import setupPFElectronIso, setupPFMuonIso
 
-def useGsfElectrons(process, postfix, dR = "04"):
+def useGsfElectrons(process, postfix):
     print "using Gsf Electrons in PF2PAT"
     print "WARNING: this will destory the feature of top projection which solves the ambiguity between leptons and jets because"
     print "WARNING: there will be overlap between non-PF electrons and jets even though top projection is ON!"
@@ -40,13 +40,14 @@ def useGsfElectrons(process, postfix, dR = "04"):
     module.useParticleFlow = False
     print "Building particle-based isolation for GsfElectrons in PF2PAT(PFBRECO)"
     print "********************* "
-    adaptPFIsoElectrons( process, module, "PFIso"+postfix, dR )
-    getattr(process,'patDefaultSequence'+postfix).replace( getattr(process,"patElectrons"+postfix),
+    process.eleIsoSequence = setupPFElectronIso(process, 'gsfElectrons', "PFIso"+postfix)
+    adaptPFIsoElectrons( process, module, "PFIso"+postfix)
+    getattr(process,'patDefaultSequence'+postfix).replace( getattr(process,"makePatElectrons"+postfix),
                                                    process.pfParticleSelectionSequence +
-                                                   setupPFElectronIso(process, 'gsfElectrons', "PFIso"+postfix) +
-                                                   getattr(process,"patElectrons"+postfix) )
+                                                   process.eleIsoSequence +
+                                                   getattr(process,"makePatElectrons"+postfix) )
 
-def adaptPFIsoElectrons(process,module, postfix = "PFIso", dR = "04"):
+def adaptPFIsoElectrons(process,module, postfix = "PFIso"):
     #FIXME: adaptPFElectrons can use this function.
     module.isoDeposits = cms.PSet(
         pfChargedHadrons = cms.InputTag("elPFIsoDepositCharged" + postfix),
@@ -56,21 +57,21 @@ def adaptPFIsoElectrons(process,module, postfix = "PFIso", dR = "04"):
         pfPhotons = cms.InputTag("elPFIsoDepositGamma" + postfix)
         )
     module.isolationValues = cms.PSet(
-        pfChargedHadrons = cms.InputTag("elPFIsoValueCharged"+dR+"PFId"+ postfix),
-        pfChargedAll = cms.InputTag("elPFIsoValueChargedAll"+dR+"PFId"+ postfix),
-        pfPUChargedHadrons = cms.InputTag("elPFIsoValuePU"+dR+"PFId" + postfix),
-        pfNeutralHadrons = cms.InputTag("elPFIsoValueNeutral"+dR+"PFId" + postfix),
-        pfPhotons = cms.InputTag("elPFIsoValueGamma"+dR+"PFId" + postfix)
+        pfChargedHadrons = cms.InputTag("elPFIsoValueCharged04PFId"+ postfix),
+        pfChargedAll = cms.InputTag("elPFIsoValueChargedAll04PFId"+ postfix),
+        pfPUChargedHadrons = cms.InputTag("elPFIsoValuePU04PFId" + postfix),
+        pfNeutralHadrons = cms.InputTag("elPFIsoValueNeutral04PFId" + postfix),
+        pfPhotons = cms.InputTag("elPFIsoValueGamma04PFId" + postfix)
         )
     module.isolationValuesNoPFId = cms.PSet(
-        pfChargedHadrons = cms.InputTag("elPFIsoValueCharged"+dR+"NoPFId"+ postfix),
-        pfChargedAll = cms.InputTag("elPFIsoValueChargedAll"+dR+"NoPFId"+ postfix),
-        pfPUChargedHadrons = cms.InputTag("elPFIsoValuePU"+dR+"NoPFId" + postfix),
-        pfNeutralHadrons = cms.InputTag("elPFIsoValueNeutral"+dR+"NoPFId" + postfix),
-        pfPhotons = cms.InputTag("elPFIsoValueGamma"+dR+"NoPFId" + postfix)
+        pfChargedHadrons = cms.InputTag("elPFIsoValueCharged04NoPFId"+ postfix),
+        pfChargedAll = cms.InputTag("elPFIsoValueChargedAll04NoPFId"+ postfix),
+        pfPUChargedHadrons = cms.InputTag("elPFIsoValuePU04NoPFId" + postfix),
+        pfNeutralHadrons = cms.InputTag("elPFIsoValueNeutral04NoPFId" + postfix),
+        pfPhotons = cms.InputTag("elPFIsoValueGamma04NoPFId" + postfix)
         )
 
-def adaptPFIsoMuons(process,module, postfix = "PFIso", dR = "04"):
+def adaptPFIsoMuons(process,module, postfix = "PFIso"):
     #FIXME: adaptPFMuons can use this function.
     module.isoDeposits = cms.PSet(
         pfChargedHadrons = cms.InputTag("muPFIsoDepositCharged" + postfix),
@@ -80,11 +81,11 @@ def adaptPFIsoMuons(process,module, postfix = "PFIso", dR = "04"):
         pfPhotons = cms.InputTag("muPFIsoDepositGamma" + postfix)
         )
     module.isolationValues = cms.PSet(
-        pfChargedHadrons = cms.InputTag("muPFIsoValueCharged" + dR + postfix),
-        pfChargedAll = cms.InputTag("muPFIsoValueChargedAll" + dR + postfix),
-        pfPUChargedHadrons = cms.InputTag("muPFIsoValuePU" + dR + postfix),
-        pfNeutralHadrons = cms.InputTag("muPFIsoValueNeutral" + dR + postfix),
-        pfPhotons = cms.InputTag("muPFIsoValueGamma" + dR + postfix)
+        pfChargedHadrons = cms.InputTag("muPFIsoValueCharged04"+ postfix),
+        pfChargedAll = cms.InputTag("muPFIsoValueChargedAll04"+ postfix),
+        pfPUChargedHadrons = cms.InputTag("muPFIsoValuePU04" + postfix),
+        pfNeutralHadrons = cms.InputTag("muPFIsoValueNeutral04" + postfix),
+        pfPhotons = cms.InputTag("muPFIsoValueGamma04" + postfix)
         )
 
 def usePFIso(process, postfix = "PFIso"):
