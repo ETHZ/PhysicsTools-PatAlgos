@@ -1,5 +1,5 @@
 //
-// $Id: PATElectronProducer.cc,v 1.60.2.1 2012/07/09 16:40:54 tjkim Exp $
+// $Id: PATElectronProducer.cc,v 1.60.2.2 2012/08/30 00:20:59 tjkim Exp $
 //
 #include "PhysicsTools/PatAlgos/plugins/PATElectronProducer.h"
 
@@ -449,7 +449,6 @@ void PATElectronProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
 	  const reco::GsfTrackRef& pfTrkRef= ie->gsfTrackRef();
 	  if( trkRef == pfTrkRef ) {
 	    pfId = true;
-            anElectron.setIsPF( pfId );
             reco::PFCandidateRef pfRef(pfElectrons, index);
             anElectron.setPFCandidateRef( pfRef );
 	    break;
@@ -462,9 +461,10 @@ void PATElectronProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
         // Get the PFCandidate
         const reco::PFCandidatePtr& pfElePtr(myValMap[elecsRef]);
         pfId= pfElePtr.isNonnull();
-        anElectron.setIsPF( pfId );
       }
-      
+      // set PFId function
+      anElectron.setIsPF( pfId ); 
+
       // add resolution info
 
       // Isolation
