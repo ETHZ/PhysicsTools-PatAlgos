@@ -1,5 +1,5 @@
 //
-// $Id: PATElectronProducer.cc,v 1.60.2.2 2012/08/30 00:20:59 tjkim Exp $
+// $Id: PATElectronProducer.cc,v 1.60.2.3 2012/09/04 22:41:42 tjkim Exp $
 //
 #include "PhysicsTools/PatAlgos/plugins/PATElectronProducer.h"
 
@@ -317,6 +317,9 @@ void PATElectronProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
 	  const edm::RefToBase<reco::GsfElectron>& elecsRef = electrons->refAt(idx);
 	  Electron anElectron(elecsRef);
 	  anElectron.setPFCandidateRef( pfRef  );
+
+          //it should be always true when particleFlow electrons are used.
+          anElectron.setIsPF( true );
 
 	  if( embedPFCandidate_ ) anElectron.embedPFCandidate();
 
