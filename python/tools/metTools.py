@@ -1,10 +1,11 @@
 from FWCore.GuiBrowsers.ConfigToolBase import *
 
-class AddMETCollection(ConfigToolBase):    
+
+class AddTCMet(ConfigToolBase):
     """
-    Tool to add alternative MET collection(s) to your PAT Tuple
+    Tool to add track corrected MET collection to you PAT Tuple
     """
-    _label='addMETCollection'    
+    _label='addTCMET'    
     _defaultParameters=dicttypes.SortedKeysDict()
     
     def __init__(self):
@@ -15,45 +16,78 @@ class AddMETCollection(ConfigToolBase):
         ## initialization of the base class
         ConfigToolBase.__init__(self)
         ## add all parameters that should be known to the class
-        self.addParameter(self._defaultParameters,'labelName',self._defaultValue, "Label name of the new patMET collection.", str)
-        self.addParameter(self._defaultParameters,'metSource',self._defaultValue, "Label of the input collection from which the new patMet collection should be created.", str)
-        ## set defaults
+        self.addParameter(self._defaultParameters,'label_name','patTCMet', 'Label name of the new module.')
+        ## set defaults 
         self._parameters=copy.deepcopy(self._defaultParameters)
         ## add comments
-        self._comment = "Add alternative MET collections as PAT object to your PAT Tuple"
-        
+        self._comment = 'Add track corrected Met as PAT object to your PAt Tuple'
+
     def getDefaultParameters(self):
         """
         Return default parameters of the class
         """
         return self._defaultParameters
-        
-    def __call__(self,process,labelName=None,metSource=None):
+
+    def __call__(self,process,postfixLabel=None) :
         """
         Function call wrapper. This will check the parameters and call the actual implementation that
-        can be found in toolCode via the base class function apply.
+        can be found in toolCode.
         """
-        if labelName is None:
-            labelName=self._defaultParameters['labelName'].value
-        self.setParameter('labelName', labelName)
-        if metSource is None:
-            metSource=self._defaultParameters['metSource'].value             
-        self.setParameter('metSource', metSource)
+        if  lable_name is None:
+            label_name = self._defaultParameters['label_name'].value 
+        self.setParameter('label_name', label_name)
+        self.apply(process) 
+        
+    def toolCode(self, process):                
+        from PhysicsTools.PatAlgos.producersLayer1.metProducer_cfi import patMETs
+        setattr(process, new_label, patMETs.clone(metSource = "tcMet"))
+        process.patCandidateSummary.candidates += [ cms.InputTag(new_label) ]
+       
+addTCMet=AddTCMet()
+
+class AddPfMET(ConfigToolBase):
+    
+    """ Add pflow MET collection to patEventContent
+    """
+    _label='addPfMET'    
+    _defaultParameters=dicttypes.SortedKeysDict()
+    
+    def __init__(self):
+        ConfigToolBase.__init__(self)
+        self.addParameter(self._defaultParameters,'postfixLabel','PF', '')
+        self._parameters=copy.deepcopy(self._defaultParameters)
+        self._comment = ''
+        
+    def getDefaultParameters(self):
+        return self._defaultParameters
+        
+    def __call__(self,process,postfixLabel=None):
+        if  postfixLabel is None:
+            postfixLabel=self._defaultParameters['postfixLabel'].value 
+        self.setParameter('postfixLabel',postfixLabel)
         self.apply(process) 
 
-    def toolCode(self, process):
-        """
-        Tool code implementation
-        """
-        ## initialize parameters
-        labelName=self._parameters['labelName'].value
-        metSource=self._parameters['metSource'].value
-        ## do necessary imports
-        from PhysicsTools.PatAlgos.producersLayer1.metProducer_cfi import patMETs
-        ## add module to the process
-        setattr(process, labelName, patMETs.clone(metSource = metSource, addMuonCorrections=False))
-        ## add module to output 
-        if hasattr(process, "out"):
-            process.out.outputCommands+=["keep *_{LABEL_NAME}_*_*".format(LABEL_NAME=labelName)]
+    def toolCode(self, process): 
+        postfixLabel=self._parameters['postfixLabel'].value
+
+
+        ## add module as process to the default sequence
+        def addAlso (label,value):
+            existing = getattr(process, label)
+            setattr( process, label+postfixLabel, value)
+            process.patDefaultSequence.replace( existing, existing*value )        
+            
+        ## clone and add a module as process to the
+        ## default sequence
+        def addClone(label,**replaceStatements):
+            new = getattr(process, label).clone(**replaceStatements)
+            addAlso(label, new)
+
+        ## addClone('corMetType1Icone5Muons', uncorMETInputTag = cms.InputTag("tcMet"))
+        addClone('patMETs', metSource = cms.InputTag("pfType1CorrectedMet"), addMuonCorrections = False)
+
+        ## add new met collections output to the pat summary
+        process.patCandidateSummary.candidates += [ cms.InputTag('patMETs'+postfixLabel) ]
+
        
-addMETCollection=AddMETCollection()
+addPfMET=AddPfMET()
