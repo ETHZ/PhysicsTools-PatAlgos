@@ -20,7 +20,10 @@ from PhysicsTools.PatAlgos.producersLayer1.tauProducer_cfi import *
 
 makePatTaus = cms.Sequence(
     # reco pre-production
+    patFixedConePFTauDiscrimination *
     patHPSPFTauDiscrimination *
+    patShrinkingConePFTauDiscrimination *
+    patCaloTauDiscrimination *
     patPFCandidateIsoDepositSelection *
     patPFTauIsolation *
     #patTauJetCorrections *
