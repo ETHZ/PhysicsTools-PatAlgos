@@ -1,9 +1,5 @@
 //
-<<<<<<< PATElectronProducer.h
-// $Id: PATElectronProducer.h,v 1.26.2.1 2012/07/09 16:40:54 tjkim Exp $
-=======
-// $Id: PATElectronProducer.h,v 1.30 2012/10/02 22:19:13 beaudett Exp $
->>>>>>> 1.30
+// $Id: PATElectronProducer.h,v 1.26.2.2 2012/10/04 19:26:11 tjkim Exp $
 //
 
 #ifndef PhysicsTools_PatAlgos_PATElectronProducer_h
@@ -17,11 +13,7 @@
    a collection of objects of reco::GsfElectron.
 
   \author   Steven Lowette, James Lamb\
-<<<<<<< PATElectronProducer.h
-  \version  $Id: PATElectronProducer.h,v 1.26.2.1 2012/07/09 16:40:54 tjkim Exp $
-=======
-  \version  $Id: PATElectronProducer.h,v 1.30 2012/10/02 22:19:13 beaudett Exp $
->>>>>>> 1.30
+  \version  $Id: PATElectronProducer.h,v 1.26.2.2 2012/10/04 19:26:11 tjkim Exp $
 */
 
 

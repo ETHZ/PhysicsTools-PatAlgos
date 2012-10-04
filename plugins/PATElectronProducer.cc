@@ -1,9 +1,5 @@
 //
-<<<<<<< PATElectronProducer.cc
-// $Id: PATElectronProducer.cc,v 1.60.2.5 2012/09/05 14:00:47 rwolf Exp $
-=======
-// $Id: PATElectronProducer.cc,v 1.71 2012/10/04 12:37:17 beaudett Exp $
->>>>>>> 1.71
+// $Id: PATElectronProducer.cc,v 1.60.2.6 2012/10/04 19:26:11 tjkim Exp $
 //
 #include "PhysicsTools/PatAlgos/plugins/PATElectronProducer.h"
 
