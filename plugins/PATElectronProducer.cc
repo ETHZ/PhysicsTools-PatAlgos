@@ -1,5 +1,5 @@
 //
-// $Id: PATElectronProducer.cc,v 1.51.2.5 2012/04/20 19:54:06 tjkim Exp $
+// $Id: PATElectronProducer.cc,v 1.63 2012/09/05 00:06:52 tjkim Exp $
 //
 #include "PhysicsTools/PatAlgos/plugins/PATElectronProducer.h"
 
@@ -67,7 +67,8 @@ PATElectronProducer::PATElectronProducer(const edm::ParameterSet & iConfig) :
     embedGenMatch_ = iConfig.getParameter<bool>         ( "embedGenMatch" );
     if (iConfig.existsAs<edm::InputTag>("genParticleMatch")) {
       genMatchSrc_.push_back(iConfig.getParameter<edm::InputTag>( "genParticleMatch" ));
-    } else {
+    }
+    else {
       genMatchSrc_ = iConfig.getParameter<std::vector<edm::InputTag> >( "genParticleMatch" );
     }
   }
@@ -89,8 +90,9 @@ PATElectronProducer::PATElectronProducer(const edm::ParameterSet & iConfig) :
     // or there might be many of them
     if (iConfig.existsAs<edm::ParameterSet>("electronIDSources")) {
       // please don't configure me twice
-      if (!elecIDSrcs_.empty()) throw cms::Exception("Configuration") <<
-				  "PATElectronProducer: you can't specify both 'electronIDSource' and 'electronIDSources'\n";
+      if (!elecIDSrcs_.empty()){
+	throw cms::Exception("Configuration") << "PATElectronProducer: you can't specify both 'electronIDSource' and 'electronIDSources'\n";
+      }
       // read the different electron ID names
       edm::ParameterSet idps = iConfig.getParameter<edm::ParameterSet>("electronIDSources");
       std::vector<std::string> names = idps.getParameterNamesForType<edm::InputTag>();
@@ -99,12 +101,14 @@ PATElectronProducer::PATElectronProducer(const edm::ParameterSet & iConfig) :
       }
     }
     // but in any case at least once
-    if (elecIDSrcs_.empty()) throw cms::Exception("Configuration") <<
-			       "PATElectronProducer: id addElectronID is true, you must specify either:\n" <<
-			       "\tInputTag electronIDSource = <someTag>\n" << "or\n" <<
-			       "\tPSet electronIDSources = { \n" <<
-			       "\t\tInputTag <someName> = <someTag>   // as many as you want \n " <<
-			       "\t}\n";
+    if (elecIDSrcs_.empty()){
+      throw cms::Exception("Configuration") <<
+	"PATElectronProducer: id addElectronID is true, you must specify either:\n" <<
+	"\tInputTag electronIDSource = <someTag>\n" << "or\n" <<
+	"\tPSet electronIDSources = { \n" <<
+	"\t\tInputTag <someName> = <someTag>   // as many as you want \n " <<
+	"\t}\n";
+    }
   }
 
   // construct resolution calculator
@@ -162,11 +166,18 @@ PATElectronProducer::PATElectronProducer(const edm::ParameterSet & iConfig) :
 }
 
 
-PATElectronProducer::~PATElectronProducer() {
+  PATElectronProducer::~PATElectronProducer()
+{
 }
 
 
-void PATElectronProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup) {
+void PATElectronProducer::produce(edm::Event & iEvent, const edm::EventSetup & iSetup)
+{
+  // switch off embedding (in unschedules mode)
+  if (iEvent.isRealData()){
+    addGenMatch_ = false;
+    embedGenMatch_ = false;
+  }
 
   // Get the collection of electrons from the event
   edm::Handle<edm::View<reco::GsfElectron> > electrons;
@@ -323,6 +334,9 @@ void PATElectronProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
 	  Electron anElectron(elecsRef);
 	  anElectron.setPFCandidateRef( pfRef  );
 
+          //it should be always true when particleFlow electrons are used.
+          anElectron.setIsPF( true );
+
 	  if( embedPFCandidate_ ) anElectron.embedPFCandidate();
 
 	  if ( useUserData_ ) {
@@ -444,26 +458,31 @@ void PATElectronProducer::produce(edm::Event & iEvent, const edm::EventSetup & i
       // Is this GsfElectron also identified as an e- in the particle flow?
       bool pfId = false;
 
-      if( valMapPresent ) {
-	const edm::ValueMap<reco::PFCandidatePtr> & myValMap(*ValMapH);
-
-	// Get the PFCandidate
-	const reco::PFCandidatePtr& pfElePtr(myValMap[elecsRef]);
-	pfId= pfElePtr.isNonnull();
-      }
-      else if ( pfCandsPresent ) {
+      if ( pfCandsPresent ) {
 	// PF electron collection not available.
 	const reco::GsfTrackRef& trkRef = itElectron->gsfTrack();
+	int index = 0;
 	for( reco::PFCandidateConstIterator ie = pfElectrons->begin();
-	     ie != pfElectrons->end(); ++ie) {
+	     ie != pfElectrons->end(); ++ie, ++index) {
 	  if(ie->particleId()!=reco::PFCandidate::e) continue;
 	  const reco::GsfTrackRef& pfTrkRef= ie->gsfTrackRef();
 	  if( trkRef == pfTrkRef ) {
 	    pfId = true;
+	    reco::PFCandidateRef pfRef(pfElectrons, index);
+	    anElectron.setPFCandidateRef( pfRef );
 	    break;
 	  }
 	}
       }
+      else if( valMapPresent ) {
+        // use value map if PF collection not available
+	const edm::ValueMap<reco::PFCandidatePtr> & myValMap(*ValMapH);
+	// Get the PFCandidate
+	const reco::PFCandidatePtr& pfElePtr(myValMap[elecsRef]);
+	pfId= pfElePtr.isNonnull();
+      }
+      // set PFId function
+      anElectron.setIsPF( pfId );
 
       // add resolution info
 
