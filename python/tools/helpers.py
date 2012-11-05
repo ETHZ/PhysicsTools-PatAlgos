@@ -164,8 +164,10 @@ class CloneSequenceVisitor(object):
             if self._waitForSequenceToClose == visitee.label():
                 self._waitForSequenceToClose = None
             if not isinstance(self._sequenceStack[-1], cms.Sequence):
-                raise StandardError, "empty Sequence encountered during cloneing. sequnece stack: %s"%self._sequenceStack
-            self.__appendToTopSequence( self._sequenceStack.pop() )
+                self._sequenceStack.pop() # remove empty sequence in cloned sequence instead of raising error
+                #raise StandardError, "empty Sequence encountered during cloneing. sequnece stack: %s"%self._sequenceStack
+            else:
+                self.__appendToTopSequence( self._sequenceStack.pop() )
 
     def clonedSequence(self):
         if not len(self._sequenceStack) == 1:
