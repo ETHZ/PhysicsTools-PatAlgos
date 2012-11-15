@@ -31,7 +31,7 @@ def warningIsolation():
 
 from CommonTools.ParticleFlow.Tools.pfIsolation import setupPFElectronIso, setupPFMuonIso
 
-def useGsfElectrons(process, postfix):
+def useGsfElectrons(process, postfix, dR = "04"):
     print "using Gsf Electrons in PF2PAT"
     print "WARNING: this will destory the feature of top projection which solves the ambiguity between leptons and jets because"
     print "WARNING: there will be overlap between non-PF electrons and jets even though top projection is ON!"
@@ -40,14 +40,12 @@ def useGsfElectrons(process, postfix):
     module.useParticleFlow = False
     print "Building particle-based isolation for GsfElectrons in PF2PAT(PFBRECO)"
     print "********************* "
-    process.eleIsoSequence = setupPFElectronIso(process, 'gsfElectrons', "PFIso"+postfix)
-    adaptPFIsoElectrons( process, module, "PFIso"+postfix)
-    getattr(process,'patDefaultSequence'+postfix).replace( getattr(process,"makePatElectrons"+postfix),
-                                                   process.pfParticleSelectionSequence +
-                                                   process.eleIsoSequence +
-                                                   getattr(process,"makePatElectrons"+postfix) )
+    adaptPFIsoElectrons( process, module, postfix+"PFIso", dR )
+    getattr(process,'patDefaultSequence'+postfix).replace( getattr(process,"patElectrons"+postfix),
+                                                   setupPFElectronIso(process, 'gsfElectrons', "PFIso", postfix, runPF2PAT=True) +
+                                                   getattr(process,"patElectrons"+postfix) )
 
-def adaptPFIsoElectrons(process,module, postfix = "PFIso"):
+def adaptPFIsoElectrons(process,module, postfix = "PFIso", dR = "04"):
     #FIXME: adaptPFElectrons can use this function.
     module.isoDeposits = cms.PSet(
         pfChargedHadrons = cms.InputTag("elPFIsoDepositCharged" + postfix),
@@ -57,21 +55,21 @@ def adaptPFIsoElectrons(process,module, postfix = "PFIso"):
         pfPhotons = cms.InputTag("elPFIsoDepositGamma" + postfix)
         )
     module.isolationValues = cms.PSet(
-        pfChargedHadrons = cms.InputTag("elPFIsoValueCharged04PFId"+ postfix),
-        pfChargedAll = cms.InputTag("elPFIsoValueChargedAll04PFId"+ postfix),
-        pfPUChargedHadrons = cms.InputTag("elPFIsoValuePU04PFId" + postfix),
-        pfNeutralHadrons = cms.InputTag("elPFIsoValueNeutral04PFId" + postfix),
-        pfPhotons = cms.InputTag("elPFIsoValueGamma04PFId" + postfix)
+        pfChargedHadrons = cms.InputTag("elPFIsoValueCharged"+dR+"PFId"+ postfix),
+        pfChargedAll = cms.InputTag("elPFIsoValueChargedAll"+dR+"PFId"+ postfix),
+        pfPUChargedHadrons = cms.InputTag("elPFIsoValuePU"+dR+"PFId" + postfix),
+        pfNeutralHadrons = cms.InputTag("elPFIsoValueNeutral"+dR+"PFId" + postfix),
+        pfPhotons = cms.InputTag("elPFIsoValueGamma"+dR+"PFId" + postfix)
         )
     module.isolationValuesNoPFId = cms.PSet(
-        pfChargedHadrons = cms.InputTag("elPFIsoValueCharged04NoPFId"+ postfix),
-        pfChargedAll = cms.InputTag("elPFIsoValueChargedAll04NoPFId"+ postfix),
-        pfPUChargedHadrons = cms.InputTag("elPFIsoValuePU04NoPFId" + postfix),
-        pfNeutralHadrons = cms.InputTag("elPFIsoValueNeutral04NoPFId" + postfix),
-        pfPhotons = cms.InputTag("elPFIsoValueGamma04NoPFId" + postfix)
+        pfChargedHadrons = cms.InputTag("elPFIsoValueCharged"+dR+"NoPFId"+ postfix),
+        pfChargedAll = cms.InputTag("elPFIsoValueChargedAll"+dR+"NoPFId"+ postfix),
+        pfPUChargedHadrons = cms.InputTag("elPFIsoValuePU"+dR+"NoPFId" + postfix),
+        pfNeutralHadrons = cms.InputTag("elPFIsoValueNeutral"+dR+"NoPFId" + postfix),
+        pfPhotons = cms.InputTag("elPFIsoValueGamma"+dR+"NoPFId" + postfix)
         )
 
-def adaptPFIsoMuons(process,module, postfix = "PFIso"):
+def adaptPFIsoMuons(process,module, postfix = "PFIso", dR = "04"):
     #FIXME: adaptPFMuons can use this function.
     module.isoDeposits = cms.PSet(
         pfChargedHadrons = cms.InputTag("muPFIsoDepositCharged" + postfix),
@@ -81,11 +79,11 @@ def adaptPFIsoMuons(process,module, postfix = "PFIso"):
         pfPhotons = cms.InputTag("muPFIsoDepositGamma" + postfix)
         )
     module.isolationValues = cms.PSet(
-        pfChargedHadrons = cms.InputTag("muPFIsoValueCharged04"+ postfix),
-        pfChargedAll = cms.InputTag("muPFIsoValueChargedAll04"+ postfix),
-        pfPUChargedHadrons = cms.InputTag("muPFIsoValuePU04" + postfix),
-        pfNeutralHadrons = cms.InputTag("muPFIsoValueNeutral04" + postfix),
-        pfPhotons = cms.InputTag("muPFIsoValueGamma04" + postfix)
+        pfChargedHadrons = cms.InputTag("muPFIsoValueCharged" + dR + postfix),
+        pfChargedAll = cms.InputTag("muPFIsoValueChargedAll" + dR + postfix),
+        pfPUChargedHadrons = cms.InputTag("muPFIsoValuePU" + dR + postfix),
+        pfNeutralHadrons = cms.InputTag("muPFIsoValueNeutral" + dR + postfix),
+        pfPhotons = cms.InputTag("muPFIsoValueGamma" + dR + postfix)
         )
 
 def usePFIso(process, postfix = "PFIso"):
@@ -107,7 +105,7 @@ def adaptPFMuons(process,module,postfix="" ):
     warningIsolation()
     print
     module.useParticleFlow = True
-    module.pfMuonSource    = cms.InputTag("pfIsolatedMuonsClones" + postfix)
+    module.pfMuonSource    = cms.InputTag("pfIsolatedMuons" + postfix)
     module.userIsolation   = cms.PSet()
     module.isoDeposits = cms.PSet(
         pfChargedHadrons = cms.InputTag("muPFIsoDepositCharged" + postfix),
@@ -141,7 +139,7 @@ def adaptPFElectrons(process,module, postfix):
     warningIsolation()
     print
     module.useParticleFlow = True
-    module.pfElectronSource = cms.InputTag("pfIsolatedElectronsClones" + postfix)
+    module.pfElectronSource = cms.InputTag("pfIsolatedElectrons" + postfix)
     module.userIsolation   = cms.PSet()
     module.isoDeposits = cms.PSet(
         pfChargedHadrons = cms.InputTag("elPFIsoDepositCharged" + postfix),
@@ -415,7 +413,7 @@ def switchToPFMET(process,input=cms.InputTag('pfMET'), type1=False, postfix=""):
         getattr(process,'selectedPatJetsForMETtype1p2Corr'+postfix).src = cms.InputTag('selectedPatJets'+postfix)
         getattr(process,'selectedPatJetsForMETtype2Corr'+postfix).src   = cms.InputTag('selectedPatJets'+postfix)
 
-        getattr(process,'pfCandMETcorr'+postfix).src = cms.InputTag('pfNoJetClones'+postfix)
+        getattr(process,'pfCandMETcorr'+postfix).src = cms.InputTag('pfNoJet'+postfix)
 
         getattr(process,'patPFJetMETtype1p2Corr'+postfix).offsetCorrLabel = cms.string(jecLabel[0])
         getattr(process,'patPFJetMETtype1p2Corr'+postfix).jetCorrLabel = cms.string(jecLabel[-1])
@@ -446,7 +444,7 @@ def switchToPFMET(process,input=cms.InputTag('pfMET'), type1=False, postfix=""):
                                                                *getattr(process,'patMETs'+postfix)
                                                               )
 
-def switchToPFJets(process, input=cms.InputTag('pfNoTauClones'), algo='AK5', postfix = "", jetCorrections=('AK5PFchs', ['L1FastJet','L2Relative', 'L3Absolute']), type1=False, outputModules=['out']):
+def switchToPFJets(process, input=cms.InputTag('pfNoTau'), algo='AK5', postfix = "", jetCorrections=('AK5PFchs', ['L1FastJet','L2Relative', 'L3Absolute']), type1=False, outputModules=['out']):
 
     print "Switching to PFJets,  ", algo
     print "************************ "
@@ -559,9 +557,7 @@ def usePF2PAT(process, runPF2PAT=True, jetAlgo='AK5', runOnMC=True, postfix="", 
         process.load("CommonTools.ParticleFlow.PF2PAT_cff")
         #add Pf2PAT *before* cloning so that overlapping modules are cloned too
         #process.patDefaultSequence.replace( process.patCandidates, process.PF2PAT+process.patCandidates)
-        #add clones of some stuff here
-        process.patPFClones = cms.Sequence(process.pfNoJetClones+process.pfNoTauClones)
-        process.patPF2PATSequence = cms.Sequence( process.PF2PAT + process.patPFClones + process.patDefaultSequence)
+        process.patPF2PATSequence = cms.Sequence( process.PF2PAT + process.patDefaultSequence)
     else:
         process.patPF2PATSequence = cms.Sequence( process.patDefaultSequence )
 
@@ -597,7 +593,7 @@ def usePF2PAT(process, runPF2PAT=True, jetAlgo='AK5', runOnMC=True, postfix="", 
 
     # Jets
     if runOnMC :
-        switchToPFJets( process, cms.InputTag('pfNoTauClones'+postfix), jetAlgo, postfix=postfix,
+        switchToPFJets( process, cms.InputTag('pfNoTau'+postfix), jetAlgo, postfix=postfix,
                         jetCorrections=jetCorrections, type1=typeIMetCorrections, outputModules=outputModules )
         applyPostfix(process,"patDefaultSequence",postfix).replace(
             applyPostfix(process,"patJetGenJetMatch",postfix),
@@ -610,7 +606,7 @@ def usePF2PAT(process, runPF2PAT=True, jetAlgo='AK5', runOnMC=True, postfix="", 
             print 'WARNING! Not using L2L3Residual but this is data.'
             print 'If this is okay with you, disregard this message.'
             print '#################################################'
-        switchToPFJets( process, cms.InputTag('pfNoTauClones'+postfix), jetAlgo, postfix=postfix,
+        switchToPFJets( process, cms.InputTag('pfNoTau'+postfix), jetAlgo, postfix=postfix,
                         jetCorrections=jetCorrections, type1=typeIMetCorrections, outputModules=outputModules )
 
     # Taus
@@ -625,7 +621,7 @@ def usePF2PAT(process, runPF2PAT=True, jetAlgo='AK5', runOnMC=True, postfix="", 
             getattr(process,'patPFMet'+postfix).addGenMET = cms.bool(False)
 
     # Unmasked PFCandidates
-    addPFCandidates(process,cms.InputTag('pfNoJetClones'+postfix),patLabel='PFParticles'+postfix,cut="",postfix=postfix)
+    addPFCandidates(process,cms.InputTag('pfNoJet'+postfix),patLabel='PFParticles'+postfix,cut="",postfix=postfix)
 
     # adapt primary vertex collection
     adaptPVs(process, pvCollection=pvCollection, postfix=postfix)
