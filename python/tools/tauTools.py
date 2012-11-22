@@ -217,6 +217,11 @@ hpsTauIDSources = [
     ("againstElectronLooseMVA2", "DiscriminationByMVA2LooseElectronRejection"),
     ("againstElectronMediumMVA2", "DiscriminationByMVA2MediumElectronRejection"),
     ("againstElectronTightMVA2", "DiscriminationByMVA2TightElectronRejection"),
+    ("againstElectronMVA3raw", "DiscriminationByMVA3rawElectronRejection"),
+    ("againstElectronMVA3category", "DiscriminationByMVA3rawElectronRejection:category"),
+    ("againstElectronLooseMVA3", "DiscriminationByMVA3LooseElectronRejection"),
+    ("againstElectronMediumMVA3", "DiscriminationByMVA3MediumElectronRejection"),
+    ("againstElectronTightMVA3", "DiscriminationByMVA3TightElectronRejection"),    
     ("againstMuonLoose", "DiscriminationByLooseMuonRejection"),
     ("againstMuonMedium", "DiscriminationByMediumMuonRejection"),
     ("againstMuonTight", "DiscriminationByTightMuonRejection") ]
