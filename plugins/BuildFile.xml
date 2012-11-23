@@ -24,5 +24,7 @@
   <use   name="RecoMET/METAlgorithms"/>
   <use   name="RecoEgamma/EgammaTools"/>
   <use   name="TrackingTools/IPTools"/> 
+  <use   name="EgammaAnalysis/ElectronTools"/>
+  <use   name="EGamma/EGammaAnalysisTools"/>
   <use   name="root"/>
 </library>
