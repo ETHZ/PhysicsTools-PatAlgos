@@ -147,7 +147,7 @@ NoUpdateDiscriminators=False
 try:
     from RecoTauTag.Configuration.updateHPSPFTaus_cff import *
 except ImportError:
-    updateDiscriminators=True
+    NoUpdateDiscriminators=True
 
 if NoUpdateDiscriminators:
     patTaus.tauIDSources = cms.PSet(
