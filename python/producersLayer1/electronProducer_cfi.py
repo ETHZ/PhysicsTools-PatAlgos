@@ -4,15 +4,11 @@ patElectrons = cms.EDProducer("PATElectronProducer",
     # input collection
     electronSource = cms.InputTag("gsfElectrons"),
 
-    # use particle flow instead of std reco
+    # use particle flow instead of std reco    
     useParticleFlow  =  cms.bool( False ),
-    pfElectronSource = cms.InputTag("particleFlow"),
+    pfElectronSource = cms.InputTag("pfIsolatedElectrons"),
     pfCandidateMap = cms.InputTag("particleFlow:electrons"),
-
-    # collections for mva input variables
-    reducedBarrelRecHitCollection = cms.InputTag("reducedEcalRecHitsEB"),
-    reducedEndcapRecHitCollection = cms.InputTag("reducedEcalRecHitsEE"),
-
+                            
     # user data to add
     userData = cms.PSet(
       # add custom classes here
@@ -40,11 +36,9 @@ patElectrons = cms.EDProducer("PATElectronProducer",
     embedGsfElectronCore = cms.bool(True),  ## embed in AOD externally stored gsf electron core
     embedGsfTrack        = cms.bool(True),  ## embed in AOD externally stored gsf track
     embedSuperCluster    = cms.bool(True),  ## embed in AOD externally stored supercluster
-    embedSeedCluster     = cms.bool(True),  ## embed in AOD externally stored the electron's seedcluster 
     embedPFCandidate     = cms.bool(True),  ## embed in AOD externally stored particle flow candidate
-    embedTrack           = cms.bool(True), ## embed in AOD externally stored track (note: gsf electrons don't have a track)
-    embedRecHits         = cms.bool(True),  ## embed in AOD externally stored the RecHits - can be called from the PATElectronProducer 
-
+    embedTrack           = cms.bool(False), ## embed in AOD externally stored track (note: gsf electrons don't have a track)
+                                    
     # embed IsoDeposits to recompute isolation
     isoDeposits = cms.PSet(),
 
@@ -69,7 +63,7 @@ patElectrons = cms.EDProducer("PATElectronProducer",
     addGenMatch      = cms.bool(True),
     embedGenMatch    = cms.bool(True),
     genParticleMatch = cms.InputTag("electronMatch"), ## Association between electrons and generator particles
-
+    
     # efficiencies
     addEfficiencies = cms.bool(False),
     efficiencies    = cms.PSet(),
@@ -80,7 +74,7 @@ patElectrons = cms.EDProducer("PATElectronProducer",
 
     # high level selections
     embedHighLevelSelection = cms.bool(True),
-    usePV                   = cms.bool(True),
+    usePV                   = cms.bool(True),                          
     beamLineSrc             = cms.InputTag("offlineBeamSpot"),
     pvSrc                   = cms.InputTag("offlinePrimaryVertices")
 )
