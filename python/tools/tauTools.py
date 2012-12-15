@@ -154,8 +154,15 @@ def _switchToPFTau(process,
 #    else:
 #        applyPostfix(process, "patTaus" + patTauLabel, postfix).addTauJetCorrFactors = cms.bool(False)
 
-    if hasattr(process,"updateHPSPFTaus"+postfix) and pfTauType== 'hpsPFTau' :
-             idSources += [
+
+    UpdateDiscriminators=True
+    try:
+        from RecoTauTag.Configuration.updateHPSPFTaus_cff import updateHPSPFTaus
+    except ImportError:
+        UpdateDiscriminators=False
+
+    if UpdateDiscriminators:
+        idSources += [
                      ("byIsolationMVAraw", "DiscriminationByIsolationMVAraw"),
                      ("byLooseIsolationMVA", "DiscriminationByLooseIsolationMVA"),
                      ("byMediumIsolationMVA", "DiscriminationByMediumIsolationMVA"),
@@ -170,6 +177,7 @@ def _switchToPFTau(process,
                      ("byMediumCombinedIsolationDeltaBetaCorr3Hits", "DiscriminationByMediumCombinedIsolationDBSumPtCorr3Hits"),
                      ("byTightCombinedIsolationDeltaBetaCorr3Hits", "DiscriminationByTightCombinedIsolationDBSumPtCorr3Hits"),
                      ("againstElectronMVA3raw", "DiscriminationByMVA3rawElectronRejection"),
+                     ("againstElectronMVA3category", "DiscriminationByMVA3rawElectronRejection:category"),
                      ("againstElectronLooseMVA3", "DiscriminationByMVA3LooseElectronRejection"),
                      ("againstElectronMediumMVA3", "DiscriminationByMVA3MediumElectronRejection"),
                      ("againstElectronTightMVA3", "DiscriminationByMVA3TightElectronRejection"),
