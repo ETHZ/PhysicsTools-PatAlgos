@@ -190,7 +190,10 @@ def _switchToPFTau(process,
                      ("againstElectronDeadECAL", "DiscriminationByDeadECALElectronRejection"),
                      ("againstMuonLoose2", "DiscriminationByLooseMuonRejection2"),
                      ("againstMuonMedium2", "DiscriminationByMediumMuonRejection2"),
-                     ("againstMuonTight2", "DiscriminationByTightMuonRejection2")]
+                     ("againstMuonTight2", "DiscriminationByTightMuonRejection2"),
+                     ("againstMuonLoose3", "DiscriminationByLooseMuonRejection3"),
+                     ("againstMuonTight3", "DiscriminationByTightMuonRejection3")
+                     ]
     
     applyPostfix(process, "patTaus" + patTauLabel, postfix).tauSource = pfTauLabelNew
     applyPostfix(process, "patTaus" + patTauLabel, postfix).tauIDSources = _buildIDSourcePSet(pfTauType, idSources, postfix)
