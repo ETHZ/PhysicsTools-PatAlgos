@@ -18,11 +18,11 @@ def redoPFTauDiscriminators(process,
     tauDiscriminationSequence = None
 
     if tauType == 'hpsPFTau':
+        process.patHPSPFTauDiscrimination = process.produceAndDiscriminateHPSPFTaus.copy()
         if hasattr(process,"updateHPSPFTaus"+postfix):
-            tauDiscriminationSequence = getattr(process,"patHPSPFTauDiscriminationUpdate"+postfix)
+            tauDiscriminationSequence = getattr(process,"patHPSPFTauDiscrimination"+postfix)
         else:
             #        remove producers
-            process.patHPSPFTauDiscrimination = process.produceAndDiscriminateHPSPFTaus.copy()
             for iname in process.patHPSPFTauDiscrimination.moduleNames():
                 if not (iname.find("DiscriminationBy")>-1 or iname.find("DiscriminationAgainst")>-1 or iname.find("kt6PFJetsForRhoComputationVoronoi")>-1):
                     process.patHPSPFTauDiscrimination.remove(getattr(process,iname) )
@@ -66,11 +66,11 @@ def redoPFTauDiscriminators(process,
     else:
         raise StandardError, "Unkown tauType: '%s'"%tauType
 
-    if not hasattr(process,"updateHPSPFTaus"+postfix):
-        applyPostfix(process,"patDefaultSequence",postfix).replace(
-            applyPostfix(process,"patTaus",postfix),
-            tauDiscriminationSequence*applyPostfix(process,"patTaus",postfix)
-            )
+    ##if not hasattr(process,"updateHPSPFTaus"+postfix):
+    ##    applyPostfix(process,"patDefaultSequence",postfix).replace(
+    ##        applyPostfix(process,"patTaus",postfix),
+    ##        tauDiscriminationSequence*applyPostfix(process,"patTaus",postfix)
+    ##        )
 
     massSearchReplaceParam(tauDiscriminationSequence, tauSrc, oldPFTauLabel, newPFTauLabel)
 
@@ -154,44 +154,6 @@ def _switchToPFTau(process,
 #    else:
 #        applyPostfix(process, "patTaus" + patTauLabel, postfix).addTauJetCorrFactors = cms.bool(False)
 
-
-    UpdateDiscriminators=True
-    try:
-        from RecoTauTag.Configuration.updateHPSPFTaus_cff import updateHPSPFTaus
-    except ImportError:
-        UpdateDiscriminators=False
-
-    if UpdateDiscriminators:
-        idSources += [
-                     ("byIsolationMVAraw", "DiscriminationByIsolationMVAraw"),
-                     ("byLooseIsolationMVA", "DiscriminationByLooseIsolationMVA"),
-                     ("byMediumIsolationMVA", "DiscriminationByMediumIsolationMVA"),
-                     ("byTightIsolationMVA", "DiscriminationByTightIsolationMVA"),
-                     ("byIsolationMVA2raw", "DiscriminationByIsolationMVA2raw"),
-                     ("byLooseIsolationMVA2", "DiscriminationByLooseIsolationMVA2"),
-                     ("byMediumIsolationMVA2", "DiscriminationByMediumIsolationMVA2"),
-                     ("byTightIsolationMVA2", "DiscriminationByTightIsolationMVA2"),
-                     ("againstElectronMVA2raw", "DiscriminationByMVA2rawElectronRejection"),
-                     ("againstElectronMVA2category", "DiscriminationByMVA2rawElectronRejection:category"),
-                     ("againstElectronVLooseMVA2", "DiscriminationByMVA2VLooseElectronRejection"),
-                     ("againstElectronLooseMVA2", "DiscriminationByMVA2LooseElectronRejection"),
-                     ("againstElectronMediumMVA2", "DiscriminationByMVA2MediumElectronRejection"),
-                     ("againstElectronTightMVA2", "DiscriminationByMVA2TightElectronRejection"),
-                     ("byLooseCombinedIsolationDeltaBetaCorr3Hits", "DiscriminationByLooseCombinedIsolationDBSumPtCorr3Hits"),
-                     ("byMediumCombinedIsolationDeltaBetaCorr3Hits", "DiscriminationByMediumCombinedIsolationDBSumPtCorr3Hits"),
-                     ("byTightCombinedIsolationDeltaBetaCorr3Hits", "DiscriminationByTightCombinedIsolationDBSumPtCorr3Hits"),
-                     ("byCombinedIsolationDeltaBetaCorrRaw3Hits", "DiscriminationByRawCombinedIsolationDBSumPtCorr3Hits"),
-                     ("againstElectronMVA3raw", "DiscriminationByMVA3rawElectronRejection"),
-                     ("againstElectronMVA3category", "DiscriminationByMVA3rawElectronRejection:category"),
-                     ("againstElectronLooseMVA3", "DiscriminationByMVA3LooseElectronRejection"),
-                     ("againstElectronMediumMVA3", "DiscriminationByMVA3MediumElectronRejection"),
-                     ("againstElectronTightMVA3", "DiscriminationByMVA3TightElectronRejection"),
-                     ("againstElectronVTightMVA3", "DiscriminationByMVA3VTightElectronRejection"),
-                     ("againstElectronDeadECAL", "DiscriminationByDeadECALElectronRejection"),
-                     ("againstMuonLoose2", "DiscriminationByLooseMuonRejection2"),
-                     ("againstMuonMedium2", "DiscriminationByMediumMuonRejection2"),
-                     ("againstMuonTight2", "DiscriminationByTightMuonRejection2")]
-    
     applyPostfix(process, "patTaus" + patTauLabel, postfix).tauSource = pfTauLabelNew
     applyPostfix(process, "patTaus" + patTauLabel, postfix).tauIDSources = _buildIDSourcePSet(pfTauType, idSources, postfix)
 
@@ -236,39 +198,42 @@ hpsTauIDSources = [
     ("byLooseIsolationDeltaBetaCorr", "DiscriminationByLooseIsolationDBSumPtCorr"),
     ("byMediumIsolationDeltaBetaCorr", "DiscriminationByMediumIsolationDBSumPtCorr"),
     ("byTightIsolationDeltaBetaCorr", "DiscriminationByTightIsolationDBSumPtCorr"),
+    ("byVLooseChargedIsolation", "DiscriminationByVLooseChargedIsolation"),
+    ("byLooseChargedIsolation", "DiscriminationByLooseChargedIsolation"),
+    ("byMediumChargedIsolation", "DiscriminationByMediumChargedIsolation"),
+    ("byTightChargedIsolation", "DiscriminationByTightChargedIsolation"),
     ("byVLooseCombinedIsolationDeltaBetaCorr", "DiscriminationByVLooseCombinedIsolationDBSumPtCorr"),
     ("byLooseCombinedIsolationDeltaBetaCorr", "DiscriminationByLooseCombinedIsolationDBSumPtCorr"),
     ("byMediumCombinedIsolationDeltaBetaCorr", "DiscriminationByMediumCombinedIsolationDBSumPtCorr"),
     ("byTightCombinedIsolationDeltaBetaCorr", "DiscriminationByTightCombinedIsolationDBSumPtCorr"),
     ("byCombinedIsolationDeltaBetaCorrRaw", "DiscriminationByRawCombinedIsolationDBSumPtCorr"),
-#    ("byLooseCombinedIsolationDeltaBetaCorr3Hits", "DiscriminationByLooseCombinedIsolationDBSumPtCorr3Hits"),
-#    ("byMediumCombinedIsolationDeltaBetaCorr3Hits", "DiscriminationByMediumCombinedIsolationDBSumPtCorr3Hits"),
-#    ("byTightCombinedIsolationDeltaBetaCorr3Hits", "DiscriminationByTightCombinedIsolationDBSumPtCorr3Hits"),    
-#commented out because of backwards compatibility. THey are added below in case new tauDiscriminators are re-run
-#    ("byIsolationMVAraw", "DiscriminationByIsolationMVAraw"),
-#    ("byLooseIsolationMVA", "DiscriminationByLooseIsolationMVA"),
-#    ("byMediumIsolationMVA", "DiscriminationByMediumIsolationMVA"),
-#    ("byTightIsolationMVA", "DiscriminationByTightIsolationMVA"),
+    ("byIsolationMVAraw", "DiscriminationByIsolationMVAraw"),
+    ("byLooseIsolationMVA", "DiscriminationByLooseIsolationMVA"),
+    ("byMediumIsolationMVA", "DiscriminationByMediumIsolationMVA"),
+    ("byTightIsolationMVA", "DiscriminationByTightIsolationMVA"),
     ("againstElectronLoose", "DiscriminationByLooseElectronRejection"),
     ("againstElectronMedium", "DiscriminationByMediumElectronRejection"),
     ("againstElectronTight", "DiscriminationByTightElectronRejection"),
     ("againstElectronMVA", "DiscriminationByMVAElectronRejection"),
-# commented out because of backwards compatibility. THey are added below in case new tauDiscriminators are re-run
-#    ("againstElectronMVA2raw", "DiscriminationByMVA2rawElectronRejection"),
-#    ("againstElectronMVA2category", "DiscriminationByMVA2rawElectronRejection:category"),
-#    ("againstElectronVLooseMVA2", "DiscriminationByMVA2VLooseElectronRejection"),
-#    ("againstElectronLooseMVA2", "DiscriminationByMVA2LooseElectronRejection"),
-#    ("againstElectronMediumMVA2", "DiscriminationByMVA2MediumElectronRejection"),
-#    ("againstElectronTightMVA2", "DiscriminationByMVA2TightElectronRejection"),
-#    ("againstElectronMVA3raw", "DiscriminationByMVA3rawElectronRejection"),
-#    ("againstElectronMVA3category", "DiscriminationByMVA3rawElectronRejection:category"),
-#    ("againstElectronLooseMVA3", "DiscriminationByMVA3LooseElectronRejection"),
-#    ("againstElectronMediumMVA3", "DiscriminationByMVA3MediumElectronRejection"),
-#    ("againstElectronTightMVA3", "DiscriminationByMVA3TightElectronRejection"),
-#    ("againstElectronDeadECAL", "DiscriminationByDeadECALElectronRejection"),
+    ("againstElectronMVA2raw", "DiscriminationByMVA2rawElectronRejection"),
+    ("againstElectronMVA2category", "DiscriminationByMVA2rawElectronRejection:category"),
+    ("againstElectronVLooseMVA2", "DiscriminationByMVA2VLooseElectronRejection"),
+    ("againstElectronLooseMVA2", "DiscriminationByMVA2LooseElectronRejection"),
+    ("againstElectronMediumMVA2", "DiscriminationByMVA2MediumElectronRejection"),
+    ("againstElectronTightMVA2", "DiscriminationByMVA2TightElectronRejection"),
+    ("againstElectronMVA3raw", "DiscriminationByMVA3rawElectronRejection"),
+    ("againstElectronMVA3category", "DiscriminationByMVA3rawElectronRejection:category"),
+    ("againstElectronLooseMVA3", "DiscriminationByMVA3LooseElectronRejection"),
+    ("againstElectronMediumMVA3", "DiscriminationByMVA3MediumElectronRejection"),
+    ("againstElectronTightMVA3", "DiscriminationByMVA3TightElectronRejection"),
+    ("againstElectronVTightMVA3", "DiscriminationByMVA3VTightElectronRejection"),
+    ("againstElectronDeadECAL", "DiscriminationByDeadECALElectronRejection"),
     ("againstMuonLoose", "DiscriminationByLooseMuonRejection"),
     ("againstMuonMedium", "DiscriminationByMediumMuonRejection"),
-    ("againstMuonTight", "DiscriminationByTightMuonRejection") ]
+    ("againstMuonTight", "DiscriminationByTightMuonRejection"),
+    ("againstMuonLoose2", "DiscriminationByLooseMuonRejection2"),
+    ("againstMuonMedium2", "DiscriminationByMediumMuonRejection2"),
+    ("againstMuonTight2", "DiscriminationByTightMuonRejection2") ]
 
 # Discriminators of new HPS + TaNC combined Tau id. algorithm
 hpsTancTauIDSources = [
