@@ -82,11 +82,14 @@ def switchToCaloTau(process,
                     postfix = ""):
     print ' Taus: ', pfTauLabelOld, '->', pfTauLabelNew
 
-    caloTauLabel = pfTauLabelNew
+    caloTauLabel = pfTauLabelNew   
+
     applyPostfix(process, "tauMatch" + patTauLabel, postfix).src = caloTauLabel
     applyPostfix(process, "tauGenJetMatch"+ patTauLabel, postfix).src = caloTauLabel
 
     applyPostfix(process, "patTaus" + patTauLabel, postfix).tauSource = caloTauLabel
+    # CV: reconstruction of tau lifetime information not implemented for CaloTaus yet
+    applyPostfix(process, "patTaus" + patTauLabel, postfix).tauTransverseImpactParameterSource = ""
     applyPostfix(process, "patTaus" + patTauLabel, postfix).tauIDSources = _buildIDSourcePSet('caloRecoTau', classicTauIDSources, postfix)
 #    applyPostfix(process, "patTaus" + patTauLabel, postfix).tauIDSources = cms.PSet(
 #        leadingTrackFinding = cms.InputTag("caloRecoTauDiscriminationByLeadingTrackFinding" + postfix),
@@ -155,6 +158,8 @@ def _switchToPFTau(process,
 #        applyPostfix(process, "patTaus" + patTauLabel, postfix).addTauJetCorrFactors = cms.bool(False)
 
     applyPostfix(process, "patTaus" + patTauLabel, postfix).tauSource = pfTauLabelNew
+    # CV: reconstruction of tau lifetime information not enabled for tau collections other than 'hpsPFTauProducer' yet
+    applyPostfix(process, "patTaus" + patTauLabel, postfix).tauTransverseImpactParameterSource = ""
     applyPostfix(process, "patTaus" + patTauLabel, postfix).tauIDSources = _buildIDSourcePSet(pfTauType, idSources, postfix)
 
     if hasattr(process, "cleanPatTaus" + patTauLabel + postfix):
@@ -236,7 +241,10 @@ hpsTauIDSources = [
     ("againstMuonTight", "DiscriminationByTightMuonRejection"),
     ("againstMuonLoose2", "DiscriminationByLooseMuonRejection2"),
     ("againstMuonMedium2", "DiscriminationByMediumMuonRejection2"),
-    ("againstMuonTight2", "DiscriminationByTightMuonRejection2") ]
+    ("againstMuonTight2", "DiscriminationByTightMuonRejection2"),
+    ("againstMuonLoose3", "DiscriminationByLooseMuonRejection3"),
+    ("againstMuonMedium3", "DiscriminationByMediumMuonRejection3"),
+    ("againstMuonTight3", "DiscriminationByTightMuonRejection3") ]
 
 # Discriminators of new HPS + TaNC combined Tau id. algorithm
 hpsTancTauIDSources = [
@@ -332,6 +340,9 @@ def switchToPFTauHPS(process,
     _switchToPFTau(process, pfTauLabelOld, pfTauLabelNew, 'hpsPFTau', hpsTauIDSources,
                    jecLevels, hpsTauJECpayloadMapping,
                    patTauLabel = patTauLabel, postfix = postfix)
+
+    # CV: enable tau lifetime information for HPS PFTaus
+    applyPostfix(process, "patTaus" + patTauLabel, postfix).tauTransverseImpactParameterSource = pfTauLabelNew.value().replace("Producer", "TransverseImpactParameters")
 
     ## adapt cleanPatTaus
     if hasattr(process, "cleanPatTaus" + patTauLabel + postfix):
