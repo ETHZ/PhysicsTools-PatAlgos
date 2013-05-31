@@ -3,6 +3,7 @@ import FWCore.ParameterSet.Config as cms
 patTaus = cms.EDProducer("PATTauProducer",
     # input
     tauSource = cms.InputTag("hpsPFTauProducer"),
+    tauTransverseImpactParameterSource = cms.InputTag("PFTauTransverseImpactParameters"),                     
 
     # add user data
     userData = cms.PSet(
